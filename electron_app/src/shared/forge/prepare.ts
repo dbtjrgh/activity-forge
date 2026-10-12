@@ -24,6 +24,11 @@ export interface LayoutPick {
   sameSlot: boolean
   /** 다음 후보 몇 개 */
   alt: string[]
+  /**
+   * 이 모듈로 만든 첫 학습코드라 원본 후보가 하나도 없다(`ok` 는 false, `module` 은 있음).
+   * 대화로 생성은 못 하지만, Claude Code 세션에서 만든 것을 미리보기 · 검수 완료는 한다 (2026-10-12, M38_1 · M38_2)
+   */
+  first?: boolean
 }
 
 /** 갈래마다 「원본은 몇 개, 지금 몇 개」 */

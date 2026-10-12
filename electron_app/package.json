@@ -1,6 +1,6 @@
 {
   "name": "sparkon-manager",
-  "version": "1.4.0",
+  "version": "1.4.4",
   "description": "SparkOn 프로젝트 관리·액티비티 양산 데스크톱 앱",
   "main": "./out/main/boot.js",
   "author": "seokho.yu",

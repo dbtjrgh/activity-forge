@@ -18,6 +18,7 @@ import type {
   GateResult,
   HallStatus,
   RscWait,
+  TeamSheet,
   TeamTally,
   RscGuide,
   ThumbsResult,
@@ -74,6 +75,8 @@ const api = {
     ipcRenderer.invoke(IPC.forgeSetMe, developer, devTeam),
   /** 스펙이 없는 모듈 — 열린 진행판마다 배치표가 정한 것 가운데 */
   forgeNewModules: (): Promise<NewModules> => ipcRenderer.invoke(IPC.forgeNewModules),
+  /** 팀 일정표 갱신 — 렌더러는 아무것도 안 보낸다. 일정표 주소는 메인이 안다 */
+  forgeTeamSheet: (): Promise<TeamSheet> => ipcRenderer.invoke(IPC.forgeTeamSheet),
   /** 스펙을 읽을 양산기 폴더 고르기 — clone 한 저장소 안의 forge */
   forgePickForgeRoot: (): Promise<Workspace> => ipcRenderer.invoke(IPC.forgePickForgeRoot),
   /** 그 폴더를 글로 정한다 */

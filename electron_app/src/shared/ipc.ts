@@ -34,6 +34,8 @@ export const IPC = {
   forgeSetMe: 'forge:setMe',
   /** 스펙이 없는 모듈 — 스펙 주인의 옆줄 알림 */
   forgeNewModules: 'forge:newModules',
+  /** 팀 일정표 갱신 — 완료 목록을 내 컴퓨터에 잠깐 띄우고 일정표를 연다(칠하는 것은 엑셀 스크립트) */
+  forgeTeamSheet: 'forge:teamSheet',
   /**
    * **스펙을 읽을 양산기 폴더를 고른다** (2026-09-18).
    *
@@ -106,6 +108,12 @@ export const IPC = {
   /** 「양산 완료 커밋」 — 호 저장소에 그 학습코드만 커밋 · 푸시 · main (`hallcommit.ts`) */
   forgeCommit: 'forge:commit',
   forgePushMain: 'forge:pushMain',
+  /** 호 저장소에 있는데 안 쓰는 리소스 — 목록 · 휴지통으로 (`pubextra.ts`) */
+  forgePubExtra: 'forge:pubExtra',
+  forgePubExtraTrash: 'forge:pubExtraTrash',
+  /** 완료 뒤 리소스 폴더 정리 — 무엇을 옮기나 · 옮기기 (`rscclean.ts`) */
+  forgeRscCleanPlan: 'forge:rscCleanPlan',
+  forgeRscClean: 'forge:rscClean',
   /** 서버가 뱉는 줄을 그때그때 화면으로 */
   forgeViewLog: 'forge:view:log',
   /** 바깥 브라우저로 주소 열기 */

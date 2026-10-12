@@ -68,7 +68,7 @@ export interface Leftover {
   from: string
 }
 
-/** 「다른 호 원본 파일 휴지통으로」 결과 */
+/** 「다른 호 원본 파일 휴지통으로」 · 정리 두 가지(`cleanup.ts`)의 결과 */
 export interface LeftoverTrash {
   moved: string[]
   failed: { rel: string; why: string }[]

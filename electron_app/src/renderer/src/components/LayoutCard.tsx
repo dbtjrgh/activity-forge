@@ -47,6 +47,19 @@ function LayoutCard({
           {/* 기계가 고른 원본이 틀리면 여기서 — 받을 리소스 · 만들기가 다 이 원본을 따른다 */}
           <OriginPicker code={code} onChanged={onChanged} />
         </>
+      ) : layout.first ? (
+        // 새 모듈의 첫 학습코드 — 잘못이 아니라 원본 후보가 아직 없는 것이라 오류 색으로 쓰지 않는다
+        <>
+          <dl className="pairs">
+            <dt>모듈</dt>
+            <dd>
+              <span className="mono">{layout.module}</span>
+              {!hasSpec && <span className="tag warn">스펙 없음</span>}
+              <span className="tag">첫 학습코드</span>
+            </dd>
+          </dl>
+          <p className="sub">{layout.why}</p>
+        </>
       ) : (
         <p className="state error">{layout.why || '모듈을 정하지 못했습니다.'}</p>
       )}

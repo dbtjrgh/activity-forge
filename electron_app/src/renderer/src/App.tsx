@@ -6,6 +6,7 @@ import FolderProperties from './components/FolderProperties'
 import FolderTree from './components/FolderTree'
 import Bench from './components/bench/Bench'
 import RscSort from './components/RscSort'
+import TeamSheetBar from './components/board/TeamSheetBar'
 import Features from './components/Features'
 import Manage from './components/manage/Manage'
 import SettingsDrawer from './components/SettingsDrawer'
@@ -158,6 +159,7 @@ function App() {
                   넣자마자 화면이 비었다 (2026-09-16 앱에서 드롭해 보고 찾음).
                   놓는 칸은 고른 호와 아무 상관이 없으니 밖이 제자리다.
                 */}
+                <TeamSheetBar />
                 <RscSort onDone={refresh} />
                 {result ? (
                   <Board result={result} onForge={setForgeCode} onChanged={refresh} />

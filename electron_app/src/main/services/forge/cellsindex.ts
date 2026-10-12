@@ -13,6 +13,7 @@
  * Electron 을 import 하지 않는다(services 규칙).
  */
 
+import { escapeRe as esc } from '../../lib/regex'
 import { valueAt } from './answer'
 import { resizeAt, uniform, type Resize } from './cells'
 import type { SpecRelation } from '@/gen/types'
@@ -57,8 +58,6 @@ export function dropOrphans(recipe: unknown, before: Set<string>, keep: Set<stri
   }
   return out
 }
-
-const esc = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 export function followIndexes(
   recipe: unknown,

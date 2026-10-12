@@ -18,6 +18,8 @@ import type {
   ThumbsResult,
   LeftoverTrash,
   OriginChoices,
+  PubExtra,
+  RscClean,
   ViewCheck,
   LinkResult
 } from '../shared/forge'
@@ -108,6 +110,12 @@ export const benchApi = {
   forgeDone: (code: string): Promise<DoneResult> => ipcRenderer.invoke(IPC.forgeDone, code),
   forgeCommit: (code: string): Promise<CommitResult> => ipcRenderer.invoke(IPC.forgeCommit, code),
   forgePushMain: (code: string, allow: string[] = []): Promise<CommitResult> => ipcRenderer.invoke(IPC.forgePushMain, code, allow),
+  /** 호 저장소에 있는데 안 쓰는 리소스 · 휴지통으로(메인이 다시 세어 화면에 보인 `shown` 과 겹치는 것만) */
+  forgePubExtra: (code: string): Promise<PubExtra> => ipcRenderer.invoke(IPC.forgePubExtra, code),
+  forgePubExtraTrash: (code: string, shown: string[]): Promise<LeftoverTrash> => ipcRenderer.invoke(IPC.forgePubExtraTrash, code, shown),
+  /** 완료 뒤 리소스 폴더 정리(기획서는 남김) · 옮기기(메인이 다시 재어 화면에 보인 `shown` 과 겹치는 것만) */
+  forgeRscCleanPlan: (code: string): Promise<RscClean> => ipcRenderer.invoke(IPC.forgeRscCleanPlan, code),
+  forgeRscClean: (code: string, shown: string[]): Promise<LeftoverTrash> => ipcRenderer.invoke(IPC.forgeRscClean, code, shown),
   /**
    * 서버가 뱉는 줄. **끊는 함수를 돌려준다** — 컴포넌트가 사라질 때 안 끊으면 리스너가 쌓여 두 번 그린다.
    *

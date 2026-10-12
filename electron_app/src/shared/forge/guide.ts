@@ -33,6 +33,25 @@ export interface GuideItem {
   talk?: boolean
 }
 
+/**
+ * 이번 폴더에 놓인 파일 하나 (2026-10-12) — 무엇을 넣었고 무엇을 빼먹었나 보게. `to` 는 **사실만** 적는다.
+ *   name  원본에 같은 이름이 있다
+ *   set   AI · 사람이 원본의 그 항목으로 정했다
+ *   size  이름은 다르고, 아직 안 온 원본 그림 가운데 크기가 같은(절반 · 두 배 포함) 것이 있다 — 여럿이면 어느 것인지 모른다
+ *   none  이름도 크기도 맞는 원본이 없다(소리 · 로티는 크기가 없어 늘 여기)
+ */
+export interface GuideFile {
+  /** 이번 폴더 안 자리 — `images/Group 33117.png` */
+  rel: string
+  name: string
+  kind: string
+  w: number | null
+  h: number | null
+  how: 'name' | 'set' | 'size' | 'none'
+  /** 짝인 원본 이름 — `size` 면 크기가 같은 원본 전부 */
+  to: string[]
+}
+
 export interface RscGuide {
   code: string
   module: string
@@ -41,8 +60,8 @@ export interface RscGuide {
   /** 크기로 원본을 바꿨으면 그 까닭 한 줄 */
   originNote?: string
   items: GuideItem[]
-  /** 이번 폴더에 갈래마다 놓인 파일 수 — 이름이 달라도 센다 */
-  here: Record<string, number>
+  /** 이번 폴더에 놓인 파일 전부 — 이름이 달라도 */
+  mine: GuideFile[]
   /** 이번 리소스 폴더 — 창은 만들지 않는다. 없으면 `exists: false` */
   dir: string
   exists: boolean

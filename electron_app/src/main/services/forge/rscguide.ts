@@ -13,6 +13,7 @@
  *   2026-10-08 부터 앱에서 그 파일에 쓰는 곳은 「대사 성우」(`voiceset.ts`)뿐이다 — 대화는 `answer.json` 을 안 쓰므로 Claude 가 고른 파일은 「정함」이 안 된다
  * - 크기가 맞는 파일은 **실마리**다(`hint`). 같은 크기가 여럿이면 어느 것이 왔는지 모르니 묶음 수만 적는다.
  *   크기가 없는 소리 · 영상은 이름이 다른 파일의 **수**로만 본다
+ * - 이번 폴더 파일 전부와 그 짝은 「넣은 리소스」로 같이 보낸다(`rscguidemine.ts`) — 무엇을 넣었나 보여야 빼먹은 것을 찾는다
  *
  * Electron 을 import 하지 않는다(services 규칙).
  */
@@ -24,6 +25,7 @@ import { readAnswers } from './answer'
 import { carryable } from './carryrsc'
 import { originNow } from './originpick'
 import { kindKey } from './rsccount'
+import { placedFiles, type Placed } from './rscguidemine'
 import { loadForge, type Forge } from './runtime'
 import { isTalkCopy, sameVoice, talkSlots, voiceGated } from './voice'
 
@@ -138,7 +140,7 @@ function countHints(items: GuideItem[], spare: Map<string, number>): void {
 }
 
 export async function rscGuide(code: string): Promise<RscGuide> {
-  const blank: RscGuide = { code, module: '', origin: '', items: [], here: {}, dir: '', exists: false }
+  const blank: RscGuide = { code, module: '', origin: '', items: [], mine: [], dir: '', exists: false }
   try {
     const forge = await loadForge()
     const side = originSide(forge, code)
@@ -146,28 +148,25 @@ export async function rscGuide(code: string): Promise<RscGuide> {
     const listing = forge.files.listFiles(code)
     const files = listing?.files ?? []
     const dir = listing?.dir ?? ''
-    const here: Record<string, number> = {}
-    for (const f of files) {
-      const k = kindKey(f.name, f.kind)
-      here[k] = (here[k] ?? 0) + 1
-    }
-    const names = new Set(files.map((f) => path.basename(f.name).toLowerCase()))
-    const relOf = (f: (typeof files)[number]): string => (f.base === 'root' ? f.name : `${f.base}/${f.name}`)
-    const pick = picked(forge.paths.REPO_ROOT, code, new Set(files.map((f) => relOf(f).toLowerCase())))
+    // 이번 폴더 파일 하나씩 — 그림은 크기까지(머리만 읽어 싸다). 「넣은 리소스」와 아래 실마리가 같이 쓴다
+    const placed: Placed[] = files.map((f) => {
+      const rel = f.base === 'root' ? f.name : `${f.base}/${f.name}`
+      const s = f.kind === 'image' && PICTURE.test(f.name) ? forge.png.pngSize(path.join(dir, rel)) : null
+      return { rel, name: path.basename(f.name), kind: kindKey(f.name, f.kind), w: s?.w ?? null, h: s?.h ?? null }
+    })
+    const names = new Set(placed.map((f) => f.name.toLowerCase()))
+    const pick = picked(forge.paths.REPO_ROOT, code, new Set(placed.map((f) => f.rel.toLowerCase())))
     const taken = new Set([...pick.values()].map((v) => v.toLowerCase()))
     const known = new Set(side.items.map((i) => i.name.toLowerCase()))
     // 이름이 다르게 온 그림의 크기 — 원본 이름과 같은 파일은 이미 제 짝이 있다
     const spare = new Map<string, number>()
     // 그림이 아닌 것은 갈래마다 수만
     const spareKind = new Map<string, number>()
-    for (const f of files) {
-      if (known.has(path.basename(f.name).toLowerCase())) continue
-      if (taken.has(relOf(f).toLowerCase())) continue // 정한 자리가 있는 파일은 실마리로 다시 세지 않는다
-      const k = kindKey(f.name, f.kind)
-      spareKind.set(k, (spareKind.get(k) ?? 0) + 1)
-      if (f.kind !== 'image' || !PICTURE.test(f.name)) continue
-      const s = forge.png.pngSize(path.join(dir, f.base === 'root' ? '' : f.base, f.name))
-      if (s) spare.set(`${s.w}x${s.h}`, (spare.get(`${s.w}x${s.h}`) ?? 0) + 1)
+    for (const f of placed) {
+      if (known.has(f.name.toLowerCase())) continue
+      if (taken.has(f.rel.toLowerCase())) continue // 정한 자리가 있는 파일은 실마리로 다시 세지 않는다
+      spareKind.set(f.kind, (spareKind.get(f.kind) ?? 0) + 1)
+      if (f.w && f.h) spare.set(`${f.w}x${f.h}`, (spare.get(`${f.w}x${f.h}`) ?? 0) + 1)
     }
     const items: GuideItem[] = side.items.map((i) => {
       if (names.has(i.name.toLowerCase())) return { ...i, state: 'name' }
@@ -179,7 +178,7 @@ export async function rscGuide(code: string): Promise<RscGuide> {
     // 그림은 크기 실마리가 쓰고 남은 수만 — 크기로 짝지은 파일을 수로 또 세지 않는다
     spareKind.set('image', [...spare.values()].reduce((a, b) => a + b, 0))
     countHints(items, spareKind)
-    return { code, module: side.module, origin: side.origin, originNote: side.note, items, here, dir, exists: listing?.exists ?? false }
+    return { code, module: side.module, origin: side.origin, originNote: side.note, items, mine: placedFiles(placed, items, side.slots, pick), dir, exists: listing?.exists ?? false }
   } catch (error) {
     return { ...blank, error: toMessage(error) }
   }

@@ -69,6 +69,24 @@
   min-height: 0;
   font-size: var(--font-md);
 }
+/* 답을 기다리는 동안 — 알림처럼 테두리가 깜빡인다. 이 칸을 누르면 멈춘다(`ChatSide`).
+   오른쪽 칸이 overflow: hidden 이라 바깥 테두리는 잘린다 — 안쪽 그림자로 그리고 그만큼 띄운다 */
+.chat-side.chat-blink {
+  padding: 4px;
+  border-radius: var(--radius-2);
+  animation: chat-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes chat-blink {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 2px transparent;
+  }
+  50% {
+    box-shadow: inset 0 0 0 2px var(--warn);
+  }
+}
+
 .chat-side h3 {
   margin: 0;
   font-size: var(--font-lg);

@@ -159,3 +159,13 @@ export const hoLabel = (m: string): string => (HO_OF[m] ? `${HO_OF[m].name}(M${m
 
 /** 호 차례 — 6호가 방학호 M11 이라 M 번호 차례와 다르다. 표에 없는 M 은 맨 뒤에 M 번호로 */
 export const hoOrder = (m: string): number => HO_OF[m]?.order ?? 100 + Number(m)
+
+/**
+ * 「팀 일정표 갱신」의 결과 (2026-10-12) — 앱은 완료 목록을 내 컴퓨터에 잠깐 띄우고 일정표를 연다.
+ * **칠하는 것은 엑셀 웹의 「스파크온 완료 칠하기」 스크립트다** — 사람이 실행한다. `until` 까지 받아 갈 수 있다(밀리초 시각)
+ */
+export interface TeamSheet {
+  count: number
+  until: number
+  error?: string
+}

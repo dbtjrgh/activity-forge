@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { BUTTON, type CommitResult, type DoneResult } from '../../../../shared/forge'
+import RscClean from './RscClean'
+import UnusedRsc from './UnusedRsc'
 
 /**
  * **「검수 완료」 · 「양산 완료 커밋」** (2026-09-29, M7 · 2026-09-30) — 앱 안 창에서 보고 누른다. 앞 단추는 호 저장소의
@@ -104,6 +106,10 @@ export default function DoneCard({ code, wrote, dummy, wait = '', onDone }: { co
       )}
       {toMain?.error && <p className="state error">{toMain.error}</p>}
       {toMain?.ok && <p className="state done">{[...toMain.done, toMain.note].filter(Boolean).join(', ')}</p>}
+      {/* 커밋 전에 치우게 — 옮긴 파일은 「양산 완료 커밋」에 같이 담긴다 */}
+      <UnusedRsc code={code} wrote={wrote} wait={wait} />
+      {/* 커밋한 뒤에 — 검수 완료 · 커밋 · 대화 형편이 바뀌면 다시 잰다 */}
+      <RscClean code={code} refresh={`${got?.ok ?? ''}|${pushed?.ok ?? ''}|${wait}|${wrote}`} />
     </section>
   )
 }

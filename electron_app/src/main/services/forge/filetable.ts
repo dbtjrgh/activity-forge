@@ -15,11 +15,10 @@
  */
 
 import type { FileTable } from '@/gen/types'
+import { escapeRe as esc } from '../../lib/regex'
 import { applyAnswers, valueAt } from './answer'
 
 export type TableFix = { id: string; from: number[]; to: number[]; note: string }
-
-const esc = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const full = (root: string, p: string): string => (root ? `${root}.${p}` : p)
 
 /** 폴더 파일에서 i → j 가짓수. 빈틈(0..N-1 중 빠진 것)이 있으면 까닭 */

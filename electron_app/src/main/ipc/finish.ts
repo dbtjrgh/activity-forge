@@ -11,8 +11,10 @@
 
 import { ipcMain } from 'electron'
 import { IPC } from '../../shared/ipc'
-import type { CommitResult, DoneResult, LinkResult, ReproResult, Server, ViewCheck } from '../../shared/forge'
+import type { CommitResult, DoneResult, LeftoverTrash, LinkResult, PubExtra, ReproResult, RscClean, Server, ViewCheck } from '../../shared/forge'
 import { commitDone, pushMain } from '../services/forge/hallcommit'
+import { pubExtraOf, trashPubExtra } from '../services/forge/pubextra'
+import { cleanRsc, rscCleanPlan } from '../services/forge/rscclean'
 import { linkFor } from '../services/forge/link'
 import { markDone } from '../services/forge/done'
 import { normalizeCode } from './answers'
@@ -70,6 +72,27 @@ export function registerFinishIpc(): void {
     const ok = normalizeCode(String(code ?? ''))
     const shas = Array.isArray(allow) ? allow.filter((s): s is string => typeof s === 'string' && /^[0-9a-f]{40}$/.test(s)).slice(0, 200) : []
     return ok ? pushMain(ok, shas) : Promise.resolve({ ok: false, done: [], error: badCode(code).error as string })
+  })
+
+  // 안 쓰는 리소스 — 지울 것은 메인이 누른 때 다시 세고, 화면에 보인 목록(`shown`, 글자만 받는다)과 겹치는 것만 옮긴다
+  ipcMain.handle(IPC.forgePubExtra, (_e, code: unknown): Promise<PubExtra> => {
+    const ok = normalizeCode(String(code ?? ''))
+    return ok ? pubExtraOf(ok) : Promise.resolve({ files: [], error: badCode(code).error as string })
+  })
+  ipcMain.handle(IPC.forgePubExtraTrash, (_e, code: unknown, shown: unknown): Promise<LeftoverTrash> => {
+    const ok = normalizeCode(String(code ?? ''))
+    const rels = Array.isArray(shown) ? shown.filter((s): s is string => typeof s === 'string').slice(0, 5000) : []
+    return ok ? trashPubExtra(ok, rels) : Promise.resolve({ moved: [], failed: [], error: badCode(code).error as string })
+  })
+  // 완료 뒤 리소스 폴더 정리 — 같은 꼴(누른 때 다시 재고 화면에 보인 항목만)
+  ipcMain.handle(IPC.forgeRscCleanPlan, (_e, code: unknown): Promise<RscClean> => {
+    const ok = normalizeCode(String(code ?? ''))
+    return ok ? rscCleanPlan(ok) : Promise.resolve({ dir: '', finished: false, entries: [], why: '', error: badCode(code).error as string })
+  })
+  ipcMain.handle(IPC.forgeRscClean, (_e, code: unknown, shown: unknown): Promise<LeftoverTrash> => {
+    const ok = normalizeCode(String(code ?? ''))
+    const names = Array.isArray(shown) ? shown.filter((s): s is string => typeof s === 'string').slice(0, 5000) : []
+    return ok ? cleanRsc(ok, names) : Promise.resolve({ moved: [], failed: [], error: badCode(code).error as string })
   })
 
   ipcMain.handle(

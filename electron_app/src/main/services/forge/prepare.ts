@@ -93,6 +93,13 @@ export async function prepare(code: string): Promise<Prepare> {
       if (at) {
         out.layout.verdict = at.verdict
         out.layout.slot = at.slot
+        // 모듈은 정했는데 그 모듈을 쓴 학습코드가 아직 하나도 없다 — 새 모듈의 첫 학습코드다(M38_1 · M38_2).
+        // 원본이 없어 대화로는 못 만들지만, 세션에서 만든 것을 미리보기 · 검수 완료는 해야 한다. 안 그러면 개발 완료로 못 넘긴다
+        if (at.module && at.verdict !== '갈림' && at.verdict !== '없음' && forge.layout.originChoices(code).choices.length === 0) {
+          out.layout.module = at.module
+          out.layout.first = true
+          out.layout.why = `${at.module} 모듈로 만든 첫 학습코드라 원본이 없습니다.`
+        }
       }
     } catch {
       // 배치표를 읽다 또 넘어지면 위 `why` 만 남는다.
@@ -125,6 +132,8 @@ export async function prepare(code: string): Promise<Prepare> {
     // 세는 곳은 `rsccount.ts` 하나 — 진행판 · 관리가 같은 수를 본다
     if (cloned.ok) out.need = rscCount(cloned.recipe, out.rsc.files).map(({ kind, origin, here }) => ({ kind, origin, here }))
     else out.needError = cloned.error
+  } else if (out.layout.first) {
+    out.needError = '첫 학습코드라 비교할 원본이 없습니다.'
   } else if (out.layout.why) {
     out.needError = '원본이 정해지지 않아 비교할 수 없습니다.'
   }

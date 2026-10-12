@@ -30,7 +30,7 @@ export function registerGuideIpc(): void {
   })
   ipcMain.handle(IPC.guideGet, async (_e, code: unknown): Promise<RscGuide> => {
     const ok = normalizeCode(String(code ?? ''))
-    if (!ok) return { code: String(code ?? ''), module: '', origin: '', items: [], here: {}, dir: '', exists: false, error: NOT_CODE }
+    if (!ok) return { code: String(code ?? ''), module: '', origin: '', items: [], mine: [], dir: '', exists: false, error: NOT_CODE }
     return rscGuide(ok)
   })
   ipcMain.handle(IPC.guideThumbs, async (_e, code: unknown, rels: unknown, wide: unknown): Promise<ThumbsResult> => {

@@ -57,6 +57,12 @@ export function orderOf({ data, canRun, busy, chat }: Input): Order {
   if (!canRun && data.layout.verdict === '갈림') {
     return { steps: [], say: '진행판의 「모듈 선택이 필요한 학습코드」에서 모듈을 고르세요.', target: TARGET.layout, blocked: true }
   }
+  // 새 모듈의 첫 학습코드 — 원본이 없어 대화로는 못 만든다. Claude Code 세션에서 만들어 호 저장소에 있으면 검수만 남는다
+  if (!canRun && data.layout.first) {
+    if (data.finished === true) return { steps: [], say: '모든 단계를 마쳤습니다.', target: '', blocked: false }
+    if (data.written) return { steps: [], say: '미리보기로 확인한 뒤 검수 완료를 누르세요.', target: TARGET.done, blocked: false }
+    return { steps: [], say: '첫 학습코드라 원본이 없어 대화로 생성할 수 없습니다.', target: TARGET.layout, blocked: true }
+  }
   if (!canRun) return { steps: [], say: '모듈과 원본을 먼저 선택하세요.', target: TARGET.layout, blocked: true }
   if (!data.hasSpec) {
     return { steps: [], say: `${data.layout.module} 모듈의 스펙이 없어 생성할 수 없습니다.`, target: TARGET.layout, blocked: true }

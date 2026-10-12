@@ -67,6 +67,8 @@ function Bench({ code, onBack }: { code: string; onBack: () => void }) {
   }
 
   const { layout, write } = data
+  // 미리보기 · 검수 완료를 여나 — 모듈을 정했거나, 새 모듈의 첫 학습코드(원본은 없음)
+  const shown = layout.ok || Boolean(layout.first)
   // 대화로 만들었거나, 이미 호 저장소에 쓴 것(이전 방식 · 손으로)이 있으면 반영된 것으로 본다
   const wrote = chat.info?.state === 'done' || data.written
   // 지금 할 일 하나 — 순서 막대와 가운데 결과 줄이 같이 본다(`lib/benchorder.ts`)
@@ -95,11 +97,11 @@ function Bench({ code, onBack }: { code: string; onBack: () => void }) {
           ) : (
             <ChatFlow chat={chat} canRun={canRun} />
           )}
-          {/* 아직 모듈을 모르면 띄울 것도 없다 */}
+          {/* 아직 모듈을 모르면 띄울 것도 없다. 새 모듈의 첫 학습코드는 원본이 없어도 모듈은 안다 — 세션에서 만든 것을 보고 검수한다 */}
           <div id={TARGET.done}>
-            {layout.ok && <ViewPanel code={data.code} moduleName={layout.module} />}
+            {shown && <ViewPanel code={data.code} moduleName={layout.module} />}
             {/* 앱 안 창에서 보고 누른다 — 호 저장소의 activityInfo.json 이 개발 끝이 된다 (M7) */}
-            {layout.ok && (
+            {shown && (
               <DoneCard code={data.code} wrote={wrote} dummy={Boolean(write.dummy) && !wrote} wait={chat.wait} onDone={load} />
             )}
           </div>

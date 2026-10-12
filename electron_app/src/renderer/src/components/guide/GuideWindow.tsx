@@ -3,6 +3,7 @@ import type { GuideItem, RscGuide } from '../../../../shared/forge'
 import { kindClass, kindName } from '../../lib/format'
 import CopyButton from '../CopyButton'
 import { GuideRows, GuideTiles } from './GuideTiles'
+import GuideMine from './GuideMine'
 import GuideOrigin from './GuideOrigin'
 import GuideVoice from './GuideVoice'
 import GuideZoom from './GuideZoom'
@@ -48,7 +49,8 @@ const listText = (g: RscGuide, left: GuideItem[]): string =>
 
 function GuideWindow({ code }: { code: string }) {
   const [data, setData] = useState<RscGuide | null>(null)
-  const [onlyLeft, setOnlyLeft] = useState(true)
+  // 남은 항목 · 전체(원본 목록) · 넣은 리소스(이번 폴더) — 넣은 것을 보고 빼먹은 것을 찾는다 (2026-10-12)
+  const [view, setView] = useState<'left' | 'all' | 'mine'>('left')
   const [top, setTop] = useState(false)
   const [zoom, setZoom] = useState<GuideItem | null>(null)
   const busy = useRef(false)
@@ -89,7 +91,7 @@ function GuideWindow({ code }: { code: string }) {
   const got = want.filter(isDone).length
   const left = want.filter((i) => !isDone(i))
   const auto = data?.items.filter((i) => i.state === 'auto') ?? []
-  const shown = onlyLeft ? left : want
+  const shown = view === 'left' ? left : want
   const figma = shown.filter((i) => FIGMA.has(i.kind))
   const other = shown.filter((i) => !FIGMA.has(i.kind))
   const pct = want.length ? Math.round((got / want.length) * 100) : 0
@@ -119,11 +121,14 @@ function GuideWindow({ code }: { code: string }) {
             </div>
             <div className="guide-tools">
               <div className="guide-seg">
-                <button className={onlyLeft ? 'on' : ''} onClick={() => setOnlyLeft(true)}>
+                <button className={view === 'left' ? 'on' : ''} onClick={() => setView('left')}>
                   남은 항목
                 </button>
-                <button className={onlyLeft ? '' : 'on'} onClick={() => setOnlyLeft(false)}>
+                <button className={view === 'all' ? 'on' : ''} onClick={() => setView('all')}>
                   전체
+                </button>
+                <button className={view === 'mine' ? 'on' : ''} onClick={() => setView('mine')}>
+                  넣은 리소스 {data.mine.length}
                 </button>
               </div>
               <span className="guide-grow" />
@@ -143,6 +148,8 @@ function GuideWindow({ code }: { code: string }) {
           <p className="state">원본 리소스를 불러오는 중…</p>
         ) : data.error ? (
           <p className="state error">{data.error}</p>
+        ) : view === 'mine' ? (
+          <GuideMine code={code} files={data.mine} />
         ) : (
           <>
             {want.length > 0 && got === want.length && <p className="guide-done">리소스가 모두 준비되었습니다. 작업대에서 생성을 누르세요.</p>}

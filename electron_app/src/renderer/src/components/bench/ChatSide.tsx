@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ClipboardEvent } from 'react'
-import type { ChatTurn } from '../../../../shared/forge'
+import { chatWaiting, type ChatTurn } from '../../../../shared/forge'
 import { TARGET } from '../../lib/benchorder'
 import { bolded } from '../../lib/text'
 import type { Chat } from './useChat'
@@ -14,6 +14,8 @@ import './chat.css'
  * - **답 칸과 「답 보내기」는 늘 보인다** — 대화와 질문이 각자 굴러간다. 질문이 길어 단추가 창 밖으로 밀려 못 보냈다
  * - 보낼 때 고른 답은 「1. …」로 번호를 붙이고, 글 칸의 말은 그 뒤에 붙는다. 화면을 Ctrl+V 로 붙이면 그림도 같이 보낸다(리소스 폴더 `_chat`)
  * - **`**굵게**` 는 굵게 그린다** — 기획서 오기를 끝 보고에 평범한 글로 적어 사람이 못 봤다(2026-10-08). 지시 글이 그렇게 쓰라고 한다
+ * - **답을 기다리면 이 칸 테두리가 깜빡인다** (2026-10-12 사용자 — 「알림오듯이 깜빡거리고, 마우스로 클릭해서 보고 있으면 없어지는 식」).
+ *   이 칸을 누르거나 답 칸에 들어가면 멈추고, Claude 가 새로 말하면(차례가 늘면) 다시 깜빡인다. 이미 답 칸에 있으면 깜빡이지 않는다
  */
 const WHO: Record<ChatTurn['who'], string> = { ai: 'Claude', person: '나', app: '앱' }
 
@@ -37,6 +39,13 @@ export default function ChatSide({ chat }: { chat: Chat }) {
   useEffect(() => {
     list.current?.scrollTo({ top: list.current.scrollHeight })
   }, [info?.turns.length])
+  // 기다리는 일 하나를 가리키는 열쇠 — 본 열쇠(`seen`)와 다르면 깜빡인다
+  const waitKey = info && chatWaiting(info) ? `${info.state}|${info.turns.length}` : ''
+  const [seen, setSeen] = useState('')
+  const box = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (waitKey && box.current?.contains(document.activeElement)) setSeen(waitKey)
+  }, [waitKey])
   if (!info) return null
 
   const open = info.state === 'asking' ? info.questions : []
@@ -66,7 +75,12 @@ export default function ChatSide({ chat }: { chat: Chat }) {
     })
 
   return (
-    <section className="chat-side">
+    <section
+      ref={box}
+      className={`chat-side${waitKey && seen !== waitKey ? ' chat-blink' : ''}`}
+      onPointerDown={() => setSeen(waitKey)}
+      onFocus={() => setSeen(waitKey)}
+    >
       <h3>대화</h3>
       {info.turns.length === 0 && <p className="sub">「대화로 생성」을 누르면 Claude 가 만들기 시작합니다. 모르는 것은 여기서 묻습니다.</p>}
       <ol className="chat-turns" ref={list}>

@@ -20,6 +20,7 @@ import type { ChatChecks } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import type { ChatFile } from './chatbrief'
 import type { ChatCtx } from './chatprep'
+import { listPub, wantOf } from './pubfiles'
 import type { Forge } from './runtime'
 
 const TSC_TIMEOUT = 180_000
@@ -81,39 +82,14 @@ function copyAll(ctx: ChatCtx, files: ChatFile[]): { copied: number; failed: str
   return { copied, failed }
 }
 
-/** 호 저장소 그 학습코드 리소스 자리의 파일 전부 — 대소문자 그대로, `/` 로 */
-function listPub(dir: string): string[] {
-  try {
-    return (fs.readdirSync(dir, { recursive: true, withFileTypes: true }) as fs.Dirent[])
-      .filter((e) => e.isFile())
-      .map((e) => path.relative(dir, path.join(e.parentPath, e.name)).split(path.sep).join('/'))
-  } catch {
-    return []
-  }
-}
-
-/** AssetTable 의 로티 경로 상수가 가리키는 폴더 — 주석 줄은 안 본다. 못 찾으면 null */
-function aniDir(act: string): string | null {
-  let text = ''
-  try {
-    text = fs.readFileSync(path.join(act, 'AssetTable.ts'), 'utf8')
-  } catch {
-    return null
-  }
-  const live = text.split(/\r?\n/).filter((l) => !l.trim().startsWith('//')).join('\n')
-  return /\/sparklab\/\$\{\w+\}\/(animations?)\b/.exec(live)?.[1] ?? null
-}
-
 /** AssetTable 이 가리키는데 호 저장소에 없는 파일 · 스펙 에러 — 둘 다 forge 가 쓴 액티비티를 다시 읽어서 */
 function readBack(forge: Forge, ctx: ChatCtx): { missing: string[]; spec: string[]; unread?: string } {
   const c = forge.api.clone(ctx.code, ctx.code)
   if (!c.ok) return { missing: [], spec: [], unread: `쓴 액티비티를 다시 읽지 못했습니다: ${c.error ?? ''}` }
   const lost = c.notes.filter((n) => n.includes('못 읽었습니다'))
   if (lost.length) return { missing: [], spec: [], unread: lost.join(' ') }
-  const ani = aniDir(ctx.act)
-  const want = [...new Set(forge.common.relOf(c.recipe as Parameters<Forge['common']['relOf']>[0]).values())].map((r) =>
-    ani && r.startsWith('animations/') ? `${ani}/${r.slice('animations/'.length)}` : r
-  )
+  // 있는 것과 부르는 것은 「안 쓰는 리소스」(`pubextra.ts`)와 같은 셈이다(`pubfiles.ts`)
+  const want = wantOf(forge, c.recipe, ctx.act)
   const have = listPub(ctx.pub)
   const exact = new Set(have)
   const lower = new Map(have.map((h) => [h.toLowerCase(), h]))

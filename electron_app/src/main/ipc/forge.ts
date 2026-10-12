@@ -1,6 +1,6 @@
-import { app, dialog, ipcMain, nativeImage } from 'electron'
+import { app, dialog, ipcMain, nativeImage, shell } from 'electron'
 import { IPC } from '../../shared/ipc'
-import type { BoardKey, Carried, LayoutAsks } from '../../shared/forge'
+import type { BoardKey, Carried, LayoutAsks, TeamSheet } from '../../shared/forge'
 import { MODULE_PATH } from '../../shared/forge'
 import { layoutAsks, pickModule } from '../services/forge/layoutasks'
 import { board, closeBoard, listBoards, openIssue } from '../services/forge/board'
@@ -11,6 +11,7 @@ import { newModules } from '../services/forge/newmodules'
 import { normalizeCode } from './answers'
 import { stopAllSessions } from '../services/forge/aisession'
 import { runTable } from '../services/forge/runtable'
+import { serveTeamSheet, TEAM_SHEET_URL } from '../services/forge/teamsheet'
 
 /**
  * 앱이 직접 만든 양산기 화면(진행판·작업 폴더)이 쓰는 채널.
@@ -144,6 +145,12 @@ export function registerForgeHandlers(): void {
     return r
   })
   ipcMain.handle(IPC.forgeUpdateCheck, () => checkUpdate())
+  // 팀 일정표 갱신 — 완료 목록을 띄운 뒤 일정표를 연다. 주소는 메인 상수뿐이다(렌더러는 아무것도 안 보낸다)
+  ipcMain.handle(IPC.forgeTeamSheet, async (): Promise<TeamSheet> => {
+    const got = await serveTeamSheet()
+    if (!got.error) await shell.openExternal(TEAM_SHEET_URL)
+    return got
+  })
 
   ipcMain.handle(IPC.forgePickWorkspace, async () => {
     const current = await getWorkspace()

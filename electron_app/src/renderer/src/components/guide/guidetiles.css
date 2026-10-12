@@ -42,6 +42,23 @@
   opacity: 0.45;
 }
 
+/* 넣은 리소스 — 누르는 것이 없어 떠오르지 않는다 */
+.guide-tile.mine:hover {
+  border-color: var(--border);
+  transform: none;
+}
+
+/* 짝인 원본이 하나로 정해질 때 그 이름 */
+.guide-to {
+  padding: 0 8px 7px;
+  margin-top: -4px;
+  font-size: var(--font-xs);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .guide-pic {
   aspect-ratio: 1;
   display: flex;
