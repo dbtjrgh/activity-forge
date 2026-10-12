@@ -1690,14 +1690,14 @@
                     "type": "number",
                     "required": true,
                     "default": 22,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "모듈이 읽지 않는 값입니다(play 와 같게 적습니다)."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 28,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "모듈이 읽지 않는 값입니다(play 와 같게 적습니다)."
                   },
                   {
                     "key": "width",
@@ -1726,14 +1726,14 @@
                     "type": "number",
                     "required": true,
                     "default": 22,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "스피커 눌림 그림의 가운데가 0 인 x 이며, 애니 왼쪽 위 모서리는 이 값에서 애니 폭을 빼고 20 을 더한 자리입니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 28,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "스피커 눌림 그림의 가운데가 0 인 y 이며, 애니 왼쪽 위 모서리는 이 값에서 애니 높이를 빼고 5 를 더 뺀 자리입니다."
                   },
                   {
                     "key": "width",
@@ -1770,14 +1770,14 @@
                     "type": "number",
                     "required": true,
                     "default": 960,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "모듈이 읽지 않는 값입니다(폭과 높이만 씁니다)."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 540,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "모듈이 읽지 않는 값입니다(폭과 높이만 씁니다)."
                   },
                   {
                     "key": "width",
@@ -1806,14 +1806,14 @@
                     "type": "number",
                     "required": true,
                     "default": 960,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "모듈이 읽지 않는 값입니다(폭과 높이만 씁니다)."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 540,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "모듈이 읽지 않는 값입니다(폭과 높이만 씁니다)."
                   },
                   {
                     "key": "width",
@@ -1842,14 +1842,14 @@
                     "type": "number",
                     "required": true,
                     "default": 960,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "모듈이 읽지 않는 값입니다(폭과 높이만 씁니다)."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 540,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "모듈이 읽지 않는 값입니다(폭과 높이만 씁니다)."
                   },
                   {
                     "key": "width",

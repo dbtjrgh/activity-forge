@@ -116,13 +116,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -190,13 +190,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -264,13 +264,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -338,13 +338,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -420,13 +420,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -494,13 +494,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -568,13 +568,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -642,13 +642,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -724,13 +724,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -798,13 +798,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -872,13 +872,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -946,13 +946,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에 둡니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 모듈이 로티를 몬스터 틀 가운데에서 50 위에 둡니다."
               },
               {
                 "key": "width",
@@ -1028,13 +1028,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1102,13 +1102,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1176,13 +1176,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1250,13 +1250,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1332,13 +1332,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1394,13 +1394,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1456,13 +1456,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1521,13 +1521,13 @@
             "key": "x",
             "type": "number",
             "required": true,
-            "desc": "자리 x (화면 가운데가 0)."
+            "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
           },
           {
             "key": "y",
             "type": "number",
             "required": true,
-            "desc": "자리 y (화면 가운데가 0)."
+            "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
           },
           {
             "key": "width",
@@ -1588,13 +1588,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1650,13 +1650,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1720,13 +1720,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1782,13 +1782,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1844,13 +1844,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1921,13 +1921,13 @@
             "key": "x",
             "type": "number",
             "required": true,
-            "desc": "자리 x (화면 가운데가 0)."
+            "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
           },
           {
             "key": "y",
             "type": "number",
             "required": true,
-            "desc": "자리 y (화면 가운데가 0)."
+            "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
           },
           {
             "key": "alpha",
@@ -1959,13 +1959,13 @@
             "key": "x",
             "type": "number",
             "required": true,
-            "desc": "자리 x (화면 가운데가 0)."
+            "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
           },
           {
             "key": "y",
             "type": "number",
             "required": true,
-            "desc": "자리 y (화면 가운데가 0)."
+            "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
           },
           {
             "key": "zIndex",
@@ -2080,14 +2080,14 @@
                   "key": "x",
                   "type": "number",
                   "required": true,
-                  "desc": "자리 x (화면 가운데가 0)."
+                  "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
                 },
                 {
                   "key": "y",
                   "type": "number",
                   "required": true,
                   "default": 507.2,
-                  "desc": "자리 y (화면 가운데가 0)."
+                  "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
                 },
                 {
                   "key": "width",

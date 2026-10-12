@@ -207,13 +207,13 @@
                   "key": "x",
                   "type": "number",
                   "required": true,
-                  "desc": "자리 x (화면 가운데가 0)."
+                  "desc": "담긴 칸 가운데 x (수레 그림 가운데에서 40 오른쪽이 0)."
                 },
                 {
                   "key": "y",
                   "type": "number",
                   "required": true,
-                  "desc": "자리 y (화면 가운데가 0)."
+                  "desc": "담긴 칸 가운데 y (수레 그림 가운데에서 13 위가 0)."
                 }
               ],
               "figmaBase": {
@@ -438,13 +438,13 @@
                       "key": "x",
                       "type": "number",
                       "required": true,
-                      "desc": "자리 x (화면 가운데가 0)."
+                      "desc": "모듈이 읽지 않는 값입니다."
                     },
                     {
                       "key": "y",
                       "type": "number",
                       "required": true,
-                      "desc": "자리 y (화면 가운데가 0)."
+                      "desc": "모듈이 읽지 않는 값입니다."
                     },
                     {
                       "key": "effect",

@@ -121,13 +121,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -153,13 +153,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -241,13 +241,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -273,13 +273,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -305,13 +305,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -345,13 +345,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "얼굴 가운데 x입니다 (끌 조각 가운데가 0)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 얼굴은 끌 조각 위쪽에서 10 안에 붙습니다."
               },
               {
                 "key": "width",
@@ -377,13 +377,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "얼굴 가운데 x입니다 (끌 조각 가운데가 0)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 얼굴은 끌 조각 위쪽에서 10 안에 붙습니다."
               },
               {
                 "key": "width",
@@ -436,13 +436,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -476,13 +476,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -508,13 +508,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -540,13 +540,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -593,13 +593,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "width",
@@ -625,13 +625,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "width",
@@ -657,13 +657,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "width",
@@ -689,13 +689,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "width",
@@ -721,13 +721,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 미리보기 점은 놓일 칸 가운데로 옮겨집니다."
               },
               {
                 "key": "width",
@@ -761,13 +761,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -793,13 +793,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -825,13 +825,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -857,13 +857,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -889,13 +889,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -929,13 +929,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 완료 단추는 화면 오른쪽 아래에 저절로 놓입니다."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "쓰지 않는 값입니다. 완료 단추는 화면 오른쪽 아래에 저절로 놓입니다."
               },
               {
                 "key": "width",
@@ -969,13 +969,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1001,13 +1001,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",
@@ -1033,13 +1033,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 x입니다 (화면 왼쪽이 0, 폭 1920 기준)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "왼쪽 위 모서리 y입니다 (화면 위가 0, 높이 1080 기준)."
               },
               {
                 "key": "width",

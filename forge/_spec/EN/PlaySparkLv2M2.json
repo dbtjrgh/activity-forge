@@ -236,13 +236,13 @@
                       "key": "x",
                       "type": "number",
                       "required": true,
-                      "desc": "자리 x (화면 가운데가 0)."
+                      "desc": "기준점 가로 비율 (0 왼쪽, 0.5 가운데, 1 오른쪽)."
                     },
                     {
                       "key": "y",
                       "type": "number",
                       "required": true,
-                      "desc": "자리 y (화면 가운데가 0)."
+                      "desc": "기준점 세로 비율 (0 위, 0.5 가운데, 1 아래)."
                     }
                   ]
                 },
@@ -340,13 +340,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "기준점 가로 비율 (0 왼쪽, 0.5 가운데, 1 오른쪽)."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "기준점 세로 비율 (0 위, 0.5 가운데, 1 아래)."
                       }
                     ]
                   }
@@ -395,13 +395,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "기준점 가로 비율 (0 왼쪽, 0.5 가운데, 1 오른쪽)."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "기준점 세로 비율 (0 위, 0.5 가운데, 1 아래)."
                       }
                     ]
                   }

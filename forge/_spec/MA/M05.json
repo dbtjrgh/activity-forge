@@ -58,7 +58,7 @@
         "alias": "start",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "학습 시작 지문. M05.ts:143 의 Com_Audio.PlayGuide(\"start\") — 이름이 nar01 이 아니라 start 입니다."
+        "note": "학습 시작 지문. M05.ts:143 의 Com_Audio.PlayGuide(\"start\") — 이름이 nar01 이 아니라 start 입니다. **기획서의 `_nar02`(1이닝 진입 · 활동 지시문)를 넣습니다** — 완성본 24개 중 22개가 그렇습니다(2026-10-12 전수). `_nar01`(도우미 안내, 기획서에 「신규」로 적힘)은 모듈이 틀 길이가 없습니다 — `nar01` 이름은 M05 어디서도 부르지 않아 등록해도 소리가 안 납니다. 그래서 start 에 무엇을 둘지는 묻지 않습니다. `_nar02` 파일이 없으면 끝 보고에 그 파일이 필요하다고 한 줄로 적고, 그동안 이 활동의 `_nar01` 을 start 에 임시로 둡니다."
       },
       {
         "alias": "wrong_sfx01",
@@ -137,14 +137,14 @@
                     "type": "number",
                     "required": true,
                     "default": -960,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": -540,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -173,14 +173,14 @@
                     "type": "number",
                     "required": true,
                     "default": 159.45,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 80.92,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -197,7 +197,43 @@
                     "desc": "높이(px)."
                   }
                 ],
-                "desc": "공책 판 자리와 크기. 배경은 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+                "desc": "높은음자리표(악보 머리) 자리와 크기. MAL1M01 · MAL2M02 · MAL1M04 · MAL1M08 이 같은 그림을 씁니다(162x285). 놓는 자리는 figma 를 따릅니다 — MAL1M08W4S1 은 386, 124."
+              },
+              {
+                "key": "bg_axis",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 734,
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 102,
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 597,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 313,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "그림그래프의 ㄴ자 축(가로축 눈금 포함) 자리와 크기. 배경 그림에 없고 이닝마다 같아 배경 위에 얹습니다 — MAL1M08W4S1(734, 102, 597x313)."
               },
               {
                 "key": "bg_background_content",
@@ -209,14 +245,14 @@
                     "type": "number",
                     "required": true,
                     "default": -960,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": -540,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -245,14 +281,14 @@
                     "type": "number",
                     "required": true,
                     "default": -40.28,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 555.96,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -272,7 +308,7 @@
                 "desc": "버튼이 놓이는 판 자리와 크기. 배경은 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
               }
             ],
-            "desc": "배경 그림 표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다. 활동에서 쓰는 것만 적으면 되고, 여기 열거된 것은 표본 5차시가 쓴 이름의 합집합입니다."
+            "desc": "배경 그림 표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다. 활동에서 쓰는 것만 적으면 되고, 여기 열거된 것은 표본 5차시가 쓴 이름의 합집합입니다.\n\n**배경 그림에 없는 고정 그림은 여기에 이름을 더해 얹습니다** — 이닝이 바뀌어도 그대로인 것만. 완성본이 쓴 것: 높은음자리표 `bg_note`(MAL1M01 · MAL2M02 · MAL1M04 · MAL1M08, 모두 같은 그림이라 MAL1M04W2S1 의 bg_note.png 를 그대로 가져다 씁니다), 단추 받침 나무판 `bg_button_table`(M01 · M02 · M06 다섯 곳), 그래프 축 `bg_axis`(MAL1M08W4S1). 기획서가 이닝마다 판 그림(`…_[이닝]_Q`)을 적어도, 이닝마다 바뀌는 그림은 M05_View 의 단계 그림에 들어가고 바뀌지 않는 판만 여기 옵니다 — 판 그림을 따로 달라고 묻지 않습니다. 고정 그림이 리소스에 없으면 무엇이 없는지(figma 자리와 크기)를 한 줄로 달라고 합니다."
           }
         ],
         "desc": "화면 배경 판들. dori_common 의 Com_BG 가 이 표를 그대로 받습니다."
@@ -290,14 +326,14 @@
             "of": {
               "key": "",
               "type": "array",
-              "minLength": 3,
+              "minLength": 2,
               "of": {
                 "key": "",
                 "type": "number",
                 "desc": "눌러야 하는 버튼 번호. M05_Button.image 의 button_{번호}_* 와 같은 번호입니다."
               },
               "desc": "그 이닝의 단계별 정답 번호. 단계 수(M05_View.data.step)만큼 필요합니다.",
-              "minLengthWhy": "완성본 가장 적은 것이 3칸입니다(MAL1M07W2S1 · MAL2M07W2S1). 칸 수는 폴더의 view_{i}_{j} 가 정합니다(fileTables)."
+              "minLengthWhy": "2칸이어도 됩니다 — MAL1M08W4S1 은 이닝마다 행 둘(2칸)이고 미리보기 끝 화면까지 돌았습니다(2026-10-12). 모듈은 칸 수를 따지지 않고 value[이닝][단계] 만 봅니다(M05_Answer.ts:92). 3칸은 그전 완성본의 최솟값이었을 뿐입니다. 칸 수는 폴더의 view_{i}_{j} 가 정합니다(fileTables)."
             },
             "desc": "**정답 번호 표. value[이닝][단계] 가 눌러야 하는 버튼 번호입니다** (M05_Answer.ts:92 — `mAnswer[mPage][mCount] === pressed`). 바깥 칸 수는 Com_Inning.length 와 같아야 하고, 안쪽 칸 수는 M05_View.data.step 과 같아야 합니다.",
             "minLengthWhy": "이닝 수만큼 필요합니다. 초안의 3 은 표본 최솟값입니다."
@@ -334,13 +370,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -366,13 +402,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -392,19 +428,19 @@
                   {
                     "key": "view_2",
                     "type": "object",
-                    "required": true,
+                    "optional": true,
                     "fields": [
                       {
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -430,13 +466,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -462,13 +498,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -494,13 +530,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -526,13 +562,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -558,13 +594,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -590,13 +626,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -630,13 +666,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -662,13 +698,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -688,19 +724,19 @@
                   {
                     "key": "view_2",
                     "type": "object",
-                    "required": true,
+                    "optional": true,
                     "fields": [
                       {
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -726,13 +762,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -758,13 +794,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -790,13 +826,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -822,13 +858,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -854,13 +890,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -886,13 +922,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -926,13 +962,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -958,13 +994,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -984,19 +1020,19 @@
                   {
                     "key": "view_2",
                     "type": "object",
-                    "required": true,
+                    "optional": true,
                     "fields": [
                       {
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1022,13 +1058,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1054,13 +1090,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1086,13 +1122,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1118,13 +1154,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1150,13 +1186,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1182,13 +1218,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1223,13 +1259,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1255,13 +1291,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1281,19 +1317,19 @@
                   {
                     "key": "view_2",
                     "type": "object",
-                    "required": true,
+                    "optional": true,
                     "fields": [
                       {
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1319,13 +1355,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1351,13 +1387,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1383,13 +1419,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1415,13 +1451,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1447,13 +1483,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1479,13 +1515,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1519,13 +1555,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1551,13 +1587,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1577,19 +1613,19 @@
                   {
                     "key": "view_2",
                     "type": "object",
-                    "required": true,
+                    "optional": true,
                     "fields": [
                       {
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1615,13 +1651,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1647,13 +1683,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1679,13 +1715,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1711,13 +1747,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1751,13 +1787,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1783,13 +1819,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1809,19 +1845,19 @@
                   {
                     "key": "view_2",
                     "type": "object",
-                    "required": true,
+                    "optional": true,
                     "fields": [
                       {
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1847,13 +1883,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1879,13 +1915,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1911,13 +1947,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1943,13 +1979,13 @@
                         "key": "x",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 x (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                       },
                       {
                         "key": "y",
                         "type": "number",
                         "required": true,
-                        "desc": "자리 y (화면 가운데가 0)."
+                        "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                       },
                       {
                         "key": "width",
@@ -1970,7 +2006,7 @@
                 "desc": "5번 이닝에서 위쪽에 보여 줄 문제 그림 자리와 크기."
               }
             ],
-            "desc": "문제 그림 표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다. 활동에서 쓰는 것만 적으면 되고, 여기 열거된 것은 표본 5차시가 쓴 이름의 합집합입니다."
+            "desc": "문제 그림 표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다. 활동에서 쓰는 것만 적으면 되고, 여기 열거된 것은 표본 5차시가 쓴 이름의 합집합입니다.\n\n**한 단계 = 그림 한 장입니다.** 정답 차례가 오면 그 단계의 basic 을 감추고 effect 를 보이며(M05_View.Show, M05_View.ts:79), 맞히면 그 한 장이 110% 로 한 번 커졌다 돌아오고(Correct) 틀리면 그 한 장이 좌우로 흔들립니다(Wrong). 이닝이 시작될 때도 단계 그림 단위로 차례로 들썩입니다(Bounce).\n\n**기획서가 한 단계에 여러 그림을 함께 강조하라고 하면(그래프의 한 행 · 묶음 전체) 그 행을 합친 한 장이 단계 그림입니다** — MAL1M08W4S1 이 그렇습니다(왼쪽 항목 그림 + 칸 그림 2~3개를 한 줄로, 폭 277 · 388 · 499, 높이 132). 완성본 21개 중 나머지는 한 장에 그림 하나입니다. 모듈은 한 단계에 여러 장을 같이 강조하지 못하므로 「어떻게 강조할까」를 묻지 않습니다. 낱개 그림만 왔으면 합친 그림이 이닝 × 단계 × (basic · effect) 장 필요하다고 한 질문에 모아 달라고 합니다. 합친 effect 그림에서 행 머리의 항목 그림처럼 세는 대상이 아닌 것은 basic 그대로 둡니다 — 강조된 그림 수가 곧 정답 숫자인 활동에서 하나 더 세어집니다."
           },
           {
             "key": "answer",
@@ -1980,14 +2016,14 @@
             "of": {
               "key": "",
               "type": "array",
-              "minLength": 3,
+              "minLength": 2,
               "of": {
                 "key": "",
                 "type": "number",
                 "desc": "값 하나."
               },
               "desc": "그 이닝에서 쓸 그림 번호들.",
-              "minLengthWhy": "완성본 가장 적은 것이 3칸입니다(MAL1M07W2S1 · MAL2M07W2S1). 칸 수는 폴더의 view_{i}_{j} 가 정합니다(fileTables)."
+              "minLengthWhy": "2칸이어도 됩니다 — MAL1M08W4S1 은 이닝마다 행 둘(2칸)이고 미리보기 끝 화면까지 돌았습니다(2026-10-12). 모듈은 칸 수를 따지지 않고 value[이닝][단계] 만 봅니다(M05_Answer.ts:92). 3칸은 그전 완성본의 최솟값이었을 뿐입니다. 칸 수는 폴더의 view_{i}_{j} 가 정합니다(fileTables)."
             },
             "desc": "누를 차례마다 켤 문제 그림. 숫자는 **view_{이닝}_{n}_basic 의 n — 위 화면 왼쪽부터의 자리**입니다. **단추 번호(M05_Answer.value)가 아닙니다.** 기획서 「이닝별 정답 순서」 표에서, 「정답 순서」의 동물이 왼쪽 「상단 문제 화면」 목록에서 몇 번째인지(0부터)를 적습니다 — MAL2M07W2S1 3이닝은 위 화면이 오징어·꽃게·불가사리, 정답 순서가 꽃게·오징어·불가사리라 [1, 0, 2] 입니다.",
             "minLengthWhy": "이닝 수만큼 필요합니다."
@@ -2028,13 +2064,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2060,13 +2096,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2092,13 +2128,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2124,13 +2160,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2157,13 +2193,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2189,13 +2225,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2221,13 +2257,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2253,13 +2289,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2284,13 +2320,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2316,13 +2352,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2348,13 +2384,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2380,13 +2416,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2413,13 +2449,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2445,13 +2481,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2477,13 +2513,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2509,13 +2545,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2541,13 +2577,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2573,13 +2609,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2605,13 +2641,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2637,13 +2673,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2669,13 +2705,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2701,13 +2737,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2733,13 +2769,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2765,13 +2801,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2797,13 +2833,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2829,13 +2865,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2861,13 +2897,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2893,13 +2929,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2925,13 +2961,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2957,13 +2993,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -2989,13 +3025,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3021,13 +3057,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3053,13 +3089,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3085,13 +3121,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3117,13 +3153,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3149,13 +3185,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3181,13 +3217,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3213,13 +3249,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3245,13 +3281,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3277,13 +3313,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3309,13 +3345,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3341,13 +3377,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3373,13 +3409,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3405,13 +3441,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3437,13 +3473,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3469,13 +3505,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3501,13 +3537,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3533,13 +3569,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3565,13 +3601,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3597,13 +3633,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3629,13 +3665,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3661,13 +3697,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3693,13 +3729,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3725,13 +3761,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3757,13 +3793,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3789,13 +3825,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3821,13 +3857,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3853,13 +3889,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3885,13 +3921,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3917,13 +3953,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3955,13 +3991,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -3987,13 +4023,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4019,13 +4055,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4051,13 +4087,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4083,13 +4119,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4115,13 +4151,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4147,13 +4183,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4179,13 +4215,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4211,13 +4247,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4243,13 +4279,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4275,13 +4311,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4307,13 +4343,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4339,13 +4375,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4371,13 +4407,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4403,13 +4439,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4435,13 +4471,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4467,13 +4503,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4499,13 +4535,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4531,13 +4567,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4563,13 +4599,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4595,13 +4631,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4627,13 +4663,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4659,13 +4695,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4691,13 +4727,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4723,13 +4759,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4755,13 +4791,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4787,13 +4823,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4819,13 +4855,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4851,13 +4887,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4883,13 +4919,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4915,13 +4951,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4947,13 +4983,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -4979,13 +5015,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5011,13 +5047,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5043,13 +5079,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5075,13 +5111,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5099,7 +5135,7 @@
                 "desc": "7번 버튼 캐릭터의 팔 오답 그림 자리와 크기. 몸과 팔을 나눠 그리는 캐릭터에만 씁니다."
               }
             ],
-            "desc": "버튼·캐릭터 그림 표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다. 활동에서 쓰는 것만 적으면 되고, 여기 열거된 것은 표본 5차시가 쓴 이름의 합집합입니다."
+            "desc": "버튼·캐릭터 그림 표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다. 활동에서 쓰는 것만 적으면 되고, 여기 열거된 것은 표본 5차시가 쓴 이름의 합집합입니다.\n\n**정답 때 건반이 어떻게 보이는지는 button_N_correct 그림과 그 자리가 전부 정합니다.** 모듈은 건반을 키우지 않고 보이기만 바꿉니다(UpdateState, M05_Button.ts:97). 1.1배로 키우는 것은 번호 그림 `button_<이닝>_<N>_number` 뿐입니다(M05_Button.ts:395). 그래서 기획서의 「_D → _D110(110% 확대)」은 받은 정답 그림을 그 크기대로 놓으면 됩니다 — 묻지 않습니다. 완성본 24개의 정답 그림은 두 가지입니다.\n- **약 1.1배 큰 같은 그림** (대부분): 그 크기대로, 가운데가 basic 과 같게 놓습니다(x · y 를 커진 만큼의 절반씩 빼기).\n- **짙게 눌린 그림** (MAL1M01 · MAL2M02 · MAL1M04 · MAL1M08 의 세로 건반): basic 보다 23px 짧으면 아래 끝을 맞춰 y 를 그만큼 내립니다(MAL1M08W4S1 은 basic 638 · 360, correct 661 · 337).\n\n`button_N_wrong` 은 완성본 24개 모두 없습니다 — 없으면 basic 으로 그리고(M05_Button.ts:230), 기획서도 오답 때 건반은 그대로이고 그 위 동물만 오답 그림(character_N_wrong)으로 바뀝니다. 받은 건반 그림 가운데 basic 보다 짙거나 크기가 다른 것은 정답 그림입니다."
           },
           {
             "key": "lottie",
@@ -5115,14 +5151,14 @@
                     "type": "number",
                     "required": true,
                     "default": 0,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 0,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5167,14 +5203,14 @@
                     "type": "number",
                     "required": true,
                     "default": -960,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": -540,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5210,13 +5246,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5249,13 +5285,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5287,13 +5323,13 @@
                     "key": "x",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5352,14 +5388,14 @@
                     "type": "number",
                     "required": true,
                     "default": 138,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 136,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5388,14 +5424,14 @@
                     "type": "number",
                     "required": true,
                     "default": 154,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 136,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5424,14 +5460,14 @@
                     "type": "number",
                     "required": true,
                     "default": 138,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 136,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5460,14 +5496,14 @@
                     "type": "number",
                     "required": true,
                     "default": 199,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 85.25,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5496,14 +5532,14 @@
                     "type": "number",
                     "required": true,
                     "default": 333,
-                    "desc": "자리 x (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 x (화면 왼쪽이 0, 폭 1920 기준). Com_Create 가 x + 너비/2 에 그림 가운데를 둡니다."
                   },
                   {
                     "key": "y",
                     "type": "number",
                     "required": true,
                     "default": 152.59,
-                    "desc": "자리 y (화면 가운데가 0)."
+                    "desc": "왼쪽 위 모서리 y (화면 위가 0, 높이 1080 기준)."
                   },
                   {
                     "key": "width",
@@ -5579,7 +5615,8 @@
     "**dori_common(협력사 공통) 위에 올라간 모듈입니다.** Com_Audio · Com_BG · Com_Inning · Com_Content · Com_Dimmed · Com_Affordance 를 쓰므로, 소리·배경·이닝 표시의 동작은 그쪽 규칙을 따릅니다.",
     "액티비티는 다섯 훅을 그대로 넘기기만 합니다 — onLoad(AssetTable 네 배열) · onInit(this, quizData, tableCheck) · onStart(quizData) · onEnd() · onUpdate(ticker). **onUpdate 를 빠뜨리면 애니가 멈춥니다.**",
     "onInit 의 세 번째 인자 tableCheck 가 진행 표를 쓸지 정합니다. 표본은 false 로 넘기면서 GameData 에는 M05_Table 을 채워 둔 차시가 있습니다 — 값이 있어도 표가 안 나오면 이 인자를 보세요.",
-    "8호는 MAL1M07W2S1 · MAL2M07W2S1 · MAL3M07W4S1 세 자리(표현수학)입니다."
+    "8호는 MAL1M07W2S1 · MAL2M07W2S1 · MAL3M07W4S1 세 자리(표현수학)입니다.",
+    "**모듈이 정한 연출은 묻지 않습니다** (2026-10-12 — MAL1M08W4S1 에서 질문 넷이 나와 사람이 「뭘 하라는 거냐」고 되물었다). 기획서가 아래처럼 적어도 모듈대로 만들고, 다른 점은 끝 보고에 한 줄로만 적습니다.\n- 「행 · 묶음 전체를 동시에 강조」 → 한 단계 = 그림 한 장(M05_View.image 설명).\n- 「정답 건반 _D110(110% 확대)」 → 받은 정답 그림을 그 크기대로(M05_Button.image 설명). 모듈은 건반을 안 키웁니다.\n- 「힌트: 연속 오답이면 정답 건반 110% 반복」 → 모듈은 오답이 wrongData.max 번 쌓이면 그다음 오답부터 지금 단계 그림을 110% 로 두 번 키우고(M05_View.KeepWrong) 도우미 오답 나레이션 `wrong_helper_nar0N` 을 틉니다(M05_Answer.ts:174~194). 정답 건반은 건드리지 않습니다.\n- 「진입 시 그림이 하나씩 들썩임」 → 단계 그림 단위로 들썩입니다.\n- 「도우미 안내 nar01 + 1이닝 진입 nar02」 → start 하나만 틉니다(assets 의 start).\n**없는 파일은 무엇이 몇 장 필요한지 한 질문에 모아 묻습니다.** 정말 고를 것이 둘 이상일 때만 고르기 질문을 냅니다."
   ],
   "relations": [
     {

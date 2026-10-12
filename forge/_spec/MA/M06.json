@@ -265,13 +265,13 @@
               "key": "x",
               "type": "number",
               "required": true,
-              "desc": "자리 x (화면 가운데가 0)."
+              "desc": "인형 영역 왼쪽 위 모서리 x (화면 왼쪽이 0). 모듈은 이 값을 읽지 않습니다."
             },
             {
               "key": "y",
               "type": "number",
               "required": true,
-              "desc": "자리 y (화면 가운데가 0)."
+              "desc": "인형 영역 왼쪽 위 모서리 y (화면 위쪽이 0). 모듈은 이 값을 읽지 않습니다."
             }
           ],
           "desc": "칸 하나."
@@ -317,13 +317,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "인형 그림 왼쪽 위 모서리 x (화면 왼쪽이 0)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "인형 그림 왼쪽 위 모서리 y (화면 위쪽이 0)."
               }
             ],
             "desc": "칸 하나."
@@ -350,13 +350,13 @@
                 "key": "x",
                 "type": "number",
                 "required": true,
-                "desc": "자리 x (화면 가운데가 0)."
+                "desc": "이닝 완료 때 인형 그림 왼쪽 위 모서리 x (화면 왼쪽이 0)."
               },
               {
                 "key": "y",
                 "type": "number",
                 "required": true,
-                "desc": "자리 y (화면 가운데가 0)."
+                "desc": "이닝 완료 때 인형 그림 왼쪽 위 모서리 y (화면 위쪽이 0)."
               }
             ],
             "desc": "칸 하나."

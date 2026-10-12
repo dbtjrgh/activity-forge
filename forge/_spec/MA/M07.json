@@ -314,13 +314,13 @@
               "key": "x",
               "type": "number",
               "required": true,
-              "desc": "자리 x (화면 가운데가 0)."
+              "desc": "첫 칸은 배경 가운데 x (화면 왼쪽이 0)이고, 둘째 칸부터는 x 를 쓰지 않습니다."
             },
             {
               "key": "y",
               "type": "number",
               "required": true,
-              "desc": "자리 y (화면 가운데가 0)."
+              "desc": "첫 칸은 배경 가운데 y (화면 위쪽이 0)이고, 둘째 칸부터는 첫 배경 가운데를 0 으로 한 y 입니다."
             }
           ],
           "desc": "칸 하나."
@@ -342,13 +342,13 @@
               "type": "number",
               "required": true,
               "default": 695,
-              "desc": "자리 x (화면 가운데가 0)."
+              "desc": "블록 그림 왼쪽 위 모서리 x (화면 왼쪽이 0)."
             },
             {
               "key": "y",
               "type": "number",
               "required": true,
-              "desc": "자리 y (화면 가운데가 0)."
+              "desc": "블록 그림 왼쪽 위 모서리 y (화면 위쪽이 0)."
             }
           ],
           "desc": "칸 하나."
@@ -365,13 +365,13 @@
             "key": "x",
             "type": "number",
             "required": true,
-            "desc": "자리 x (화면 가운데가 0)."
+            "desc": "클릭 영역 가운데 x (화면 왼쪽이 0). 모듈은 이 값을 읽지 않고 960 으로 고정합니다."
           },
           {
             "key": "y",
             "type": "number",
             "required": true,
-            "desc": "자리 y (화면 가운데가 0)."
+            "desc": "클릭 영역 가운데 y (화면 위쪽이 0). 모듈은 이 값을 읽지 않고 700 으로 고정합니다."
           },
           {
             "key": "width",
@@ -1159,13 +1159,13 @@
             "key": "x",
             "type": "number",
             "required": true,
-            "desc": "자리 x (화면 가운데가 0)."
+            "desc": "클릭 영역 가운데 x (화면 왼쪽이 0). 모듈은 이 값을 읽지 않고 960 으로 고정합니다."
           },
           {
             "key": "y",
             "type": "number",
             "required": true,
-            "desc": "자리 y (화면 가운데가 0)."
+            "desc": "클릭 영역 가운데 y (화면 위쪽이 0). 모듈은 이 값을 읽지 않고 700 으로 고정합니다."
           },
           {
             "key": "width",

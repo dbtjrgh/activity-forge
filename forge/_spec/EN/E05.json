@@ -252,13 +252,13 @@
               "key": "x",
               "type": "number",
               "required": true,
-              "desc": "자리 x (화면 가운데가 0)."
+              "desc": "그림자 캐릭터 가운데 x (창 가운데가 0)."
             },
             {
               "key": "y",
               "type": "number",
               "required": true,
-              "desc": "자리 y (화면 가운데가 0)."
+              "desc": "그림자 캐릭터 가운데 y (창 가운데가 0)."
             }
           ],
           "desc": "칸 하나."
