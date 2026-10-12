@@ -1,0 +1,292 @@
+{
+  "specVersion": 1,
+  "module": "K31",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K31",
+    "activities": [
+      "KOL3M01W1S3",
+      "KOL3M02W1S3",
+      "KOL3M03W1S3",
+      "KOL3M04W1S3",
+      "KOL3M05W1S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "K31.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "const bgSpr = new Sprite(AssetManager.get(\"bg\"));",
+        "bgSpr.anchor.set(0.5);",
+        "this.addChild(bgSpr);",
+        "K31.handle.onInit(quizData.positionData);",
+        "this.addChild(K31.handle);"
+      ],
+      "onStart": [
+        "//if(import.meta.env.PROD){",
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "//}",
+        "await K31.handle.onStart(quizData.inningData);",
+        "await SparkApp.eop.show(K31.handle.totalPercent / quizData.inningData.length * 0.01);"
+      ],
+      "onAffordanceOn": [
+        "K31.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "K31.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "Sprite",
+        "from": "pixi.js"
+      },
+      {
+        "symbol": "K31",
+        "from": "@_common/module/KR/K31/K31"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "dust",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/QuizCard.ts 가 AssetManager.get(\"dust\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "driver_idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Train.ts 가 AssetManager.get(\"driver_idle\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "driver_end",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Train.ts 가 AssetManager.get(\"driver_end\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "area",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/Train.ts 가 AssetManager.get(\"area\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "positionData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "vehicle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "area",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "position",
+                    "type": "point",
+                    "required": true,
+                    "figma": true
+                  }
+                ]
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "choice",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "aniType",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "fadeOut",
+                  "scaleUp"
+                ]
+              },
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "text",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "size",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "optional": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "train",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "body",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "driverPos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true
+                },
+                {
+                  "key": "trail",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "alias",
+                      "type": "asset:lottie",
+                      "required": true
+                    },
+                    {
+                      "key": "position",
+                      "type": "point",
+                      "required": true,
+                      "figma": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "basket",
+              "type": "array",
+              "required": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "label",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "key": "card",
+                    "type": "asset:image",
+                    "required": true
+                  },
+                  {
+                    "key": "sound",
+                    "type": "asset:sound",
+                    "required": true
+                  },
+                  {
+                    "key": "correct",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "platform",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "voices": {
+    "KOL3M01W1S3": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-08 seokho.yu(유석호) · KOL3M08W1S3 에서 정했습니다)"
+    },
+    "KOL3M02W1S3": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-08 seokho.yu(유석호) · KOL3M08W1S3 에서 정했습니다)"
+    },
+    "KOL3M04W1S3": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-08 seokho.yu(유석호) · KOL3M08W1S3 에서 정했습니다)"
+    },
+    "KOL3M05W1S3": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-08 seokho.yu(유석호) · KOL3M08W1S3 에서 정했습니다)"
+    },
+    "KOL3M06W1S3": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-08 seokho.yu(유석호) · KOL3M08W1S3 에서 정했습니다)"
+    },
+    "KOL3M07W1S3": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-08 seokho.yu(유석호) · KOL3M08W1S3 에서 정했습니다)"
+    },
+    "KOL3M08W1S3": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-08 seokho.yu(유석호) · KOL3M08W1S3 에서 정했습니다)"
+    }
+  }
+}

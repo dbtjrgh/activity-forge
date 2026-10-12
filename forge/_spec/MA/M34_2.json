@@ -1,0 +1,637 @@
+{
+  "specVersion": 1,
+  "module": "M34_2",
+  "subject": "MA",
+  "title": "시소로 무게 비교 (이닝 고르기 확장판)",
+  "summary": "M34_1 과 같은 시소 활동인데, **이닝마다 시소 그림과 표정 애니를 GameData 로 받고** 이닝을 카드로 골라 들어갈 수 있습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M34_2",
+    "activities": [
+      "MAL1M05W1S3",
+      "MAL1M05W2S3",
+      "MAL1M11W4S3",
+      "MAL2M05W1S2"
+    ],
+    "doc": "README 없음. 근거는 M34_2.ts · SeeSaw.ts · Item.ts · ItemBox.ts · SelectInning.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M34_2.addAsset();"
+      ],
+      "onInit": [
+        "M34_2.handle.init(quizData);",
+        "this.addChild(M34_2.handle);"
+      ],
+      "onStart": [
+        "await M34_2.handle.start();",
+        "await M34_2.handle.play();",
+        "await M34_2.handle.finish();",
+        "SparkApp.eop.show(1);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onAffordanceOn": [
+        "await M34_2.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await M34_2.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "M34_2",
+        "from": "@_common/module/MA"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg_select",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "이닝 고르기 화면 배경. useSelectInning 이 true 일 때 쓰입니다."
+      },
+      {
+        "alias": "SL_ma_inc_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음."
+      },
+      {
+        "alias": "SL_ma_m34_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시소가 움직일 때의 효과음."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 M34_2.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+      }
+    ],
+    "providedByModule": {
+      "note": "모듈이 등록하는 것은 폰트와 `bg` · `bgm` · 로티 `correct` 뿐입니다.\n\n**이름이 코드에 박힌 것** — 그림 `bg_select`(이닝 고르기 화면 배경) · 음원 `SL_ma_inc_sfx01` · `SL_ma_m34_sfx01` · `correct`(음원. 모듈이 물고 있는 **로티** correct 와 이름이 겹칩니다).\n\n시소 축·판·자·표정은 **M34_1 과 달리 이름이 박혀 있지 않고** inningData[].seesaw 가 가리킵니다.",
+      "font": [
+        "NanumSquareRoundR"
+      ],
+      "image": [
+        "bg"
+      ],
+      "sound": [
+        "bgm"
+      ],
+      "lottie": [
+        "correct"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "startNarration",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "학습 시작 지문."
+      },
+      {
+        "key": "firstInningNarration",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "첫 이닝에만 읽는 지문. 이후 이닝은 inningData[].narration 을 씁니다."
+      },
+      {
+        "key": "seesawInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "type",
+            "type": "string",
+            "optional": true,
+            "desc": "시소 갈래 이름. 코드 분기에 쓰입니다."
+          },
+          {
+            "key": "maxWeight",
+            "type": "number",
+            "required": true,
+            "default": 6,
+            "desc": "한쪽에 올릴 수 있는 최대 무게. 생략하면 6."
+          },
+          {
+            "key": "maxAngle",
+            "type": "number",
+            "required": true,
+            "desc": "시소가 기울 수 있는 최대 각(도)."
+          },
+          {
+            "key": "barPos",
+            "type": "point",
+            "optional": true,
+            "figma": true,
+            "desc": "시소 막대 자리."
+          },
+          {
+            "key": "correctEffectPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 0,
+              "y": 100
+            },
+            "desc": "정답 이펙트 자리."
+          },
+          {
+            "key": "dropArea",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "outer",
+                "type": "number",
+                "required": true,
+                "desc": "바깥쪽으로 넓힐 px."
+              },
+              {
+                "key": "inner",
+                "type": "number",
+                "required": true,
+                "desc": "안쪽으로 넓힐 px."
+              },
+              {
+                "key": "top",
+                "type": "number",
+                "required": true,
+                "desc": "위로 넓힐 px."
+              },
+              {
+                "key": "bottom",
+                "type": "string",
+                "required": true,
+                "mixed": true,
+                "desc": "아래로 넓힐 px. **타입이 string 으로 잡혀 있지만 수입니다** — 표본 값이 계산식이라 초안이 잘못 짚었습니다."
+              }
+            ],
+            "desc": "물건을 놓았다고 볼 판정 영역을 넓히는 값."
+          }
+        ],
+        "desc": "시소 공통 설정. 그림은 이닝마다 따로 받습니다."
+      },
+      {
+        "key": "itemAnchorLocation",
+        "type": "number",
+        "required": true,
+        "default": 500,
+        "desc": "물건이 시소 판에 붙는 기준 위치(px)."
+      },
+      {
+        "key": "items",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "item1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item1",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다."
+              }
+            ],
+            "desc": "1번 물건."
+          },
+          {
+            "key": "item2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item2",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다."
+              }
+            ],
+            "desc": "2번 물건."
+          },
+          {
+            "key": "item3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item3",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다."
+              }
+            ],
+            "desc": "3번 물건."
+          },
+          {
+            "key": "item4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item4",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다."
+              }
+            ],
+            "desc": "4번 물건."
+          },
+          {
+            "key": "item5",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item5",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "default": 3,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다."
+              }
+            ],
+            "desc": "5번 물건."
+          },
+          {
+            "key": "item6",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item6",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다."
+              }
+            ],
+            "desc": "6번 물건."
+          },
+          {
+            "key": "item7",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item7",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다."
+              }
+            ],
+            "desc": "7번 물건."
+          },
+          {
+            "key": "item8",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item8",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다."
+              }
+            ],
+            "desc": "8번 물건."
+          }
+        ],
+        "desc": "물건 사전. **열쇠가 item1 … item8 로 고정입니다.** startItems 와 itemBox.items 가 alias 를 적고 무게는 이 표에서 찾습니다."
+      },
+      {
+        "key": "useSelectInning",
+        "type": "bool",
+        "required": true,
+        "default": true,
+        "desc": "이닝을 카드로 골라 들어가게 할지. true 면 SelectInning 화면이 먼저 나오고 `bg_select` 와 각 이닝의 selectCard 가 필요합니다."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "seesaw",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "checkType",
+                  "type": "enum",
+                  "optional": true,
+                  "values": [
+                    "heavy"
+                  ],
+                  "desc": "판정 갈래. heavy = 더 무거운 쪽을 고르는 문제."
+                },
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "optional": true,
+                  "figma": true,
+                  "desc": "시소 자리."
+                },
+                {
+                  "key": "face",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "idle",
+                      "type": "asset:lottie",
+                      "required": true,
+                      "desc": "평형 표정."
+                    },
+                    {
+                      "key": "left",
+                      "type": "asset:lottie",
+                      "required": true,
+                      "desc": "왼쪽이 무거울 때."
+                    },
+                    {
+                      "key": "right",
+                      "type": "asset:lottie",
+                      "required": true,
+                      "desc": "오른쪽이 무거울 때."
+                    },
+                    {
+                      "key": "talk",
+                      "type": "asset:lottie",
+                      "required": true,
+                      "desc": "말할 때."
+                    }
+                  ],
+                  "desc": "시소 표정 애니 네 벌."
+                },
+                {
+                  "key": "facePos",
+                  "type": "point",
+                  "optional": true,
+                  "figma": true,
+                  "desc": "표정이 붙는 자리."
+                },
+                {
+                  "key": "axis",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "시소 축 그림."
+                },
+                {
+                  "key": "board",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "시소 판 그림."
+                },
+                {
+                  "key": "measure",
+                  "type": "asset:image",
+                  "optional": true,
+                  "desc": "무게 눈금 그림."
+                }
+              ],
+              "desc": "그 이닝의 시소 리소스와 자리. **이것이 M34_1 과의 핵심 차이입니다** — 이름을 박지 않고 이닝마다 받습니다."
+            },
+            {
+              "key": "selectCard",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "normal",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "아직 안 푼 카드 그림."
+                },
+                {
+                  "key": "clear",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "다 푼 카드 그림."
+                },
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "카드 자리."
+                }
+              ],
+              "desc": "이닝 고르기 화면의 카드. useSelectInning 이 true 일 때만 씁니다."
+            },
+            {
+              "key": "narration",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 지시문 음원."
+            },
+            {
+              "key": "narrationSide",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "어느 쪽이 무거운지 알려 주는 음원."
+            },
+            {
+              "key": "startItems",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "left",
+                  "type": "array",
+                  "optional": true,
+                  "minLength": 0,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [],
+                    "desc": "미리 올려 둘 물건 하나."
+                  },
+                  "desc": "왼쪽에 미리 올려 둘 것들. **M34_1 과 달리 칸이 객체입니다** — 표본 값의 생김새가 그렇습니다.",
+                  "minLengthWhy": "비어 있어도 됩니다."
+                },
+                {
+                  "key": "right",
+                  "type": "array",
+                  "optional": true,
+                  "minLength": 0,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [],
+                    "desc": "미리 올려 둘 물건 하나."
+                  },
+                  "desc": "오른쪽에 미리 올려 둘 것들. **M34_1 과 달리 칸이 객체입니다** — 표본 값의 생김새가 그렇습니다.",
+                  "minLengthWhy": "비어 있어도 됩니다."
+                }
+              ],
+              "desc": "이닝을 시작할 때 시소에 이미 올라가 있는 물건들."
+            },
+            {
+              "key": "itemBox",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "gap",
+                  "type": "number",
+                  "required": true,
+                  "desc": "상자 안 물건 사이 간격(px)."
+                },
+                {
+                  "key": "items",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 1,
+                  "of": {
+                    "key": "",
+                    "type": "asset:image",
+                    "desc": "물건 alias 하나. items 표에 있어야 무게를 찾습니다."
+                  },
+                  "desc": "상자에 놓을 물건 alias 들.",
+                  "minLengthWhy": "끌 것이 하나는 있어야 합니다."
+                }
+              ],
+              "desc": "아래쪽 물건 상자."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. **M34_1 과 달리 진행은 모듈 play() 가 돌립니다** — 액티비티는 start · play · finish 만 부릅니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "aliasNote": "M34_1 의 확장판입니다. 시소 리소스를 이름으로 박지 않고 GameData 가 가리키는 것이 가장 큰 차이입니다.",
+  "rules": [
+    {
+      "id": "alias-in-items-table",
+      "level": "error",
+      "check": "itemBox.items 와 startItems 에 적은 alias 가 items 표에 있어야 한다.",
+      "why": "무게를 표에서 찾습니다. 없으면 무게가 undefined 가 되어 시소가 기울지 않습니다."
+    },
+    {
+      "id": "seesaw-per-inning-complete",
+      "level": "error",
+      "check": "이닝마다 seesaw.axis · board · measure 와 face 네 애니가 모두 채워져야 한다.",
+      "why": "**M34_1 처럼 이름이 박혀 있지 않아 빠뜨리면 대신 찾아 줄 것이 없습니다.** 시소가 통째로 안 보입니다."
+    },
+    {
+      "id": "select-inning-needs-cards",
+      "level": "error",
+      "check": "useSelectInning 이 true 면 이닝마다 selectCard 가 있어야 하고 bg_select 를 등록해야 한다.",
+      "why": "고르기 화면에 카드가 없으면 들어갈 이닝이 없어 진행이 막힙니다."
+    },
+    {
+      "id": "weight-within-max",
+      "level": "error",
+      "check": "한쪽 무게 합이 seesawInfo.maxWeight 를 넘지 않아야 한다.",
+      "why": "넘으면 더 올라가지 않아 문제가 성립하지 않습니다."
+    },
+    {
+      "id": "play-loop-in-module",
+      "level": "warn",
+      "check": "onStart 는 start · play · finish 세 줄이다 — M34_1 처럼 for 문을 넣지 않는다.",
+      "why": "이 확장판은 이닝 진행을 모듈 play() 가 돌립니다. 액티비티에서 또 돌리면 이닝이 두 번 진행됩니다."
+    },
+    {
+      "id": "correct-name-collision",
+      "level": "error",
+      "check": "AssetTable 에 음원 correct 를 등록해야 한다.",
+      "why": "모듈이 물고 있는 `correct` 는 로티이고, AudioManager.play(\"correct\") 가 찾는 것은 같은 이름의 음원입니다."
+    },
+    {
+      "id": "drop-area-bottom-number",
+      "level": "warn",
+      "check": "dropArea.bottom 은 수로 적는다.",
+      "why": "스펙 타입이 string 으로 잡혀 있지만 표본이 계산식을 적어 그렇게 보인 것입니다. 값은 px 수입니다."
+    }
+  ],
+  "notes": [
+    "eop 는 액티비티 onStart 가 부릅니다(SparkApp.eop.show(1)).",
+    "8호에 이 모듈을 쓰는 자리는 없습니다. 다만 **8호 배치표의 M27_2 와 마찬가지로 M34_1 · M34_2 는 이름이 비슷해도 서로 다른 모듈**이니 배치표를 볼 때 주의하세요."
+  ]
+}

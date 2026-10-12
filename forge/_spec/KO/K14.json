@@ -1,0 +1,424 @@
+{
+  "specVersion": 1,
+  "module": "K14",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K14",
+    "activities": [
+      "KOL3M01W1S2",
+      "KOL3M02W1S2",
+      "KOL3M03W1S2",
+      "KOL3M04W1S2",
+      "KOL3M05W3S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "await this.K14.load()"
+      ],
+      "onInit": [
+        "await this.K14.init()"
+      ],
+      "onStart": [
+        "await this.K14.start()"
+      ],
+      "onUpdate": [
+        "this.K14.update(_ticker)"
+      ],
+      "onAffordanceOn": [
+        "await this.K14.affordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K14.affordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K14",
+      "from": "@_common/module/KR/K14/K14"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "default",
+                "type": "number",
+                "required": true,
+                "default": 30
+              },
+              {
+                "key": "condition_0",
+                "type": "number",
+                "required": true,
+                "default": 3
+              },
+              {
+                "key": "condition_1",
+                "type": "number",
+                "required": true,
+                "default": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "inningCount",
+        "type": "number",
+        "required": true,
+        "default": 5
+      },
+      {
+        "key": "isInningOrderRandom",
+        "type": "bool",
+        "required": true,
+        "default": false
+      },
+      {
+        "key": "backgroundAlias",
+        "type": "asset:image",
+        "required": true,
+        "default": "background"
+      },
+      {
+        "key": "answerImagePos",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "questionerAnimInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "idleAlias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "idle"
+          },
+          {
+            "key": "talkAlias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "talk"
+          },
+          {
+            "key": "correctAlias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "correct"
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "neonAnimInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "neon"
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 1320
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 730
+          }
+        ]
+      },
+      {
+        "key": "bgmAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "bgm"
+      },
+      {
+        "key": "correctSfxAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "correctSfx"
+      },
+      {
+        "key": "wrongSfxAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "wrongSfx"
+      },
+      {
+        "key": "touchSfxAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "touchSfx"
+      },
+      {
+        "key": "guideNarAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "guideNar"
+      },
+      {
+        "key": "questionerCorrectNarAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "childCorrectNar"
+      },
+      {
+        "key": "correctNarAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      },
+      {
+        "key": "wrongNarAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      },
+      {
+        "key": "nextNarAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      },
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "cardMaxRow",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "cardMaxColumn",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "cardAlias",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "array",
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "before",
+                      "type": "asset:image",
+                      "required": true
+                    },
+                    {
+                      "key": "after",
+                      "type": "asset:image",
+                      "required": true
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "cardPos",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "array",
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "answerCardAlias",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "before",
+                    "type": "asset:image",
+                    "required": true
+                  },
+                  {
+                    "key": "after",
+                    "type": "asset:image",
+                    "required": true
+                  }
+                ]
+              }
+            },
+            {
+              "key": "answerCardPos",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            },
+            {
+              "key": "answerImageAlias",
+              "type": "asset:image",
+              "required": true
+            },
+            {
+              "key": "questionSentenceNarAlias",
+              "type": "asset:sound",
+              "required": true
+            },
+            {
+              "key": "answerSentenceNarAlias",
+              "type": "asset:sound",
+              "required": true
+            },
+            {
+              "key": "wordNarAlias",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "array",
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

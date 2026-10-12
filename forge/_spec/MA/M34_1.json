@@ -1,0 +1,569 @@
+{
+  "specVersion": 1,
+  "module": "M34_1",
+  "subject": "MA",
+  "title": "시소로 무게 비교",
+  "summary": "시소 양쪽에 물건을 끌어다 올려 무게를 견주는 활동. 물건마다 무게가 정해져 있고, 양쪽 무게 합에 따라 시소가 기울어집니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M34_1",
+    "activities": [
+      "MAL2M05W2S3",
+      "MAL2M11W4S2",
+      "MAL3M04W3S3"
+    ],
+    "doc": "README 없음. 근거는 M34_1.ts · SeeSaw.ts · Item.ts · ItemBox.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M34_1.addAsset();"
+      ],
+      "onInit": [
+        "M34_1.handle.init(quizData);",
+        "this.addChild(M34_1.handle);"
+      ],
+      "onStart": [
+        "await M34_1.handle.start();",
+        "for(const data of quizData.inningData) {",
+        "  await M34_1.handle.readyInning(data);",
+        "  await M34_1.handle.playInning();",
+        "  await M34_1.handle.endInning();",
+        "}",
+        "await M34_1.handle.finish();",
+        "SparkApp.eop.show(1);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onAffordanceOn": [
+        "await M34_1.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await M34_1.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "M34_1",
+        "from": "@_common/module/MA"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "axis",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "시소 축."
+      },
+      {
+        "alias": "board",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "시소 판."
+      },
+      {
+        "alias": "bump",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "시소 받침."
+      },
+      {
+        "alias": "correct_eff",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트. 자리는 seesawInfo.correctEffectPos."
+      },
+      {
+        "alias": "look_idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "시소 표정 — 평형."
+      },
+      {
+        "alias": "look_left",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "시소 표정 — 왼쪽이 무거울 때."
+      },
+      {
+        "alias": "look_right",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "시소 표정 — 오른쪽이 무거울 때."
+      },
+      {
+        "alias": "look_success",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "시소 표정 — 정답."
+      },
+      {
+        "alias": "SL_ma_inc_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음."
+      },
+      {
+        "alias": "SL_ma_m34_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시소가 움직일 때의 효과음."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 M34_1.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 3개 다 가짐(litgate, 2026-09-29)."
+      }
+    ],
+    "providedByModule": {
+      "note": "모듈이 등록하는 것은 폰트와 `bg` · `bgm` · 로티 `correct` 뿐입니다.\n\n**이름이 코드에 박혔는데 모듈이 등록하지 않는 것** — 그림 `axis`(시소 축) · `board`(시소 판) · `bump`(받침) · 로티 `correct_eff` · 시소 표정 넷 `look_idle` · `look_left` · `look_right` · `look_success` · 음원 `SL_ma_inc_sfx01` · `SL_ma_m34_sfx01` · `correct`(음원 — 모듈이 물고 있는 **로티** correct 와 이름이 겹칩니다).",
+      "font": [
+        "NanumSquareRoundR"
+      ],
+      "image": [
+        "bg"
+      ],
+      "sound": [
+        "bgm"
+      ],
+      "lottie": [
+        "correct"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "startNarration",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "학습 시작 지문."
+      },
+      {
+        "key": "seesawInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "maxWeight",
+            "type": "number",
+            "required": true,
+            "default": 6,
+            "desc": "한쪽에 올릴 수 있는 최대 무게. **생략하면 6 입니다**(SeeSaw.ts:276). 이 값을 넘기면 더 올라가지 않습니다."
+          },
+          {
+            "key": "maxAngle",
+            "type": "number",
+            "required": true,
+            "default": 10,
+            "desc": "시소가 기울 수 있는 최대 각(도)."
+          },
+          {
+            "key": "correctEffectPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 0,
+              "y": 100
+            },
+            "desc": "정답 이펙트(correct_eff) 자리."
+          },
+          {
+            "key": "dropArea",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "outer",
+                "type": "number",
+                "required": true,
+                "desc": "바깥쪽으로 넓힐 px."
+              },
+              {
+                "key": "inner",
+                "type": "number",
+                "required": true,
+                "desc": "안쪽(축 방향)으로 넓힐 px."
+              },
+              {
+                "key": "top",
+                "type": "number",
+                "required": true,
+                "desc": "위로 넓힐 px."
+              },
+              {
+                "key": "bottom",
+                "type": "number",
+                "required": true,
+                "desc": "아래로 넓힐 px."
+              }
+            ],
+            "desc": "물건을 놓았다고 볼 판정 영역을 넓히는 값. 시소 판보다 넉넉히 잡아야 아이가 놓기 쉽습니다."
+          }
+        ],
+        "desc": "시소 설정."
+      },
+      {
+        "key": "items",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "item1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item1",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "1번 물건."
+          },
+          {
+            "key": "item2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item2",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "default": 1,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "2번 물건."
+          },
+          {
+            "key": "item3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item3",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "default": 2,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "3번 물건."
+          },
+          {
+            "key": "item4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item4",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "4번 물건."
+          },
+          {
+            "key": "item5",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item5",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "5번 물건."
+          },
+          {
+            "key": "item6",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item6",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "6번 물건."
+          },
+          {
+            "key": "item7",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item7",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "7번 물건."
+          },
+          {
+            "key": "item8",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "item8",
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "8번 물건."
+          },
+          {
+            "key": "item9",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "9번 물건."
+          },
+          {
+            "key": "item10",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "desc": "물건 그림."
+              },
+              {
+                "key": "weight",
+                "type": "number",
+                "required": true,
+                "desc": "물건 무게. 양쪽 합을 견주어 시소가 기웁니다(SeeSaw.ts:58·382~383)."
+              }
+            ],
+            "desc": "10번 물건."
+          }
+        ],
+        "desc": "물건 사전. **열쇠가 item1 · item2 … 로 고정입니다** — 아래 startItems 와 itemBox.items 는 alias 를 직접 적고, 무게는 이 표에서 찾습니다. 열쇠 이름 자체는 코드가 읽지 않고 값의 alias · weight 만 씁니다."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "narration",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 지시문 음원."
+            },
+            {
+              "key": "startItems",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "left",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 0,
+                  "of": {
+                    "key": "",
+                    "type": "asset:image",
+                    "desc": "물건 alias 하나. items 표에 같은 alias 가 있어야 무게를 찾습니다."
+                  },
+                  "desc": "왼쪽에 미리 올려 둘 물건 alias 들. 비우면 그쪽은 빈 채로 시작합니다.",
+                  "minLengthWhy": "비어 있어도 됩니다."
+                },
+                {
+                  "key": "right",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 0,
+                  "of": {
+                    "key": "",
+                    "type": "asset:image",
+                    "desc": "물건 alias 하나. items 표에 같은 alias 가 있어야 무게를 찾습니다."
+                  },
+                  "desc": "오른쪽에 미리 올려 둘 물건 alias 들. 비우면 그쪽은 빈 채로 시작합니다.",
+                  "minLengthWhy": "비어 있어도 됩니다."
+                }
+              ],
+              "desc": "이닝을 시작할 때 시소에 이미 올라가 있는 물건들."
+            },
+            {
+              "key": "itemBox",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "gap",
+                  "type": "number",
+                  "required": true,
+                  "desc": "상자 안 물건 사이 간격(px)."
+                },
+                {
+                  "key": "items",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 1,
+                  "of": {
+                    "key": "",
+                    "type": "asset:image",
+                    "desc": "물건 alias 하나. items 표에 있어야 무게를 찾습니다."
+                  },
+                  "desc": "상자에 놓을 물건 alias 들.",
+                  "minLengthWhy": "끌 것이 하나는 있어야 합니다."
+                }
+              ],
+              "desc": "아래쪽 물건 상자 — 끌어다 올릴 것들이 여기 놓입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. **액티비티 onStart 가 이 배열을 직접 훑어 readyInning → playInning → endInning 을 부릅니다** — 훅을 줄이면 이닝이 안 돌아갑니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "aliasNote": "M34_2 는 같은 시소를 쓰지만 이닝마다 시소 그림·표정을 GameData 로 받는 확장판입니다. 서로 바꿔 쓸 수 없습니다.",
+  "rules": [
+    {
+      "id": "alias-in-items-table",
+      "level": "error",
+      "check": "startItems.left · right 와 itemBox.items 에 적은 alias 가 모두 items 표의 alias 중 하나여야 한다.",
+      "why": "무게를 items 표에서 찾습니다(ItemBox.ts:37 · SeeSaw.ts:155). 표에 없는 alias 를 적으면 무게가 undefined 가 되어 **시소가 기울지 않고 판정도 되지 않습니다.**"
+    },
+    {
+      "id": "weight-within-max",
+      "level": "error",
+      "check": "한쪽에 올릴 물건 무게 합이 seesawInfo.maxWeight 를 넘지 않아야 한다.",
+      "why": "넘으면 더 올라가지 않습니다(SeeSaw.ts:276, 생략 시 6). 문제가 성립하지 않는 이닝이 됩니다."
+    },
+    {
+      "id": "inning-loop-in-onstart",
+      "level": "error",
+      "check": "onStart 의 for 문(readyInning → playInning → endInning)을 지우지 않는다.",
+      "why": "**이 모듈은 이닝 진행을 액티비티가 돌립니다.** 훅을 M34_2 처럼 play() 하나로 줄이면 첫 이닝에서 멈춥니다."
+    },
+    {
+      "id": "look-lotties-registered",
+      "level": "error",
+      "check": "look_idle · look_left · look_right · look_success 네 애니가 등록돼야 한다.",
+      "why": "시소 표정입니다. 하나만 빠지면 그 상태에서 표정이 사라집니다 — 특히 look_success 가 없으면 정답인지 알 수 없습니다."
+    },
+    {
+      "id": "correct-name-collision",
+      "level": "error",
+      "check": "AssetTable 에 음원 correct 를 등록해야 한다.",
+      "why": "모듈이 물고 있는 `correct` 는 **로티**이고, AudioManager.play(\"correct\") 가 찾는 것은 같은 이름의 **음원**입니다. 이름이 겹쳐 있는 줄 알고 빠뜨리기 쉽습니다."
+    },
+    {
+      "id": "drop-area-generous",
+      "level": "warn",
+      "check": "seesawInfo.dropArea 를 시소 판보다 넉넉히 잡는다.",
+      "why": "판정 영역이 좁으면 아이가 물건을 올려도 안 놓입니다(Item.ts:52 · SeeSaw.ts:334)."
+    }
+  ],
+  "notes": [
+    "eop 는 액티비티 onStart 가 부릅니다(SparkApp.eop.show(1)).",
+    "items 표는 item1~item10 열쇠가 이미 다 있습니다. 쓰지 않는 칸은 남겨 두어도 되지만, alias 가 AssetTable 에 없으면 그 칸을 쓰는 순간 사라집니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

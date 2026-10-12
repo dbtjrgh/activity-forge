@@ -1,0 +1,251 @@
+{
+  "specVersion": 1,
+  "module": "M13",
+  "subject": "MA",
+  "title": "자물쇠 열기 (블록 끌어다 맞추기)",
+  "summary": "구름에 가려진 자물쇠 세 개가 있고, 블록을 끌어다 맞는 자리에 넣어 자물쇠를 여는 활동. 다 열면 완료 도장이 찍힙니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M13",
+    "activities": [
+      "MAL1M01W3S2"
+    ],
+    "doc": "README 없음. 근거는 M13.ts 와 M13_Answer · M13_Drag · M13_Inning · M13_ImageData · M13_LottieData · M13_Sound · M13_Timer 그리고 표본 MAL1M01W3S2 입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M13",
+      "from": "@_common/module/MA/M13/M13"
+    },
+    "members": [
+      "private readonly mM13: M13 = new M13();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "super.onLoad();",
+        "await this.mM13.onLoad(",
+        "  AssetTable as unknown as Parameters<M13['onLoad']>[0],",
+        ");"
+      ],
+      "onInit": [
+        "await this.mM13.onInit(",
+        "  this,",
+        "  quizData as Parameters<M13['onInit']>[1],",
+        "  AssetTable as unknown as Parameters<M13['onInit']>[2],",
+        ");"
+      ],
+      "onStart": [
+        "await this.mM13.onStart();"
+      ],
+      "onEnd": [
+        "await this.mM13.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mM13.onUpdate();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "introNarration",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 진입 지문. mainCharacter.guide(\"introNarration\")."
+      },
+      {
+        "alias": "timeGuide",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "한동안 안 누르면 읽어 주는 안내. mainCharacter.guide(\"timeGuide\")."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 AssetTable 을 통째로 받습니다** — 액티비티가 onLoad · onInit 에 `AssetTable` 객체 자체를 넘기고(M13.onLoad(AssetTable) · M13.onInit(this, quizData, AssetTable)), M13_ImageData · M13_LottieData 가 그 안에서 필요한 것을 골라 씁니다. 그래서 **스펙이 alias 목록을 정확히 적어 줄 수 없습니다** — M15 와 같은 갈래의 자리이고, 검사기도 이런 모듈을 「아는 결함」으로 두고 있습니다.\n\n이름이 코드에 박힌 음원은 두 개입니다 — `introNarration`(학습 진입 지문) · `timeGuide`(시간이 지나면 읽어 주는 안내). 둘 다 mainCharacter.guide 로 찾습니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "object",
+    "fields": [
+      {
+        "key": "bg",
+        "type": "object",
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 왼쪽 위가 0 인 좌표로 적혀 있습니다 — 표본 값이 전부 양수입니다)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y."
+          }
+        ],
+        "desc": "배경 자리.",
+        "optional": true
+      },
+      {
+        "key": "wideBg",
+        "type": "object",
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 왼쪽 위가 0 인 좌표로 적혀 있습니다 — 표본 값이 전부 양수입니다)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y."
+          }
+        ],
+        "desc": "넓은 배경 자리. 배경을 두 겹으로 깔 때 뒤쪽입니다.",
+        "optional": true
+      },
+      {
+        "key": "block",
+        "type": "object",
+        "fields": [],
+        "desc": "끌어다 넣는 블록이 처음 놓이는 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다.",
+        "optional": true
+      },
+      {
+        "key": "lock",
+        "type": "object",
+        "fields": [],
+        "desc": "자물쇠 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다.",
+        "optional": true
+      },
+      {
+        "key": "cloud",
+        "type": "object",
+        "fields": [],
+        "desc": "자물쇠를 가리는 구름 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다.",
+        "optional": true
+      },
+      {
+        "key": "lockOpen",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "열린 자물쇠 그림 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다."
+      },
+      {
+        "key": "light",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "자물쇠가 열릴 때 비치는 빛 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다."
+      },
+      {
+        "key": "particle",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "자물쇠가 열릴 때 터지는 파티클 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다."
+      },
+      {
+        "key": "question",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "문제 그림 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다."
+      },
+      {
+        "key": "questionGray",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "아직 풀지 않은 문제의 흐린 그림 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다."
+      },
+      {
+        "key": "blur",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "흐림 처리 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다."
+      },
+      {
+        "key": "drag",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "블록을 놓아야 하는 목표 자리. **열쇠가 1 · 2 · 3 … 숫자입니다** — 자물쇠(문제) 번호이고, 안쪽 값은 { x, y } 입니다. 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다. 그래서 fields 를 비워 두고 값을 그대로 씁니다 — 화면은 이 칸을 그려 주지 못합니다."
+      },
+      {
+        "key": "completeStamp",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "완료 도장 자리. **열쇠가 두 겹으로 숫자입니다 — completeStamp[이닝][자물쇠] = { x, y }.** 표본은 이닝마다 세 자리를 같은 좌표로 두었습니다."
+      },
+      {
+        "key": "answerNumber",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "정답 번호 표. **열쇠가 숫자입니다.** M13_Answer 가 이 값으로 어느 블록이 어느 자물쇠에 맞는지 판정합니다."
+      },
+      {
+        "key": "__expr",
+        "type": "string",
+        "optional": true,
+        "desc": "**스펙이 아니라 도구의 자리표입니다.** 이 모듈 표본은 GameData 열쇠가 숫자(1 · 2 · 3)여서 추출기(gen clone)가 quizData 를 쪼개지 못하고 통째로 `{ __expr: \"<원본 JS>\" }` 로 떠 옵니다. 그 값이 그대로 다시 GameData 로 쓰이므로 클론은 정상 동작합니다 — 다만 화면에서 칸별로 편집할 수는 없고, 위에 적은 자리들은 **사람이 읽기 위한 설명**입니다."
+      }
+    ],
+    "note": "위 자리들은 표본 MAL1M01W3S2 의 GameData 와 모듈 소스를 보고 사람이 적은 것입니다. 도구는 이 모듈의 GameData 를 쪼개지 못해 __expr 로 통째로 다룹니다."
+  },
+  "rules": [
+    {
+      "id": "numbered-keys-consistent",
+      "level": "error",
+      "check": "block · lock · cloud 의 숫자 열쇠 집합이 같아야 하고, 나머지 표(lockOpen · light · particle · question · questionGray · drag)도 쓰는 번호를 빠뜨리지 않아야 한다.",
+      "why": "자물쇠 번호로 여러 표를 동시에 찾습니다. 한 표에서 그 번호가 빠지면 그 자물쇠만 그림이나 연출이 사라집니다 — 에러는 없습니다."
+    },
+    {
+      "id": "complete-stamp-two-levels",
+      "level": "error",
+      "check": "completeStamp 는 [이닝][자물쇠] 두 겹이어야 한다.",
+      "why": "한 겹으로 적으면 도장 좌표를 못 찾아 도장이 안 찍히고, 이닝이 끝나지 않은 것처럼 보입니다."
+    },
+    {
+      "id": "asset-table-passed-whole",
+      "level": "warn",
+      "check": "AssetTable 을 M13.onLoad · onInit 에 그대로 넘기는 훅을 지우지 않는다.",
+      "why": "**이 모듈은 alias 를 GameData 가 아니라 AssetTable 객체에서 직접 골라 씁니다.** 훅을 줄이면 그림이 통째로 안 붙습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "introNarration · timeGuide 가 등록돼야 한다.",
+      "why": "이름이 코드에 박혀 있습니다. 없으면 진입 지문과 안내가 무음으로 지나갑니다."
+    },
+    {
+      "id": "coordinate-origin",
+      "level": "warn",
+      "check": "이 모듈의 좌표는 표본이 왼쪽 위 기준(양수)으로 적혀 있다.",
+      "why": "다른 MA 모듈은 화면 가운데가 0 입니다. 가운데 기준으로 적으면 왼쪽 위로 몰립니다 — 표본 값을 그대로 보고 옮기는 것이 안전합니다."
+    },
+    {
+      "id": "expr-passthrough",
+      "level": "warn",
+      "check": "이 모듈은 gen clone 으로 떠 온 __expr 를 그대로 두고, 값은 GameData.ts 를 직접 고친다.",
+      "why": "숫자 열쇠를 추출기가 못 쪼갭니다. 화면에서 칸을 편집하려 들면 값이 날아갑니다."
+    }
+  ],
+  "notes": [
+    "**초안 스펙이 못 쓸 상태였습니다** — 표본 GameData 가 `1: { x, y }` 처럼 숫자 열쇠를 쓰는데 초안 생성기가 그것을 모델로 못 만들어 필드가 `__expr` 하나만 남아 있었습니다. 표본과 소스를 보고 손으로 다시 적었습니다.",
+    "숫자 열쇠는 스펙 형식이 표현하지 못합니다(series.prefix 가 글자로 시작해야 합니다). 화면에서 칸을 그려 주지 못하므로 값은 손으로 적습니다.",
+    "표본이 MAL1M01W3S2 한 차시뿐입니다. 8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

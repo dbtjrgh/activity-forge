@@ -1,0 +1,468 @@
+{
+  "specVersion": 1,
+  "module": "K11",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K11",
+    "activities": [
+      "KOL2M01W4S1",
+      "KOL2M02W4S1",
+      "KOL2M03W4S1",
+      "KOL2M04W4S1",
+      "KOL2M05W4S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "await this.K11.OnInit()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm')",
+        "bgm.loop(true)",
+        "bgm.volume(0.1)",
+        "bgm.play()",
+        "await this.K11.OnStart()"
+      ],
+      "onAffordanceOn": [
+        "await this.K11.onAffordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K11.onAffordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K11",
+      "from": "@_common/module/KR/K11/K11"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "highlight",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Books.ts 가 AssetManager.get(\"highlight\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 9개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "effect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 Books.ts 가 AssetManager.get(\"effect\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 9개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "cart",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Cart.ts 가 AssetManager.get(\"cart\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 9개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 InningManager.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 9개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "default",
+                "type": "number",
+                "required": true,
+                "default": 30
+              },
+              {
+                "key": "condition_0",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "condition_1",
+                "type": "number",
+                "required": true,
+                "default": 6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "isRandom",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "settings",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningType",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "enum",
+              "values": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E"
+              ]
+            }
+          },
+          {
+            "key": "inningCount",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "number"
+            }
+          },
+          {
+            "key": "inningNums",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "number"
+            }
+          },
+          {
+            "key": "maxInning",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "dropBookSize",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "dropAreaSize",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 120
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "type",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "positions",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "cartPos",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "platePos",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "dropBookPos",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "bookPos",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "key": "inningData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inning",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "setCount",
+                  "type": "number",
+                  "required": true,
+                  "default": 4
+                }
+              ]
+            }
+          },
+          {
+            "key": "data",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "label1",
+                  "type": "string",
+                  "required": true
+                },
+                {
+                  "key": "label2",
+                  "type": "string",
+                  "required": true
+                },
+                {
+                  "key": "label3",
+                  "type": "string",
+                  "required": true
+                },
+                {
+                  "key": "label4",
+                  "type": "string",
+                  "required": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "effPos",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "autoplay",
+                  "type": "bool",
+                  "required": true,
+                  "default": false
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": false
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "key": "sound",
+        "type": "object",
+        "optional": true,
+        "fields": []
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "KO",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "asset:sound",
+                "required": true,
+                "default": "start02"
+              },
+              {
+                "key": "correctP",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "correct",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "string"
+                }
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "hint",
+                "type": "asset:sound",
+                "required": true,
+                "default": "com5"
+              },
+              {
+                "key": "pressEnd",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "com6"
+                ],
+                "default": "com6"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

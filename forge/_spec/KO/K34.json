@@ -1,0 +1,337 @@
+{
+  "specVersion": 1,
+  "module": "K34",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K34",
+    "activities": [
+      "KOL2M01W2S3",
+      "KOL2M02W2S3",
+      "KOL2M03W2S3",
+      "KOL2M04W2S3",
+      "KOL2M05W2S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "K34.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "const bgSpr = new Sprite(AssetManager.get(\"bg\"));",
+        "bgSpr.anchor.set(0.5);",
+        "this.addChild(bgSpr);",
+        "K34.handle.onInit(quizData);",
+        "this.addChild(K34.handle);"
+      ],
+      "onStart": [
+        "//if(import.meta.env.PROD){",
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "//}",
+        "await K34.handle.onStart(quizData);",
+        "await SparkApp.eop.show(K34.handle.totalPercent / quizData.inningData.length * 0.01);"
+      ],
+      "onAffordanceOn": [
+        "K34.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "K34.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "Sprite",
+        "from": "pixi.js"
+      },
+      {
+        "symbol": "K34",
+        "from": "@_common/module/KR/K34/K34"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "typeWriter",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/TypeWriter.ts 가 AssetManager.get(\"typeWriter\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "bottle",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "image",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true
+                },
+                {
+                  "key": "sticker",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "alias",
+                      "type": "asset:image",
+                      "required": true
+                    },
+                    {
+                      "key": "position",
+                      "type": "point",
+                      "required": true,
+                      "figma": true
+                    }
+                  ]
+                },
+                {
+                  "key": "answer",
+                  "type": "string",
+                  "required": true
+                },
+                {
+                  "key": "lottiePos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true
+                }
+              ]
+            },
+            {
+              "key": "paper",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "wordPos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true
+                },
+                {
+                  "key": "element",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 2,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "fill",
+                        "type": "asset:image",
+                        "required": true
+                      },
+                      {
+                        "key": "stroke",
+                        "type": "asset:image",
+                        "optional": true
+                      },
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true
+                      },
+                      {
+                        "key": "word",
+                        "type": "string",
+                        "optional": true
+                      },
+                      {
+                        "key": "isQuiz",
+                        "type": "bool",
+                        "optional": true
+                      }
+                    ]
+                  }
+                },
+                {
+                  "key": "typingArea",
+                  "type": "asset:image",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "key",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "consonant",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 3,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "idle",
+                        "type": "asset:image",
+                        "required": true
+                      },
+                      {
+                        "key": "press",
+                        "type": "asset:image",
+                        "required": true
+                      },
+                      {
+                        "key": "sound",
+                        "type": "asset:sound",
+                        "required": true
+                      },
+                      {
+                        "key": "answer",
+                        "type": "bool",
+                        "required": true
+                      },
+                      {
+                        "key": "word",
+                        "type": "string",
+                        "required": true
+                      }
+                    ]
+                  }
+                },
+                {
+                  "key": "vowel",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 3,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "idle",
+                        "type": "asset:image",
+                        "required": true
+                      },
+                      {
+                        "key": "press",
+                        "type": "asset:image",
+                        "required": true
+                      },
+                      {
+                        "key": "sound",
+                        "type": "asset:sound",
+                        "required": true
+                      },
+                      {
+                        "key": "answer",
+                        "type": "bool",
+                        "required": true
+                      },
+                      {
+                        "key": "word",
+                        "type": "string",
+                        "required": true
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "key": "keyPosition",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "consonant",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "vowel",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,357 @@
+{
+  "specVersion": 1,
+  "module": "M35",
+  "subject": "MA",
+  "title": "자로 재기 (길이 비교)",
+  "summary": "화면에 놓인 것들 중 하나를 자로 재는 활동. 자를 끌어 정답 길이(correctHeight 또는 correctWidth)에 닿으면 맞은 것으로 처리됩니다. 이닝마다 세로로 재는 문제와 가로로 재는 문제가 갈립니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M35",
+    "activities": [
+      "MAL1M05W3S3",
+      "MAL2M05W3S3",
+      "MAL3M05W1S3",
+      "MAL3M05W3S3",
+      "MAL3M11W4S3"
+    ],
+    "doc": "README 없음. 근거는 M35.ts · PlayStage.ts · RulerGroup.ts · ObjectGroup.ts · Monster.ts · Answer.ts · BG.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M35.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(M35.handle);",
+        "await M35.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await M35.handle.start();",
+        "await M35.handle.play();",
+        "await M35.handle.finish();",
+        "await SparkApp.eop.show();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "M35",
+        "from": "@_common/module/MA/M35/M35"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "ruler",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "자. **모듈이 등록하지 않으므로 액티비티가 넣어야 합니다** — 없으면 잴 도구가 없어 진행이 막힙니다."
+      },
+      {
+        "alias": "rulerhand",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "자를 잡는 손잡이. ruler 와 같은 이유로 액티비티가 넣습니다."
+      },
+      {
+        "alias": "nar01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. mainCharacter.guide(\"nar01\") 로 이름이 박혀 있습니다 — 모듈이 물고 있는 SL_ma_m35_guide_nar01 과 다른 이름입니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "M35.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M35 에 있습니다(별도 repo).\n\n**모듈이 등록하지 않는데 코드가 이름으로 찾는 것**\n- 자 — `ruler` · `rulerhand`. **이 둘이 활동의 핵심 도구인데 모듈 리소스에 없습니다.**\n- 도우미 애니 — `{Bmon|Pmon|Rmon}_idle` · `_talk`. 여섯 이름을 다 참조하니 쓰는 색은 반드시 등록해야 합니다.\n- 지문 — `nar01`(mainCharacter.guide). 모듈이 물고 있는 SL_ma_m35_guide_nar01~04 와 **다른 이름**입니다.\n- 배경 — GameData 의 bg_alias 가 가리킵니다.",
+      "image": [
+        "inningbar_bg",
+        "inning_off",
+        "inning_on",
+        "item_bg",
+        "mag_button",
+        "note",
+        "note_next_btn",
+        "note_next_btn_p",
+        "note_prev_btn",
+        "note_prev_btn_p",
+        "popup_option_close_btn_n",
+        "dot_line1",
+        "dot_line2"
+      ],
+      "sound": [
+        "bgm",
+        "SL_ma_cor_sfx01",
+        "SL_ma_cor_sfx02",
+        "SL_ma_com_sfx01",
+        "SL_ma_com_sfx02",
+        "SL_ma_inc_sfx02",
+        "SL_ma_m35_sfx01",
+        "SL_ma_m35_guide_nar01",
+        "SL_ma_m35_guide_nar02",
+        "SL_ma_m35_guide_nar03",
+        "SL_ma_m35_guide_nar04"
+      ],
+      "lottie": [
+        "correct_ef"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "type",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "horizontal",
+                "vertical"
+              ],
+              "desc": "재는 방향. **vertical 이면 rulerInfo.correctHeight 를, horizontal 이면 correctWidth 를 봅니다**(RulerGroup.ts:205·224). 방향과 정답 값을 짝 맞춰 적지 않으면 아무리 맞춰도 정답이 되지 않습니다."
+            },
+            {
+              "key": "bg_alias",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그 이닝의 배경 그림."
+            },
+            {
+              "key": "bgfront",
+              "type": "object",
+              "optional": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "optional": true,
+                  "desc": "그림."
+                },
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "optional": true,
+                  "figma": true,
+                  "desc": "자리."
+                }
+              ],
+              "desc": "대상보다 앞에 겹치는 배경 조각. 대상이 「안에 놓인」 느낌을 냅니다."
+            },
+            {
+              "key": "mon",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "Bmon",
+                    "Pmon",
+                    "Rmon"
+                  ],
+                  "desc": "캐릭터 색. **애니 alias 를 `{이 값}_idle` · `{이 값}_talk` 로 조합합니다** — 그 두 애니를 액티비티가 등록해야 합니다."
+                },
+                {
+                  "key": "quizChat",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "말풍선(문제) 그림."
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "문제를 읽는 음원."
+                },
+                {
+                  "key": "answersound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "정답을 알려 주는 음원."
+                }
+              ],
+              "desc": "도우미 캐릭터와 그 말풍선."
+            },
+            {
+              "key": "objectInfo",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "name",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "obj1",
+                      "obj2",
+                      "obj3"
+                    ],
+                    "desc": "대상 이름표. **rulerInfo[].target 이 이 이름으로 대상을 찾습니다**(ObjectGroup.ts:198) — obj1 · obj2 · obj3 세 이름만 씁니다."
+                  },
+                  {
+                    "key": "alias",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "대상 그림."
+                  },
+                  {
+                    "key": "answer",
+                    "type": "bool",
+                    "required": true,
+                    "desc": "이 대상이 정답인지(ObjectGroup.ts:142)."
+                  },
+                  {
+                    "key": "pos",
+                    "type": "point",
+                    "required": true,
+                    "figma": true,
+                    "desc": "대상이 놓이는 자리."
+                  },
+                  {
+                    "key": "effectPos",
+                    "type": "point",
+                    "optional": true,
+                    "figma": true,
+                    "desc": "정답 이펙트(correct_ef)가 뜨는 자리."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "화면에 놓이는 대상들. **answer: true 인 것이 재야 하는 대상입니다.**",
+              "minLengthWhy": "고를 것이 둘은 있어야 문제가 됩니다."
+            },
+            {
+              "key": "rulerInfo",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "target",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "obj1",
+                      "obj2",
+                      "obj3"
+                    ],
+                    "desc": "이 값이 가리키는 대상(objectInfo[].name)의 정답 길이라는 뜻입니다. 이름이 어긋나면 그 대상은 아무리 재도 정답이 되지 않습니다."
+                  },
+                  {
+                    "key": "line",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "재는 동안 보이는 안내선 그림. 모듈이 물고 있는 dot_line1 · dot_line2 를 씁니다."
+                  },
+                  {
+                    "key": "correctHeight",
+                    "type": "number",
+                    "optional": true,
+                    "desc": "세로로 재는 문제(type: vertical)의 정답 길이(px). 정답 연출도 이 값만큼 자를 움직입니다(RulerGroup.ts:261)."
+                  },
+                  {
+                    "key": "pos",
+                    "type": "point",
+                    "required": true,
+                    "figma": true,
+                    "desc": "안내선이 놓이는 자리."
+                  },
+                  {
+                    "key": "correctWidth",
+                    "type": "number",
+                    "optional": true,
+                    "desc": "가로로 재는 문제(type: horizontal)의 정답 길이(px)."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "대상마다의 정답 길이. **target 으로 objectInfo 의 name 과 짝지어집니다.**",
+              "minLengthWhy": "적어도 정답 대상 몫은 있어야 합니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. 이닝 수가 곧 화면 위 이닝 표시 개수입니다. 적은 차례대로 진행합니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "type-matches-correct-value",
+      "level": "error",
+      "check": "type 이 vertical 이면 correctHeight 를, horizontal 이면 correctWidth 를 실제 값으로 채워야 한다.",
+      "why": "RulerGroup.ts:205·224 가 방향에 따라 한쪽만 봅니다. 반대쪽만 채우면 **아무리 정확히 재도 정답이 되지 않습니다** — 진행이 막히고 에러는 없습니다."
+    },
+    {
+      "id": "target-name-matches",
+      "level": "error",
+      "check": "rulerInfo[].target 이 그 이닝 objectInfo[].name 중 하나와 같아야 한다.",
+      "why": "ObjectGroup.ts:198 이 이름으로 대상을 찾습니다. 못 찾으면 그 대상에는 정답 길이가 없어 재도 반응이 없습니다."
+    },
+    {
+      "id": "one-answer-object",
+      "level": "error",
+      "check": "이닝마다 objectInfo 에 answer: true 가 정확히 하나 있어야 한다.",
+      "why": "모듈이 검사하지 않습니다. 없으면 잴 대상이 없고, 둘 이상이면 판정이 갈립니다."
+    },
+    {
+      "id": "ruler-assets-registered",
+      "level": "error",
+      "check": "AssetTable 에 ruler 와 rulerhand 가 있어야 한다.",
+      "why": "**활동의 핵심 도구인데 모듈 리소스에 없습니다.** 다른 것은 다 모듈이 물고 있어서 이 둘만 빠뜨리기 쉽고, 없으면 잴 도구가 화면에 안 나와 진행이 막힙니다."
+    },
+    {
+      "id": "mon-anim-registered",
+      "level": "error",
+      "check": "mon.alias 값에 맞춰 {색}_idle · {색}_talk 두 애니를 등록해야 한다.",
+      "why": "alias 를 색 이름으로 조합하는데 모듈이 등록해 주지 않습니다."
+    },
+    {
+      "id": "start-nar-name",
+      "level": "error",
+      "check": "학습 시작 지문 alias 는 nar01 이다.",
+      "why": "mainCharacter.guide(\"nar01\") 로 박혀 있습니다. 모듈이 물고 있는 SL_ma_m35_guide_nar01 을 그것이라고 생각하면 무음으로 시작합니다."
+    },
+    {
+      "id": "object-name-enum",
+      "level": "error",
+      "check": "objectInfo[].name 은 obj1 · obj2 · obj3 중 하나.",
+      "why": "표본이 쓰는 이름이고 rulerInfo.target 과 짝을 맞춰야 합니다. 자유 문자열로 쓰면 짝짓기에서 실수가 납니다."
+    }
+  ],
+  "notes": [
+    "eop 는 액티비티 onStart 가 부릅니다(SparkApp.eop.show()). 모듈은 부르지 않습니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

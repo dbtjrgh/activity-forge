@@ -1,0 +1,380 @@
+{
+  "specVersion": 1,
+  "module": "M36",
+  "subject": "MA",
+  "title": "빈칸 채우기 (커서로 골라 넣기)",
+  "summary": "위쪽에 문제 줄이 놓이고 아래쪽 같은 줄에는 몇 칸이 비어 있습니다. 커서가 지나가는 선택판에서 맞는 버튼을 눌러 빈칸을 채우는 활동.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M36",
+    "activities": [
+      "MAL1M06W2S3",
+      "MAL2M06W2S3",
+      "MAL3M06W2S3"
+    ],
+    "doc": "README 없음. 근거는 M36.ts · QuizItemPanel.ts · TouchPanel.ts · Bg.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M36.addAsset();"
+      ],
+      "onInit": [
+        "M36.handle.init(quizData);",
+        "this.addChild(M36.handle);"
+      ],
+      "onStart": [
+        "await M36.handle.start();",
+        "await M36.handle.play();",
+        "await M36.handle.finish();",
+        "SparkApp.eop.show(1);"
+      ],
+      "onAffordanceOn": [
+        "await M36.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await M36.handle.onAffordanceCanceled();"
+      ],
+      "onResize": [
+        "M36.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "M36",
+        "from": "@/_common/module/MA"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bar",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "선택판 위를 지나가는 막대."
+      },
+      {
+        "alias": "cursor",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "선택판 커서. cursorSpeed 로 속도를 조절합니다."
+      },
+      {
+        "alias": "correct_eff",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트. 모듈이 물고 있는 `correct` 와 **이름이 다릅니다** — 이것은 액티비티가 넣어야 합니다."
+      },
+      {
+        "alias": "sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "버튼 효과음."
+      },
+      {
+        "alias": "sfx_correct",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "정답 효과음."
+      },
+      {
+        "alias": "sfx_incorrect",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Bg.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 3개 다 가짐(litgate, 2026-09-29)."
+      }
+    ],
+    "providedByModule": {
+      "note": "M36.addAsset() 이 등록하는 것은 폰트 하나와 `bg` · `bgm` · `correct` 뿐입니다.\n\n**이름이 코드에 박혔는데 모듈이 등록하지 않는 것** — 그림 `bar` · `cursor` · 로티 `correct_eff`(모듈이 물고 있는 `correct` 와 **다른 이름**) · 음원 `sfx01` · `sfx_correct` · `sfx_incorrect`. 여섯 개를 액티비티가 넣어야 합니다.",
+      "font": [
+        "NanumSquareRoundR"
+      ],
+      "image": [
+        "bg"
+      ],
+      "sound": [
+        "bgm"
+      ],
+      "lottie": [
+        "correct"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "startNarration",
+        "type": "asset:sound",
+        "required": true,
+        "default": "nar01",
+        "desc": "학습 시작 지문."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "quizNarration",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "문제를 읽는 음원."
+            },
+            {
+              "key": "endNarration",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "이닝을 마칠 때 읽는 음원."
+            },
+            {
+              "key": "touchPanel",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "cursorSpeed",
+                  "type": "number",
+                  "required": true,
+                  "desc": "커서가 한 바퀴 도는 시간(초). **생략하면 5 입니다**(TouchPanel.ts:250). 작을수록 빨라 난도가 올라갑니다."
+                },
+                {
+                  "key": "color",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "#E0D4FF",
+                    "#FFEBCF",
+                    "#FFEBF3"
+                  ],
+                  "desc": "선택판 배경색. **생략하면 #ffebcf 입니다**(TouchPanel.ts:189). 목록에 없는 색도 문자열로 그대로 씁니다."
+                },
+                {
+                  "key": "button",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 2,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "quizIDX",
+                        "type": "number",
+                        "required": true,
+                        "desc": "**이 버튼이 어느 빈칸의 답인지 가리키는 번호.** TouchPanel.ts:218 이 눌린 버튼의 quizIDX 와 지금 채워야 하는 칸의 quizIDX 를 견줍니다. 범위 밖 번호를 주면 그 버튼은 어떤 칸에도 맞지 않습니다."
+                      },
+                      {
+                        "key": "normal",
+                        "type": "asset:image",
+                        "required": true,
+                        "desc": "버튼 기본 그림."
+                      },
+                      {
+                        "key": "wrong",
+                        "type": "asset:image",
+                        "required": true,
+                        "desc": "오답일 때의 그림."
+                      },
+                      {
+                        "key": "correct",
+                        "type": "asset:image",
+                        "optional": true,
+                        "desc": "정답일 때의 그림."
+                      }
+                    ],
+                    "desc": "칸 하나."
+                  },
+                  "desc": "선택판 버튼들. **quizIDX 로 빈칸과 짝지어집니다.**",
+                  "minLengthWhy": "고를 것이 둘은 있어야 문제가 됩니다."
+                }
+              ],
+              "desc": "커서가 지나가는 선택판."
+            },
+            {
+              "key": "item",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "normal",
+                    "type": "string",
+                    "required": true,
+                    "desc": "칸에 보일 그림. **타입이 string 으로 잡혀 있지만 실제로는 그림 alias 입니다.**"
+                  },
+                  {
+                    "key": "blank",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "그 칸이 비었을 때 보일 그림(QuizItemPanel.ts:62)."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "한 줄에 놓이는 칸들. **아래 답 줄과 위 문제 줄이 같은 배열을 씁니다**(M36.ts:116~117 이 같은 item 을 두 패널에 넘깁니다).",
+              "minLengthWhy": "칸이 하나는 있어야 합니다."
+            },
+            {
+              "key": "quiz",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "number",
+                "desc": "그 칸의 문제 번호. 선택판 버튼의 quizIDX 와 맞춰 적습니다."
+              },
+              "desc": "칸마다의 문제 번호. item 과 같은 차례로 짝지어져 두 패널에 함께 넘어갑니다.",
+              "minLengthWhy": "item 과 같은 수만큼 필요합니다."
+            },
+            {
+              "key": "blank",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "bool",
+                "desc": "그 칸을 비울지."
+              },
+              "desc": "**아래 답 줄에서 어느 칸을 비울지.** 위 문제 줄에는 빈 배열이 넘어가므로 문제 줄은 다 채워져 보입니다(M36.ts:116 이 [] 를 넘깁니다).",
+              "minLengthWhy": "item 과 같은 수만큼 필요합니다."
+            },
+            {
+              "key": "quizPos",
+              "type": "object",
+              "optional": true,
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": -750,
+                  "desc": "줄 시작 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": -300,
+                  "desc": "줄 y."
+                },
+                {
+                  "key": "gap",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "칸 사이 간격(px). **생략하거나 quizPos 자체가 없으면 40 입니다**(M36.ts:116~117). 두 줄이 같은 gap 을 쓰려면 quizPos 쪽에 적습니다 — 코드가 두 패널 모두 quizPos.gap 을 봅니다."
+                }
+              ],
+              "desc": "위 문제 줄의 자리와 칸 간격."
+            },
+            {
+              "key": "answerPos",
+              "type": "object",
+              "optional": true,
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": -750,
+                  "desc": "줄 시작 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 100,
+                  "desc": "줄 y."
+                },
+                {
+                  "key": "gap",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "칸 사이 간격(px). **생략하거나 quizPos 자체가 없으면 40 입니다**(M36.ts:116~117). 두 줄이 같은 gap 을 쓰려면 quizPos 쪽에 적습니다 — 코드가 두 패널 모두 quizPos.gap 을 봅니다."
+                }
+              ],
+              "desc": "아래 답 줄의 자리와 칸 간격."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. 적은 차례대로 진행합니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "quizidx-pairs",
+      "level": "error",
+      "check": "blank 가 true 인 칸의 quiz 번호마다, touchPanel.button 에 같은 quizIDX 를 가진 버튼이 있어야 한다.",
+      "why": "TouchPanel.ts:218 이 두 번호를 견줍니다. 짝이 없으면 그 빈칸은 채울 수 없어 **이닝이 끝나지 않습니다.**"
+    },
+    {
+      "id": "arrays-same-length",
+      "level": "error",
+      "check": "item · quiz · blank 의 칸 수가 같아야 한다.",
+      "why": "세 배열을 같은 첨자로 씁니다. 짧은 쪽에서 undefined 를 읽어 칸이 사라지거나 빈칸 표시가 어긋납니다."
+    },
+    {
+      "id": "at-least-one-blank",
+      "level": "error",
+      "check": "blank 에 true 가 하나 이상 있어야 한다.",
+      "why": "채울 칸이 없으면 문제를 풀기 전에 이닝이 끝납니다."
+    },
+    {
+      "id": "gap-read-from-quizpos",
+      "level": "warn",
+      "check": "칸 간격은 quizPos.gap 에 적는다 — answerPos.gap 은 읽지 않는다.",
+      "why": "M36.ts:116~117 이 두 패널 모두 quizPos.gap 을 넘깁니다. answerPos.gap 만 고치면 아무 일도 일어나지 않습니다."
+    },
+    {
+      "id": "correct-eff-vs-correct",
+      "level": "error",
+      "check": "AssetTable 에 correct_eff 를 등록해야 한다.",
+      "why": "모듈이 물고 있는 것은 `correct` 이고 코드가 찾는 것은 `correct_eff` 입니다. 이름이 비슷해 있는 줄 알고 빠뜨리기 쉽습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bar · cursor · correct_eff · sfx01 · sfx_correct · sfx_incorrect 여섯 개를 등록해야 한다.",
+      "why": "이름이 코드에 박혔는데 모듈이 등록하지 않습니다. cursor 가 없으면 커서가 안 보여 **어디를 눌러야 할지 알 수 없습니다.**"
+    },
+    {
+      "id": "cursor-speed-difficulty",
+      "level": "warn",
+      "check": "cursorSpeed 를 지나치게 작게 두지 않는다.",
+      "why": "커서가 한 바퀴 도는 시간(초)입니다. 기본 5 이고, 1~2 로 두면 아이가 맞출 수 없습니다."
+    }
+  ],
+  "notes": [
+    "위 문제 줄과 아래 답 줄이 **같은 item 배열**을 씁니다. 위쪽에는 blank 로 [] 를 넘겨 다 채워 보이게 하고, 아래쪽에만 blank 를 적용합니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

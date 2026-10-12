@@ -1,0 +1,340 @@
+{
+  "specVersion": 1,
+  "module": "E39",
+  "subject": "EN",
+  "title": "UFO 로 낱말 빨아올려 문장 만들기",
+  "summary": "문장을 듣고 아래 늘어선 낱말 중 맞는 것을 UFO 로 빨아올려 순서대로 문장을 완성하는 활동.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E39",
+    "activities": [
+      "ENL2M02W3S3",
+      "ENL2M04W3S3",
+      "ENL2M06W3S3",
+      "ENL2M11W3S3"
+    ],
+    "doc": "README 없음. 근거는 E39.ts · Asset.ts · component/PlayStage.ts · component/Sentence.ts 와 표본 4차시(1·2·4·6호)입니다. 자리는 네 호 모두 ENL2M__W3S3 입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E39.addAsset();"
+      ],
+      "onInit": [
+        "E39.handle.onInit();",
+        "this.addChild(E39.handle);"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.volume(1);",
+        "bgm.loop(true);",
+        "bgm.play();",
+        "E39.handle.onStart(quizData)"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "E39",
+      "from": "@_common/module/EN"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "bg_ani1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경 장식 1."
+      },
+      {
+        "alias": "star",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "별 장식."
+      },
+      {
+        "alias": "speaker_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "스피커 배경."
+      },
+      {
+        "alias": "speaker_icon",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "스피커 아이콘."
+      },
+      {
+        "alias": "speaker_ani",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "스피커 애니."
+      },
+      {
+        "alias": "idle_ufo",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "대기 상태 UFO."
+      },
+      {
+        "alias": "fail_ufo",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "실패한 UFO."
+      },
+      {
+        "alias": "correct1_ufo",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "정답 UFO 1."
+      },
+      {
+        "alias": "correct2_ufo",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "정답 UFO 2."
+      },
+      {
+        "alias": "ufo_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "UFO 이펙트."
+      },
+      {
+        "alias": "correct_ufo_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 UFO 이펙트."
+      },
+      {
+        "alias": "correct_block_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 낱말 블록 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. **액티비티 onStart 가 직접 켭니다.**"
+      },
+      {
+        "alias": "guide_nar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. **모듈이 이름을 박아 부릅니다.**"
+      },
+      {
+        "alias": "ufo_move",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "UFO 움직이는 소리."
+      },
+      {
+        "alias": "ufo_suck",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "빨아올리는 소리."
+      },
+      {
+        "alias": "ufo-correct-ending",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "정답 마무리 소리. **같은 이름의 로티도 필요합니다** — 코드가 같은 문자열로 둘 다 찾습니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "E39.addAsset() 이 등록하는 것은 폰트와 `speaker` · `correct_sound_ef` · `wrong_sound_ef` · 도우미 음원(`correct01`~`03` · `incorrect01`~`03` · `inning-start1`~`3` · `inning_end1`~`3`) · 로티 `correct` 입니다.\n\n**나머지는 액티비티가 넣어야 합니다.** 표본 네 차시가 모두 공통으로 등록한 것이 사실상 모듈 몫입니다:\n그림 — `bg` · `bg_ani1` · `bg_ani2` · `spaceship` · `star` · `speaker_bg` · `speaker_icon` · `speaker_ani` · `idle_ufo` · `fail_ufo` · `correct1_ufo` · `correct2_ufo` · 로티 `ufo_ef` · `correct_ufo_ef` · `correct_block_ef` · `ufo-correct-ending`\n음원 — `bgm` · `guide_nar` · `ufo_move` · `ufo_suck`\n\n**`ufo-correct-ending` 은 로티 이름인데 `AudioManager.play` 로도 불립니다** — 양쪽에 같은 이름으로 등록해야 합니다.\n\n차시 고유는 `sentence_{낱말}` · `{낱말}_sound` 입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고 낱말 이름이 붙은 것은 그 차시 몫입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "sentence",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "string",
+                "desc": "낱말 하나. **화면에 글자로 그립니다** — 아래 words[].word 와 글자까지 같아야 짝이 됩니다."
+              },
+              "desc": "그 이닝 문장의 **낱말 목록. 적은 차례가 정답 순서입니다** — PlayStage.ts:84 가 빨아올린 낱말과 `sentence[지금 순서]` 를 견주고, 끝까지 맞으면 이닝이 끝납니다(:99).",
+              "minLengthWhy": "낱말이 둘은 있어야 순서 문제가 됩니다."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝 문장의 음원."
+            },
+            {
+              "key": "sentenceDelay",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "string",
+                "desc": "그 낱말이 나타나기까지 기다릴 시간(ms)."
+              },
+              "desc": "낱말이 하나씩 나타나는 간격(ms). Sentence.ts:84~87 이 칸마다 `delay()` 를 겁니다. **타입이 string 으로 잡혀 있지만 값은 ms 수입니다** — 표본이 계산식을 적어 그렇게 보인 것입니다.",
+              "minLengthWhy": "sentence 낱말 수만큼 필요합니다."
+            },
+            {
+              "key": "words",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "word",
+                    "type": "string",
+                    "required": true,
+                    "desc": "낱말. **sentence 의 값과 글자까지 같아야 정답으로 인정됩니다.**"
+                  },
+                  {
+                    "key": "sound",
+                    "type": "asset:sound",
+                    "required": true,
+                    "desc": "그 낱말의 음원."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝에 아래로 늘어설 낱말들 — **정답과 오답이 섞여 있습니다.** `word` 로 sentence 와 짝을 찾습니다.",
+              "minLengthWhy": "정답 낱말 수보다 많아야 고르는 문제가 됩니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. **칸 수가 곧 이닝 수입니다.** 적은 차례대로 진행합니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      },
+      {
+        "key": "position",
+        "type": "posTable",
+        "required": true,
+        "default": {
+          "4": [
+            {
+              "x": -610,
+              "y": 0
+            },
+            {
+              "x": -204,
+              "y": 0
+            },
+            {
+              "x": 202,
+              "y": 0
+            },
+            {
+              "x": 608,
+              "y": 0
+            }
+          ],
+          "5": [
+            {
+              "x": -660,
+              "y": 0
+            },
+            {
+              "x": -329,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 333,
+              "y": 0
+            },
+            {
+              "x": 658,
+              "y": 0
+            }
+          ]
+        },
+        "desc": "낱말이 놓이는 자리표. **낱말 개수를 열쇠로 한 표입니다** — 표본은 `4` 와 `5` 두 벌이고, 그 이닝의 `words` 개수에 맞는 열쇠를 찾습니다. **쓰는 개수의 열쇠가 없으면 자리를 못 찾습니다.**"
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "sentence-words-match",
+      "level": "error",
+      "check": "sentence 의 모든 낱말이 words[].word 안에 글자까지 같게 있어야 한다.",
+      "why": "PlayStage.ts:84 가 문자열로 견줍니다. 한 글자만 달라도 그 낱말은 **아무리 빨아올려도 정답이 되지 않아 이닝이 끝나지 않습니다.**"
+    },
+    {
+      "id": "position-key-exists",
+      "level": "error",
+      "check": "position 에 그 이닝 words 개수와 같은 열쇠가 있어야 한다.",
+      "why": "낱말 개수로 자리표를 찾습니다. 표본은 4·5 만 있으니 6개를 쓰려면 `6` 열쇠를 새로 만들어야 합니다 — 없으면 낱말이 겹쳐 쌓입니다."
+    },
+    {
+      "id": "sentence-delay-length",
+      "level": "error",
+      "check": "sentenceDelay 의 칸 수가 sentence 낱말 수와 같아야 한다.",
+      "why": "Sentence.ts:84 가 칸마다 delay 를 겁니다. 모자라면 뒤쪽 낱말이 한꺼번에 나타납니다."
+    },
+    {
+      "id": "words-more-than-sentence",
+      "level": "error",
+      "check": "words 개수가 sentence 낱말 수보다 많아야 한다.",
+      "why": "오답이 없으면 고를 것이 없어 문제가 성립하지 않습니다."
+    },
+    {
+      "id": "ending-alias-both-kinds",
+      "level": "error",
+      "check": "`ufo-correct-ending` 을 로티와 음원 양쪽에 같은 이름으로 등록해야 한다.",
+      "why": "코드가 같은 문자열로 애니와 소리를 둘 다 찾습니다. 한쪽만 넣으면 그림이나 소리 한쪽이 조용히 빠집니다."
+    },
+    {
+      "id": "delay-is-number",
+      "level": "warn",
+      "check": "sentenceDelay 값은 ms 수다.",
+      "why": "스펙 타입이 string 으로 잡혀 있지만 표본이 계산식을 적어 그렇게 보인 것입니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 열여덟 개가 모두 등록돼야 한다.",
+      "why": "모듈이 등록하는 것은 폰트·스피커·효과음·도우미 음원뿐입니다."
+    }
+  ],
+  "notes": [
+    "표본 네 차시가 모두 ENL2M__W3S3 자리입니다.",
+    "8호는 ENL2M07W3S3 이고 지금 「리소스 대기」입니다."
+  ]
+}

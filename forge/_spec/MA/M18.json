@@ -1,0 +1,934 @@
+{
+  "specVersion": 1,
+  "module": "M18",
+  "subject": "MA",
+  "title": "다리 건너기 (수만큼 다리 놓기)",
+  "summary": "캐릭터가 다리를 건너가는 활동. 다리 조각을 골라 놓아 길을 이으면 캐릭터가 뛰어 건너고, 이닝마다 다리 구성과 정답이 다릅니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M18",
+    "activities": [
+      "MAL1M01W4S2"
+    ],
+    "doc": "README 없음. 근거는 M18.ts 와 M18_Bridge · M18_BridgeManager · M18_Monster · M18_MoveMonster · M18_EffectPlayer · M18_BlockScreen 그리고 표본 MAL1M01W4S2 입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "M18",
+        "from": "@_common/module/MA/M18/M18"
+      },
+      {
+        "symbol": "AssetTable",
+        "from": "./AssetTable",
+        "ns": true
+      }
+    ],
+    "members": [
+      "private readonly mM18: M18 = new M18();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "await this.mM18.onLoad({",
+        "  font: AssetTable.font,",
+        "  image: AssetTable.image,",
+        "  sound: AssetTable.sound,",
+        "  lottie: AssetTable.lottie,",
+        "});"
+      ],
+      "onInit": [
+        "this.eventMode = 'static';",
+        "this.interactive = true;",
+        "await this.mM18.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mM18.onStart();"
+      ],
+      "onEnd": [
+        "await this.mM18.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mM18.onUpdate();"
+      ],
+      "onAffordanceOn": [
+        "await this.mM18.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mM18.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "background",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "startBridge",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "출발 다리."
+      },
+      {
+        "alias": "correctEffect1",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 모듈이 AudioManager.getSound(\"bgm\") 으로 찾습니다."
+      },
+      {
+        "alias": "intro",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. mainCharacter.guide(\"intro\")."
+      },
+      {
+        "alias": "action",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "다리를 놓을 때의 효과음."
+      },
+      {
+        "alias": "jump",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "뛰는 효과음."
+      },
+      {
+        "alias": "success",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "성공 효과음."
+      },
+      {
+        "alias": "fail",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "실패 효과음."
+      },
+      {
+        "alias": "inningComplete",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "이닝 완료 효과음."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 AssetTable 을 통째로 받습니다** — 액티비티 onLoad 가 `{ font, image, sound, lottie }` 를 넘깁니다. 그래서 alias 목록을 스펙이 정확히 적어 줄 수 없습니다(M13 · M15 와 같은 갈래).\n\n**이름이 코드에 박힌 것** — 그림 `background` · `startBridge` · `correctEffect1` · 음원 `bgm`(모듈이 getSound 로 찾습니다) · `action` · `jump` · `success` · `fail` · `inningComplete` · 지문 `intro`(mainCharacter.guide).\n\n**번호로 조합하는 것** — `correct{다리 갈래}`(bridgeDatas[].type 값) · `jumpMonster{이닝}` · `monsterMove{이닝}`. **이닝은 1 부터**입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "totalInningCount",
+        "type": "number",
+        "required": true,
+        "desc": "이닝 수. **아래 표들의 숫자 열쇠가 1 부터 이 수까지 있어야 합니다.**"
+      },
+      {
+        "key": "bridgeDatas",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "id",
+                  "type": "number",
+                  "required": true,
+                  "desc": "다리 조각 번호. gameAnswers 가 이 번호를 가리킵니다."
+                },
+                {
+                  "key": "type",
+                  "type": "number",
+                  "required": true,
+                  "desc": "다리 갈래. **정답 이펙트 alias 를 `correct{이 값}` 으로 조합합니다** — 쓰는 갈래마다 그 그림이 있어야 합니다."
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 400.57,
+                  "desc": "자리 y."
+                },
+                {
+                  "key": "name",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "다리 조각 그림."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "id",
+                  "type": "number",
+                  "required": true,
+                  "desc": "다리 조각 번호. gameAnswers 가 이 번호를 가리킵니다."
+                },
+                {
+                  "key": "type",
+                  "type": "number",
+                  "required": true,
+                  "desc": "다리 갈래. **정답 이펙트 alias 를 `correct{이 값}` 으로 조합합니다** — 쓰는 갈래마다 그 그림이 있어야 합니다."
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 400.57,
+                  "desc": "자리 y."
+                },
+                {
+                  "key": "name",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "다리 조각 그림."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "id",
+                  "type": "number",
+                  "required": true,
+                  "desc": "다리 조각 번호. gameAnswers 가 이 번호를 가리킵니다."
+                },
+                {
+                  "key": "type",
+                  "type": "number",
+                  "required": true,
+                  "desc": "다리 갈래. **정답 이펙트 alias 를 `correct{이 값}` 으로 조합합니다** — 쓰는 갈래마다 그 그림이 있어야 합니다."
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 400.57,
+                  "desc": "자리 y."
+                },
+                {
+                  "key": "name",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "다리 조각 그림."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다의 다리 조각 목록. **열쇠가 이닝 번호(1 부터)입니다** — 코드가 `Record<number, …>` 로 받아 이닝 번호로 바로 찾습니다."
+      },
+      {
+        "key": "gameAnswers",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "칸 하나."
+            },
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "칸 하나."
+            },
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "칸 하나."
+            },
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다의 정답 — 놓아야 하는 다리 조각 번호(id) 목록입니다. **적은 차례가 놓는 순서입니다.** **열쇠가 이닝 번호(1 부터)입니다** — 코드가 `Record<number, …>` 로 받아 이닝 번호로 바로 찾습니다."
+      },
+      {
+        "key": "itemDatas",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "name",
+                "type": "asset:image",
+                "required": true,
+                "desc": "아이템 그림."
+              }
+            ],
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "name",
+                "type": "asset:image",
+                "required": true,
+                "desc": "아이템 그림."
+              }
+            ],
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "name",
+                "type": "asset:image",
+                "required": true,
+                "desc": "아이템 그림."
+              }
+            ],
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다 화면에 놓는 아이템. **열쇠가 이닝 번호(1 부터)입니다** — 코드가 `Record<number, …>` 로 받아 이닝 번호로 바로 찾습니다."
+      },
+      {
+        "key": "monsterMovePositions",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "array",
+            "required": true,
+            "minLength": 6,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다 캐릭터가 지나갈 자리들. **열쇠가 이닝 번호(1 부터)입니다** — 코드가 `Record<number, …>` 로 받아 이닝 번호로 바로 찾습니다."
+      },
+      {
+        "key": "BridgeNarrationKey",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "asset:sound",
+              "desc": "칸 하나."
+            },
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "asset:sound",
+              "desc": "칸 하나."
+            },
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "asset:sound",
+              "desc": "칸 하나."
+            },
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다 다리를 놓을 때 읽을 음원 alias 목록. **열쇠가 이닝 번호(1 부터)입니다** — 코드가 `Record<number, …>` 로 받아 이닝 번호로 바로 찾습니다."
+      },
+      {
+        "key": "moveMonsterAnimData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다 움직이는 캐릭터 애니 크기. **열쇠가 이닝 번호(1 부터)입니다** — 코드가 `Record<number, …>` 로 받아 이닝 번호로 바로 찾습니다."
+      },
+      {
+        "key": "monsterConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "monsterIdle1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "1번 이닝의 캐릭터 대기 애니 설정."
+          },
+          {
+            "key": "monsterIdle2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "2번 이닝의 캐릭터 대기 애니 설정."
+          },
+          {
+            "key": "monsterIdle3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "3번 이닝의 캐릭터 대기 애니 설정."
+          },
+          {
+            "key": "monsterClear1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "1번 이닝의 캐릭터 완료 애니 설정."
+          },
+          {
+            "key": "monsterClear2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "2번 이닝의 캐릭터 완료 애니 설정."
+          },
+          {
+            "key": "monsterClear3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "3번 이닝의 캐릭터 완료 애니 설정."
+          }
+        ],
+        "desc": "캐릭터 애니 설정. **열쇠 뒤 숫자가 이닝 번호(1 부터)입니다** — monsterIdle{n} 과 monsterClear{n} 두 벌씩 필요합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "inning-keys-one-based",
+      "level": "error",
+      "check": "bridgeDatas · gameAnswers · itemDatas · monsterMovePositions · BridgeNarrationKey · moveMonsterAnimData 의 열쇠가 1 부터 totalInningCount 까지 있어야 하고, monsterConfig 에 monsterIdle{n} · monsterClear{n} 이 그만큼 있어야 한다.",
+      "why": "코드가 이닝 번호를 열쇠로 바로 찾습니다. 0 부터 적거나 한 이닝이 빠지면 그 이닝에서 undefined 를 읽어 **다리도 캐릭터도 없는 빈 화면**이 됩니다."
+    },
+    {
+      "id": "answers-reference-ids",
+      "level": "error",
+      "check": "gameAnswers[이닝] 의 값이 그 이닝 bridgeDatas 의 id 중에 있어야 한다.",
+      "why": "정답을 조각 번호로 가리킵니다. 없는 번호면 놓을 수 없는 정답이 되어 **이닝을 끝낼 방법이 없습니다.**"
+    },
+    {
+      "id": "correct-effect-per-type",
+      "level": "error",
+      "check": "bridgeDatas 에 쓰는 모든 type 값에 대해 `correct{type}` 그림이 있어야 한다.",
+      "why": "이펙트 alias 를 갈래 번호로 조합합니다. 없으면 정답인데 이펙트가 안 나와 맞았는지 알기 어렵습니다."
+    },
+    {
+      "id": "monster-alias-per-inning",
+      "level": "error",
+      "check": "이닝마다 `jumpMonster{이닝}` 과 `monsterMove{이닝}` 이 있어야 한다.",
+      "why": "이닝 번호로 조합합니다. 없으면 그 이닝에서 캐릭터가 안 보입니다."
+    },
+    {
+      "id": "narration-count-matches-answers",
+      "level": "warn",
+      "check": "BridgeNarrationKey[이닝] 의 개수를 gameAnswers[이닝] 개수에 맞춘다.",
+      "why": "다리를 놓을 때마다 하나씩 읽습니다. 모자라면 뒤쪽 다리에서 무음이 됩니다."
+    },
+    {
+      "id": "asset-table-passed-whole",
+      "level": "warn",
+      "check": "onLoad 가 AssetTable 네 배열을 그대로 넘기는 훅을 지우지 않는다.",
+      "why": "이 모듈은 alias 를 AssetTable 객체에서 직접 골라 씁니다. 훅을 줄이면 그림이 통째로 안 붙습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 열 개가 모두 등록돼야 한다.",
+      "why": "이름이 코드에 박혀 있습니다. 없는 그림은 console.error 만 찍고 사라지고, 없는 음원은 무음으로 통과합니다."
+    }
+  ],
+  "notes": [
+    "표본이 MAL1M01W4S2 한 차시뿐입니다. 표본은 이닝 3개(열쇠 1 · 2 · 3)이고, 이닝을 늘리려면 여섯 표와 monsterConfig 를 모두 같이 늘려야 합니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

@@ -1,0 +1,759 @@
+{
+  "specVersion": 1,
+  "module": "K23",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K23",
+    "activities": [
+      "KOL3M01W4S2",
+      "KOL3M02W4S2",
+      "KOL3M03W4S2",
+      "KOL3M04W4S2",
+      "KOL3M05W4S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "await this.mK23.onLoad(font, image, lottie, sound);"
+      ],
+      "onInit": [
+        "await this.mK23.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mK23.onStart();"
+      ],
+      "onEnd": [
+        "await this.mK23.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mK23.onUpdate(_ticker);"
+      ],
+      "onAffordanceOn": [
+        "await this.mK23.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mK23.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K23",
+      "from": "@_common/module/KR/K23/K23"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_BG",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "bg_background",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -540
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 2160
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "Com_VideoTape",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "video_dimmed",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 129.7
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 94.69
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1659.92
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 891.17
+                  }
+                ]
+              },
+              {
+                "key": "video_replay_btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 869
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 444
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 182.97
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 191.75
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "videoLayout",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "screen",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 129.7
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 94.69
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1659.92
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 891.17
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "userLayout",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "cam",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 770
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 149
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 960
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 540
+                  }
+                ]
+              },
+              {
+                "key": "radius",
+                "type": "number",
+                "required": true,
+                "default": 45
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K23_News",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 770
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 149
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 960
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 540
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "lottie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1920
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 1080
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "Com_Complete",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "complete_btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 1764
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 924
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 116
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 116
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K23_Emcee",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "lottie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 240
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 417
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 530
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 490
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true,
+                    "default": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true,
+                    "default": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "value",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "current",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "length",
+                "type": "number",
+                "required": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K23_ReplayVideo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "replayVideo_table",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 129.67
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 907.46
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1660
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 79.4
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K23_Recording",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "recording_bar_basic",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 200
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "recording_bar_start",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 200
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "recording_basic",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 91.84
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  }
+                ]
+              },
+              {
+                "key": "recording_start",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  },
+                  {
+                    "key": "visible",
+                    "type": "bool",
+                    "required": true,
+                    "default": false
+                  }
+                ]
+              },
+              {
+                "key": "recording_line",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 216
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 116
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "area",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "button",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "position",
+                    "type": "object",
+                    "required": true,
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true,
+                        "default": 852
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true,
+                        "default": 924
+                      },
+                      {
+                        "key": "width",
+                        "type": "number",
+                        "required": true,
+                        "default": 216
+                      },
+                      {
+                        "key": "height",
+                        "type": "number",
+                        "required": true,
+                        "default": 116
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "Com_Affordance",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "label",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "recording",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "Button"
+                ],
+                "default": "Button"
+              },
+              {
+                "key": "complete",
+                "type": "asset:image",
+                "required": true,
+                "default": "complete_btn"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

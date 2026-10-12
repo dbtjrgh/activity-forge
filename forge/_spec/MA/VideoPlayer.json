@@ -1,0 +1,210 @@
+{
+  "specVersion": 1,
+  "module": "VideoPlayer",
+  "subject": "MA",
+  "title": "영상 한 편 (탐색수학)",
+  "summary": "모듈이 아니라 VideoPlayActivity 를 상속하는 액티비티입니다. GameData 가 없고, 넣을 것은 video.mp4 와 thumb.png 두 개뿐입니다. 탐색수학 차시(W1S1·W3S1)가 이 꼴입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/sparkLib/module/VideoPlayer/VideoPlayActivity",
+    "note": "초안이 sparkon_common/_common/module/MA/VideoPlayer 로 적어 두었는데 그런 폴더는 없습니다 — 이 모듈은 과목 폴더가 아니라 sparkLib 에 있습니다.",
+    "activities": [
+      "MAL1M01W1S1",
+      "MAL1M01W3S1",
+      "MAL1M02W1S1",
+      "MAL1M02W3S1",
+      "MAL1M03W1S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "await super.onInit();",
+        "this.initVideoPlay('bgFrame', 'thumb', 'video');"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm');",
+        "bgm.loop(true);",
+        "bgm.volume(1);",
+        "bgm.play();",
+        "await SparkApp.mainMenu.mainCharacter.show()",
+        "await this.mPlayer.ready();",
+        "this.mPlayer.playLock(true);",
+        "await SparkApp.mainMenu.mainCharacter.guide('play')",
+        "SparkApp.activeAffordanceWaiter(true)",
+        "this.mPlayer.playLock(false);",
+        "this.mPlayer.playButtonFocusAni();",
+        "this.on('startPlay', async () => {",
+        "  if (bgm.playing()) {",
+        "    bgm.fade(1, 0, 1000);",
+        "    // bgm.once('fade', () => {",
+        "      //bgm.stop();",
+        "    // });",
+        "  }",
+        "})",
+        "this.on('pause', async () => {",
+        "  bgm.fade(1, 1, 1000);",
+        "  //bgm.play()",
+        "})",
+        "this.on('endPlay', async () => {",
+        "  // const nar = ['end_nar01', 'end_nar02', 'end_nar03']",
+        "  // shuffleArray(nar);",
+        "  // await SparkApp.mainMenu.mainCharacter.guide(nar[0])",
+        "  await SparkApp.eop.show(1);",
+        "})",
+        "//await AudioManager.playAsync('play');"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "VideoPlayActivity",
+      "from": "@_common/sparkLib/module/VideoPlayer/VideoPlayActivity"
+    },
+    "import": {
+      "symbol": "SparkApp",
+      "from": "@_common/sparkLib/Application"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "video",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "initVideoPlay(\"bgFrame\",\"thumb\",\"video\") 의 세 번째 인자. mp4 지만 AssetManager 로 등록해야 해서 image 배열에 들어갑니다. 파일은 images/ 가 아니라 액티비티 폴더 바로 아래(base: root)입니다 — 여기가 제일 자주 틀립니다."
+      },
+      {
+        "alias": "thumb",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "재생 전에 보이는 썸네일. 차시마다 새로 그립니다.",
+        "size": {
+          "w": 1280,
+          "h": 720,
+          "why": "재생을 누르면 플레이어를 1080 ÷ 썸네일 높이 만큼 키웁니다(VideoPlayActivity.ts:52). 1280×720 이면 1.5배로 화면을 채우고, 1921×1081 처럼 화면 크기로 오면 1배라 확대가 안 됩니다 — 에러도 없이. 완성본 MA 12곳 · EN 24곳이 이 크기입니다(7호 MAL1M07W1S1 · W3S1 만 1921×1081)."
+        }
+      },
+      {
+        "alias": "bgFrame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "영상 테두리. 호마다 같은 frame_case.png 를 씁니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "onStart 가 AudioManager.getSound(\"bgm\") 으로 직접 찾습니다. 재생이 시작되면 1초에 걸쳐 페이드아웃하고, 일시정지하면 되돌아옵니다."
+      },
+      {
+        "alias": "play",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "도우미 캐릭터가 「눌러 보자」고 읽는 지문. mainCharacter.guide(\"play\") 로 이름이 박혀 있습니다."
+      }
+    ],
+    "defaults": {
+      "image": [
+        {
+          "alias": "video",
+          "file": "video.mp4",
+          "base": "root"
+        },
+        {
+          "alias": "playBTN",
+          "file": "video_play_btn_n.png"
+        },
+        {
+          "alias": "pauseBTN",
+          "file": "video_stop_btn_n.png"
+        },
+        {
+          "alias": "closeBTN",
+          "file": "popup_guide_close_btn_n.png"
+        },
+        {
+          "alias": "bgFrame",
+          "file": "frame_case.png"
+        },
+        {
+          "alias": "thumb",
+          "file": "thumb.png"
+        }
+      ],
+      "sound": [
+        {
+          "alias": "bgm",
+          "file": "MA_ani_bgm_01.mp3"
+        },
+        {
+          "alias": "play",
+          "file": "SL_ma_com_ani_nar01.mp3"
+        },
+        {
+          "alias": "end_nar01",
+          "file": "SL_ma_com_nar02.mp3"
+        },
+        {
+          "alias": "end_nar02",
+          "file": "SL_ma_com_nar03.mp3"
+        },
+        {
+          "alias": "end_nar03",
+          "file": "SL_ma_com_nar04.mp3"
+        }
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "unused",
+    "fields": []
+  },
+  "aliases": [
+    "애니메이션"
+  ],
+  "aliasNote": "ANI 와 사실상 같은 것입니다 — WBS 가 모듈 칸을 - 로 두고 옆 칸에 애니메이션 이라고 적는 자리이고, 코드는 1~7호 모두 VideoPlayActivity 를 상속합니다. 스펙이 둘로 나뉘어 있는 것은 배치표가 이름을 둘로 적어 왔기 때문입니다.",
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "video · thumb · bgFrame · bgm · play 다섯 alias 가 모두 등록돼야 한다.",
+      "why": "다섯 다 코드가 문자열로 직접 찾습니다. 빠지면 빌드는 통과하고 런타임에 깨집니다."
+    },
+    {
+      "id": "video-at-activity-root",
+      "level": "error",
+      "check": "video 의 파일 자리는 base: root 여야 한다 — public/sparklab/{학습코드}/video.mp4.",
+      "why": "images/ 아래에 두면 경로가 어긋나 영상만 안 나옵니다. 썸네일은 보이므로 눈으로는 다 된 것처럼 보입니다."
+    },
+    {
+      "id": "eop-on-endplay",
+      "level": "error",
+      "check": "onStart 의 endPlay 핸들러가 SparkApp.eop.show(1) 을 불러야 한다.",
+      "why": "안 부르면 영상이 끝나도 학습이 끝나지 않습니다. M28 에서 같은 사고가 있었습니다."
+    },
+    {
+      "id": "end-nar-optional",
+      "level": "warn",
+      "check": "end_nar01~03 은 등록만 해 두고 쓰지 않는 것이 기본이다.",
+      "why": "끝 나레이션을 살리려면 endPlay 핸들러의 주석을 풀어야 합니다. 등록만 해 두고 안 쓰는 것은 정상입니다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 레시피 gameData 에 있으면 경고.",
+      "why": "GameData 가 없는 모듈이라 값을 적을 자리가 없습니다."
+    }
+  ],
+  "notes": [
+    "레시피에 적을 것이 사실상 없습니다. code 와 module 만 있으면 나머지는 defaults 가 채웁니다.",
+    "진짜 작업은 public/sparklab/{학습코드}/video.mp4 와 images/thumb.png 를 넣는 것입니다.",
+    "8호는 MAL1M07W1S1 · MAL1M07W3S1 두 차시가 이 꼴이고 둘 다 이미 만들어져 있습니다. L2·L3 의 같은 자리는 인터북(MIB)입니다."
+  ]
+}

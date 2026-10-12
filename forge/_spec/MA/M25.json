@@ -1,0 +1,356 @@
+{
+  "specVersion": 1,
+  "module": "M25",
+  "subject": "MA",
+  "title": "두더지 잡기 (문제 보고 맞는 것 때리기)",
+  "summary": "언덕 뒤 구멍에서 토끼들이 판을 들고 올라오고, 문제 패널의 문제에 맞는 토끼를 망치로 때리는 활동. 문제를 맞히면 다음 문제로 넘어가고, 문제를 다 풀면 이닝이 끝납니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M25",
+    "activities": [
+      "MAL1M02W1S3",
+      "MAL1M06W4S2",
+      "MAL2M02W1S3",
+      "MAL2M04W2S3",
+      "MAL2M05W1S3"
+    ],
+    "doc": "README 없음. 근거는 M25.ts · GameScreen.ts · GameTarget.ts · QuizPanel.ts · BG.ts 와 표본 5차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M25.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild( M25.handle );",
+        "await M25.handle.init( quizData );"
+      ],
+      "onStart": [
+        "await M25.handle.start();",
+        "await M25.handle.play();",
+        "await M25.handle.finish();",
+        "// await SparkApp.eop.show();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onResize": [
+        "M25.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M25",
+      "from": "@_common/module/MA"
+    }
+  },
+  "assets": {
+    "required": [],
+    "providedByModule": {
+      "note": "M25.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M25 에 있습니다(별도 repo). 로티 alias 가 MAL1M02W1S3_ 로 시작하는 것은 최초 제작 차시 이름이 그대로 굳은 것입니다 — 활동별 이름이 아니라 모듈 공용이므로 바꾸지 마세요.\n\n**이름을 조합해 찾거나 GameData 가 가리키는 자원** — required 에는 이름이 고정된 것만 적을 수 있어서 여기에 규칙을 둡니다.\n- `(문제 그림)` (image) ← quizData.inningData[].quizPanel[].normal · .answered — 문제 패널에 올라가는 그림 두 벌 — 풀기 전(normal)과 푼 뒤(answered). 이름은 자유이고 GameData 가 가리킵니다.\n- `(토끼가 든 판 그림)` (image) ← quizData.inningData[].targets[].image — 선지. 토끼가 들고 올라오는 판에 붙습니다.\n- `(문제 음원)` (sound) ← quizData.inningData[].quizPanel[].soundBtn.sound — 문제 패널의 동그란 소리 버튼을 누르면 재생됩니다. 빈 문자열이면 버튼이 만들어지지 않습니다.",
+      "image": [
+        "bg",
+        "bg_scrollbase",
+        "hole",
+        "quiz_panel",
+        "target_panel",
+        "circleBTN_normal"
+      ],
+      "sound": [
+        "bgm",
+        "SL_ma_cor_sfx01",
+        "SL_ma_cor_sfx02",
+        "SL_ma_inc_sfx02",
+        "SL_ma_m25_nar01"
+      ],
+      "lottie": [
+        "MAL1M02W1S3_rabbit_idle01",
+        "MAL1M02W1S3_rabbit_idle02",
+        "MAL1M02W1S3_rabbit_idle03",
+        "MAL1M02W1S3_rabbit_ans01",
+        "MAL1M02W1S3_rabbit_ans02",
+        "MAL1M02W1S3_hammer_Blu",
+        "MAL1M02W1S3_hammer_Pur",
+        "MAL1M02W1S3_hammer_Red",
+        "MAL1M02W1S3_correct_ef"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "hammer",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "Bmon",
+          "Pmon",
+          "Rmon"
+        ],
+        "desc": "망치 색. Bmon=파랑 · Pmon=보라 · Rmon=빨강 이고, GameScreen.init 이 이 값으로 로티 alias(hammer_Blu/Pur/Red)를 고릅니다. **다른 값을 적으면 조용히 파랑으로 떨어집니다**(else 가 없는 if 사슬)."
+      },
+      {
+        "key": "bg",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "mask",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "startX",
+                "type": "number",
+                "required": true,
+                "default": -1000,
+                "desc": "곡선 왼쪽 끝 x. 화면 밖까지 넉넉히 잡습니다."
+              },
+              {
+                "key": "endX",
+                "type": "number",
+                "required": true,
+                "default": 1000,
+                "desc": "곡선 오른쪽 끝 x. **아래를 닫는 lineTo 의 y 에도 이 값이 그대로 쓰입니다**(BG.ts:94 — lineTo(endX, endX)). 그래서 endX 를 줄이면 마스크 아래쪽이 같이 올라옵니다. 의도한 것인지 확인되지 않았습니다."
+              },
+              {
+                "key": "posY",
+                "type": "number",
+                "required": true,
+                "desc": "마스크 전체를 위아래로 옮기는 값. 언덕 높이를 맞춥니다."
+              },
+              {
+                "key": "curve",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "cpx",
+                    "type": "number",
+                    "required": true,
+                    "default": 0,
+                    "desc": "제어점 x. 보통 0(가운데)입니다."
+                  },
+                  {
+                    "key": "cpy",
+                    "type": "number",
+                    "required": true,
+                    "desc": "제어점 y. 이 값이 언덕이 얼마나 볼록한지를 정합니다."
+                  },
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 1000,
+                    "desc": "곡선 끝점 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "곡선 시작·끝점 y. moveTo 와 quadraticCurveTo 가 같은 y 를 쓰므로 양끝 높이가 같습니다."
+                  }
+                ],
+                "desc": "곡선의 제어점과 끝점."
+              }
+            ],
+            "desc": "언덕 곡선. 2차 베지어 한 조각으로 그립니다(moveTo → quadraticCurveTo → lineTo 두 번으로 닫습니다)."
+          }
+        ],
+        "desc": "배경 언덕 마스크. 토끼는 이 곡선 **아래로 잘려** 보입니다 — 구멍에서 올라오는 것처럼 보이게 하는 장치입니다. 값이 어긋나면 토끼가 언덕 위로 떠 보이거나 아예 안 보입니다."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "quizPanel",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "normal",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "풀기 전 문제 그림. **판을 뺀 내용만** 넣습니다 — 판(quiz_panel)은 모듈이 width · height 로 따로 그리고, 문제 그림이 소리 버튼보다 나중에 올라가(QuizPanel.ts:55-56) 판까지 든 통그림이면 **스피커 버튼을 덮습니다**(MAL3M07W2S3 900×504 → 503×338, 수정요청 #145). 완성본 10곳 모두 문제 그림이 판보다 작습니다."
+                  },
+                  {
+                    "key": "answered",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "맞힌 뒤로 바뀌는 그림. 토끼가 든 마크가 패널로 날아온 뒤 이것으로 교체됩니다. normal 과 같이 **판을 뺀 내용만**입니다."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "문제 패널 배경(quiz_panel)을 늘릴 너비(px). 그림마다 달라서 문제별로 적습니다."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "문제 패널 배경 높이(px)."
+                  },
+                  {
+                    "key": "soundBtn",
+                    "type": "object",
+                    "required": true,
+                    "fields": [
+                      {
+                        "key": "sound",
+                        "type": "asset:sound",
+                        "required": true,
+                        "desc": "버튼을 누르면 재생할 음원. **빈 문자열이면 버튼을 만들지 않습니다** — 소리 없는 문제는 \"\" 로 둡니다."
+                      },
+                      {
+                        "key": "correct_sound",
+                        "type": "asset:sound",
+                        "optional": true,
+                        "desc": "맞힌 뒤 재생할 음원. 생략하면 공통 효과음만 납니다."
+                      },
+                      {
+                        "key": "pos",
+                        "type": "point",
+                        "optional": true,
+                        "figma": true,
+                        "desc": "버튼 자리. quizPos 를 기준으로 다시 계산되므로 둘을 같이 적습니다(QuizPanel.ts:108~110)."
+                      }
+                    ],
+                    "desc": "문제를 다시 들려주는 동그란 버튼(circleBTN_normal)."
+                  },
+                  {
+                    "key": "quizPos",
+                    "type": "point",
+                    "optional": true,
+                    "figma": true,
+                    "desc": "**판 안에서 문제 그림 가운데가 놓일 자리**입니다(문제 그림 anchor 0.5, QuizPanel.ts:113-115). soundBtn.pos 가 있을 때만 씁니다 — 없으면 모듈이 소리 버튼과 문제 그림을 나란히 늘어놓습니다. 판을 뺀 그림으로 바꿀 때는 예전 통그림에서 내용이 있던 자리를 그대로 옮깁니다(MAL3M07W2S3: {0,-6} → {0.5,-10} · {7.5,-10})."
+                  },
+                  {
+                    "key": "answeredPos",
+                    "type": "point",
+                    "optional": true,
+                    "figma": true,
+                    "desc": "맞힌 뒤 그림이 놓이는 자리. 그림 크기가 달라 자리를 따로 잡아야 할 때 씁니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝에서 순서대로 낼 문제 목록. **문제를 다 맞히면 이닝이 끝납니다**(QuizPanel.isEnd 가 mCurrentQuizIndex 로 판정). 칸 하나 = 문제 하나입니다."
+            },
+            {
+              "key": "targets",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "image",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "토끼가 들고 올라오는 판 그림(선지)."
+                  },
+                  {
+                    "key": "correct",
+                    "type": "number",
+                    "required": true,
+                    "desc": "**이 토끼가 몇 번째 문제의 정답인지. 1 부터 셉니다.** GameTarget.ts:153 이 correct == quizPanel 현재 번호 + 1 로 비교하므로, quizPanel[0] 의 정답은 correct: 1 입니다. 0 부터 적으면 **모든 문제가 오답 처리**됩니다 — 에러는 나지 않고 학생이 계속 틀립니다. 어느 문제의 정답도 아닌 토끼는 겹치지 않는 큰 수(예: 99)를 줍니다."
+                  },
+                  {
+                    "key": "pos",
+                    "type": "point",
+                    "required": true,
+                    "figma": true,
+                    "desc": "토끼가 올라올 구멍 자리."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝에 올라오는 토끼(선지) 목록. 구멍 자리마다 하나씩입니다.",
+              "minLengthWhy": "고를 것이 하나면 문제가 성립하지 않습니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. 이닝 수가 곧 화면 위 이닝 표시 개수입니다(inningDisplay.setInningCount). 적은 순서대로 진행하고 셔플하지 않습니다.",
+        "minLengthWhy": "표본 5차시가 4~6개씩입니다. 초안의 4 는 표본 최솟값일 뿐이라, 이닝 표시가 의미를 갖는 2 로 낮췄습니다."
+      },
+      {
+        "key": "startNar",
+        "type": "asset:sound",
+        "optional": true,
+        "desc": "이닝 시작 지문. 도우미 캐릭터가 읽습니다. 값이 없으면 지문 없이 시작합니다(M25.ts:112 가 있는지 확인합니다)."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "correct-is-one-based",
+      "level": "error",
+      "check": "quizPanel 의 i 번째(0부터) 문제마다 targets 안에 correct === i + 1 인 칸이 정확히 하나 있어야 한다.",
+      "why": "GameTarget.ts:153 이 mCorrectIDX == mCurrentQuizIndex + 1 로 비교합니다. **0 부터 적으면 모든 문제가 오답이 되고, 빠뜨리면 그 문제에서 이닝이 끝나지 않습니다.** 모듈이 검사하지 않고 에러도 없습니다."
+    },
+    {
+      "id": "sound-btn-empty-string",
+      "level": "warn",
+      "check": "소리 버튼이 필요 없는 문제는 soundBtn.sound 를 \"\" 로 둔다(키를 지우지 말 것).",
+      "why": "QuizPanel.ts:97 이 값이 있고 빈 문자열이 아닌지를 봅니다. 키를 아예 지우면 undefined 접근이 됩니다."
+    },
+    {
+      "id": "panel-size-per-quiz",
+      "level": "warn",
+      "check": "quizPanel[].width · height 가 문제 그림 크기와 맞아야 한다.",
+      "why": "패널 배경을 그 값으로 늘립니다. 안 맞으면 그림이 패널 밖으로 나가거나 여백이 크게 남습니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "normal · answered · targets[].image · soundBtn.sound · correct_sound · startNar 의 alias 가 모두 AssetTable 에 있어야 한다.",
+      "why": "없는 그림 alias 는 AssetManager.get 이 console.error 만 찍고 지나가고, 없는 음원은 AudioManager 가 즉시 통과시켜 무음으로 진행합니다."
+    },
+    {
+      "id": "eop-by-module",
+      "level": "warn",
+      "check": "onStart 에서 SparkApp.eop.show() 를 직접 부르지 않는다.",
+      "why": "M25.play() 가 마지막에 정답률로 eop 를 띄웁니다(M25.ts:144). 액티비티가 또 부르면 두 번 뜹니다 — 표본의 onStart 에 주석으로 남아 있는 줄이 그 자리입니다."
+    }
+  ],
+  "notes": [
+    "토끼는 1.5초 안에 안 때리면 그냥 내려갑니다(GameTarget.checkCorrectProc). 오답 처리가 아니라 무응답입니다.",
+    "정답 토끼의 축하 애니는 rabbit_ans01 · ans02 중에서 무작위로 하나 고릅니다.",
+    "8호는 MAL3M07W2S3(26차시 놀이수학) 한 자리입니다."
+  ],
+  "relations": [
+    {
+      "id": "hammer-enum-exact",
+      "kind": "oneOf",
+      "pick": "hammer",
+      "values": [
+        "Bmon",
+        "Pmon",
+        "Rmon"
+      ],
+      "note": "hammer 는 Bmon · Pmon · Rmon 중 하나여야 한다.",
+      "why": "GameScreen.init 의 if 사슬에 else 가 없어 다른 값은 **조용히 파랑 망치**가 됩니다."
+    }
+  ]
+}

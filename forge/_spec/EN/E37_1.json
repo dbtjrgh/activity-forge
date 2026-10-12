@@ -1,0 +1,529 @@
+{
+  "specVersion": 1,
+  "module": "E37_1",
+  "subject": "EN",
+  "title": "글자 꼬치 굽기 — 주문받은 낱말을 글자 꼬치로 꿰어 굽습니다",
+  "summary": "주문판이 내려와 오늘 만들 낱말을 알려 줍니다. 화면이 바뀌면 글자 조각들이 쟁반에 놓이고, 낱말 차례대로 조각을 꿰어 꼬치를 만듭니다. 다 꿰면 불판에 올려 굽고 종이 울리면 완성입니다. 틀린 조각을 꿰면 튕겨 나옵니다. 이닝 차례는 열 때마다 섞입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E37_1",
+    "activities": [
+      "ENL3M01W3S2",
+      "ENL3M04W3S2",
+      "ENL3M06W3S2",
+      "ENL3M11W3S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "E37_1.handle.onInit(quizData);",
+        "this.addChild(E37_1.handle)"
+      ],
+      "onStart": [
+        "   E37_1.handle.onStart();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "E37_1",
+      "from": "@_common/module/EN/E37_1/E37_1"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "주문 받는 화면 배경."
+      },
+      {
+        "alias": "bg2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "꼬치 만드는 화면 배경."
+      },
+      {
+        "alias": "tray",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각을 담아 두는 쟁반."
+      },
+      {
+        "alias": "order_tray",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "주문판."
+      },
+      {
+        "alias": "tray_with_hand",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "손이 든 쟁반."
+      },
+      {
+        "alias": "hand",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "손."
+      },
+      {
+        "alias": "skewer_box",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "꼬치 상자."
+      },
+      {
+        "alias": "example_skewer",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "본보기 꼬치."
+      },
+      {
+        "alias": "empty_skewer",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "빈 꼬치."
+      },
+      {
+        "alias": "skewer",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "꼬치."
+      },
+      {
+        "alias": "stick",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "꼬치 막대."
+      },
+      {
+        "alias": "woodBoard",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "도마."
+      },
+      {
+        "alias": "glow",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "빛 효과."
+      },
+      {
+        "alias": "burner",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "불판."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. E37_1.ts 가 getSound(\"bgm\") 으로 찾아 소리 크기 0.2 로 되풀이합니다."
+      },
+      {
+        "alias": "bell",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다 구워졌다고 알리는 종."
+      },
+      {
+        "alias": "bell_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "종소리."
+      },
+      {
+        "alias": "grill_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "굽는 소리."
+      },
+      {
+        "alias": "slide_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "미끄러지는 소리."
+      },
+      {
+        "alias": "particle_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "알갱이 소리."
+      },
+      {
+        "alias": "correct_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞는 조각을 꿰었을 때."
+      },
+      {
+        "alias": "wrong_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀린 조각을 꿰었을 때."
+      },
+      {
+        "alias": "correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 나오는 효과."
+      },
+      {
+        "alias": "grill_loop",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "굽는 동안 되풀이되는 불."
+      },
+      {
+        "alias": "grill_on",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "불이 켜질 때."
+      },
+      {
+        "alias": "nar2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "안내. CreateWord.ts:209 가 guide(\"nar2\") 로 그대로 부릅니다."
+      },
+      {
+        "alias": "nar6",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "첫 이닝 안내. E37_1.ts:70 이 nar6·nar7 중 하나를 무작위로 고릅니다."
+      },
+      {
+        "alias": "nar7",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "nar8",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "둘째 이닝부터의 안내. E37_1.ts:72 가 nar8~nar10 중 하나를 무작위로 고릅니다."
+      },
+      {
+        "alias": "nar9",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "nar10",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 Assets 파일이 없습니다.** 등록하는 곳이 아예 없어서 **배경부터 꼬치·불판·글자 조각까지 전부 액티비티가 넣습니다.** 그래서 required 가 깁니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "board",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "text",
+                  "type": "string",
+                  "required": true,
+                  "desc": "주문판에 적힐 낱말 글자."
+                },
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "주문판 그림."
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "그 낱말을 읽는 소리."
+                }
+              ],
+              "desc": "주문판에 뜨는 것."
+            },
+            {
+              "key": "source",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "text",
+                  "type": "string",
+                  "required": true,
+                  "desc": "꿰어야 할 낱말 글자. **board.text 와 같아야 합니다** — 이 글자가 조각 하나하나로 쪼개집니다. 빈칸을 넣으면 조각 하나가 빈 채로 나오므로 STOPbutton 처럼 붙여 씁니다."
+                }
+              ],
+              "desc": "꼬치로 꿸 낱말."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "낱말 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — E37_1.ts:52.",
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 4개는 5개씩입니다."
+      },
+      {
+        "key": "sourcePos",
+        "type": "posTable",
+        "required": true,
+        "default": {
+          "3": [
+            {
+              "x": 0,
+              "y": -180
+            },
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 180
+            }
+          ],
+          "4": [
+            {
+              "x": -105,
+              "y": -120
+            },
+            {
+              "x": 100,
+              "y": -120
+            },
+            {
+              "x": -105,
+              "y": 120
+            },
+            {
+              "x": 100,
+              "y": 120
+            }
+          ],
+          "5": [
+            {
+              "x": -105,
+              "y": -180
+            },
+            {
+              "x": 100,
+              "y": -180
+            },
+            {
+              "x": -105,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 180
+            }
+          ],
+          "6": [
+            {
+              "x": -105,
+              "y": -180
+            },
+            {
+              "x": 100,
+              "y": -180
+            },
+            {
+              "x": -105,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": -105,
+              "y": 180
+            },
+            {
+              "x": 100,
+              "y": 180
+            }
+          ],
+          "7": [
+            {
+              "x": -105,
+              "y": -220
+            },
+            {
+              "x": 100,
+              "y": -220
+            },
+            {
+              "x": -105,
+              "y": -70
+            },
+            {
+              "x": 100,
+              "y": -70
+            },
+            {
+              "x": -105,
+              "y": 80
+            },
+            {
+              "x": 100,
+              "y": 80
+            },
+            {
+              "x": 0,
+              "y": 230
+            }
+          ],
+          "8": [
+            {
+              "x": -105,
+              "y": -220
+            },
+            {
+              "x": 100,
+              "y": -220
+            },
+            {
+              "x": -105,
+              "y": -70
+            },
+            {
+              "x": 100,
+              "y": -70
+            },
+            {
+              "x": -105,
+              "y": 80
+            },
+            {
+              "x": 100,
+              "y": 80
+            },
+            {
+              "x": -105,
+              "y": 230
+            },
+            {
+              "x": 100,
+              "y": 230
+            }
+          ],
+          "9": [
+            {
+              "x": -105,
+              "y": -220
+            },
+            {
+              "x": 100,
+              "y": -220
+            },
+            {
+              "x": -105,
+              "y": -70
+            },
+            {
+              "x": 100,
+              "y": -70
+            },
+            {
+              "x": -105,
+              "y": 80
+            },
+            {
+              "x": 100,
+              "y": 80
+            },
+            {
+              "x": -105,
+              "y": 230
+            },
+            {
+              "x": 100,
+              "y": 230
+            },
+            {
+              "x": 100,
+              "y": {
+                "__expr": "230 + 150"
+              }
+            }
+          ]
+        },
+        "desc": "글자 조각 수마다 정해 둔 자리표. **3~9 자까지 있습니다** — 낱말이 그보다 길거나 짧으면 놓을 자리가 없습니다. 기존 4개가 이 값을 그대로 씁니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg1 · bg2 · tray · order_tray · skewer · burner · bgm · 효과음 여섯 · 로티 셋 · nar2 · nar6~nar10 이 다 AssetTable 에 있어야 한다.",
+      "why": "**이 모듈에는 Assets 파일이 아예 없습니다.** 등록하는 곳이 없어 전부 회차 몫입니다."
+    },
+    {
+      "id": "source-matches-board",
+      "level": "error",
+      "check": "source.text 가 board.text 와 같아야 한다.",
+      "why": "주문판에 적히는 것과 꿰어야 할 글자가 다르면 아이가 볼 수 있는 정답과 맞는 답이 어긋납니다."
+    },
+    {
+      "id": "word-length-in-sourcepos",
+      "level": "error",
+      "check": "source.text 글자 수가 3~9 여야 한다.",
+      "why": "sourcePos 가 3~9 에 대한 자리만 들고 있습니다. 두 자면 자리표가 undefined 라 조각이 (0,0) 에 겹칩니다."
+    },
+    {
+      "id": "source-text-no-space",
+      "level": "warn",
+      "check": "source.text 에 빈칸이 없어야 한다.",
+      "why": "글자 하나가 조각 하나가 됩니다. 빈칸이 들어가면 빈 조각이 하나 생겨 꿰어야 할 것이 몇 개인지 헷갈립니다. 기존 회차가 STOPbutton 처럼 붙여 씁니다."
+    },
+    {
+      "id": "inningdata-shuffled",
+      "level": "warn",
+      "check": "inningData 의 차례에 뜻이 있으면 안 된다.",
+      "why": "E37_1.ts:52 가 shuffleArray(inningData) 를 그대로 부릅니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

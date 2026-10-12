@@ -1,0 +1,2492 @@
+{
+  "specVersion": 1,
+  "module": "M19",
+  "subject": "MA",
+  "title": "긁어서 색칠하기 (숫자 색칠)",
+  "summary": "색 버튼을 골라 숫자 칸을 색칠하는 활동. 팝업에서 긁어내는 연출이 있고, 다 칠하면 꽃·애벌레 애니로 마무리합니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M19",
+    "activities": [
+      "MAL1M01W1S2",
+      "MAL1M11W1S1"
+    ],
+    "doc": "README 없음. 근거는 M19.ts · M19_ColorBtn.ts · M19_ScratchPopup.ts · M19_SceneBG.ts · M19_Finish.ts 와 표본 2차시입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M19",
+      "from": "@_common/module/MA/M19/M19"
+    },
+    "members": [
+      "private mM19 = new M19();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "super.onLoad();",
+        "await this.mM19.onLoad(font, lottie, image, sound);"
+      ],
+      "onInit": [
+        "await this.mM19.onInit(this, { ...quizData, rscImagePath: RscImagePath });"
+      ],
+      "onStart": [
+        "await this.mM19.onStart();"
+      ],
+      "onAffordanceOn": [
+        "await this.mM19.OnAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mM19.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bGConfig",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경. 자리는 GameData 의 bGLayout."
+      },
+      {
+        "alias": "chkBtnConfig",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "확인 버튼. **자리는 chkBtnLayout** — 이름이 다릅니다."
+      },
+      {
+        "alias": "frameConfig",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "테두리. 자리는 frameLayout."
+      },
+      {
+        "alias": "normalHeadConfig",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "머리. 자리는 normalHeadLayout."
+      },
+      {
+        "alias": "endBGConfig",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 배경. 자리는 endBGLayout."
+      },
+      {
+        "alias": "endHeadConfig",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 머리. 자리는 endHeadLayout."
+      },
+      {
+        "alias": "popup",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "긁기 팝업. 자리는 popupLayout."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 볼륨은 quizData.bgmVolume."
+      },
+      {
+        "alias": "firstnar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "첫 지문."
+      },
+      {
+        "alias": "secondnar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "두 번째 지문."
+      },
+      {
+        "alias": "popupsfx",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "팝업 효과음."
+      },
+      {
+        "alias": "popupclick",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "팝업 터치 효과음."
+      },
+      {
+        "alias": "flowersfx",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "꽃 효과음."
+      },
+      {
+        "alias": "fruitendsfx",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "열매 마무리 효과음."
+      },
+      {
+        "alias": "fruitend2sfx",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "열매 마무리 효과음 2."
+      },
+      {
+        "alias": "wrong1sfx",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음 1."
+      },
+      {
+        "alias": "wrong2sfx",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음 2."
+      },
+      {
+        "alias": "mobanisound0",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "0번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "1번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "2번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound3",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "3번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound4",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "4번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound5",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "5번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound6",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "6번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound7",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "7번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound8",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "8번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "mobanisound9",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "9번 애니 효과음. **열 개가 다 필요합니다** — 색 버튼 열 개에 하나씩 붙습니다."
+      },
+      {
+        "alias": "wormface2",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"wormface2\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "flowerAni",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"flowerAni\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "flowerEndAni",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"flowerEndAni\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "flowerAni2",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"flowerAni2\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "flowerEndAni2",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"flowerEndAni2\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "flowerAni3",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"flowerAni3\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "flowerEndAni3",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"flowerEndAni3\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "flowerAni4",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"flowerAni4\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "flowerEndAni4",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"flowerEndAni4\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "headface",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"headface\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "wormAni2",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"wormAni2\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mobAni1",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"mobAni1\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "wormAni3",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"wormAni3\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mobAni2",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_Finish.ts 가 AssetManager.get(\"mobAni2\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "wormface",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_SceneBG.ts 가 AssetManager.get(\"wormface\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mergeAnimation",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 M19_ScratchPopup.ts 가 AssetManager.get(\"mergeAnimation\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 2개 다 가짐(litgate, 2026-09-29)."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — 액티비티 onLoad 가 AssetTable 네 배열을 넘깁니다(`mM19.onLoad(font, lottie, image, sound)` — **font · lottie · image · sound 차례**).\n\n**onInit 이 GameData 에 경로를 하나 더 얹습니다** — `{ ...quizData, rscImagePath: RscImagePath }`. **AssetTable 의 RscImagePath 상수를 같이 넘겨야 합니다** — 이 줄을 빼면 긁기 팝업에 쓸 그림 경로를 못 찾습니다.\n\n**이름이 코드에 박힌 그림·애니** — `bGConfig` · `chkBtnConfig` · `frameConfig` · `normalHeadConfig` · `endBGConfig` · `endHeadConfig` · `popup` · `headface` · `wormface` · `wormface2` · `wormAni2` · `wormAni3` · `mobAni1` · `mobAni2` · `mergeAnimation` · `flowerAni` ~ `flowerAni4` · `flowerEndAni` ~ `flowerEndAni4`\n**음원** — `bgm`(getSound) · `flowersfx` · `fruitendsfx` · `fruitend2sfx` · `popupsfx` · `popupclick` · `wrong1sfx` · `wrong2sfx` · `mobanisound0` ~ `mobanisound9`(열 개)\n**지문** — `firstnar` · `secondnar`\n\n**배치 열쇠 이름과 alias 이름이 다른 자리가 있습니다** — GameData 는 `chkBtnLayout` 인데 코드가 찾는 alias 는 `chkBtnConfig` 입니다(frameLayout↔frameConfig · normalHeadLayout↔normalHeadConfig · endBGLayout↔endBGConfig · endHeadLayout↔endHeadConfig 도 같습니다). **Layout 은 자리, Config 는 그림 이름**으로 갈려 있습니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "bgmVolume",
+        "type": "number",
+        "required": true,
+        "desc": "배경음 볼륨(0~1)."
+      },
+      {
+        "key": "wrongCount",
+        "type": "number",
+        "required": true,
+        "desc": "오답 허용 횟수."
+      },
+      {
+        "key": "endBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "desc": "가로 간격(px)."
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "desc": "세로 간격(px)."
+          }
+        ],
+        "desc": "완료 버튼의 어포던스가 버튼에서 얼마나 떨어질지."
+      },
+      {
+        "key": "bGLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "배경 자리. 그림 alias 는 `bGConfig` 입니다."
+      },
+      {
+        "key": "chkBtnLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "확인 버튼 자리. **그림 alias 는 `chkBtnConfig`** 로 이름이 다릅니다."
+      },
+      {
+        "key": "frameLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "테두리 자리. 그림 alias 는 `frameConfig`."
+      },
+      {
+        "key": "popupLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "긁기 팝업 자리와 크기. 그림 alias 는 `popup`."
+      },
+      {
+        "key": "normalHeadLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "머리 자리. 그림 alias 는 `normalHeadConfig`."
+      },
+      {
+        "key": "normalBodyLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "몸 조각 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 필요합니다."
+      },
+      {
+        "key": "bodyNumLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "몸에 적히는 숫자 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 필요합니다."
+      },
+      {
+        "key": "bodyNumColorLayout0",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "0번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout1",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "1번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout2",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "2번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout3",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "3번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout4",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "4번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout5",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "5번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout6",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "6번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout7",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "7번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout8",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "8번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "bodyNumColorLayout9",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "9번 색으로 칠할 숫자 칸의 자리. **열쇠 뒤 숫자가 색 번호(0~9)** 이고 색 버튼·mobanisound 와 같은 번호입니다."
+      },
+      {
+        "key": "endBGLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "마무리 배경 자리. 그림 alias 는 `endBGConfig`."
+      },
+      {
+        "key": "endHeadLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "마무리 머리 자리. 그림 alias 는 `endHeadConfig`."
+      },
+      {
+        "key": "endWormLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "마무리 애벌레 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 필요합니다."
+      },
+      {
+        "key": "colorBtnLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "색 버튼 자리들. **열 개(0~9)를 전제로 합니다** — mobanisound0~9 와 짝입니다.",
+        "minLengthWhy": "쓰는 개수만큼 필요합니다."
+      },
+      {
+        "key": "colorBtnPressLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "눌린 색 버튼 자리들. colorBtnLayout 과 같은 개수·차례로 둡니다.",
+        "minLengthWhy": "쓰는 개수만큼 필요합니다."
+      },
+      {
+        "key": "btnOnOffLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "버튼 켜짐·꺼짐 표시 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 필요합니다."
+      },
+      {
+        "key": "aniPlayTime",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "number",
+          "desc": "그 애니의 재생 시간(ms)."
+        },
+        "desc": "애니마다의 재생 시간(ms).",
+        "minLengthWhy": "쓰는 애니 개수만큼 필요합니다."
+      },
+      {
+        "key": "guideStartLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "시작 안내 표시 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 필요합니다."
+      },
+      {
+        "key": "drawnedNumLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "num1",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "1번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num2",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "2번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num3",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "3번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num4",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "4번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num5",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "5번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num6",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "6번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num7",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "7번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num8",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "8번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num9",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "9번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            },
+            {
+              "key": "num10",
+              "type": "array",
+              "optional": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "anchor",
+                    "type": "number",
+                    "required": true,
+                    "default": 0.5,
+                    "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                  },
+                  {
+                    "key": "alpha",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "투명도(0~1)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "desc": "배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "10번 색으로 칠할 자리. **열쇠 뒤 숫자가 색 번호**이고 bodyNumColorLayout{번호} · mobanisound{번호} 와 같은 번호입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이미 칠해진 숫자 자리들. (열쇠 철자가 drawned 입니다 — drawn 이 아닙니다.)",
+        "minLengthWhy": "쓰는 개수만큼 필요합니다."
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "wormface",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "`wormface` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "wormface2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`wormface2` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "flowerAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`flowerAni` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "flowerEndAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`flowerEndAni` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "flowerAni2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`flowerAni2` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "flowerEndAni2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`flowerEndAni2` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "flowerAni3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`flowerAni3` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "flowerEndAni3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`flowerEndAni3` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "flowerAni4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`flowerAni4` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "flowerEndAni4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`flowerEndAni4` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "headface",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`headface` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "wormAni2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`wormAni2` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "wormAni3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`wormAni3` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "mobAni1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`mobAni1` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "mobAni2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`mobAni2` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "mergeAnimation",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              }
+            ],
+            "desc": "`mergeAnimation` 애니의 배치. **열쇠가 곧 alias 입니다.**"
+          },
+          {
+            "key": "guideAniArray",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y (화면 가운데가 0)."
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "desc": "너비(px)."
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "desc": "높이(px)."
+                },
+                {
+                  "key": "autoPlay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "올라오는 순간 재생할지."
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "반복 재생할지."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "안내 애니 자리들.",
+            "minLengthWhy": "쓰는 개수만큼 필요합니다."
+          }
+        ],
+        "desc": "애니 배치. **열쇠가 곧 애니 alias 입니다** — 모듈이 AssetManager.get(열쇠) 로 찾습니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "layout-vs-config-names",
+      "level": "error",
+      "check": "자리 열쇠(…Layout)와 그림 alias(…Config)가 이름이 다르다 — chkBtnLayout↔chkBtnConfig · frameLayout↔frameConfig · normalHeadLayout↔normalHeadConfig · endBGLayout↔endBGConfig · endHeadLayout↔endHeadConfig.",
+      "why": "**GameData 열쇠를 alias 로 착각해 그 이름으로 등록하면 그림이 안 나옵니다.** 이 모듈만의 규칙이라 가장 자주 걸립니다."
+    },
+    {
+      "id": "ten-color-slots",
+      "level": "error",
+      "check": "색 버튼과 bodyNumColorLayout0~9 · mobanisound0~9 를 열 벌 맞춰 둔다.",
+      "why": "색 번호로 세 곳을 동시에 찾습니다. 한쪽만 아홉 개면 마지막 색에서 undefined 를 읽습니다."
+    },
+    {
+      "id": "rsc-image-path-passed",
+      "level": "error",
+      "check": "onInit 은 `{ ...quizData, rscImagePath: RscImagePath }` 로 넘긴다.",
+      "why": "**긁기 팝업이 이 경로로 그림을 읽습니다.** 이 줄을 지우면 팝업이 빈 채로 뜨고, GameData 만 봐서는 원인을 알 수 없습니다."
+    },
+    {
+      "id": "onload-arg-order",
+      "level": "error",
+      "check": "onLoad 는 mM19.onLoad(font, lottie, image, sound) 차례로 넘긴다.",
+      "why": "다른 모듈과 인자 차례가 다릅니다. 바꿔 넘기면 그림과 애니가 엉킵니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 스물일곱 개가 모두 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다."
+    },
+    {
+      "id": "affordance-hooks",
+      "level": "error",
+      "check": "onAffordanceOn 은 M19.OnAffordanceOn() 을 부른다 — **대문자 O 입니다.**",
+      "why": "짝이 되는 훅은 소문자입니다. 틀리면 어포던스가 안 뜹니다."
+    },
+    {
+      "id": "typo-keys-kept",
+      "level": "warn",
+      "check": "drawnedNumLayout 은 철자 그대로 적는다.",
+      "why": "코드가 그 이름으로 읽습니다. 고쳐 적으면 그 자리표가 기본값으로 떨어집니다."
+    }
+  ],
+  "notes": [
+    "표본이 두 차시(MAL1M01W1S2 · MAL1M11W1S1)뿐입니다.",
+    "Layout(자리)과 Config(그림 이름)가 갈려 있는 것이 이 모듈의 가장 큰 함정입니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

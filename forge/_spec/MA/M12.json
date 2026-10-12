@@ -1,0 +1,910 @@
+{
+  "specVersion": 1,
+  "module": "M12",
+  "subject": "MA",
+  "title": "길 빈칸 채우기 (수 카드 끌어다 놓기)",
+  "summary": "칸이 죽 이어진 길에 빈칸이 몇 개 있고, 아래에서 올라온 수 카드를 끌어다 빈칸을 채우는 활동. 그 이닝의 빈칸(setCount)을 다 채우면 캐릭터가 길을 따라 점프해 목표까지 갑니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M12",
+    "activities": [
+      "MAL1M04W2S2",
+      "MAL1M05W4S2",
+      "MAL1M06W2S2",
+      "MAL1M11W4S2",
+      "MAL2M01W4S2"
+    ],
+    "doc": "README 없음. 근거는 M12.ts · InningManager.ts · Road.ts · Target.ts · Animation.ts 와 표본 5차시입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M12",
+      "from": "@_common/module/MA/M12/M12"
+    },
+    "members": [
+      "public M12: M12 = new M12(this, quizData);"
+    ],
+    "hooks": {
+      "onLoad": [
+        "super.onLoad();"
+      ],
+      "onInit": [
+        "await this.M12.init();"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "await this.M12.Start();"
+      ],
+      "onAffordanceOn": [
+        "await this.M12.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.M12.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "effect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트. AssetManager.get(\"effect\") 로 이름이 박혀 있습니다. 자리는 effectPosOffset 이 조정합니다."
+      },
+      {
+        "alias": "correct",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "정답 효과음. AudioManager.playAsync(\"correct\")."
+      },
+      {
+        "alias": "wrong",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음. AudioManager.play(\"wrong\")."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. **액티비티 onStart 가 AudioManager.getSound(\"bgm\") 으로 직접 켭니다** — 모듈이 켜 주지 않습니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset.ts 가 없습니다. 아래 이름 규칙대로 액티비티 AssetTable 에 전부 넣어야 합니다.\n\n**이름을 조합해 찾는 자원** — required 에는 이름이 고정된 것만 적을 수 있어서 여기에 규칙을 둡니다.\n- `{roadName}_{이닝}_{번호}` (image) — 길 칸 그림. roadName 기본값이 road 이므로 **road_1_0 · road_1_1 · …** 꼴입니다. 이닝은 1 부터, 번호는 0 부터입니다. 같은 이름의 **음원**도 필요합니다(칸을 밟을 때 읽는 수). 그리고 `{roadName}_0`(이닝 없는 형태) 한 장을 따로 찾는 자리가 있습니다(Road.ts).\n- `{roadOverName}_{이닝}_{번호}` (image) — 채워진 칸 위에 덮이는 그림. roadOverName 기본값이 roadOver 이므로 **roadOver_1_1 · …** 꼴이고 **번호가 1 부터**입니다(코드가 i + 1 로 찾습니다).\n- `{targetName}_{이닝}_{번호}` (image) — 끌어다 놓는 수 카드. targetName 기본값이 road 라서 **길 그림과 이름이 겹칩니다** — 표본이 그렇게 쓰고 있습니다. 같은 이름의 음원도 필요합니다.\n- `{animationRoadName}_{이닝}_{번호}` (sound) — 캐릭터가 칸을 밟으며 세는 음원. animationRoadName 기본값이 road_Mon 이므로 **road_Mon_1_1 · …** 꼴이고 번호가 1 부터입니다.\n- `bg{n} · extra{n} · goal_{n} · idle_{이닝} · mon_nar_0{이닝}` (image) — 배경은 bg1 부터, 곁장식은 extra0 부터, 목표는 goal_0 부터, 대기 애니는 idle_1(이닝 번호), 캐릭터 나레이션은 mon_nar_01(이닝 번호, 두 자리)입니다. **mon_nar 은 0 을 붙여 두 자리로 만들므로 이닝이 10 을 넘으면 이름이 깨집니다.**\n\n`inningNar_01` 은 **이닝 지문을 쓰는 차시에만** 필요합니다 — 표본 다섯 중 셋만 등록해 두었습니다(MAL1M04W2S2 · MAL1M06W2S2 · MAL1M11W4S2 는 있고, MAL1M05W4S2 · MAL2M01W4S2 는 없습니다). GameData 의 playInningNar 가 false 면 안 부르므로 required 목록에서는 뺐습니다 — **켜 두고 리소스를 빠뜨리면 지문만 무음으로 지나갑니다.**"
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "maxInning",
+        "type": "number",
+        "required": true,
+        "desc": "이닝 수. 화면 위 이닝 표시·진행률·성취도가 모두 이 값을 씁니다(M12.ts:69~72). **inning 배열의 칸 수가 이 값보다 적으면 그 이닝에서 undefined 를 읽습니다.**"
+      },
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "setCount",
+              "type": "number",
+              "required": true,
+              "desc": "**그 이닝에서 채워야 하는 빈칸 수.** InningManager 가 길이 이만큼 찼는지로 이닝 종료를 판정합니다(Road.isFull). inningBlank[이닝] 의 칸 수가 이보다 적으면 **이닝이 끝나지 않습니다.**"
+            },
+            {
+              "key": "targetCount",
+              "type": "number",
+              "required": true,
+              "desc": "그 이닝에 내려오는 수 카드 수. 빈칸보다 많아야 고르는 재미가 있습니다. allTargetList[이닝] 의 칸 수가 이만큼 있어야 합니다."
+            },
+            {
+              "key": "roadCount",
+              "type": "number",
+              "required": true,
+              "desc": "그 이닝의 길 칸 수. 길 그림·음원 alias 를 이 수만큼 1 부터 찾습니다(Road.ts:55). 점프 애니도 이 값으로 칸을 셉니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝별 칸 수 설정. 첨자는 0 부터지만 이닝 번호는 1 부터라 코드가 inning[inningCount - 1] 로 찾습니다.",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "mStudyCode",
+        "type": "string",
+        "required": true,
+        "desc": "**코드가 읽지 않습니다.** 학습코드는 Activity.mStudyCode 가 들고 있습니다. 표본 GameData 에 남아 초안에 올라온 자리이니 새로 만들 때는 넣지 마세요."
+      },
+      {
+        "key": "isInningEndAniPlay",
+        "type": "bool",
+        "required": true,
+        "desc": "이닝 마무리 애니를 재생할지."
+      },
+      {
+        "key": "isUseInningStartAni",
+        "type": "bool",
+        "required": true,
+        "desc": "이닝 시작 애니(inningStartAni)를 쓸지. false 면 값을 적어도 안 나옵니다."
+      },
+      {
+        "key": "isUseInningIdleAni",
+        "type": "bool",
+        "required": true,
+        "desc": "이닝 대기 애니(inningIdleAni)를 쓸지."
+      },
+      {
+        "key": "isUseInningJumpAni",
+        "type": "bool",
+        "required": true,
+        "desc": "점프 애니(inningJumpAni)를 쓸지."
+      },
+      {
+        "key": "isUseInningEndAni",
+        "type": "bool",
+        "required": true,
+        "desc": "이닝 종료 애니(inningEndAni)를 쓸지."
+      },
+      {
+        "key": "isUseAfterJumpIdle",
+        "type": "bool",
+        "required": true,
+        "desc": "점프가 끝난 뒤 대기 애니(afterJumpIdle)를 쓸지."
+      },
+      {
+        "key": "jumpMotionTime",
+        "type": "number",
+        "required": true,
+        "default": 1000,
+        "desc": "한 칸 점프에 걸리는 시간(ms). 길이 길면 총 시간이 칸 수에 비례해 늘어납니다."
+      },
+      {
+        "key": "targetMovingDist",
+        "type": "number",
+        "required": true,
+        "default": 400,
+        "desc": "수 카드가 아래에서 올라오는 거리(px)."
+      },
+      {
+        "key": "endingAniTime",
+        "type": "number",
+        "required": true,
+        "default": 1500,
+        "desc": "마무리 애니가 머무는 시간(ms)."
+      },
+      {
+        "key": "jumpHeight",
+        "type": "number",
+        "required": true,
+        "desc": "점프 높이(px)."
+      },
+      {
+        "key": "jumpDelayTime",
+        "type": "number",
+        "required": true,
+        "desc": "점프 사이 간격(ms). 0 이면 쉬지 않고 이어 뜁니다."
+      },
+      {
+        "key": "animationRoadName",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "road_Mon"
+        ],
+        "default": "road_Mon",
+        "desc": "캐릭터가 칸을 세는 **음원 alias 앞머리**. 기본 road_Mon 이고 `{이 값}_{이닝}_{번호}` 로 조합합니다. 값을 바꾸면 음원 파일 이름도 같이 바꿔야 합니다."
+      },
+      {
+        "key": "playInningNar",
+        "type": "bool",
+        "required": true,
+        "desc": "이닝 시작 나레이션을 재생할지."
+      },
+      {
+        "key": "isTargetCorrectSound",
+        "type": "bool",
+        "required": true,
+        "default": true,
+        "desc": "수 카드를 맞게 놓았을 때 그 카드의 수 음원을 읽어 줄지."
+      },
+      {
+        "key": "isPlaySound",
+        "type": "bool",
+        "required": true,
+        "desc": "소리 전체를 켤지. false 면 효과음까지 조용해집니다."
+      },
+      {
+        "key": "isInningRandom",
+        "type": "bool",
+        "required": true,
+        "default": false,
+        "desc": "이닝 순서를 섞을지. true 면 getRandomInt 로 고릅니다(M12.ts:50) — 같은 이닝이 거듭 나올 수 있습니다."
+      },
+      {
+        "key": "firstNarTime",
+        "type": "number",
+        "required": true,
+        "default": 9000,
+        "desc": "첫 나레이션을 기다리는 시간(ms)."
+      },
+      {
+        "key": "extraBg",
+        "type": "number",
+        "required": true,
+        "desc": "배경 그림을 몇 장 겹칠지. bg1 부터 이 수만큼 찾습니다."
+      },
+      {
+        "key": "roadOverName",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "roadOver"
+        ],
+        "default": "roadOver",
+        "desc": "채워진 칸 위 그림의 **alias 앞머리**. 기본 roadOver 이고 `{이 값}_{이닝}_{번호}` 로 조합하며 **번호가 1 부터**입니다."
+      },
+      {
+        "key": "isCorrectAni",
+        "type": "bool",
+        "required": true,
+        "default": true,
+        "desc": "정답 애니를 재생할지."
+      },
+      {
+        "key": "roadName",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "road"
+        ],
+        "default": "road",
+        "desc": "길 칸의 **alias 앞머리**. 기본 road 이고 `{이 값}_{이닝}_{번호}` 로 조합하며 **번호가 0 부터**입니다. 같은 이름의 음원도 찾습니다."
+      },
+      {
+        "key": "isObj",
+        "type": "bool",
+        "required": true,
+        "desc": "길 끝에 목표 오브젝트(goal_{n})를 둘지. false 면 목표 없이 길만 그립니다(Road.ts:101)."
+      },
+      {
+        "key": "inningBlank",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "number",
+            "desc": "값 하나."
+          },
+          "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+        },
+        "desc": "**이닝마다 빈칸이 될 칸 번호들.** 두 겹 배열이고 inningBlank[이닝][i] 를 setCount 만큼 훑습니다(Target.ts:335~336). 칸 수가 setCount 보다 적으면 **이닝이 끝나지 않고**, 번호가 roadCount 를 넘으면 있지도 않은 칸을 비웁니다.",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "targetName",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "road"
+        ],
+        "default": "road",
+        "desc": "수 카드의 **alias 앞머리**. 기본값이 road 라서 길 그림과 이름이 겹치는데, 표본이 실제로 그렇게 씁니다 — 길과 카드에 같은 그림을 쓰는 구성입니다."
+      },
+      {
+        "key": "startTime",
+        "type": "number",
+        "required": true,
+        "default": 2500,
+        "desc": "이닝이 시작하기까지 기다리는 시간(ms)."
+      },
+      {
+        "key": "roadNarTime",
+        "type": "number",
+        "required": true,
+        "default": 1000,
+        "desc": "칸 음원 사이 간격(ms)."
+      },
+      {
+        "key": "createTargetWay",
+        "type": "number",
+        "required": true,
+        "desc": "수 카드가 나타나는 방식 번호. Animation.TargetCreateAni 에 그대로 넘어갑니다(Target.ts:124)."
+      },
+      {
+        "key": "allTargetList",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "number",
+            "desc": "값 하나."
+          },
+          "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+        },
+        "desc": "**이닝마다 내려올 수 카드 번호들.** 두 겹 배열이고 allTargetList[이닝][i] 로 카드 그림·음원 alias 의 번호를 만듭니다(Target.ts:96). 칸 수가 그 이닝의 targetCount 보다 적으면 **카드가 undefined 이름으로 만들어져 화면에서 사라집니다.**",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "effectPosOffset",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 0,
+          "y": 0
+        },
+        "desc": "정답 이펙트(effect) 자리를 빈칸 기준으로 얼마나 밀지."
+      },
+      {
+        "key": "goalPos",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "desc": "높이(px)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "목표 오브젝트 자리와 크기. isObj 가 true 일 때만 씁니다. 배열이라 여러 개를 둘 수 있고 goal_0 부터 짝지어집니다."
+      },
+      {
+        "key": "dropTargetPos",
+        "type": "array",
+        "required": true,
+        "minLength": 8,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "수 카드가 처음 놓이는 자리들(아래 대기줄). targetCount 만큼 필요합니다."
+      },
+      {
+        "key": "roadPos",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "칸 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "칸 y."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+        },
+        "desc": "**이닝마다 길 칸이 놓이는 자리표.** 두 겹 배열이고 안쪽 칸 수가 그 이닝의 roadCount 만큼 있어야 합니다. **x · y 는 돌 그림의 왼쪽 위**입니다(Road.ts `anchor 0`) — figma 의 돌 왼쪽 위를 그대로 옮깁니다. 화면 가운데 대칭으로 셈해 놓으면 쏠립니다(MAL2M07W2S2 는 597 · 839 · 1081 로 놨다가 QA 에서 figma 571 · 813 · 1055 · 613 으로 고침, 2026-09-28). 점프 뒤 대기 그림(afterJumpIdle)은 이 값에서 셈하므로 같이 옮깁니다. 빈칸 그림 `road_0` 도 왼쪽 위로 붙으므로, 다른 호에서 가져온 것이 돌보다 작으면 한쪽으로 치우칩니다 — 그때는 사방에 여백을 넣어 돌 크기로 맞춥니다(MAL2M07W2S2: 221×213 → 242×234). 완성본 여섯 가운데 넷은 road_0 이 돌보다 작아(450×320 대 480×350) 크기를 막는 규칙으로는 두지 않습니다.",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "effPos",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": false,
+            "desc": "올라오는 순간 재생할지."
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": false,
+            "desc": "반복할지. 정답 이펙트는 한 번만 나오는 것이 보통이라 false 입니다."
+          }
+        ],
+        "desc": "정답 이펙트 재생 설정."
+      },
+      {
+        "key": "dropTargetSize",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 320,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "수 카드 크기."
+      },
+      {
+        "key": "playMonNar",
+        "type": "bool",
+        "optional": true,
+        "desc": "캐릭터 나레이션(mon_nar_0{이닝})을 재생할지."
+      },
+      {
+        "key": "isRoadTouchSound",
+        "type": "bool",
+        "optional": true,
+        "desc": "길 칸을 눌렀을 때 소리를 낼지."
+      },
+      {
+        "key": "useInningDotLineImg",
+        "type": "bool",
+        "optional": true,
+        "desc": "빈칸에 점선 표시를 그릴지."
+      },
+      {
+        "key": "isBlockTouchSound",
+        "type": "bool",
+        "optional": true,
+        "desc": "막힌 칸을 눌렀을 때 소리를 낼지."
+      },
+      {
+        "key": "inningStartAni",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "desc": "높이(px)."
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "올라오는 순간 재생할지."
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "반복할지."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 시작 애니. **배열이고 이닝 번호로 꺼내 쓰므로 maxInning 만큼 필요합니다.** 쓸지 말지는 짝이 되는 isUse… 값이 정합니다."
+      },
+      {
+        "key": "inningJumpAni",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "올라오는 순간 재생할지."
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "반복할지."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "optional": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "optional": true,
+              "desc": "높이(px)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "칸을 뛰어넘는 애니. **배열이고 이닝 번호로 꺼내 쓰므로 maxInning 만큼 필요합니다.** 쓸지 말지는 짝이 되는 isUse… 값이 정합니다."
+      },
+      {
+        "key": "afterJumpIdle",
+        "type": "array",
+        "optional": true,
+        "minLength": 8,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "desc": "높이(px)."
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "올라오는 순간 재생할지."
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "반복할지."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "점프가 끝난 뒤 대기 애니. **배열이고 이닝 번호로 꺼내 쓰므로 maxInning 만큼 필요합니다.** 쓸지 말지는 짝이 되는 isUse… 값이 정합니다."
+      },
+      {
+        "key": "inningIdleAni",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "올라오는 순간 재생할지."
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": true,
+              "desc": "반복할지."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "optional": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "optional": true,
+              "desc": "높이(px)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 진행 중 대기 애니. loop 기본값이 true 입니다. **배열이고 이닝 번호로 꺼내 쓰므로 maxInning 만큼 필요합니다.** 쓸지 말지는 짝이 되는 isUse… 값이 정합니다."
+      },
+      {
+        "key": "inningEndAni",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "desc": "높이(px)."
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "올라오는 순간 재생할지."
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": false,
+              "desc": "반복할지."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 종료 애니. **배열이고 이닝 번호로 꺼내 쓰므로 maxInning 만큼 필요합니다.** 쓸지 말지는 짝이 되는 isUse… 값이 정합니다."
+      },
+      {
+        "key": "extra",
+        "type": "array",
+        "optional": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "optional": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "optional": true,
+              "desc": "높이(px)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "곁장식 그림들. extra0 부터 이 배열 차례대로 짝지어집니다."
+      },
+      {
+        "key": "isEndNar",
+        "type": "bool",
+        "optional": true,
+        "desc": "마지막에 마무리 나레이션을 읽을지."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "inning-arrays-cover-maxinning",
+      "level": "error",
+      "check": "inning · inningBlank · allTargetList · roadPos 의 칸 수가 maxInning 보다 적지 않아야 한다. 이닝 애니 배열(inningStartAni 등)도 쓰는 것만큼은 같다.",
+      "why": "모두 inningCount - 1 을 첨자로 찾습니다. 모자라면 그 이닝에서 undefined 를 읽고 길이나 카드가 통째로 안 나옵니다."
+    },
+    {
+      "id": "blank-index-in-road-range",
+      "level": "error",
+      "check": "inningBlank[i] 의 값이 inning[i].roadCount 범위 안이어야 한다.",
+      "why": "있지도 않은 칸을 비우게 되어 채울 자리가 사라집니다."
+    },
+    {
+      "id": "alias-naming-convention",
+      "level": "error",
+      "check": "길·카드 그림과 음원 이름이 규칙과 맞아야 한다 — {roadName}_{이닝}_{번호}(번호 0부터) · {roadOverName}_{이닝}_{번호}(번호 1부터) · {animationRoadName}_{이닝}_{번호}(번호 1부터) · bg{n}(1부터) · extra{n}(0부터) · goal_{n}(0부터) · idle_{이닝} · mon_nar_0{이닝}.",
+      "why": "**모듈이 alias 를 문자열로 조합해 찾습니다.** 번호가 0 부터인지 1 부터인지가 자리마다 다릅니다 — 한 칸 밀리면 그 칸만 조용히 안 보입니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "effect · correct · wrong · bgm 네 alias 가 등록돼야 하고, playInningNar 가 true 면 inningNar_01 도 있어야 한다.",
+      "why": "이름이 코드에 박혀 있습니다. 없으면 빌드는 통과하고 이펙트·효과음·BGM·시작 지문만 조용히 빠집니다."
+    }
+  ],
+  "notes": [
+    "BGM 을 **액티비티 onStart 가 직접 켭니다**(AudioManager.getSound(\"bgm\")). 모듈이 켜 주지 않으니 훅을 지우면 무음으로 진행됩니다.",
+    "eop 는 모듈이 부릅니다(M12.ts:100). onStart 에서 또 부르지 마세요.",
+    "isUse… 스위치가 여섯 개 있어서, 애니 값을 적어도 스위치가 false 면 아무 일도 일어나지 않습니다. 「애니를 넣었는데 안 나온다」의 대부분이 이것입니다.",
+    "8호는 MAL1M07W2S2 · MAL2M07W2S2 두 자리입니다."
+  ],
+  "relations": [
+    {
+      "id": "mon-nar-two-digit",
+      "kind": "range",
+      "pick": "maxInning",
+      "max": 9,
+      "note": "maxInning 이 9 를 넘지 않는 것이 안전하다.",
+      "why": "캐릭터 나레이션 alias 를 `mon_nar_0${이닝}` 으로 만듭니다 — 이닝이 10 이면 mon_nar_010 이 되어 이름이 깨집니다.",
+      "level": "warn"
+    },
+    {
+      "id": "blank-count-matches-setcount",
+      "kind": "sameCount",
+      "picks": [
+        "inningBlank[]",
+        "inning[].setCount"
+      ],
+      "zip": true,
+      "atLeast": true,
+      "note": "inningBlank[i] 의 칸 수가 inning[i].setCount 보다 적지 않아야 한다.",
+      "why": "Target.ts:335 가 setCount 만큼 inningBlank 를 훑고, Road.isFull(setCount) 로 이닝 종료를 판정합니다. **모자라면 채울 곳이 없어 이닝이 끝나지 않습니다.**"
+    },
+    {
+      "id": "target-list-matches-target-count",
+      "kind": "sameCount",
+      "picks": [
+        "allTargetList[]",
+        "inning[].targetCount"
+      ],
+      "zip": true,
+      "atLeast": true,
+      "note": "allTargetList[i] 의 칸 수가 inning[i].targetCount 보다 적지 않아야 한다.",
+      "why": "Target.ts:96 이 targetCount 만큼 이 배열을 훑습니다. 모자라면 카드 alias 가 undefined 로 조합돼 **카드가 화면에서 사라집니다.**"
+    },
+    {
+      "id": "road-pos-matches-road-count",
+      "kind": "sameCount",
+      "picks": [
+        "roadPos[]",
+        "inning[].roadCount"
+      ],
+      "zip": true,
+      "note": "roadPos[i] 의 칸 수가 inning[i].roadCount 만큼 있어야 한다.",
+      "why": "길 칸을 자리표에서 하나씩 꺼내 놓습니다. 모자라면 뒤쪽 칸이 화면 밖에 겹칩니다."
+    }
+  ]
+}

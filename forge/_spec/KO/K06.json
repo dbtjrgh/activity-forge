@@ -1,0 +1,653 @@
+{
+  "specVersion": 1,
+  "module": "K06",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K06",
+    "activities": [
+      "KOL3M01W2S1",
+      "KOL3M02W2S1",
+      "KOL3M03W2S1",
+      "KOL3M04W2S1",
+      "KOL3M05W2S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "await this.K06.load()"
+      ],
+      "onInit": [
+        "await this.K06.init()"
+      ],
+      "onStart": [
+        "await this.K06.start()"
+      ],
+      "onAffordanceOn": [
+        "await this.K06.affordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K06.affordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K06",
+      "from": "@_common/module/KR/K06/K06"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "portpolio",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 540
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1920
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 1080
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "inningCount",
+        "type": "number",
+        "required": true,
+        "default": 5
+      },
+      {
+        "key": "isInningOrderRandom",
+        "type": "bool",
+        "required": true,
+        "default": false
+      },
+      {
+        "key": "backgroundAlias",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "default",
+            "type": "asset:image",
+            "required": true,
+            "default": "defaultBackground"
+          },
+          {
+            "key": "inning",
+            "type": "asset:image",
+            "required": true,
+            "default": "inningBackground"
+          }
+        ]
+      },
+      {
+        "key": "defaultOutlineInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1920
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 1080
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 2
+          }
+        ]
+      },
+      {
+        "key": "inningFrameOutlineInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1920
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 1000
+          },
+          {
+            "key": "scale",
+            "type": "number",
+            "required": true,
+            "default": 0.7
+          }
+        ]
+      },
+      {
+        "key": "numberAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "asset:image"
+        }
+      },
+      {
+        "key": "numberInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1920
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 1080
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 3
+          }
+        ]
+      },
+      {
+        "key": "webcamInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1920
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 1080
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 1280
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 720
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "scaleX",
+            "type": "number",
+            "required": true,
+            "default": -1
+          }
+        ]
+      },
+      {
+        "key": "capturedImageInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1920
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 1000
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "scale",
+            "type": "number",
+            "required": true,
+            "default": 0.7
+          }
+        ]
+      },
+      {
+        "key": "retryBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "retryBtn"
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "default": 110
+          }
+        ]
+      },
+      {
+        "key": "retryBtnLabelInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "retryBtnLabel"
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 2
+          },
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "default": 130
+          }
+        ]
+      },
+      {
+        "key": "nextBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "nextBtn"
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 100
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 100
+          },
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "default": 80
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "default": 80
+          }
+        ]
+      },
+      {
+        "key": "completeBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "completeBtn"
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 100
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 100
+          },
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "default": 80
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "default": 80
+          }
+        ]
+      },
+      {
+        "key": "inningFrameInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "inningFrame"
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1920
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 1080
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 2
+          },
+          {
+            "key": "totalFrameScale",
+            "type": "number",
+            "required": true,
+            "default": 0.4
+          }
+        ]
+      },
+      {
+        "key": "inningFrameContainerPos",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningFrameTextInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "fontFamily",
+            "type": "asset:font",
+            "required": true,
+            "default": "NanumSquareRoundEB"
+          },
+          {
+            "key": "fontSize",
+            "type": "number",
+            "required": true,
+            "default": 65
+          },
+          {
+            "key": "fill",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "black"
+            ],
+            "default": "black"
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1920
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 1360
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 1
+          }
+        ]
+      },
+      {
+        "key": "totalFrameInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "totalFrame"
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1920
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 1080
+          }
+        ]
+      },
+      {
+        "key": "bgmAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "bgm"
+      },
+      {
+        "key": "cameraSfxAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "cameraSfx"
+      },
+      {
+        "key": "touchSfxAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "touchSfx"
+      },
+      {
+        "key": "guideNarAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "guideNar"
+      },
+      {
+        "key": "cameraNarAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "cameraNar"
+      },
+      {
+        "key": "photoCompleteNarAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "photoCompleteNar"
+      },
+      {
+        "key": "affordanceNarAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "affordanceNar"
+      },
+      {
+        "key": "affordanceNarAlias2",
+        "type": "asset:sound",
+        "optional": true
+      },
+      {
+        "key": "affordanceNarAlias3",
+        "type": "asset:sound",
+        "optional": true
+      },
+      {
+        "key": "correctNarAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      },
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "outlineAlias",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "before",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "after",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "illust",
+                  "type": "asset:image",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "inningFrameText",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "posingNarAlias",
+              "type": "asset:sound",
+              "required": true
+            },
+            {
+              "key": "sentenceNarAlias",
+              "type": "asset:sound",
+              "required": true
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

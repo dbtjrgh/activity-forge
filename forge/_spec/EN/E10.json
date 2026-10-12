@@ -1,0 +1,643 @@
+{
+  "specVersion": 1,
+  "module": "E10",
+  "subject": "EN",
+  "title": "카드 뒤집어 짝 찾기 — 소리를 듣고 맞는 카드를 뒤집습니다",
+  "summary": "화면에 카드가 비스듬히 흩어져 놓입니다. 낱말 소리가 나면 그 낱말의 카드를 찾아 누릅니다. 맞으면 카드가 뒤집혀 그림이 드러나고 큰 카드로 떠오릅니다. 틀리면 도로 덮입니다. 한 이닝의 낱말을 다 찾으면 카드 배치가 새로 깔리고 다음 이닝으로 넘어갑니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E10",
+    "activities": [
+      "ENL3M01W1S3",
+      "ENL3M03W1S3",
+      "ENL3M05W1S3",
+      "ENL3M11W2S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E10.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(E10.handle);",
+        "await E10.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await E10.handle.start();",
+        "await E10.handle.play();",
+        "await E10.handle.finish();",
+        "await SparkApp.eop.show(E10.handle.completePercent);"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "E10",
+        "from": "@_common/module/EN"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. E10 이 getSound(\"bgm\") 으로 찾습니다."
+      },
+      {
+        "alias": "s3_nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작할 때 도우미가 하는 안내. E10.ts:98 이 guide(\"s3_nar02\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.**"
+      },
+      {
+        "alias": "s3_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "카드를 누를 때."
+      },
+      {
+        "alias": "s3_sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "카드가 뒤집힐 때."
+      },
+      {
+        "alias": "s3_sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "이닝이 끝날 때."
+      },
+      {
+        "alias": "com_sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공용 효과음."
+      },
+      {
+        "alias": "com_sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞혔을 때."
+      },
+      {
+        "alias": "com_sfx05",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀렸을 때."
+      },
+      {
+        "alias": "correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 나오는 효과."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 사실상 아무것도 안 넣습니다.** Assets.ts 에 네 줄(폰트·스크롤 바탕·bgm·거품)뿐이고 그나마 이 활동에서 쓰지 않는 것이 섞여 있습니다. 배경부터 효과까지 **전부 액티비티가 넣습니다.**"
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "cardPos",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 6,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "string",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "string",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "angle",
+                "type": "number",
+                "required": true,
+                "desc": "카드를 기울이는 각(도). CardManager.ts:30·35 가 자리와 함께 넘깁니다 — 흩어 놓은 느낌을 내는 값입니다."
+              },
+              {
+                "key": "focus",
+                "type": "enum",
+                "optional": true,
+                "values": [
+                  "left",
+                  "right"
+                ],
+                "desc": "카드가 뒤집힐 때 어느 쪽 앞면을 쓸지."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+        },
+        "desc": "**선지가 셋일 때** 쓰는 카드 배치. 배치 세 벌을 넣어 두고 이닝마다 하나를 골라 씁니다. 한 벌에 여섯 자리입니다. 좌표를 `80 - 960 + 170` 처럼 적어 두었는데, figma 의 왼쪽 위 기준 값에서 화면 절반(960·540)을 빼고 카드 반지름(170)을 더한 것입니다."
+      },
+      {
+        "key": "cardPos_2",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 4,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "string",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "string",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "angle",
+                "type": "number",
+                "required": true,
+                "desc": "카드를 기울이는 각(도). CardManager.ts:30·35 가 자리와 함께 넘깁니다 — 흩어 놓은 느낌을 내는 값입니다."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+        },
+        "desc": "**선지가 둘일 때** 쓰는 배치. 한 벌에 네 자리입니다. 셋일 때보다 카드가 적어 자리도 적습니다."
+      },
+      {
+        "key": "cardAliasInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "rub",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "rub 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "wash",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "wash 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "bath",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "bath 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "shampoo",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "shampoo 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "shower",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "shower 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "brush",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "brush 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "tshirt",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_b_01",
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_a_01",
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "default": "word_01",
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "tshirt 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "pants",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_b_02",
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_a_02",
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "default": "word_02",
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "pants 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "socks",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_b_03",
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_a_03",
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "default": "word_03",
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "socks 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "coat",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_b_04",
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_a_04",
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "default": "word_04",
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "coat 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          },
+          {
+            "key": "hat",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_b_05",
+                "desc": "맞혔을 때 크게 떠오르는 카드."
+              },
+              {
+                "key": "front",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 보이는 앞면."
+              },
+              {
+                "key": "correctFront",
+                "type": "asset:image",
+                "required": true,
+                "default": "card_a_05",
+                "desc": "맞는 카드로 확정됐을 때의 앞면. front 와 다른 그림입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "required": true,
+                "default": "word_05",
+                "desc": "그 낱말을 읽는 소리."
+              }
+            ],
+            "desc": "hat 낱말의 카드. **이 이름은 회차마다 다릅니다** — 기존 4개가 그 회차 낱말을 그대로 열쇠로 씁니다."
+          }
+        ],
+        "desc": "낱말마다 딸린 카드 그림 세 벌과 소리. **열쇠가 낱말 이름**이고, inningData 의 quizWord 가 이 이름을 가리킵니다. 그림 이름이 아니라 열쇠 이름을 적는 자리라 헷갈리기 쉽습니다."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "quizWord",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "string",
+                "desc": "낱말 열쇠 이름."
+              },
+              "desc": "이 이닝에서 찾을 낱말들. **cardAliasInfo 의 열쇠 이름**입니다. 셋이면 cardPos 를, 둘이면 cardPos_2 를 씁니다."
+            },
+            {
+              "key": "cardBackAlias",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그 이닝 카드의 뒷면 그림."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 하나가 카드 한 판입니다. 기존 4개가 두 이닝씩입니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · bgm · s3_nar02 · s3_sfx01·02·04 · com_sfx02·04·05 · correct 이 AssetTable 에 있어야 한다.",
+      "why": "**이 모듈은 사실상 아무것도 안 넣습니다.** Assets.ts 에 네 줄(폰트·스크롤 바탕·bgm·거품)뿐이고 그나마 이 활동에서 쓰지 않는 것이 섞여 있습니다. 배경부터 효과까지 **전부 액티비티가 넣습니다.**"
+    },
+    {
+      "id": "quizword-exists-in-cardalias",
+      "level": "error",
+      "check": "inningData[].quizWord 가 cardAliasInfo 에 있는 열쇠여야 한다.",
+      "why": "CardManager 가 cardAliasInfo[열쇠] 를 그대로 꺼냅니다. 없는 이름이면 undefined 를 AssetManager.get 에 넘겨 **그 카드가 안 보입니다.** 그림 이름을 적어 넣기 쉬운 자리입니다."
+    },
+    {
+      "id": "cardpos-matches-choice-count",
+      "level": "error",
+      "check": "quizWord 가 셋이면 cardPos 를, 둘이면 cardPos_2 를 쓸 수 있게 둘 다 있어야 한다.",
+      "why": "선지 수에 따라 쓰는 배치가 갈립니다. 한쪽만 두면 그 이닝에서 놓을 자리가 없습니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

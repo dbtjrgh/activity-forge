@@ -1,0 +1,551 @@
+{
+  "specVersion": 1,
+  "module": "M10_1",
+  "subject": "MA",
+  "title": "점 잇기 (선 그어 모양 만들기)",
+  "summary": "점(마커)들이 놓이고, 정해진 구간을 순서대로 그어 모양을 완성하는 활동. 구간마다 소리가 나고 다 이으면 정답 애니가 재생됩니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M10_1",
+    "activities": [
+      "MAL1M03W3S3",
+      "MAL2M03W3S3",
+      "MAL3M03W1S3",
+      "MAL3M05W1S2",
+      "MAL3M11W4S2"
+    ],
+    "doc": "README 없음. 근거는 M10_1.ts · Quiz.ts · Segment.ts · Ending.ts · Assets.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M10_1",
+      "from": "@_common/module/MA"
+    },
+    "members": [
+      "private M10_1: M10_1 = new M10_1(this, quizData);"
+    ],
+    "hooks": {
+      "onLoad": [
+        "  super.onLoad()"
+      ],
+      "onInit": [
+        "  await this.M10_1.OnInit()"
+      ],
+      "onStart": [
+        "  const bgm = AudioManager.getSound('bgm')",
+        "  bgm.loop(true)",
+        "  bgm.volume(0.1)",
+        "  bgm.play()",
+        "  await this.M10_1.OnStart()"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. **액티비티 onStart 가 AudioManager.getSound(\"bgm\") 으로 직접 켭니다** — 모듈이 켜 주지 않습니다. 모듈 Assets.ts 에도 있으니 액티비티에서 다시 등록하지는 마세요."
+      }
+    ],
+    "providedByModule": {
+      "note": "**모듈이 등록하는 것은 폰트 셋과 `bg` · `bgm` · 로티 `MAL1M02W1S3_rabbit_idle01` 뿐입니다.** 아래 값들이 가리키는 나머지 alias 는 전부 액티비티가 넣어야 합니다 — 이 모듈은 이름이 코드에 박힌 자리가 없고 **모두 GameData 가 가리키므로** alias 는 자유입니다(각 필드의 default 가 관례 이름입니다).\n\nnarration 의 com* 이름들은 도우미 캐릭터 공통 음원 관례입니다. MainCharacter 가 이미 물고 있는 것이면 다시 등록하지 마세요.",
+      "font": [
+        "NanumSquareRoundR",
+        "NanumSquareRoundB",
+        "NanumSquareRoundEB"
+      ],
+      "image": [
+        "bg"
+      ],
+      "sound": [
+        "bgm"
+      ],
+      "lottie": [
+        "MAL1M02W1S3_rabbit_idle01"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "bg",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "bg",
+            "desc": "배경 그림."
+          }
+        ],
+        "desc": "배경."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "marker",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "normal_alias",
+                  "type": "asset:image",
+                  "required": true,
+                  "default": "point",
+                  "desc": "아직 안 이은 점."
+                },
+                {
+                  "key": "focus_alias",
+                  "type": "asset:image",
+                  "required": true,
+                  "default": "start",
+                  "desc": "지금 그어야 하는 점(시작점)."
+                },
+                {
+                  "key": "active_alias",
+                  "type": "asset:image",
+                  "required": true,
+                  "default": "end",
+                  "desc": "이미 이은 점(끝점)."
+                }
+              ],
+              "desc": "점(마커) 그림 세 벌 — 아직 안 이은 점 · 지금 이을 점 · 이미 이은 점."
+            },
+            {
+              "key": "line",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "correctAniAlias",
+                  "type": "asset:lottie",
+                  "required": true,
+                  "default": "correct",
+                  "desc": "구간을 맞게 그었을 때의 애니."
+                },
+                {
+                  "key": "color",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "#FFF"
+                  ],
+                  "default": "#FFF",
+                  "desc": "안내선 색(#RRGGBB 문자열). 목록에 없는 색도 그대로 씁니다."
+                },
+                {
+                  "key": "drawColor",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "#50FFD9"
+                  ],
+                  "default": "#50FFD9",
+                  "desc": "학생이 그은 선 색."
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "default": 50,
+                  "desc": "선 굵기(px)."
+                },
+                {
+                  "key": "alpha",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "안내선 투명도(0~1)."
+                },
+                {
+                  "key": "completeAlpha",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "다 이은 뒤 선 투명도(0~1)."
+                }
+              ],
+              "desc": "그어지는 선의 모양."
+            },
+            {
+              "key": "quiz",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "문제 그림(무엇을 만들지 보여 주는 것)."
+                },
+                {
+                  "key": "complete_alias",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "완성한 뒤로 바뀌는 그림."
+                },
+                {
+                  "key": "completeSound_alias",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "완성했을 때 재생할 음원."
+                },
+                {
+                  "key": "correctEffect_alias",
+                  "type": "asset:lottie",
+                  "required": true,
+                  "default": "inning_correct",
+                  "desc": "완성 이펙트 애니."
+                },
+                {
+                  "key": "correctEffect_sound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "default": "clear",
+                  "desc": "완성 이펙트 효과음."
+                },
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "문제 그림 자리."
+                }
+              ],
+              "desc": "그 이닝의 문제 그림과 완료 연출."
+            },
+            {
+              "key": "segments",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "start",
+                    "type": "point",
+                    "required": true,
+                    "figma": true,
+                    "desc": "구간 시작점 자리."
+                  },
+                  {
+                    "key": "end",
+                    "type": "point",
+                    "required": true,
+                    "figma": true,
+                    "desc": "구간 끝점 자리."
+                  },
+                  {
+                    "key": "sound",
+                    "type": "asset:sound",
+                    "optional": true,
+                    "desc": "그 구간을 이었을 때 재생할 음원."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "이을 구간 목록. **적은 차례대로 이어야 합니다** — 칸 하나가 선 한 획입니다.",
+              "minLengthWhy": "이을 구간이 하나는 있어야 합니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. 이닝 하나가 모양 하나입니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      },
+      {
+        "key": "ending",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "bg_alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "ending_bg",
+            "desc": "마무리 배경."
+          },
+          {
+            "key": "sound_alias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "ending",
+            "desc": "마무리 음원. **타입이 asset:lottie 로 잡혀 있지만 실제로는 음원입니다** — 초안이 default 값(ending)을 보고 잘못 짚었습니다."
+          },
+          {
+            "key": "lottieAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "ending",
+                "desc": "애니 alias."
+              },
+              {
+                "key": "pos",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "자리."
+              }
+            ],
+            "desc": "마무리 애니."
+          },
+          {
+            "key": "upsprite",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "optional": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "pos",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "자리."
+              }
+            ],
+            "desc": "마무리 화면 위에 얹는 그림."
+          }
+        ],
+        "desc": "마무리 화면."
+      },
+      {
+        "key": "sound",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correct",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "correct",
+                "desc": "alias."
+              }
+            ],
+            "desc": "정답 효과음."
+          },
+          {
+            "key": "wrong",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "default": "wrong",
+                "desc": "alias."
+              }
+            ],
+            "desc": "오답 효과음."
+          },
+          {
+            "key": "wrong2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "default": "wrong2",
+                "desc": "alias."
+              }
+            ],
+            "desc": "거듭 틀렸을 때의 효과음."
+          },
+          {
+            "key": "touch",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "default": "touch",
+                "desc": "alias."
+              }
+            ],
+            "desc": "터치 효과음."
+          }
+        ],
+        "desc": "효과음 표. **한 겹 더 감싸 있습니다** — 각 항목이 { alias } 객체입니다."
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "enterance",
+            "type": "asset:sound",
+            "required": true,
+            "default": "nar1",
+            "desc": "학습 진입 지문. (철자가 enterance 입니다.)"
+          },
+          {
+            "key": "ending",
+            "type": "string",
+            "required": true,
+            "default": "nar3",
+            "desc": "마무리 지문. **타입이 string 으로 잡혀 있지만 음원 alias 입니다.**"
+          },
+          {
+            "key": "clear",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "enum",
+              "values": [
+                "com14",
+                "com15",
+                "com16"
+              ],
+              "desc": "음원 alias 하나."
+            },
+            "desc": "이닝을 맞혔을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+            "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+          },
+          {
+            "key": "wrong",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "enum",
+              "values": [
+                "com10",
+                "com8",
+                "com9"
+              ],
+              "desc": "음원 alias 하나."
+            },
+            "desc": "틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+            "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+          },
+          {
+            "key": "wrong2",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "enum",
+              "values": [
+                "com17",
+                "com18",
+                "com19"
+              ],
+              "desc": "음원 alias 하나."
+            },
+            "desc": "거듭 틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+            "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+          },
+          {
+            "key": "guide",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "enum",
+              "values": [
+                "com5",
+                "com6",
+                "com7"
+              ],
+              "desc": "음원 alias 하나."
+            },
+            "desc": "안내 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+            "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+          },
+          {
+            "key": "hint",
+            "type": "string",
+            "required": true,
+            "default": "com1",
+            "desc": "힌트 음원. **타입이 string 이지만 음원 alias 입니다.**"
+          }
+        ],
+        "desc": "나레이션 표."
+      }
+    ]
+  },
+  "aliasNote": "M10 의 변형입니다. 두 폴더는 파일도 내용도 달라 서로 바꿔 쓸 수 없습니다.",
+  "rules": [
+    {
+      "id": "segments-in-order",
+      "level": "error",
+      "check": "segments 는 실제로 이어야 하는 차례대로 적는다.",
+      "why": "코드가 배열 차례를 그대로 진행 순서로 씁니다. 순서가 뒤바뀌면 모양이 이어지지 않고, 학생은 「맞게 그었는데 반응이 없다」를 겪습니다."
+    },
+    {
+      "id": "segment-endpoints-match-markers",
+      "level": "error",
+      "check": "segments[].start · end 좌표가 실제 마커 자리와 같아야 한다.",
+      "why": "점과 구간이 따로 적혀 있어 어긋나도 에러가 없습니다 — 선이 점에서 벗어난 자리에 그려집니다."
+    },
+    {
+      "id": "bgm-by-activity",
+      "level": "error",
+      "check": "onStart 의 BGM 훅을 지우지 않는다.",
+      "why": "모듈이 BGM 을 켜지 않습니다. 액티비티가 직접 켭니다."
+    },
+    {
+      "id": "sound-wrapped-in-alias",
+      "level": "error",
+      "check": "sound 의 각 항목은 { alias: … } 객체로 적는다.",
+      "why": "문자열로 바로 적으면 코드가 .alias 를 읽어 undefined 가 되고 그 소리만 조용히 빠집니다."
+    },
+    {
+      "id": "narration-typing-loose",
+      "level": "warn",
+      "check": "narration.ending · hint 와 ending.sound_alias 는 타입 표시와 달리 모두 음원 alias 다.",
+      "why": "초안이 표본 값의 생김새로 타입을 짚어 잘못 잡혔습니다. 값은 음원 alias 를 적습니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "이 스펙의 모든 alias 가 AssetTable 이나 모듈 제공 목록에 있어야 한다.",
+      "why": "모듈이 물고 있는 것이 넷뿐이라 대부분을 액티비티가 넣어야 합니다. 없는 그림은 console.error 만 찍고 사라집니다."
+    }
+  ],
+  "notes": [
+    "모듈이 물고 있는 로티 이름이 MAL1M02W1S3_rabbit_idle01 인 것은 최초 제작 차시 이름이 굳은 것입니다. 활동 이름이 아니니 바꾸지 마세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

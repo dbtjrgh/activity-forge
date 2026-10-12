@@ -1,0 +1,404 @@
+{
+  "specVersion": 1,
+  "module": "K32",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K32",
+    "activities": [
+      "KOL1M01W2S2",
+      "KOL1M03W4S2",
+      "KOL1M04W4S2",
+      "KOL1M05W2S2",
+      "KOL1M07W2S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "STTButton.addAsset();",
+        "K32.addAsset();"
+      ],
+      "onInit": [
+        "K32.handle.onInit(quizData);",
+        "this.addChild(K32.handle);"
+      ],
+      "onStart": [
+        "await K32.handle.onStart(quizData);",
+        "SparkApp.eop.show(GameMap.handle.totalPercent * 0.01);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "STTButton",
+        "from": "@_common/sparkLib/component/STTButton"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "K32",
+        "from": "@_common/module/KR/K32/K32"
+      },
+      {
+        "symbol": "GameMap",
+        "from": "@_common/module/KR/K32/component/GameMap"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "endbg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/EndingScene.ts 가 AssetManager.get(\"endbg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 5개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/GameMap.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 5개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "record_text_box",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/Record.ts 가 AssetManager.get(\"record_text_box\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 5개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "pedestal",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/Spaceship.ts 가 AssetManager.get(\"pedestal\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 5개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "linePos",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 0,
+          "y": -50
+        }
+      },
+      {
+        "key": "batteryInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "batteryBg",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "battery_bg"
+              },
+              {
+                "key": "offsetX",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "offsetY",
+                "type": "number",
+                "required": true,
+                "default": 20
+              }
+            ]
+          },
+          {
+            "key": "batteryGauge",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:image",
+                "required": true,
+                "default": "battery_gauge"
+              },
+              {
+                "key": "offsetX",
+                "type": "number",
+                "required": true,
+                "default": -7
+              },
+              {
+                "key": "offsetY",
+                "type": "number",
+                "required": true,
+                "default": 20
+              }
+            ]
+          },
+          {
+            "key": "maskPos",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "batteryAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "offsetX",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "offsetY",
+                "type": "number",
+                "required": true,
+                "default": 20
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "endingPos",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "rocketList",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "spaceship",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "offsetX",
+                  "type": "number",
+                  "required": true,
+                  "default": 0
+                },
+                {
+                  "key": "offsetY",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "spaceshipAni",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:lottie",
+                  "required": true
+                },
+                {
+                  "key": "offsetX",
+                  "type": "number",
+                  "required": true,
+                  "default": 0
+                },
+                {
+                  "key": "offsetY",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "spaceshipFailAni",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:lottie",
+                  "required": true
+                },
+                {
+                  "key": "offsetX",
+                  "type": "number",
+                  "required": true,
+                  "default": 0
+                },
+                {
+                  "key": "offsetY",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "spaceshipFlyAni",
+              "type": "asset:lottie",
+              "required": true
+            },
+            {
+              "key": "spaceshipOutAni",
+              "type": "asset:lottie",
+              "required": true
+            },
+            {
+              "key": "fruit",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "offsetX",
+                  "type": "number",
+                  "required": true,
+                  "default": 0
+                },
+                {
+                  "key": "offsetY",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "word",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "offsetX",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "offsetY",
+                  "type": "number",
+                  "required": true,
+                  "default": -205
+                }
+              ]
+            },
+            {
+              "key": "wordSound",
+              "type": "asset:sound",
+              "required": true
+            },
+            {
+              "key": "lineAni",
+              "type": "asset:lottie",
+              "required": true
+            },
+            {
+              "key": "recordAnswer",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "recordData",
+              "type": "string",
+              "optional": true,
+              "default": ""
+            },
+            {
+              "key": "pos",
+              "type": "point",
+              "required": true,
+              "figma": true
+            },
+            {
+              "key": "spaceshipPos",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "default": {
+                "x": 0,
+                "y": -185
+              }
+            },
+            {
+              "key": "pedestalPos",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "default": {
+                "x": 0,
+                "y": -100
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "specVersion": 1,
+  "module": "ShowcaseWriteLv2",
+  "subject": "EN",
+  "title": "글자판으로 낱말 쓰기 — 자판을 눌러 낱말을 채웁니다",
+  "summary": "아래에 글자 자판이 있고 위에 빈 칸이 놓입니다. 그림과 소리를 보고 글자를 하나씩 눌러 낱말을 채웁니다. 잘못 누르면 지우개로 지울 수 있습니다. 다 채우면 사진이 찍혀 앨범에 쌓이고, 끝나면 앨범에서 낱말을 다시 들을 수 있습니다. 이닝 차례는 열 때마다 섞입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/ShowcaseWriteLv2",
+    "activities": [
+      "ENL2M01W4S2",
+      "ENL2M02W4S2",
+      "ENL2M03W4S2",
+      "ENL2M04W4S2",
+      "ENL2M05W4S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ShowcaseWriteLv2.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.5);",
+        "this.addChild( ShowcaseWriteLv2.handle );",
+        "ShowcaseWriteLv2.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await ShowcaseWriteLv2.handle.start();",
+        "await ShowcaseWriteLv2.handle.play();",
+        "await ShowcaseWriteLv2.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// ShowcaseWriteLv2.handle.onResize();"
+      ],
+      "onResize": [
+        "ShowcaseWriteLv2.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "ShowcaseWriteLv2",
+        "from": "@_common/module/EN"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [],
+    "providedByModule": {
+      "note": "**자판과 공책, 앨범은 모듈 것입니다.** Assets.ts 가 배경·판·공책·글쇠 열한 벌·지우개·앨범 판·배경음·안내(SL_en_com_nar86)·효과음·알갱이 로티를 등록합니다. **액티비티는 그림 두 벌과 낱말 소리만 넣습니다.** 회차 AssetTable 에 남아 있는 //{alias:'correct'…} 주석은 **틀에서 딸려 온 것**입니다 — 기존 회차가 모두 주석인 채로 두었고 모듈이 안 찾습니다.",
+      "image": [
+        "bg",
+        "panel",
+        "notebook",
+        "key_bg",
+        "key01_body ~ key11_body",
+        "trash_board",
+        "trash_n",
+        "trash_p",
+        "result_panel",
+        "bar_sz2",
+        "bar_sz3",
+        "return_icon"
+      ],
+      "lottie": [
+        "En_L2_M01_W4_S2_kboard_ef",
+        "En_L3_M01_W4_S2_txt_ef"
+      ],
+      "sound": [
+        "bgm",
+        "SL_en_com_nar86 (시작 안내)",
+        "SL_en_com_sfx01·02·04·13~16"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "채워야 할 낱말. **글자 그대로**입니다 — 자판과 빈 칸을 이 글자로 만듭니다. 빈칸 수도 글자 수에서 나옵니다."
+            },
+            {
+              "key": "pic",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "n",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "아직 못 맞힌 상태(흐린 그림)."
+                },
+                {
+                  "key": "p",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "맞힌 뒤 상태(또렷한 그림). 기존 5개가 _n / _p 로 짝을 두고 있습니다."
+                }
+              ],
+              "desc": "낱말 그림 두 벌."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 낱말을 읽는 소리. 앨범에서 다시 들을 때도 이것입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "낱말 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — ShowcaseWriteLv2.ts:69.",
+        "minLengthWhy": "ENL2M02W4S2 가 이닝 하나로 나가 있습니다(2026-09-28, 완성본 전부로 잼). 여럿이 흔하지만 하나도 돕니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "pic-two-states",
+      "level": "error",
+      "check": "pic.n 과 pic.p 가 서로 다른 alias 여야 한다.",
+      "why": "맞히기 전과 뒤를 같은 그림으로 두면 맞혔다는 것이 화면에 안 나타납니다."
+    },
+    {
+      "id": "word-is-plain-letters",
+      "level": "error",
+      "check": "word 가 자판으로 칠 수 있는 글자여야 한다.",
+      "why": "모듈이 이 글자로 자판과 빈 칸을 만듭니다. 빈칸이나 특수문자가 섞이면 누를 글쇠가 없어 **그 이닝을 끝낼 수가 없습니다.**"
+    },
+    {
+      "id": "inningdata-shuffled",
+      "level": "warn",
+      "check": "inningData 의 차례에 뜻이 있으면 안 된다.",
+      "why": "ShowcaseWriteLv2.ts:69 가 shuffleArray(inningData) 를 그대로 부릅니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

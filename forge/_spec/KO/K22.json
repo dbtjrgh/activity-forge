@@ -1,0 +1,2217 @@
+{
+  "specVersion": 1,
+  "module": "K22",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K22",
+    "activities": [
+      "KOL2M01W4S2",
+      "KOL2M02W4S2",
+      "KOL2M03W4S2",
+      "KOL2M04W4S2",
+      "KOL2M05W4S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "await this.mK22.onLoad(font, image, lottie, sound);"
+      ],
+      "onInit": [
+        "await this.mK22.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mK22.onStart();"
+      ],
+      "onEnd": [
+        "await this.mK22.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mK22.onUpdate(_ticker);"
+      ],
+      "onAffordanceOn": [
+        "await this.mK22.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mK22.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K22",
+      "from": "@_common/module/KR/K22/K22"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_BG",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "bg_background",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -540
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 2160
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K22_Recording",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "container",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "recording",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 860
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 940
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 216
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 116
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "recording_blank",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 200
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "recording_frame",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 216
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 116
+                  }
+                ]
+              },
+              {
+                "key": "recording_start",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 200
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "recording_off",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 55
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 71
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "lottie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "recording_on",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 200
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "visible",
+                    "type": "bool",
+                    "required": true,
+                    "default": false
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true,
+                    "default": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true,
+                    "default": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K22_Call",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "container",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "phone_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 240
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 120
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "phone_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 740
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 120
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "phone_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 1240
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 120
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "phone_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 490
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 590
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "phone_4",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 990
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 590
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "call_phone_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "call_phone_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "call_phone_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "call_phone_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "call_phone_4",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 440
+                  }
+                ]
+              },
+              {
+                "key": "call_btn_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "call_btn_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "call_btn_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "call_btn_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "call_btn_4",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "call_receive_bg",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -540
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 2160
+                  }
+                ]
+              },
+              {
+                "key": "call_receive_char_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 735
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 210
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 450
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 450
+                  }
+                ]
+              },
+              {
+                "key": "call_screen_dimmed",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -540
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 2160
+                  }
+                ]
+              },
+              {
+                "key": "call_bg",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -540
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 2160
+                  }
+                ]
+              },
+              {
+                "key": "call_table",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_table_0",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "lottie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "call_receive_anim",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 810
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 700
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 300
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 300
+                  }
+                ]
+              },
+              {
+                "key": "call_char_position",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 635
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 85.08
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 650
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 800
+                  }
+                ]
+              },
+              {
+                "key": "call_bg_anim_0_0",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_bg_anim_0_1",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "reversal",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_bg_anim_1_0",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_bg_anim_1_1",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "reversal",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_bg_anim_1_2",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_char_0",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_char_1",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_char_2",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 580
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 760
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 810
+                  }
+                ]
+              },
+              {
+                "key": "call_char_3",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_char_4",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_bg_anim_2_0",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_bg_anim_4_0",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "reversal",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "call_bg_anim_4_1",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "autoplay",
+                    "type": "bool",
+                    "required": true
+                  },
+                  {
+                    "key": "loop",
+                    "type": "bool",
+                    "required": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "value",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "talkMax",
+                "type": "number",
+                "required": true,
+                "default": 6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K22_Delete",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "delete_btn_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "delete_btn_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "delete_btn_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "delete_btn_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "delete_btn_4",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K22_Popup",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "container",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "popup",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 270
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 120
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1380
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 840
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "popup_btn_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "popup_btn_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "popup_btn_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "popup_btn_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "popup_btn_4",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -50
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 165
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "popup_dim",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -540
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 2160
+                  }
+                ]
+              },
+              {
+                "key": "popup_bg",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1380
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 840
+                  }
+                ]
+              },
+              {
+                "key": "popup_stop_btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -500
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 285
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 130
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 130
+                  }
+                ]
+              },
+              {
+                "key": "popup_progrees_bar_blank",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 80
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 280
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 960
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "popup_progrees_bar_frame",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 80
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 280
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 970
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 110
+                  }
+                ]
+              },
+              {
+                "key": "popup_progrees_bar_start",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 80
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 280
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 960
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              },
+              {
+                "key": "popup_close_btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 590
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -320
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 90
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 90
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "Com_Complete",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "complete_btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "Com_Affordance",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "label",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "call",
+                "type": "array",
+                "required": true,
+                "minLength": 5,
+                "of": {
+                  "key": "",
+                  "type": "enum",
+                  "values": [
+                    "phone_0",
+                    "phone_1",
+                    "phone_2",
+                    "phone_3",
+                    "phone_4"
+                  ]
+                }
+              },
+              {
+                "key": "recording",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "recording"
+                ],
+                "default": "recording"
+              },
+              {
+                "key": "complete",
+                "type": "asset:image",
+                "required": true,
+                "default": "complete_btn"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

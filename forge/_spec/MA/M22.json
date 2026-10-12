@@ -1,0 +1,3148 @@
+{
+  "specVersion": 1,
+  "module": "M22",
+  "subject": "MA",
+  "title": "붙였다 떼며 수 만들기 (룰렛·게시판)",
+  "summary": "물건을 끌어다 게시판에 붙여 수를 만드는 활동. 룰렛을 돌려 나온 수를 쓰고, 결과를 출력 버튼으로 확인합니다. 세트를 바꿔 가며 여러 벌을 만듭니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M22",
+    "activities": [
+      "MAL2M01W2S1",
+      "MAL2M11W1S1"
+    ],
+    "doc": "README 없음. 근거는 M22.ts 와 M22_DragObject · M22_DropZone · M22_Clone · M22_ChangeObject · M22_Roulette · M22_Post · M22_Output · M22_Ending · M22_Trash · M22_Buttons · M22_DragLock 그리고 표본 2차시입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M22",
+      "from": "@_common/module/MA/M22/M22"
+    },
+    "members": [
+      "private mM22: M22 = new M22();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "await this.mM22.onLoad(font, image, lottie, sound);"
+      ],
+      "onInit": [
+        "await this.mM22.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mM22.onStart();"
+      ],
+      "onEnd": [
+        "await this.mM22.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mM22.onUpdate(_ticker);"
+      ],
+      "onAffordanceOn": [
+        "await this.mM22.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mM22.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [],
+    "providedByModule": {
+      "note": "**dori_common(협력사 공통) 꼴의 모듈입니다** — 자기 리소스를 등록하지 않고, 액티비티 onLoad 가 AssetTable 네 배열을 넘깁니다(`mM22.onLoad(font, image, lottie, sound)`).\n\n**모든 배치표의 열쇠가 곧 AssetTable 의 alias 입니다.** 여기 열거된 열쇠는 표본 두 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다. 코드에 이름을 박은 자리는 없습니다 — 그래서 **열쇠를 알아보기 쉽게 바꿔 적으면 그 그림이 통째로 사라집니다.**\n\n이름 규칙 — `drag_Obj_{세트}_{번호}`(그림 물건) · `drag_Anim_{세트}_{번호}`(애니 물건) · `drag_Area_{세트}_{번호}`(그 물건을 놓는 영역) · `post_img_{번호}`(게시판 그림) · `Roll_{숫자}`(룰렛 숫자) · `result0` · `result1`(출력 결과)."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "firstResult",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "number",
+          "desc": "값 하나."
+        },
+        "desc": "처음 보여 줄 결과 값들.",
+        "minLengthWhy": "결과가 하나는 있어야 합니다."
+      },
+      {
+        "key": "viewIndex",
+        "type": "number",
+        "required": true,
+        "desc": "처음 보여 줄 화면 번호."
+      },
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "portpolio",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`portpolio` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              }
+            ],
+            "desc": "`data` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+          }
+        ],
+        "desc": "공통 콘텐츠 설정(포트폴리오 저장 범위 등). **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "bgImgLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "bg_background",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "화면 배경 자리와 크기. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+          },
+          {
+            "key": "bg_shelf",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "선반 배경 자리와 크기."
+          }
+        ],
+        "desc": "배경 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "postImgLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "post_img_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "게시판 그림 0번 자리와 크기."
+          },
+          {
+            "key": "post_img_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "게시판 그림 1번 자리와 크기."
+          },
+          {
+            "key": "post_img_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "게시판 그림 2번 자리와 크기."
+          },
+          {
+            "key": "post_img_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "게시판 그림 3번 자리와 크기."
+          },
+          {
+            "key": "post_img_4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "게시판 그림 4번 자리와 크기."
+          },
+          {
+            "key": "post_btn_basic",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "게시 버튼 기본 그림 자리와 크기."
+          },
+          {
+            "key": "post_btn_click",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "게시 버튼 눌린 그림 자리와 크기."
+          }
+        ],
+        "desc": "게시판·게시 버튼 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "changeImgLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "change_btn_basic",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "바꾸기 버튼 기본 그림."
+          },
+          {
+            "key": "change_btn_click",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "바꾸기 버튼 눌린 그림."
+          }
+        ],
+        "desc": "바꾸기 버튼 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "currentSet",
+        "type": "number",
+        "required": true,
+        "desc": "시작 세트 번호. **drag_Obj_{세트}_… 의 세트 번호와 같은 값입니다.**"
+      },
+      {
+        "key": "setLength",
+        "type": "number",
+        "required": true,
+        "desc": "세트 수. **이 수만큼 drag_Obj_{세트}_… · drag_Area_{세트}_… 가 있어야 합니다.**"
+      },
+      {
+        "key": "dropAreaLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "drop_area_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "물건을 놓는 큰 영역."
+          }
+        ],
+        "desc": "놓는 영역 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "endingLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "ending_clones",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "마무리 화면의 복제본들 자리."
+          },
+          {
+            "key": "ending_post",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "마무리 게시판 자리."
+          },
+          {
+            "key": "ending_result_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "마무리 결과 0번 자리와 크기."
+          },
+          {
+            "key": "ending_result_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "마무리 결과 1번 자리와 크기."
+          }
+        ],
+        "desc": "마무리 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "dragImgLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "drag_Obj_0_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "0번 세트의 0번 물건(그림)이 놓이는 자리와 크기. **drag_Area_0_0 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Anim_0_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "0번 세트의 1번 물건(애니)이 놓이는 자리와 크기. **drag_Area_0_1 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Anim_0_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "0번 세트의 2번 물건(애니)이 놓이는 자리와 크기. **drag_Area_0_2 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Obj_0_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "0번 세트의 3번 물건(그림)이 놓이는 자리와 크기. **drag_Area_0_3 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Obj_1_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 세트의 0번 물건(그림)이 놓이는 자리와 크기. **drag_Area_1_0 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Anim_1_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 세트의 1번 물건(애니)이 놓이는 자리와 크기. **drag_Area_1_1 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Anim_1_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 세트의 2번 물건(애니)이 놓이는 자리와 크기. **drag_Area_1_2 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Obj_1_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 세트의 3번 물건(그림)이 놓이는 자리와 크기. **drag_Area_1_3 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Obj_2_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 세트의 0번 물건(그림)이 놓이는 자리와 크기. **drag_Area_2_0 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Anim_2_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 세트의 1번 물건(애니)이 놓이는 자리와 크기. **drag_Area_2_1 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Anim_2_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 세트의 2번 물건(애니)이 놓이는 자리와 크기. **drag_Area_2_2 이 이 물건을 놓는 영역입니다.**"
+          },
+          {
+            "key": "drag_Obj_2_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 세트의 3번 물건(그림)이 놓이는 자리와 크기. **drag_Area_2_3 이 이 물건을 놓는 영역입니다.**"
+          }
+        ],
+        "desc": "끌어다 놓는 물건 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "dragAreaLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "drag_Area_0_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "0번 세트 0번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_0_0 또는 drag_Anim_0_0 입니다."
+          },
+          {
+            "key": "drag_Area_0_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "0번 세트 1번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_0_1 또는 drag_Anim_0_1 입니다."
+          },
+          {
+            "key": "drag_Area_0_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "0번 세트 2번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_0_2 또는 drag_Anim_0_2 입니다."
+          },
+          {
+            "key": "drag_Area_0_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "0번 세트 3번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_0_3 또는 drag_Anim_0_3 입니다."
+          },
+          {
+            "key": "drag_Area_1_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 세트 0번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_1_0 또는 drag_Anim_1_0 입니다."
+          },
+          {
+            "key": "drag_Area_1_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 세트 1번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_1_1 또는 drag_Anim_1_1 입니다."
+          },
+          {
+            "key": "drag_Area_1_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 세트 2번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_1_2 또는 drag_Anim_1_2 입니다."
+          },
+          {
+            "key": "drag_Area_1_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "1번 세트 3번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_1_3 또는 drag_Anim_1_3 입니다."
+          },
+          {
+            "key": "drag_Area_2_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 세트 0번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_2_0 또는 drag_Anim_2_0 입니다."
+          },
+          {
+            "key": "drag_Area_2_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 세트 1번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_2_1 또는 drag_Anim_2_1 입니다."
+          },
+          {
+            "key": "drag_Area_2_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 세트 2번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_2_2 또는 drag_Anim_2_2 입니다."
+          },
+          {
+            "key": "drag_Area_2_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "2번 세트 3번 물건을 놓는 판정 영역. 짝이 되는 물건은 drag_Obj_2_3 또는 drag_Anim_2_3 입니다."
+          }
+        ],
+        "desc": "물건마다의 판정 영역 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "rouletteImgLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "Roulette_Bar",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 막대 자리."
+          },
+          {
+            "key": "Roulette_Unit",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 한 칸 자리."
+          }
+        ],
+        "desc": "룰렛 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "rollImgLayout0",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "Roll_4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 4 의 자리와 크기."
+          },
+          {
+            "key": "Roll_5",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 5 의 자리와 크기."
+          },
+          {
+            "key": "Roll_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 1 의 자리와 크기."
+          },
+          {
+            "key": "Roll_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 2 의 자리와 크기."
+          },
+          {
+            "key": "Roll_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 3 의 자리와 크기."
+          }
+        ],
+        "desc": "룰렛 첫째 자리 숫자 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "rollImgLayout1",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "Roll_8",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 8 의 자리와 크기."
+          },
+          {
+            "key": "Roll_9",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 9 의 자리와 크기."
+          },
+          {
+            "key": "Roll_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 0 의 자리와 크기."
+          },
+          {
+            "key": "Roll_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 1 의 자리와 크기."
+          },
+          {
+            "key": "Roll_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 2 의 자리와 크기."
+          },
+          {
+            "key": "Roll_3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 3 의 자리와 크기."
+          },
+          {
+            "key": "Roll_4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 4 의 자리와 크기."
+          },
+          {
+            "key": "Roll_5",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 5 의 자리와 크기."
+          },
+          {
+            "key": "Roll_6",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 6 의 자리와 크기."
+          },
+          {
+            "key": "Roll_7",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 숫자 7 의 자리와 크기."
+          }
+        ],
+        "desc": "룰렛 둘째 자리 숫자 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "rouletteAreaLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "DragArea_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 0번 칸을 끌 수 있는 영역."
+          },
+          {
+            "key": "DragArea_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 1번 칸을 끌 수 있는 영역."
+          }
+        ],
+        "desc": "룰렛을 끌 수 있는 영역 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "trashImgLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "trash_close",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "닫힌 쓰레기통 자리."
+          },
+          {
+            "key": "trash_open",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "열린 쓰레기통 자리."
+          }
+        ],
+        "desc": "쓰레기통 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "trashAreaLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "trash_area",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "쓰레기통 판정 영역."
+          }
+        ],
+        "desc": "쓰레기통 판정 영역 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "endingData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "ending_btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`ending_btn` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              }
+            ],
+            "desc": "`image` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+          }
+        ],
+        "desc": "마무리 리소스 표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "completeData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "complete_btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`complete_btn` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              }
+            ],
+            "desc": "`image` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+          }
+        ],
+        "desc": "완료 리소스 표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "hideLabels",
+        "type": "array",
+        "required": true,
+        "minLength": 0,
+        "of": {
+          "key": "",
+          "type": "string",
+          "desc": "label 이름 하나."
+        },
+        "desc": "마무리에서 감출 요소의 label 이름 목록.",
+        "minLengthWhy": "없으면 빈 배열로 둡니다."
+      },
+      {
+        "key": "buttonsLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "post_area",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "게시판 판정 영역."
+          }
+        ],
+        "desc": "버튼 판정 영역 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "outputLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "output_btn_basic",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "출력 버튼 기본 그림."
+          },
+          {
+            "key": "output_btn_click",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "출력 버튼 눌린 그림."
+          },
+          {
+            "key": "result0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "Number_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_0` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_1` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_2` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_3` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_4",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_4` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_5",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_5` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              }
+            ],
+            "desc": "출력 결과 0번 배치."
+          },
+          {
+            "key": "result1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "Number_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_0` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_1` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_2` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_3` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_4",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_4` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_5",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_5` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_6",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_6` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_7",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_7` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_8",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_8` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "Number_9",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "`Number_9` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              }
+            ],
+            "desc": "출력 결과 1번 배치."
+          }
+        ],
+        "desc": "출력 버튼·결과 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "lottieLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "slot_roll",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "룰렛 회전 애니 자리."
+          }
+        ],
+        "desc": "애니 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "particleLayout",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "particle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "파티클 자리."
+          }
+        ],
+        "desc": "파티클 배치표. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      },
+      {
+        "key": "afforData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "label",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "drag",
+                "type": "array",
+                "required": true,
+                "minLength": 12,
+                "of": {
+                  "key": "",
+                  "type": "string",
+                  "desc": "칸 하나."
+                },
+                "desc": "`drag` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "ending",
+                "type": "asset:image",
+                "required": true,
+                "desc": "`ending` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              },
+              {
+                "key": "complete",
+                "type": "asset:image",
+                "required": true,
+                "desc": "`complete` 의 배치. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+              }
+            ],
+            "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+          }
+        ],
+        "desc": "어포던스 설정. **열쇠가 곧 AssetTable 의 alias 입니다.**"
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "key-is-alias",
+      "level": "error",
+      "check": "모든 배치표의 열쇠가 AssetTable 의 alias 와 정확히 같아야 한다.",
+      "why": "**이 모듈은 코드에 이름을 박은 자리가 없고 열쇠가 곧 alias 입니다.** 한 글자만 달라도 그 그림이 조용히 사라지고, 자리 값이 맞아도 아무것도 안 보입니다."
+    },
+    {
+      "id": "obj-area-pairs",
+      "level": "error",
+      "check": "물건마다 짝이 되는 판정 영역이 있어야 한다 — drag_Obj_{세트}_{번호} 또는 drag_Anim_{세트}_{번호} ↔ drag_Area_{세트}_{번호}.",
+      "why": "번호로 짝을 찾습니다. 영역이 없으면 그 물건은 **어디에도 놓을 수 없습니다.**"
+    },
+    {
+      "id": "sets-cover-setlength",
+      "level": "error",
+      "check": "setLength 만큼의 세트 번호가 dragImgLayout · dragAreaLayout 에 다 있어야 한다.",
+      "why": "세트를 번호로 바꿔 가며 씁니다. 빠진 세트에서는 화면이 비어 버립니다."
+    },
+    {
+      "id": "roll-digits-complete",
+      "level": "error",
+      "check": "rollImgLayout0 · rollImgLayout1 에 쓰는 숫자의 Roll_{숫자} 가 다 있어야 한다.",
+      "why": "룰렛 숫자 그림을 값으로 찾습니다. 하나 빠지면 그 숫자가 나올 때 칸이 빕니다. (표본은 첫째 자리 5개 · 둘째 자리 10개입니다.)"
+    },
+    {
+      "id": "affor-labels-exist",
+      "level": "error",
+      "check": "afforData.label 의 alias 가 실제 배치표 열쇠에 있어야 한다.",
+      "why": "어포던스를 그 이름으로 찾습니다. 없으면 아무 데도 안 뜹니다."
+    },
+    {
+      "id": "onupdate-required",
+      "level": "error",
+      "check": "onUpdate 에서 M22.onUpdate(ticker) 를 불러야 한다.",
+      "why": "룰렛과 끌기가 매 프레임 갱신됩니다. 훅을 빠뜨리면 룰렛이 돌지 않습니다."
+    },
+    {
+      "id": "hooks-all-seven",
+      "level": "error",
+      "check": "일곱 훅(onLoad · onInit · onStart · onEnd · onUpdate · onAffordanceOn · onAffordanceCanceled)을 다 넘긴다.",
+      "why": "어포던스 훅을 빠뜨리면 안내 표시가 안 나옵니다."
+    }
+  ],
+  "notes": [
+    "표본이 두 차시(MAL2M01W2S1 · MAL2M11W1S1)뿐입니다.",
+    "물건과 판정 영역이 번호로 짝지어져 있어, 물건을 늘리면 영역도 같은 번호로 늘려야 합니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

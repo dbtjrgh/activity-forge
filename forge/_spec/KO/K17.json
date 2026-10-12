@@ -1,0 +1,1176 @@
+{
+  "specVersion": 1,
+  "module": "K17",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K17",
+    "activities": [
+      "KOL3M01W3S2",
+      "KOL3M02W3S2",
+      "KOL3M03W3S2",
+      "KOL3M04W3S2",
+      "KOL3M05W1S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "super.onLoad()"
+      ],
+      "onInit": [
+        "await this.K17.init()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm');",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "await this.K17.Start();"
+      ],
+      "onAffordanceOn": [
+        "await this.K17.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K17.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K17",
+      "from": "@_common/module/KR/K17/K17.ts"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "default",
+                "type": "number",
+                "required": true,
+                "default": 30
+              },
+              {
+                "key": "condition_0",
+                "type": "number",
+                "required": true,
+                "default": 3
+              },
+              {
+                "key": "condition_1",
+                "type": "number",
+                "required": true,
+                "default": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "maxInning",
+        "type": "number",
+        "required": true
+      },
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "setCount",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "targetCount",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "roadCount",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "extraRoadCount",
+              "type": "number",
+              "required": true,
+              "default": 2
+            }
+          ]
+        }
+      },
+      {
+        "key": "quizType",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "cat",
+          "spaceShip"
+        ]
+      },
+      {
+        "key": "isInningEndAniPlay",
+        "type": "bool",
+        "required": true,
+        "default": false
+      },
+      {
+        "key": "endZoomMotionTime",
+        "type": "number",
+        "required": true,
+        "default": 3
+      },
+      {
+        "key": "targetMovingAngle",
+        "type": "number",
+        "required": true
+      },
+      {
+        "key": "targetMovingTime",
+        "type": "number",
+        "required": true,
+        "default": 2
+      },
+      {
+        "key": "isRoadOver",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isZoomEvent",
+        "type": "bool",
+        "required": true
+      },
+      {
+        "key": "noSoundEndPlayTime",
+        "type": "number",
+        "required": true,
+        "default": 3000
+      },
+      {
+        "key": "isPlaySound",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isInningRandom",
+        "type": "bool",
+        "required": true,
+        "default": false
+      },
+      {
+        "key": "firstNarTime",
+        "type": "number",
+        "required": true,
+        "default": 9000
+      },
+      {
+        "key": "extraBg",
+        "type": "number",
+        "required": true,
+        "default": 0
+      },
+      {
+        "key": "affordanceScale",
+        "type": "number",
+        "required": true,
+        "default": 1.05
+      },
+      {
+        "key": "roadName",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "road"
+        ],
+        "default": "road"
+      },
+      {
+        "key": "isObj",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "issynthesisRoad",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "normalRoadNum",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "number"
+        }
+      },
+      {
+        "key": "extraRoadNum",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "number"
+        }
+      },
+      {
+        "key": "extraRoad",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "number"
+        }
+      },
+      {
+        "key": "extraRoadTypeCount",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "number"
+        }
+      },
+      {
+        "key": "roadOverName",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "roadOver"
+        ],
+        "default": "roadOver"
+      },
+      {
+        "key": "extraTypeStartNum",
+        "type": "number",
+        "required": true,
+        "default": 5
+      },
+      {
+        "key": "inningBlank",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 0,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": []
+          }
+        }
+      },
+      {
+        "key": "targetName",
+        "type": "asset:image",
+        "required": true,
+        "default": "rocket"
+      },
+      {
+        "key": "issynthesisTarget",
+        "type": "bool",
+        "required": true,
+        "default": false
+      },
+      {
+        "key": "rocketIdleName",
+        "type": "asset:lottie",
+        "required": true,
+        "default": "roIdle"
+      },
+      {
+        "key": "rocketMoveName",
+        "type": "asset:lottie",
+        "required": true,
+        "default": "roMove"
+      },
+      {
+        "key": "rocketEndName",
+        "type": "asset:image",
+        "aliasMayBeOff": "AssetTable 의 rocketEnd 줄을 주석으로 막아 끄는 회차가 있습니다(KOL3M02W3S2 등 4개). K17.ts:177 이 빈 그림을 받아 아무것도 안 보입니다.",
+        "required": true,
+        "default": "rocketEnd"
+      },
+      {
+        "key": "characterIdle",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "chIdle"
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": false
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": false
+          }
+        ]
+      },
+      {
+        "key": "characterTalk",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "chTalk"
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": false
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": false
+          }
+        ]
+      },
+      {
+        "key": "goalPos",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": true
+          }
+        ]
+      },
+      {
+        "key": "goalTalkPos",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": true
+          }
+        ]
+      },
+      {
+        "key": "dropTargetPos",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "roadPos",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "label",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "extra",
+                "normal"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "key": "extraRoadPos",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "dropRocketPos",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "extraDropRocketPos",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "rocketMoveAni",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 410
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "optional": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "optional": true
+          }
+        ]
+      },
+      {
+        "key": "targetIdleAni",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 410
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "optional": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "optional": true
+          }
+        ]
+      },
+      {
+        "key": "inningEndTargetPos",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 1415,
+          "y": 780
+        }
+      },
+      {
+        "key": "inningEndTarget",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 650.63,
+          "y": 198.34
+        }
+      },
+      {
+        "key": "bg",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 1350.82,
+          "y": 919.61
+        }
+      },
+      {
+        "key": "bgSize",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "label",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "end",
+                "start"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "key": "bgi",
+        "type": "point",
+        "required": true,
+        "figma": true
+      },
+      {
+        "key": "afforData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "label",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "dropTarget",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "characterIdle2",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "chIdle2"
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 390
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 440
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": false
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": false
+          }
+        ]
+      },
+      {
+        "key": "goal_pos",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "string",
+            "required": true,
+            "default": {
+              "__expr": "1530 + 180"
+            }
+          },
+          {
+            "key": "y",
+            "type": "string",
+            "required": true,
+            "default": {
+              "__expr": "700 + 220"
+            }
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": true
+          }
+        ]
+      },
+      {
+        "key": "charIdle",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 150
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 480
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": true
+          }
+        ]
+      },
+      {
+        "key": "charTalk",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 150
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 480
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": true
+          }
+        ]
+      },
+      {
+        "key": "catIdle",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "roIdle"
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 425
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 660
+          },
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": true
+          }
+        ]
+      },
+      {
+        "key": "FixedPattern",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "pattern_0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "road_1",
+                "type": "array",
+                "required": true,
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "road_2",
+                "type": "array",
+                "required": true,
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "road_3",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_4",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_5",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_6",
+                "type": "point",
+                "required": true,
+                "figma": true
+              }
+            ]
+          },
+          {
+            "key": "pattern_1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "road_1",
+                "type": "array",
+                "required": true,
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "road_2",
+                "type": "array",
+                "required": true,
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "road_3",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_4",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_5",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_6",
+                "type": "point",
+                "required": true,
+                "figma": true
+              }
+            ]
+          },
+          {
+            "key": "pattern_2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "road_1",
+                "type": "array",
+                "required": true,
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "road_2",
+                "type": "array",
+                "required": true,
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "road_3",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_4",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_5",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "road_6",
+                "type": "point",
+                "required": true,
+                "figma": true
+              }
+            ]
+          },
+          {
+            "key": "value",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "isTextOrderLeft",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

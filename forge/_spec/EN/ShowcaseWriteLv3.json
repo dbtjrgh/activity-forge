@@ -1,0 +1,142 @@
+{
+  "specVersion": 1,
+  "module": "ShowcaseWriteLv3",
+  "subject": "EN",
+  "title": "공책에 낱말 쓰기 — 자판으로 낱말을 적어 공책에 남깁니다",
+  "summary": "공책이 펼쳐져 있고 아래에 글자 자판이 있습니다. 그림과 소리를 보고 낱말을 자판으로 적습니다. 다 적으면 공책에 남고 다음 낱말로 넘어갑니다. Lv2 와 달리 빈 칸을 채우는 것이 아니라 공책에 줄을 맞춰 적는 꼴입니다. 이닝 차례는 열 때마다 섞입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/ShowcaseWriteLv3",
+    "activities": [
+      "ENL3M01W4S2",
+      "ENL3M02W4S2",
+      "ENL3M03W4S2",
+      "ENL3M04W4S2",
+      "ENL3M05W4S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ShowcaseWriteLv3.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "this.addChild( ShowcaseWriteLv3.handle );",
+        "ShowcaseWriteLv3.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await ShowcaseWriteLv3.handle.start();",
+        "await ShowcaseWriteLv3.handle.play();",
+        "await ShowcaseWriteLv3.handle.finish();",
+        "await SparkApp.eop.show(ShowcaseWriteLv3.handle.totalPercent / quizData.inningData.length * 0.01);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onResize": [
+        "ShowcaseWriteLv3.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "ShowcaseWriteLv3",
+        "from": "@_common/module/EN"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [],
+    "providedByModule": {
+      "note": "**공책과 자판은 모듈 것입니다.** Assets.ts 가 배경·공책·글쇠 두 벌·되돌리기·배경음·안내(SL_en_com_nar88)·효과음·알갱이 로티를 등록합니다. **액티비티는 낱말 그림과 소리만 넣습니다.** 회차 AssetTable 에 남아 있는 //{alias:'correct'…} 주석은 **틀에서 딸려 온 것**입니다 — 기존 회차가 모두 주석인 채로 두었고 모듈이 안 찾습니다.",
+      "image": [
+        "bg",
+        "notebook",
+        "key01_bg",
+        "key01_body",
+        "key02_bg",
+        "key02_body",
+        "return_icon"
+      ],
+      "lottie": [
+        "En_L3_M01_W4_S2_kboard_ef",
+        "En_L3_M01_W4_S2_txt_ef"
+      ],
+      "sound": [
+        "bgm",
+        "SL_en_com_nar88 (시작 안내)",
+        "SL_en_com_sfx02·04·05·14~16·18·19"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "적어야 할 낱말. **글자 그대로**입니다. 3레벨이라 pull down · sit on 처럼 **빈칸이 든 두 낱말도 들어갑니다** — 그림 이름에서는 빈칸을 빼서 pulldown 으로 씁니다."
+            },
+            {
+              "key": "image",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그 낱말의 그림. 이름에 빈칸을 안 씁니다."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 낱말을 읽는 소리."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "낱말 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — ShowcaseWriteLv3.ts:69.",
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 5개는 5개씩입니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "image-alias-no-space",
+      "level": "warn",
+      "check": "image alias 에 빈칸이 없어야 한다.",
+      "why": "word 에는 빈칸이 들어가도 되지만 alias 는 파일 이름으로 이어집니다. 빈칸이 들어가면 주소에서 %20 이 되어 못 찾는 자리가 생깁니다."
+    },
+    {
+      "id": "inningdata-shuffled",
+      "level": "warn",
+      "check": "inningData 의 차례에 뜻이 있으면 안 된다.",
+      "why": "ShowcaseWriteLv3.ts:69 가 shuffleArray(inningData) 를 그대로 부릅니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

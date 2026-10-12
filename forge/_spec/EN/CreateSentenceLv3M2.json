@@ -1,0 +1,344 @@
+{
+  "specVersion": 1,
+  "module": "CreateSentenceLv3M2",
+  "subject": "EN",
+  "title": "문장 카드 뒤집기 — 낱말 카드를 차례대로 눌러 문장을 만듭니다",
+  "summary": "위쪽 그림판에 장면이 뜨고 스피커를 누르면 문장을 읽어 줍니다. 아래에는 뒤집힌 카드가 낱말 수만큼 놓여 있습니다. 문장 차례대로 카드를 누르면 카드가 뒤집히며 낱말이 드러나고 문장 칸에 하나씩 채워집니다. 틀리면 도로 덮이고 다시 고릅니다. 다 채우면 답 카드가 뜨고 문장이 완성됩니다. 이닝 차례도, 카드가 놓이는 자리도 열 때마다 섞입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/CreateSentenceLv3M2",
+    "activities": [
+      "ENL3M02W3S3",
+      "ENL3M03W3S3",
+      "ENL3M06W3S3",
+      "ENL3M11W1S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ButtonSound.addAsset();"
+      ],
+      "onInit": [
+        "CreateSentenceLv3M2.handle.init(quizData);",
+        "this.addChild(CreateSentenceLv3M2.handle);",
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await CreateSentenceLv3M2.handle.start();",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"SL_en_307_s3_nar02\");",
+        "await CreateSentenceLv3M2.handle.play();",
+        "await CreateSentenceLv3M2.handle.finish();",
+        "await SparkApp.eop.show();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "ButtonSound",
+        "from": "@_common/sparkLib/component/Buttons/ButtonSound"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "CreateSentenceLv3M2",
+        "from": "@_common/module/EN/CreateSentenceLv3M2/CreateSentenceLv3M2"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경. CreateSentenceLv3M2.ts:57 하드코딩."
+      },
+      {
+        "alias": "board",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "카드가 놓이는 판 — **낱말이 넷 이하일 때** 씁니다. Board.ts:58 이 flipCardAniArray 길이로 갈라 고릅니다."
+      },
+      {
+        "alias": "board5",
+        "kind": "image",
+        "note": "같은 판의 **다섯 개 이상**용. Board.ts:58 이 flipCardAniArray 길이로 갈라 고릅니다. **낱말이 다섯인 이닝이 하나라도 있을 때만 넣습니다** — 기존 4개 중 6호(ENL3M06W3S3)만 넣고 있고 나머지 셋은 다 넷짜리라 안 넣었습니다."
+      },
+      {
+        "alias": "card",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "뒤집힌 카드 뒷면. CardManager.ts 하드코딩."
+      },
+      {
+        "alias": "card_blank",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "뒤집힌 뒤 낱말이 얹히는 빈 카드. CardManager.ts:22."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. CreateSentenceLv3M2.ts:73 이 getSound(\"bgm\") 으로 찾아 소리 크기 0.5 로 되풀이합니다."
+      },
+      {
+        "alias": "SL_en_com_sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞는 카드를 눌렀을 때."
+      },
+      {
+        "alias": "SL_en_com_sfx05",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀린 카드를 눌렀을 때."
+      },
+      {
+        "alias": "SL_en_com_nar01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞혔을 때 도우미 칭찬. nar01~03 중 하나를 무작위로 고릅니다(CreateSentenceLv3M2.ts:22·142)."
+      },
+      {
+        "alias": "SL_en_com_nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "SL_en_com_nar03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "SL_en_com_nar07",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀렸을 때. nar07~09 중 하나를 무작위로 고릅니다(:23·145)."
+      },
+      {
+        "alias": "SL_en_com_nar08",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "SL_en_com_nar09",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "SL_en_com_nar13",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "이닝을 마쳤을 때. nar13~15 중 하나를 무작위로 고릅니다(:24·148)."
+      },
+      {
+        "alias": "SL_en_com_nar14",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "SL_en_com_nar15",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈에는 Assets 파일이 없습니다.** 등록하는 곳이 아예 없어서 배경·판·카드까지 전부 액티비티가 넣습니다. 예외는 스피커 단추로, onLoad 에 적힌 ButtonSound.addAsset() 이 공용 폴더에서 가져옵니다. 칭찬·오답·이닝 완료 나레이션(SL_en_com_nar01~03 · 07~09 · 13~15)은 회차 AssetTable 에 넣지만 **이름이 모듈에 박혀 있습니다**(CreateSentenceLv3M2.ts:22-24) — 셋씩 무리로 두고 무작위로 하나를 고릅니다.",
+      "image": [
+        "스피커 단추 (ButtonSound.addAsset)"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "iningInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "flipCardAniArray",
+              "type": "array",
+              "required": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "ani",
+                    "type": "asset:lottie",
+                    "required": true,
+                    "desc": "그 자리 카드가 뒤집히는 로티. 낱말마다 다른 파일입니다(flip_bus_1 처럼)."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "카드가 뒤집히는 움직임. **낱말 하나에 하나씩**이라 칸 수가 곧 낱말 수입니다. ⚠️ **판 그림도 이 길이가 정합니다** — Board.ts:58 이 다섯 이상이면 board5, 아니면 board 를 씁니다.",
+              "minLengthWhy": "문장이 두 낱말이면 고를 것이 없습니다. 기존 4개는 4~5개입니다."
+            },
+            {
+              "key": "cardOption",
+              "type": "array",
+              "required": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "word",
+                    "type": "string",
+                    "required": true,
+                    "desc": "카드에 적힐 낱말. **글자 그대로**입니다 — 그림이 아니라 폰트로 찍습니다. 아포스트로피는 기존 4개가 **곧은 따옴표가 아니라 ’ (U+2019)** 를 씁니다(Let’s · There’s)."
+                  },
+                  {
+                    "key": "sound",
+                    "type": "asset:sound",
+                    "required": true,
+                    "desc": "그 낱말 하나를 읽는 소리. 카드를 뒤집으면 납니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "카드에 적힐 낱말들. **차례가 곧 맞는 차례**입니다 — 앞에서부터 눌러야 합니다. 화면에 놓일 때는 섞입니다(CardManager.ts:246).",
+              "minLengthWhy": "flipCardAniArray · totalLength 와 같은 수여야 합니다."
+            },
+            {
+              "key": "board",
+              "type": "asset:image",
+              "required": true,
+              "desc": "위쪽 문장 칸 그림. 회차마다 sentence_box_1 · sentence_box_2 처럼 몇 벌을 두고 문장 길이에 맞춰 고릅니다. **카드가 놓이는 판(board·board5)과 다른 것입니다.**"
+            },
+            {
+              "key": "sentence",
+              "type": "string",
+              "required": true,
+              "desc": "완성될 문장 **글자 그대로**. Board.ts:109 가 이 글자를 그대로 찍습니다. cardOption 의 낱말을 빈칸으로 이어 붙인 것과 같아야 합니다."
+            },
+            {
+              "key": "img",
+              "type": "asset:image",
+              "required": true,
+              "desc": "위쪽 그림판에 뜨는 장면 그림."
+            },
+            {
+              "key": "totalLength",
+              "type": "number",
+              "required": true,
+              "desc": "그 문장의 낱말 수. **cardOption · flipCardAniArray 칸 수와 같아야 합니다** — CardManager.ts:249·282 이 이 수만큼 카드를 만들고, :155~163 이 이 수로 이닝이 끝났는지 셉니다. 어긋나면 카드 수와 셈이 갈립니다."
+            },
+            {
+              "key": "answerCard",
+              "type": "asset:image",
+              "required": true,
+              "desc": "다 맞혔을 때 뜨는 답 카드 그림. AnswerCard.ts:21."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "스피커를 누르면 나오는 문장 전체 읽기."
+            },
+            {
+              "key": "correctEff",
+              "type": "asset:lottie",
+              "required": true,
+              "desc": "맞혔을 때 카드 위에 터지는 효과. Board.ts:22. 기존 4개가 낱말 수에 맞춰 correct_eff_4 · correct_eff_5 를 나눠 씁니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "문장 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — CreateSentenceLv3M2.ts:78 이 shuffleArray 를 그대로 부릅니다. 기존 4개가 5~6개입니다.",
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 4개는 5~6개입니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · board · card · card_blank · bgm · SL_en_com_sfx04 · sfx05 · nar01~03 · nar07~09 · nar13~15 가 AssetTable 에 있어야 한다.",
+      "why": "**이 모듈에는 Assets 파일이 없습니다.** 스피커 단추만 ButtonSound 가 넣고 나머지는 전부 회차 몫입니다. 나레이션 아홉은 이름이 모듈에 박혀 있어 바꿀 수 없습니다."
+    },
+    {
+      "id": "board5-for-five-or-more",
+      "level": "error",
+      "check": "flipCardAniArray 가 다섯 개 이상인 이닝이 있으면 board5 가 AssetTable 에 있어야 한다.",
+      "why": "Board.ts:58 이 길이로 갈라 board5 를 찾습니다. 없으면 그 이닝에서 판이 안 보입니다 — 넷짜리 이닝만 눈으로 보고 넘기면 못 잡습니다."
+    },
+    {
+      "id": "sentence-matches-cardoption",
+      "level": "error",
+      "check": "sentence 가 cardOption 의 낱말을 차례대로 이은 것과 같아야 한다.",
+      "why": "문장 칸에 찍히는 글자와 카드로 맞추는 차례가 따로 놉니다. 어긋나면 아이가 카드를 맞게 눌러도 위 문장과 달라 보입니다."
+    },
+    {
+      "id": "apostrophe-is-curly",
+      "level": "warn",
+      "check": "cardOption[].word 와 sentence 의 아포스트로피가 ’ (U+2019) 여야 한다.",
+      "why": "기존 4개가 다 굽은 따옴표를 씁니다. 곧은 ' 로 적으면 카드 글자와 문장 글자가 눈으로는 같아 보이는데 위 규칙의 대조에서 어긋납니다."
+    },
+    {
+      "id": "correcteff-matches-length",
+      "level": "warn",
+      "check": "correctEff 가 그 이닝 낱말 수에 맞는 것이어야 한다.",
+      "why": "기존 4개가 correct_eff_4 · correct_eff_5 를 낱말 수에 맞춰 씁니다. 어긋나면 효과가 카드 자리를 벗어나 터집니다."
+    },
+    {
+      "id": "ininginfo-shuffled",
+      "level": "warn",
+      "check": "iningInfo 의 차례에 뜻이 있으면 안 된다.",
+      "why": "CreateSentenceLv3M2.ts:78 이 shuffleArray(iningInfo) 를 그대로 부릅니다. **끄는 값이 없습니다.**"
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ],
+  "relations": [
+    {
+      "id": "length-three-ways-agree",
+      "kind": "sameCount",
+      "each": "iningInfo",
+      "picks": [
+        "totalLength",
+        "cardOption",
+        "flipCardAniArray"
+      ],
+      "note": "iningInfo[] 의 totalLength · cardOption 칸 수 · flipCardAniArray 칸 수가 다 같아야 한다.",
+      "why": "CardManager.ts:249 이 totalLength 만큼 카드를 만들고 :155~163 이 그 수로 이닝이 끝났는지 셉니다. cardOption 이 모자라면 카드가 빈 낱말로 뜨고, totalLength 가 크면 **다 맞혀도 이닝이 안 끝나 그 자리에서 멈춥니다.**"
+    }
+  ]
+}

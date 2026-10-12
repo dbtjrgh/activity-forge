@@ -1,0 +1,148 @@
+{
+  "specVersion": 1,
+  "module": "ANI",
+  "subject": "MA",
+  "title": "애니메이션 (영상 한 편)",
+  "summary": "모듈이 아니라 VideoPlayActivity 를 상속하는 액티비티입니다. GameData 가 없고, 넣을 것은 video.mp4 와 thumb.png 두 개뿐입니다.",
+  "aliases": ["애니메이션", "-"],
+  "aliasNote": "WBS 는 모듈 칸을 '-' 로 두고 옆 칸에 '애니메이션' 이라고 적습니다. 붙일 모듈이 없다는 뜻이지 만들 것이 없다는 뜻이 아닙니다.",
+  "reference": {
+    "module": "sparkon_common/_common/sparkLib/module/VideoPlayer/VideoPlayActivity",
+    "activities": [
+      "sparkon_m06/src/activity/MAL1M06W1S1",
+      "sparkon_m05/src/activity/MAL1M05W1S1"
+    ]
+  },
+
+  "codegen": {
+    "extends": {
+      "symbol": "VideoPlayActivity",
+      "from": "@_common/sparkLib/module/VideoPlayer/VideoPlayActivity"
+    },
+    "imports": [{ "symbol": "SparkApp", "from": "@_common/sparkLib/Application" }],
+    "hooks": {
+      "onInit": [
+        "await super.onInit();",
+        "this.initVideoPlay(\"bgFrame\", \"thumb\", \"video\");"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(1);",
+        "bgm.play();",
+        "",
+        "await SparkApp.mainMenu.mainCharacter.show();",
+        "",
+        "await this.mPlayer.ready();",
+        "this.mPlayer.playLock(true);",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"play\");",
+        "SparkApp.activeAffordanceWaiter(true);",
+        "this.mPlayer.playLock(false);",
+        "this.mPlayer.playButtonFocusAni();",
+        "",
+        "this.on(\"startPlay\", async () => {",
+        "  if (bgm.playing()) {",
+        "    bgm.fade(1, 0, 1000);",
+        "  }",
+        "});",
+        "this.on(\"pause\", async () => {",
+        "  bgm.fade(1, 1, 1000);",
+        "});",
+        "this.on(\"endPlay\", async () => {",
+        "  // 끝 나레이션을 쓰려면 아래를 살리세요. end_nar01~03 은 이미 등록돼 있습니다.",
+        "  // const nar = ['end_nar01', 'end_nar02', 'end_nar03'];",
+        "  // shuffleArray(nar);",
+        "  // await SparkApp.mainMenu.mainCharacter.guide(nar[0]);",
+        "  await SparkApp.eop.show(1);",
+        "});"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+
+  "assets": {
+    "defaults": {
+      "image": [
+        {
+          "alias": "video",
+          "file": "video.mp4",
+          "base": "root"
+        },
+        { "alias": "playBTN", "file": "video_play_btn_n.png" },
+        { "alias": "pauseBTN", "file": "video_stop_btn_n.png" },
+        { "alias": "closeBTN", "file": "popup_guide_close_btn_n.png" },
+        { "alias": "bgFrame", "file": "frame_case.png" },
+        { "alias": "thumb", "file": "thumb.png" }
+      ],
+      "sound": [
+        { "alias": "bgm", "file": "MA_ani_bgm_01.mp3" },
+        { "alias": "play", "file": "SL_ma_com_ani_nar01.mp3" },
+        { "alias": "end_nar01", "file": "SL_ma_com_nar02.mp3" },
+        { "alias": "end_nar02", "file": "SL_ma_com_nar03.mp3" },
+        { "alias": "end_nar03", "file": "SL_ma_com_nar04.mp3" }
+      ]
+    },
+    "required": [
+      {
+        "alias": "video",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "initVideoPlay(\"bgFrame\", \"thumb\", \"video\") 의 세 번째 인자입니다. mp4 지만 AssetManager 로 등록해야 해서 image 배열에 들어갑니다. 파일은 images/ 가 아니라 액티비티 폴더 바로 아래(base: root)입니다."
+      },
+      {
+        "alias": "thumb",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "재생 전에 보이는 썸네일. 액티비티마다 새로 그립니다.",
+        "size": {
+          "w": 1280,
+          "h": 720,
+          "why": "재생을 누르면 플레이어를 1080 ÷ 썸네일 높이 만큼 키웁니다(VideoPlayActivity.ts:52). 1280×720 이면 1.5배로 화면을 채우고, 1921×1081 처럼 화면 크기로 오면 1배라 확대가 안 됩니다 — 에러도 없이. 완성본 MA 12곳 · EN 24곳이 이 크기입니다(7호 MAL1M07W1S1 · W3S1 만 1921×1081)."
+        }
+      },
+      {
+        "alias": "bgFrame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "영상 테두리. 호마다 같은 frame_case.png 를 씁니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "onStart 가 AudioManager.getSound(\"bgm\") 으로 직접 찾습니다."
+      }
+    ]
+  },
+
+  "gameData": {
+    "root": "quizData",
+    "kind": "unused",
+    "fields": []
+  },
+
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "이름이 고정된 alias(video · thumb · bgFrame · bgm)가 모두 등록돼야 한다.",
+      "why": "네 개 다 코드가 문자열로 직접 찾습니다. 빠지면 빌드는 통과하고 런타임에 깨집니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 참조하는 alias가 AssetTable 에 있어야 한다. (이 스펙은 GameData 가 없어 사실상 해당 없음)"
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 레시피 gameData 에 있으면 경고."
+    }
+  ],
+
+  "notes": [
+    "레시피에 적을 것이 사실상 없습니다. code 와 module 만 있으면 나머지는 defaults 가 채웁니다.",
+    "진짜 작업은 public/sparklab/<코드>/video.mp4 와 images/thumb.png 를 넣는 것입니다.",
+    "영어(EN)는 사운드 파일명이 다릅니다(SL_en_com_bgm_01.mp3 등). EN 용은 spec/EN/ANI.json 을 따로 두거나 레시피에서 sound 를 덮어쓰면 됩니다."
+  ]
+}

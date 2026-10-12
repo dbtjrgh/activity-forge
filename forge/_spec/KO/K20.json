@@ -1,0 +1,1608 @@
+{
+  "specVersion": 1,
+  "module": "K20",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K20",
+    "activities": [
+      "KOL2M01W3S3",
+      "KOL2M02W3S3",
+      "KOL2M03W3S3",
+      "KOL2M04W3S3",
+      "KOL2M05W3S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "await this.mK20.onLoad(font, image, lottie, sound);"
+      ],
+      "onInit": [
+        "await this.mK20.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mK20.onStart(quizData);"
+      ],
+      "onEnd": [
+        "await this.mK20.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mK20.onUpdate(_ticker);"
+      ],
+      "onAffordanceOn": [
+        "await this.mK20.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mK20.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K20",
+      "from": "@_common/module/KR/K20/K20"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Inning",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "current",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "length",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "random",
+            "type": "bool",
+            "required": true,
+            "default": true
+          }
+        ]
+      },
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "default",
+                "type": "number",
+                "required": true,
+                "default": 30
+              },
+              {
+                "key": "condition_0",
+                "type": "number",
+                "required": true,
+                "default": 3
+              },
+              {
+                "key": "condition_1",
+                "type": "number",
+                "required": true,
+                "default": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "Com_BG",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "bg_background",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -540
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 2160
+                  }
+                ]
+              },
+              {
+                "key": "bg_decoration_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": -960
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 3840
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 700
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K20_Collision",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "value",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "text",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "current",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "length",
+                    "type": "number",
+                    "required": true,
+                    "default": 4
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K20_Progress",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "progress_box",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 300
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 40
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 300
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 130
+                  }
+                ]
+              },
+              {
+                "key": "progress_target",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 332
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 82
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "progress_director_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 714
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 492
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "progress_countNum_0",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 463
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 75
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 90
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  }
+                ]
+              },
+              {
+                "key": "progress_director_0_small",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "progress_director_1_small",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "progress_director_2_small",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "progress_director_3_small",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "progress_director_4_small",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "lottie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "particle",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 400
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 200
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "area",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "area_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 262
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 40
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 376
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 130
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "text",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "text",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "0 / 4"
+                ],
+                "default": "0 / 4"
+              },
+              {
+                "key": "layout",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 463
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 90
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 50
+                  }
+                ]
+              },
+              {
+                "key": "style",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "fontFamily",
+                    "type": "asset:font",
+                    "required": true,
+                    "default": "NanumSquareRoundEB"
+                  },
+                  {
+                    "key": "fontWeight",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "800"
+                    ],
+                    "default": "800"
+                  },
+                  {
+                    "key": "fontSize",
+                    "type": "number",
+                    "required": true,
+                    "default": 40
+                  },
+                  {
+                    "key": "lineHeight",
+                    "type": "number",
+                    "required": true,
+                    "default": 1
+                  },
+                  {
+                    "key": "letterSpacing",
+                    "type": "number",
+                    "required": true,
+                    "default": 8
+                  },
+                  {
+                    "key": "fill",
+                    "type": "string",
+                    "required": true,
+                    "mixed": true
+                  },
+                  {
+                    "key": "stroke",
+                    "type": "object",
+                    "required": true,
+                    "fields": [
+                      {
+                        "key": "color",
+                        "type": "number",
+                        "required": true
+                      },
+                      {
+                        "key": "width",
+                        "type": "number",
+                        "required": true,
+                        "default": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K20_View",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "container",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "view_object",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 175
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 310
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 660
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "view_target_idle",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 310
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 540
+                  }
+                ]
+              },
+              {
+                "key": "view_box",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "view_img",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 23
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 340
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 310
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "lottie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "view_target_pop",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 310
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 540
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "area",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "view_screen",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 175
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 2230
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 660
+                  }
+                ]
+              },
+              {
+                "key": "view_target_area_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -60
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  }
+                ]
+              },
+              {
+                "key": "view_target_area_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -185
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  }
+                ]
+              },
+              {
+                "key": "view_target_area_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 3
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -145
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  }
+                ]
+              },
+              {
+                "key": "view_target_area_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -40
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  }
+                ]
+              },
+              {
+                "key": "view_target_area_4",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 2
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -145
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  }
+                ]
+              },
+              {
+                "key": "view_target_area_5",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -40
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  }
+                ]
+              },
+              {
+                "key": "view_target_area_6",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -185
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  }
+                ]
+              },
+              {
+                "key": "view_target_area_7",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": -60
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 150
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "value",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "view_target_idle",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "top"
+                    ],
+                    "default": "top"
+                  },
+                  {
+                    "key": "view_box",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "bottom"
+                    ],
+                    "default": "bottom"
+                  },
+                  {
+                    "key": "view_img",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "center"
+                    ],
+                    "default": "center"
+                  },
+                  {
+                    "key": "view_target_pop",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "top"
+                    ],
+                    "default": "top"
+                  }
+                ]
+              },
+              {
+                "key": "pattern",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "inning_0",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 4,
+                    "of": {
+                      "key": "",
+                      "type": "enum",
+                      "values": [
+                        "correct",
+                        "wrong"
+                      ]
+                    }
+                  },
+                  {
+                    "key": "inning_1",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 4,
+                    "of": {
+                      "key": "",
+                      "type": "enum",
+                      "values": [
+                        "correct",
+                        "wrong"
+                      ]
+                    }
+                  },
+                  {
+                    "key": "inning_2",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 4,
+                    "of": {
+                      "key": "",
+                      "type": "enum",
+                      "values": [
+                        "correct",
+                        "wrong"
+                      ]
+                    }
+                  },
+                  {
+                    "key": "inning_3",
+                    "type": "array",
+                    "optional": true,
+                    "minLength": 4,
+                    "of": {
+                      "key": "",
+                      "type": "enum",
+                      "values": [
+                        "correct",
+                        "wrong"
+                      ]
+                    }
+                  },
+                  {
+                    "key": "inning_4",
+                    "type": "array",
+                    "optional": true,
+                    "minLength": 4,
+                    "of": {
+                      "key": "",
+                      "type": "enum",
+                      "values": [
+                        "correct",
+                        "wrong"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "key": "boxList",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "inning_0",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 8,
+                    "of": {
+                      "key": "",
+                      "type": "asset:sound"
+                    }
+                  },
+                  {
+                    "key": "inning_1",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 8,
+                    "of": {
+                      "key": "",
+                      "type": "asset:sound"
+                    }
+                  },
+                  {
+                    "key": "inning_2",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 8,
+                    "of": {
+                      "key": "",
+                      "type": "asset:sound"
+                    }
+                  },
+                  {
+                    "key": "inning_3",
+                    "type": "array",
+                    "optional": true,
+                    "minLength": 8,
+                    "of": {
+                      "key": "",
+                      "type": "asset:sound"
+                    }
+                  },
+                  {
+                    "key": "inning_4",
+                    "type": "array",
+                    "optional": true,
+                    "minLength": 8,
+                    "of": {
+                      "key": "",
+                      "type": "asset:sound"
+                    }
+                  }
+                ]
+              },
+              {
+                "key": "objectLength",
+                "type": "number",
+                "required": true,
+                "default": 8
+              },
+              {
+                "key": "objectMove",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "direction",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "left"
+                    ],
+                    "default": "left"
+                  },
+                  {
+                    "key": "duration",
+                    "type": "number",
+                    "required": true,
+                    "default": 20
+                  },
+                  {
+                    "key": "interval",
+                    "type": "number",
+                    "required": true,
+                    "default": 3.5
+                  }
+                ]
+              },
+              {
+                "key": "nextPosition",
+                "type": "array",
+                "required": true,
+                "minLength": 4,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true,
+                      "default": 175
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K20_Attack",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "attack_line",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 953
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 288
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 15
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 1525
+                  }
+                ]
+              },
+              {
+                "key": "attack_img",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 945
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "area",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "attack_screen",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1920
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "key": "attack_area",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 20
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 210
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "value",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "attackDuration",
+                "type": "number",
+                "required": true,
+                "default": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "K20_Next",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "next_btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 100
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "Com_Affordance",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "label",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "attack",
+                "type": "asset:image",
+                "required": true,
+                "default": "attack_img"
+              },
+              {
+                "key": "next",
+                "type": "asset:image",
+                "required": true,
+                "default": "next_btn"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

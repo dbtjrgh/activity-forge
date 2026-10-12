@@ -1,0 +1,479 @@
+{
+  "specVersion": 1,
+  "module": "M31",
+  "subject": "MA",
+  "title": "끌어다 나눠 담기 (캐릭터별 분류)",
+  "summary": "캐릭터 여럿이 말풍선으로 무엇을 달라고 말하고, 학생이 아이템을 끌어다 맞는 캐릭터 자리(dragzone)에 놓는 활동. 정답이 필요한 아이템이 모두 안착하면 이닝이 끝납니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M31",
+    "activities": [
+      "MAL1M06W3S2",
+      "MAL2M06W3S2",
+      "MAL3M06W3S2"
+    ],
+    "doc": "README 없음. 근거는 M31.ts · CharacterPanel.ts · QuizPanel.ts · TablePanel.ts · Dragzone.ts 와 6호 세 차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M31.addAsset();"
+      ],
+      "onInit": [
+        "M31.handle.init(quizData);",
+        "this.addChild(M31.handle);"
+      ],
+      "onStart": [
+        "await M31.handle.start();",
+        "await M31.handle.play();",
+        "await M31.handle.finish();",
+        "SparkApp.eop.show(1);"
+      ],
+      "onAffordanceOn": [
+        "await M31.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await M31.handle.onAffordanceCanceled();"
+      ],
+      "onResize": [
+        "M31.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "M31",
+        "from": "@_common/module/MA/M31/M31"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경. M31.init 이 AssetManager.get(\"bg\") 로 직접 찾습니다."
+      },
+      {
+        "alias": "bg_front",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "아이템보다 앞에 겹치는 배경 조각(테이블 앞판 등). 자리는 quizData.bgFrontPos 가 정합니다."
+      },
+      {
+        "alias": "correct_eff",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트. 이름이 박혀 있습니다 — 표본 AssetTable 의 correct_eff 가 그것입니다. 빠뜨려도 빌드는 통과하고 이펙트만 조용히 안 나옵니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "AudioManager.getSound(\"bgm\") 으로 직접 찾습니다."
+      },
+      {
+        "alias": "sound_correct",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "정답 효과음. AudioManager.play(\"sound_correct\")."
+      },
+      {
+        "alias": "sound_incorrect",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음. AudioManager.play(\"sound_incorrect\")."
+      },
+      {
+        "alias": "dragzone",
+        "kind": "image",
+        "fixedAlias": false,
+        "boundTo": "quizData.inningData[].dragzone.alias",
+        "note": "아이템을 놓는 자리(접시) 그림. 관례상 alias 는 dragzone 이고 GameData 가 가리킵니다. **자리 개수만큼 쓰이지만 그림은 한 장을 돌려 씁니다.**"
+      }
+    ],
+    "providedByModule": {
+      "note": "**M31.addAsset() 이 등록하는 것이 하나도 없습니다** — Asset.ts 가 통째로 주석 처리돼 있습니다. 그래서 모듈이 이름으로 직접 찾는 alias 여섯 개까지 액티비티가 등록해야 합니다(아래 required 참고). 다른 모듈과 반대이므로 주의하세요."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "startNarration",
+        "type": "asset:sound",
+        "required": true,
+        "default": "nar01",
+        "desc": "학습 시작 지문. 도우미 캐릭터가 읽습니다."
+      },
+      {
+        "key": "bgFrontPos",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "bg_front 조각이 놓이는 자리. 아이템보다 앞에 겹쳐서 접시 안에 담긴 느낌을 냅니다 — 어긋나면 아이템이 접시 위에 떠 보입니다."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "character",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "correctDirect",
+                  "type": "bool",
+                  "required": true,
+                  "desc": "정답 연출을 캐릭터가 바로 할지. true 면 아이템이 안착하는 순간 그 캐릭터가 정답 애니로 넘어갑니다(CharacterPanel.ts:46·231)."
+                },
+                {
+                  "key": "endNar",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "이닝을 마칠 때 재생할 음원."
+                },
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "캐릭터 무리 전체의 기준 자리. 캐릭터 하나하나의 자리는 child[].pos 입니다."
+                },
+                {
+                  "key": "child",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 1,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "data",
+                        "type": "object",
+                        "required": true,
+                        "fields": [
+                          {
+                            "key": "type",
+                            "type": "enum",
+                            "required": true,
+                            "values": [
+                              "lottie"
+                            ],
+                            "default": "lottie",
+                            "desc": "지금은 lottie 하나뿐입니다."
+                          },
+                          {
+                            "key": "alias_normal",
+                            "type": "asset:lottie",
+                            "required": true,
+                            "desc": "기본(대기) 애니. 표본은 {색}mon_idle."
+                          },
+                          {
+                            "key": "alias_correct",
+                            "type": "asset:lottie",
+                            "required": true,
+                            "desc": "정답 애니. 표본은 {색}mon_correct."
+                          },
+                          {
+                            "key": "alias_talk",
+                            "type": "asset:lottie",
+                            "required": true,
+                            "desc": "말풍선을 띄우고 말할 때의 애니. 표본은 {색}mon_talk."
+                          },
+                          {
+                            "key": "alias_end",
+                            "type": "asset:lottie",
+                            "required": true,
+                            "desc": "이닝을 마칠 때의 애니. 표본은 {색}mon_end."
+                          }
+                        ],
+                        "desc": "캐릭터 애니 네 벌. 상태마다 하나씩이고 넷 다 필요합니다."
+                      },
+                      {
+                        "key": "pos",
+                        "type": "point",
+                        "required": true,
+                        "figma": true,
+                        "desc": "그 캐릭터가 서는 자리."
+                      },
+                      {
+                        "key": "talkBubble",
+                        "type": "object",
+                        "required": true,
+                        "fields": [
+                          {
+                            "key": "alias_normal",
+                            "type": "asset:image",
+                            "required": true,
+                            "desc": "말풍선 그림(문제). 표본은 quiz{n}."
+                          },
+                          {
+                            "key": "pos",
+                            "type": "point",
+                            "required": true,
+                            "figma": true,
+                            "desc": "말풍선 자리."
+                          },
+                          {
+                            "key": "alias_end",
+                            "type": "asset:image",
+                            "optional": true,
+                            "desc": "다 받은 뒤로 바뀌는 말풍선 그림. 표본은 quiz_end_{캐릭터}_{개수}."
+                          },
+                          {
+                            "key": "sound_normal",
+                            "type": "asset:sound",
+                            "required": true,
+                            "desc": "말풍선을 띄울 때 읽는 음원."
+                          },
+                          {
+                            "key": "sound_end",
+                            "type": "asset:sound",
+                            "required": true,
+                            "desc": "다 받은 뒤 읽는 음원."
+                          }
+                        ],
+                        "desc": "그 캐릭터의 말풍선. 무엇을 달라고 하는지를 그림과 음원으로 보여 줍니다."
+                      }
+                    ],
+                    "desc": "칸 하나."
+                  },
+                  "desc": "캐릭터 하나씩. **차례가 번호입니다(0부터).** 아이템의 target 이 이 번호를 가리키므로, 캐릭터를 넣고 빼면 target 과 dropzone.pos 를 같이 고쳐야 합니다.",
+                  "minLengthWhy": "하나도 돕니다 — MAL1M07W4S2 · MAL2M07W4S2 · MAL3M07W1S3 가 이닝마다 캐릭터 하나로 나가 있습니다(2026-09-28, 완성본 전부로 잼)."
+                }
+              ],
+              "desc": "그 이닝에 나오는 캐릭터들. **child 의 차례가 곧 캐릭터 번호**이고, 아이템의 target 과 dropzone.pos 의 첫 번째 첨자가 이 번호를 가리킵니다."
+            },
+            {
+              "key": "quizPanel",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "useAlign",
+                  "type": "bool",
+                  "required": true,
+                  "desc": "아이템을 코드가 줄 세울지(true), items[].pos 를 그대로 쓸지(false). true 면 pos 를 적어도 무시됩니다(QuizPanel.ts:32·229)."
+                },
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "아이템 무리 전체의 기준 자리."
+                },
+                {
+                  "key": "items",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 2,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "alias",
+                        "type": "asset:image",
+                        "required": true,
+                        "desc": "아이템 그림. 표본은 item{캐릭터}_{번호}."
+                      },
+                      {
+                        "key": "target",
+                        "type": "number",
+                        "optional": true,
+                        "desc": "**이 아이템이 가야 하는 캐릭터·자리 번호. 0 부터 셉니다.** QuizPanel.ts:77 이 놓인 dragzone 의 index 와 이 값을 비교하고, 같은 번호로 character.child 와 dropzone.pos 도 찾습니다. 생략하면 놓을 필요가 없는 장식 아이템입니다."
+                      },
+                      {
+                        "key": "pos",
+                        "type": "point",
+                        "optional": true,
+                        "figma": true,
+                        "desc": "아이템 자리. useAlign 이 true 면 무시됩니다."
+                      }
+                    ],
+                    "desc": "칸 하나."
+                  },
+                  "desc": "아이템 하나씩. **target 이 있는 것만 놓아야 하는 것으로 셉니다**(QuizPanel.ts:224) — target 이 없는 아이템은 끌 수는 있어도 이닝 종료 조건에 들어가지 않는 장식입니다.",
+                  "minLengthWhy": "6호 세 차시가 9개씩입니다. 초안의 6 은 표본 값일 뿐이라, 분류가 성립하는 2 로 낮췄습니다."
+                }
+              ],
+              "desc": "끌어다 놓을 아이템 목록과 그 배치."
+            },
+            {
+              "key": "dragzone",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "rootPos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "자리 무리 전체의 기준점."
+                },
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true,
+                  "default": "dragzone",
+                  "desc": "접시 그림. 자리 개수만큼 같은 그림을 돌려 씁니다."
+                },
+                {
+                  "key": "pos",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 1,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 x."
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 y."
+                      }
+                    ],
+                    "desc": "칸 하나."
+                  },
+                  "desc": "자리 하나씩의 좌표. rootPos 기준입니다.",
+                  "minLengthWhy": "**개수가 character.child 개수와 같아야 합니다.** 하나도 돕니다(7호 셋이 그렇습니다)."
+                }
+              ],
+              "desc": "아이템을 놓는 자리(접시)들. **차례가 곧 자리 번호(0부터)** 이고 아이템의 target 이 이 번호를 가리킵니다."
+            },
+            {
+              "key": "dropzone",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "pos",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 1,
+                  "of": {
+                    "key": "",
+                    "type": "array",
+                    "minLength": 2,
+                    "of": {
+                      "key": "",
+                      "type": "object",
+                      "fields": [
+                        {
+                          "key": "x",
+                          "type": "number",
+                          "required": true,
+                          "desc": "놓이는 자리 x."
+                        },
+                        {
+                          "key": "y",
+                          "type": "number",
+                          "required": true,
+                          "desc": "놓이는 자리 y."
+                        }
+                      ],
+                      "desc": "칸 하나."
+                    },
+                    "desc": "그 캐릭터가 받을 자리들. 받는 순서대로 씁니다.",
+                    "minLengthWhy": "그 캐릭터가 받을 아이템 수만큼 있어야 합니다."
+                  },
+                  "desc": "**두 겹 배열입니다 — pos[캐릭터번호][몇 번째로 받은 것]**. QuizPanel.ts:164~165 가 그 캐릭터가 지금까지 받은 개수(mCount)로 안쪽 첨자를 고릅니다. 그래서 안쪽 칸 수가 그 캐릭터가 받을 아이템 수보다 적으면 **undefined 자리로 날아가 아이템이 사라집니다.**",
+                  "minLengthWhy": "캐릭터 수만큼 있어야 합니다. 하나도 돕니다(7호 셋이 그렇습니다)."
+                }
+              ],
+              "desc": "안착한 아이템이 실제로 놓이는 자리표."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. 이닝 수가 곧 화면 위 이닝 표시 개수입니다. 적은 순서대로 진행하고 셔플하지 않습니다.",
+        "minLengthWhy": "6호 세 차시가 3개씩입니다. 초안의 3 은 표본 값일 뿐이라, 이닝 표시가 의미를 갖는 2 로 낮췄습니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "target-is-zero-based",
+      "level": "error",
+      "check": "items[].target 은 0 부터 세는 번호이고, character.child · dragzone.pos 의 범위 안이어야 한다.",
+      "why": "QuizPanel.ts:77 이 dragzone 의 index 와 그대로 비교하고, 같은 번호로 mCharacters[target] 과 dropzone.pos[target] 을 찾습니다. **범위를 벗어나면 그 아이템은 어디에 놓아도 정답이 되지 않고, 이닝 종료 조건이 영원히 성립하지 않아 학습이 멈춥니다**(M31.ts:129 의 while 루프)."
+    },
+    {
+      "id": "dropzone-slots-enough",
+      "level": "error",
+      "check": "dropzone.pos[i] 의 칸 수가, target === i 인 아이템 수보다 적지 않아야 한다.",
+      "why": "받은 개수를 안쪽 첨자로 쓰므로(QuizPanel.ts:164) 칸이 모자라면 **undefined 자리로 날아가 아이템이 화면에서 사라집니다.** 에러는 나지 않습니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "캐릭터 애니 4종 · 말풍선 그림·음원 · 아이템 그림 · dragzone 그림의 alias 가 모두 AssetTable 에 있어야 한다.",
+      "why": "없는 그림 alias 는 AssetManager.get 이 console.error 만 찍고 지나가고, 없는 음원은 무음으로 통과합니다."
+    }
+  ],
+  "notes": [
+    "eop 는 **액티비티가 부릅니다** — onStart 의 SparkApp.eop.show(1). M25 처럼 모듈이 부르는 것이 아니라서 빠뜨리면 학습이 끝나지 않습니다.",
+    "표본 AssetTable 에 sound_touch · sound_particle 이 등록돼 있지만 모듈 코드가 쓰지 않습니다. 새로 만들 때 굳이 넣지 않아도 됩니다.",
+    "8호는 MAL1M07W4S2 · MAL2M07W4S2 · MAL3M07W1S3 세 자리입니다."
+  ],
+  "relations": [
+    {
+      "id": "counts-must-match",
+      "kind": "sameCount",
+      "each": "inningData",
+      "picks": [
+        "character.child",
+        "dragzone.pos",
+        "dropzone.pos"
+      ],
+      "note": "character.child 개수 · dragzone.pos 개수 · dropzone.pos 개수가 모두 같아야 한다.",
+      "why": "세 배열을 같은 번호로 찾습니다. 하나만 늘리면 그 번호에서 undefined 접근이 됩니다."
+    },
+    {
+      "id": "use-align-ignores-pos",
+      "kind": "absent",
+      "each": "inningData",
+      "when": {
+        "pick": "quizPanel.useAlign",
+        "is": true
+      },
+      "pick": "quizPanel.items[].pos",
+      "note": "useAlign 이 true 면 items[].pos 를 적지 않는다.",
+      "why": "적어도 무시됩니다. 남겨 두면 좌표를 고쳤는데 안 움직인다가 됩니다.",
+      "level": "warn"
+    },
+    {
+      "id": "at-least-one-target",
+      "kind": "present",
+      "each": "inningData",
+      "picks": [
+        "quizPanel.items[].target"
+      ],
+      "note": "items 안에 target 이 있는 아이템이 하나 이상 있어야 한다.",
+      "why": "이닝 종료 조건이 정답 아이템이 다 안착했는가입니다. 하나도 없으면 문제를 풀기 전에 이닝이 끝납니다."
+    }
+  ]
+}

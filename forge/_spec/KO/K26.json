@@ -1,0 +1,437 @@
+{
+  "specVersion": 1,
+  "module": "K26",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K26",
+    "activities": [
+      "KOL2M01W4S3",
+      "KOL2M02W4S3",
+      "KOL2M03W4S3",
+      "KOL2M04W4S3",
+      "KOL2M05W4S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "await this.K26.onInit()"
+      ],
+      "onStart": [
+        "SparkApp.affordanceWaiter.pause(true);",
+        "// bgm 재생",
+        "const bgm = AudioManager.getSound('bgm');",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "await this.K26.onStart()"
+      ],
+      "onAffordanceOn": [
+        "await this.K26.onAffordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K26.onAffordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "K26",
+        "from": "@_common/module/KR/K26/K26"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "main_next_btn_n",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 CompleteButton.ts 가 AssetManager.get(\"main_next_btn_n\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "main_next_btn_p",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 CompleteButton.ts 가 AssetManager.get(\"main_next_btn_p\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "redPoint",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 GuideView.ts 가 AssetManager.get(\"redPoint\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "panel",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 TabController.ts 가 AssetManager.get(\"panel\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "frame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 TabController.ts 가 AssetManager.get(\"frame\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "Ko_L2_M01_W4_S3_effect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 WriteView.ts 가 AssetManager.get(\"Ko_L2_M01_W4_S3_effect\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "endBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "default": 140
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "default": 140
+          }
+        ]
+      },
+      {
+        "key": "TOTOAL_INNING_COUNT",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "number",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "isRandom",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "InningNums",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "number"
+        }
+      },
+      {
+        "key": "TabPageCount",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "number"
+        }
+      },
+      {
+        "key": "PenWidth",
+        "type": "number",
+        "required": true,
+        "default": 70
+      },
+      {
+        "key": "DrawingColorData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "string"
+        }
+      },
+      {
+        "key": "WritePointDatas",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 4,
+          "of": {
+            "key": "",
+            "type": "array",
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "startX",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "startY",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "middleX",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "middleY",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "endX",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "endY",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "isSmall",
+                  "type": "bool",
+                  "optional": true
+                },
+                {
+                  "key": "size",
+                  "type": "number",
+                  "optional": true
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "key": "beforeLetterData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 4,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "MaskDataDict",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 4,
+          "of": {
+            "key": "",
+            "type": "array",
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "key": "outlinePositions",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 4,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "GuideAnimData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningGuide",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:lottie",
+                  "required": true
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "default": 600
+                },
+                {
+                  "key": "autoplay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": false
+                }
+              ]
+            }
+          },
+          {
+            "key": "CompletAnimData",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "asset:lottie"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "key": "useSmallRed",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "0",
+            "type": "bool",
+            "required": true,
+            "default": false
+          },
+          {
+            "key": "1",
+            "type": "bool",
+            "required": true
+          },
+          {
+            "key": "2",
+            "type": "bool",
+            "required": true
+          },
+          {
+            "key": "3",
+            "type": "bool",
+            "optional": true
+          },
+          {
+            "key": "4",
+            "type": "bool",
+            "optional": true
+          }
+        ]
+      }
+    ]
+  }
+}

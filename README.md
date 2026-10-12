@@ -9,8 +9,8 @@ activities. Designers' figma screens, planning PDFs and assets go in; a headless
 code into the target repo; the tool verifies it against 120+ JSON module specs, type-checks it, retries with feedback,
 and walks the human through review, commit and release. Built solo, from design to in-house rollout.
 
-> **공개본 안내** — 실제 업무에 쓰는 저장소에서 회사 자료(모듈 스펙, 호별 배치표, 사내 문서, 측정 도구 대부분)와
-> 내부 주소 · 이름을 덜어 낸 사본입니다. 코드는 그대로라 구조와 구현은 읽을 수 있지만, 자료가 없어 실행하면 빈 결과가 나옵니다.
+> **공개본 안내** — 실제 업무에 쓰는 저장소에서 회사 자료(호별 배치표, 사내 문서, 측정 도구 대부분)와
+> 내부 주소 · 이름을 덜어 낸 사본입니다. 모듈 스펙(`forge/_spec/`)은 들어 있습니다. 배치표와 호 저장소가 없어 실행하면 빈 결과가 나옵니다.
 
 ---
 
@@ -117,7 +117,7 @@ flowchart LR
 |---|---|
 | 앱 | TypeScript 약 27,600줄 · 272개 파일 (메인 서비스 147 · IPC 14 · 화면 컴포넌트 53) |
 | 생성기 | TypeScript 약 12,800줄 · 116개 파일 |
-| 모듈 스펙 | 120여 장 (공개본에는 없음) |
+| 모듈 스펙 | 123장 (`forge/_spec/`) |
 | 이 저장소 기록 | 2026-09-11 ~ , 커밋 188개 |
 
 ## 폴더

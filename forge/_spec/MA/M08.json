@@ -1,0 +1,695 @@
+{
+  "specVersion": 1,
+  "module": "M08",
+  "subject": "MA",
+  "title": "양쪽 세어 수 만들기 (버튼으로 답 입력)",
+  "summary": "화면 왼쪽과 오른쪽에 물건이 놓이고, 각각 몇 개인지 세어 아래 숫자 버튼으로 답을 입력하는 활동. 이닝마다 두 수(num1 · num2)가 정답입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M08",
+    "activities": [
+      "MAL1M01W2S2"
+    ],
+    "doc": "README 없음. 근거는 SetContent.ts · InningManager.ts · AnswerCheck.ts · ButtonManager.ts · ExamManager.ts · NumberButton.ts · BubbleAni.ts 와 표본 MAL1M01W2S2 입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "SetContent",
+      "from": "@_common/module/MA/M08/SetContent"
+    },
+    "members": [
+      "private setContent: SetContent = new SetContent(this, quizData);"
+    ],
+    "hooks": {
+      "onLoad": [
+        "super.onLoad()",
+        "await this.setContent.OnLoad()"
+      ],
+      "onInit": [
+        "await this.setContent.OnInit()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm')",
+        "bgm.loop(true)",
+        "bgm.volume(0.1)",
+        "bgm.play()",
+        "await this.setContent.OnStart()"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "bg2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "두 번째 배경."
+      },
+      {
+        "alias": "inningBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "이닝 배경."
+      },
+      {
+        "alias": "endingBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 배경."
+      },
+      {
+        "alias": "checkBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "체크 영역 배경. 자리는 checkBoxLayout."
+      },
+      {
+        "alias": "answer_box",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "정답 칸. 자리는 AnswerLayout(**A 가 대문자**)."
+      },
+      {
+        "alias": "bubble",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "말풍선 그림. **같은 이름의 효과음도 따로 필요합니다.**"
+      },
+      {
+        "alias": "side_bubble",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "옆 말풍선 그림."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 액티비티 onStart 가 직접 켭니다."
+      },
+      {
+        "alias": "bubble",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "말풍선 효과음. AudioManager.getSound(\"bubble\") — **그림 bubble 과 이름이 같고 갈래만 다릅니다.** 그림만 넣고 소리를 빠뜨리기 쉽습니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset 파일이 없습니다. 아래를 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 고정된 것** — 그림 `bg` · `bg2` · `inningBg` · `endingBg` · `checkBg` · `answer_box` · `bubble` · `side_bubble` · 음원 `bgm`(액티비티 onStart 가 직접 켭니다) · `bubble`(효과음. **같은 이름의 그림과 갈래만 다릅니다**)\n\n**번호로 조합하는 것** (모두 코드가 문자열로 만듭니다)\n- `num{n}_n` · `num{n}_p` — 숫자 버튼 기본·눌린 상태. **n 은 1 부터**\n- `exam_{n}` — 예제 그림. **1 부터**\n- `answer_num{n}` — 정답 자리에 찍히는 숫자 그림. n 은 그 이닝의 num1 · num2 값 자체입니다\n- `objLeft_{n}` · `objRight_{n}` — 좌·우 물건 그림. **0 부터**(코드가 `i - 1`)\n- `obj_{이닝}_{갈래}_{개수}` — 이닝·갈래별 물건 그림\n- `eop_{n}` — 마무리 그림. **0 부터**"
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningCount",
+        "type": "number",
+        "required": true,
+        "desc": "시작 이닝 번호. 이닝은 1 부터 셉니다."
+      },
+      {
+        "key": "maxInning",
+        "type": "number",
+        "required": true,
+        "desc": "이닝 수. **answerData 배열의 칸 수와 같아야 합니다.**"
+      },
+      {
+        "key": "answerData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "num1",
+              "type": "number",
+              "required": true,
+              "desc": "왼쪽 개수(첫 번째 정답). AnswerCheck.ts:51 이 입력값과 견줍니다. `answer_num{이 값}` 그림도 이 수로 찾습니다."
+            },
+            {
+              "key": "num2",
+              "type": "number",
+              "required": true,
+              "desc": "오른쪽 개수(두 번째 정답)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝마다의 정답 두 수. **코드가 `answerData[이닝 - 1]` 로 찾습니다**(AnswerCheck.ts:40) — 이닝은 1 부터인데 첨자는 0 부터입니다.",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "examIndex",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "number",
+          "desc": "예제 시작 번호."
+        },
+        "desc": "이닝마다 예제 그림을 몇 번부터 보여 줄지. `examIndex[이닝 - 1]` 로 찾고(ExamManager.ts:73) 그 값으로 `exam_{n}` 을 조합합니다.",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "fieldLayout",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "물건이 놓이는 판 전체 자리."
+      },
+      {
+        "key": "inningLeft_Layout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 3,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "그 이닝의 자리들.",
+          "minLengthWhy": "그 이닝에 놓을 물건 수만큼 필요합니다."
+        },
+        "desc": "왼쪽 물건 자리표. **두 겹 배열 — [이닝][물건 번호]** 입니다. 이닝마다 놓는 개수가 달라 안쪽 길이도 다릅니다.",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "inningRight_Layout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "그 이닝의 자리들.",
+          "minLengthWhy": "그 이닝에 놓을 물건 수만큼 필요합니다."
+        },
+        "desc": "오른쪽 물건 자리표. **두 겹 배열 — [이닝][물건 번호]** 입니다. 이닝마다 놓는 개수가 달라 안쪽 길이도 다릅니다.",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "examLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "예제 그림 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "checkBoxLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "체크 영역 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "AnswerLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "정답 칸 자리들. (열쇠 첫 글자가 대문자입니다 — 다른 것들과 다릅니다.)",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "buttonslayouts",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 873,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "숫자 버튼 자리들. (열쇠가 buttonslayouts — s 가 둘 붙어 있습니다.)",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "pressedBtnLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 888,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "눌린 숫자 버튼 자리들. buttonslayouts 와 같은 개수·차례로 둡니다.",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "ending_obj_Layout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y."
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "그 이닝의 자리들.",
+          "minLengthWhy": "그 이닝의 마무리 그림 수만큼 필요합니다."
+        },
+        "desc": "마무리 화면 그림 자리표. **두 겹 배열 — [이닝][그림 번호]** 입니다. 그림은 `eop_{번호}`(0 부터)로 찾습니다.",
+        "minLengthWhy": "maxInning 만큼 필요합니다."
+      },
+      {
+        "key": "bubbleAniLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "말풍선 애니 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "sideBubbleAniLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "옆 말풍선 애니 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "bubbleAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지. **열쇠가 autoPlay 로 P 가 대문자입니다** — 다른 모듈은 autoplay 입니다."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "가운데 말풍선 애니."
+          },
+          {
+            "key": "sideBubbleAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지. **열쇠가 autoPlay 로 P 가 대문자입니다** — 다른 모듈은 autoplay 입니다."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "옆 말풍선 애니."
+          }
+        ],
+        "desc": "말풍선 애니 크기·재생 설정."
+      },
+      {
+        "key": "sound",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "효과음 표. **표본이 비어 있습니다** — 이 모듈은 효과음을 이름으로 직접 찾으므로 여기에 적을 것이 없습니다."
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "MA",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "학습 진입 지문. (철자가 enterance 입니다.)"
+              },
+              {
+                "key": "clear",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "이닝을 맞혔을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "correct",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "정답 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "string",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "거듭 틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "안내 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "hint",
+                "type": "string",
+                "required": true,
+                "desc": "힌트 음원. **타입이 string 이지만 음원 alias 입니다.**"
+              }
+            ],
+            "desc": "수학 나레이션."
+          }
+        ],
+        "desc": "나레이션 표. **과목 이름으로 한 겹 감싸 있습니다** — MA 아래에 값이 있습니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "inning-index-off-by-one",
+      "level": "error",
+      "check": "answerData · examIndex · inningLeft_Layout · inningRight_Layout · ending_obj_Layout 의 칸 수가 maxInning 만큼 있어야 한다.",
+      "why": "코드가 `[이닝 - 1]` 로 찾습니다 — 이닝은 1 부터, 첨자는 0 부터입니다. 모자라면 그 이닝에서 undefined 를 읽어 **물건도 정답도 없는 빈 화면**이 됩니다."
+    },
+    {
+      "id": "layout-covers-count",
+      "level": "error",
+      "check": "inningLeft_Layout[i] 의 자리 수가 answerData[i].num1 이상, inningRight_Layout[i] 는 num2 이상이어야 한다.",
+      "why": "InningManager 가 정답 개수만큼 물건을 놓습니다(InningManager.ts:494~495). 자리가 모자라면 마지막 물건이 화면 밖으로 갑니다 — **세어서 답을 맞힐 수 없습니다.**"
+    },
+    {
+      "id": "answer-num-alias",
+      "level": "error",
+      "check": "쓰이는 모든 num1 · num2 값에 대해 `answer_num{값}` 그림이 있어야 한다.",
+      "why": "ButtonManager.ts:224·244 가 정답 수로 alias 를 조합합니다. 없으면 정답 칸이 비어 보입니다."
+    },
+    {
+      "id": "number-button-pairs",
+      "level": "error",
+      "check": "숫자 버튼마다 `num{n}_n` 과 `num{n}_p` 두 장이 다 있어야 하고, buttonslayouts 와 pressedBtnLayout 의 자리 수가 같아야 한다.",
+      "why": "기본·눌린 상태를 따로 그립니다. 한쪽이 없으면 누르는 순간 버튼이 사라집니다."
+    },
+    {
+      "id": "index-bases-differ",
+      "level": "error",
+      "check": "alias 번호의 시작이 자리마다 다르다 — num{n} · exam_{n} 은 1 부터, objLeft_{n} · objRight_{n} · eop_{n} 은 0 부터.",
+      "why": "코드가 `i + 1` 과 `i - 1` 을 섞어 씁니다. 한 칸 밀리면 **그 그림만 조용히 사라집니다.**"
+    },
+    {
+      "id": "bubble-image-and-sound",
+      "level": "error",
+      "check": "alias `bubble` 을 그림과 음원 **둘 다** 등록해야 한다.",
+      "why": "이름이 같고 갈래만 다릅니다. 그림만 넣으면 AudioManager.getSound(\"bubble\") 이 undefined 를 주고 말풍선 소리만 빠집니다."
+    },
+    {
+      "id": "odd-key-names",
+      "level": "warn",
+      "check": "열쇠 이름을 그대로 적는다 — AnswerLayout(대문자 A) · buttonslayouts(s 둘) · autoPlay(대문자 P) · enterance.",
+      "why": "다른 모듈과 규칙이 다릅니다. 「고쳐 적으면」 코드가 못 찾아 기본값으로 떨어집니다."
+    },
+    {
+      "id": "sound-table-empty",
+      "level": "warn",
+      "check": "sound 표는 비워 둔다.",
+      "why": "이 모듈은 효과음을 alias 로 직접 찾습니다. 표본도 비어 있습니다."
+    }
+  ],
+  "notes": [
+    "표본이 MAL1M01W2S2 한 차시뿐입니다. 새 차시는 그것을 gen clone 으로 떠 오는 것이 안전합니다.",
+    "이닝 번호는 1 부터인데 배열 첨자는 0 부터입니다. 이 모듈에서 나는 실수는 대부분 이 한 칸 차이입니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

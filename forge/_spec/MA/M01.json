@@ -1,0 +1,2238 @@
+{
+  "specVersion": 1,
+  "module": "M01",
+  "subject": "MA",
+  "title": "정리 문제 8유형 (문항 유형별 선지 고르기)",
+  "summary": "회차를 마무리하는 정리수학 문제집. 문항 유형이 여덟 개(type1_1 · type1_2 · type1_3 · type2 · type3_1 · type3_2 · type3_3 · type4)이고, 이닝마다 그중 하나를 골라 문제·선지·스피커 버튼을 배치합니다. 이닝을 다 풀면 엔딩 연출이 나옵니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M01",
+    "activities": [
+      "MAL1M01W4S3",
+      "MAL1M02W4S3",
+      "MAL1M03W4S3",
+      "MAL1M04W4S3",
+      "MAL1M05W4S3"
+    ],
+    "doc": "README 없음. 근거는 InningManager.ts · TypeBase.ts · ButtonBase.ts · SpkButton.ts · Background.ts · Ending.ts 와 유형별 type*.ts 여덟 개, 그리고 표본 5차시입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "InningManager",
+        "from": "@_common/module/MA/M01/InningManager"
+      },
+      {
+        "symbol": "Container",
+        "from": "pixi.js"
+      },
+      {
+        "symbol": "CommonUse",
+        "from": "@dori_common/CommonUse"
+      },
+      {
+        "symbol": "Com_Content",
+        "from": "@dori_common/Com_Content"
+      }
+    ],
+    "members": [
+      "public mCom_Content: Com_Content = new Com_Content();",
+      "private inningManager!: InningManager;",
+      "private Common: CommonUse = CommonUse.getInstance();",
+      "public backgroundContainer: Container = new Container();",
+      "public isInningComplete: boolean = false;",
+      "public inningCount: number = 0;"
+    ],
+    "hooks": {
+      "onLoad": [
+        "super.onLoad();"
+      ],
+      "onInit": [
+        "this.backgroundContainer.label = 'backgroundContainer';",
+        "this.addChild(this.backgroundContainer);",
+        "this.inningManager = new InningManager(this, quizData);",
+        "await this.inningManager.init();"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm');",
+        "bgm.loop(true);",
+        "bgm.volume(quizData.settings.bgmVolume);",
+        "bgm.play();",
+        "await SparkApp.mainMenu.mainCharacter.show();",
+        "this.mCom_Content.ScoreInitialize(5);",
+        "for (const _ of quizData.settings.inningCount) {",
+        "  this.inningCount++;",
+        "  this.Common.setCount(this.inningCount);",
+        "  await this.inningManager.change_inning();",
+        "}",
+        "while (!this.isInningComplete) {",
+        "  await new Promise((resolve) => setTimeout(resolve, 100));",
+        "}",
+        "await this.mCom_Content.ScoreUpdate(false, true);",
+        "await SparkApp.eop.show();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "문제집 배경. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+      },
+      {
+        "alias": "bg2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "두 번째 배경(겹치는 판)."
+      },
+      {
+        "alias": "frame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "문제 틀. 자리는 positions.framePos."
+      },
+      {
+        "alias": "wing",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "틀 옆 날개 장식. 자리는 positions.wing."
+      },
+      {
+        "alias": "lever",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다음으로 넘기는 손잡이. 자리는 positions.leverPos."
+      },
+      {
+        "alias": "elecWave",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "전기 물결 연출. 자리·크기는 positions.wavePos."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. **액티비티 onStart 가 AudioManager.getSound('bgm') 으로 직접 켜고 볼륨은 settings.bgmVolume 을 씁니다** — 모듈이 켜 주지 않습니다."
+      },
+      {
+        "alias": "effect3",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 Ending.ts 가 AssetManager.get(\"effect3\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 21개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "effect4",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 Ending.ts 가 AssetManager.get(\"effect4\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 21개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "inningOff",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 InningDisplay.ts 가 AssetManager.get(\"inningOff\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 21개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "inningOn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 InningDisplay.ts 가 AssetManager.get(\"inningOn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 21개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "skpAni",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 SpkButton.ts 가 AssetManager.get(\"skpAni\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 21개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "correctEff",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 type1_1.ts 가 AssetManager.get(\"correctEff\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 21개 다 가짐(litgate, 2026-09-29)."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset.ts 가 없습니다. 아래 것들을 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 코드에 박힌 것** — bg · bg2 · frame · wing · lever · elecWave · checkBox · mark.\n\n**이름을 조합해 찾는 것** (required 에는 고정 이름만 적을 수 있어 여기에 규칙을 둡니다)\n- `btn{answerNum}_{선지번호}` — 선지 버튼 기본 그림 (ButtonBase.ts:42)\n- `btn_select{answerNum}` · `btn_wrong{answerNum}` · `btn_correct{answerNum}` — 선지 버튼의 선택·오답·정답 상태\n- `exam{answerNum}` — 문제(예제) 그림\n- `spkBtn{이닝번호}_{버튼번호}` — 문항 안에 놓이는 스피커 버튼\n- `{mStudy}_spk` · `{mStudy}_spkPress` — 과목 스피커 버튼. mStudy 가 MA 이므로 **MA_spk · MA_spkPress**\n\n도우미 캐릭터 음원은 MainCharacter 가 과목별로 물고 있어 등록하지 않습니다.\n\n`checkBox` · `mark` 은 **체크박스를 쓰는 차시에만** 필요합니다 — 표본 다섯 중 MAL1M01W4S3 하나만 등록해 두었습니다. inningData[].isCheckBox 를 false 로 두면 만들지 않으므로, 모든 차시에 있어야 하는 것이 아니라 required 목록에서는 뺐습니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "settings",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "typeList",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "string",
+              "desc": "이름 하나."
+            },
+            "desc": "쓸 문항 유형 이름 목록. InningManager 가 이 순서대로 유형 인스턴스를 만들고(InningManager.ts:92), **inningData[].index 가 이 목록의 몇 번째인지를 가리킵니다.** 이름은 type1_1 · type1_2 · type1_3 · type2 · type3_1 · type3_2 · type3_3 · type4 중에서 씁니다 — 목록에 없는 이름을 inningData.type 에 적으면 InningManager 가 대놓고 에러를 던집니다(드물게 친절한 자리입니다).",
+            "minLengthWhy": "문항 유형이 하나는 있어야 합니다. 초안의 6 은 표본 값입니다."
+          },
+          {
+            "key": "inningCount",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "값 하나."
+            },
+            "desc": "이닝 목록. **액티비티 onStart 가 이 배열을 훑어 이닝을 돌립니다** — 칸의 값이 아니라 **칸 수**가 이닝 수입니다.",
+            "minLengthWhy": "이닝이 하나는 있어야 합니다. 초안의 6 은 표본 값입니다."
+          },
+          {
+            "key": "maxInning",
+            "type": "number",
+            "required": true,
+            "default": 5,
+            "desc": "이닝 최대 수. 진행률 표시가 씁니다."
+          },
+          {
+            "key": "bgmVolume",
+            "type": "number",
+            "optional": true,
+            "desc": "배경음 볼륨(0~1). 액티비티 onStart 가 이 값으로 bgm.volume 을 잡습니다."
+          },
+          {
+            "key": "showHintCount",
+            "type": "number",
+            "required": true,
+            "default": 2,
+            "desc": "힌트를 몇 번까지 보여 줄지."
+          },
+          {
+            "key": "isRandomInning",
+            "type": "bool",
+            "required": true,
+            "default": false,
+            "desc": "이닝 순서를 섞을지."
+          },
+          {
+            "key": "isTouchSound",
+            "type": "bool",
+            "required": true,
+            "default": true,
+            "desc": "터치 효과음(sound.touch)을 낼지."
+          },
+          {
+            "key": "isSfxSound",
+            "type": "bool",
+            "required": true,
+            "default": true,
+            "desc": "효과음 전체를 켤지."
+          },
+          {
+            "key": "isEndingShow",
+            "type": "bool",
+            "required": true,
+            "default": true,
+            "desc": "엔딩 연출(Ending.ts)을 보여 줄지."
+          },
+          {
+            "key": "isShowLog",
+            "type": "bool",
+            "optional": true,
+            "desc": "**디버그용 로그 스위치입니다. 양산에서는 false 로 둡니다.** true 로 넘기면 콘솔이 시끄러워집니다."
+          },
+          {
+            "key": "mStudy",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "MA"
+            ],
+            "default": "MA",
+            "desc": "과목 표시. **스피커 버튼 alias 앞머리로 쓰입니다** — `${mStudy}_spk` · `${mStudy}_spkPress` 이므로 MA 이면 MA_spk · MA_spkPress 를 등록해야 합니다."
+          },
+          {
+            "key": "isCorrectSound",
+            "type": "bool",
+            "optional": true,
+            "desc": "정답 효과음(sound.correct)을 낼지."
+          },
+          {
+            "key": "isInningCompleteActivation",
+            "type": "bool",
+            "optional": true,
+            "desc": "이닝을 마칠 때 완료 연출을 켤지."
+          },
+          {
+            "key": "isCompleteActivation",
+            "type": "bool",
+            "optional": true,
+            "desc": "학습 전체를 마칠 때 완료 연출을 켤지."
+          },
+          {
+            "key": "isAffordanceTimer",
+            "type": "bool",
+            "optional": true,
+            "desc": "일정 시간 안 누르면 어포던스를 띄울지."
+          },
+          {
+            "key": "isNarrationSound",
+            "type": "bool",
+            "optional": true,
+            "desc": "나레이션을 재생할지."
+          },
+          {
+            "key": "isMainCharacterSound",
+            "type": "bool",
+            "optional": true,
+            "desc": "도우미 캐릭터 음원을 재생할지."
+          }
+        ],
+        "desc": "활동 전체 스위치와 이닝 구성."
+      },
+      {
+        "key": "positions",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "framePos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 224,
+              "y": 22
+            },
+            "desc": "문제 틀(frame) 자리."
+          },
+          {
+            "key": "wing",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 160,
+              "y": 414
+            },
+            "desc": "날개 장식(wing) 자리."
+          },
+          {
+            "key": "frameCover",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 224,
+              "y": 112
+            },
+            "desc": "틀 위 덮개 자리."
+          },
+          {
+            "key": "dotBase",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 700,
+              "y": 77
+            },
+            "desc": "점선 기준 자리."
+          },
+          {
+            "key": "leverPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 1515,
+              "y": 146
+            },
+            "desc": "손잡이(lever) 자리."
+          },
+          {
+            "key": "coverPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 1515,
+              "y": 179
+            },
+            "desc": "덮개 자리."
+          },
+          {
+            "key": "markPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 960,
+              "y": 90
+            },
+            "desc": "체크 표시(mark) 자리."
+          },
+          {
+            "key": "basePos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "선지 버튼이 기본으로 놓이는 자리들.",
+            "minLengthWhy": "선지 수만큼 필요합니다. 초안의 5 는 표본 값입니다."
+          },
+          {
+            "key": "type1_1_btnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type1_1 유형의 선지 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_1_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type1_1 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type1 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_1_spkPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type1_1 유형의 스피커 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_1_spkPress",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type1_1 유형의 스피커 버튼 눌린 상태 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_2_examPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type1_2 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_2_btnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type1_2 유형의 선지 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_2_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type1_2 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_2_spkPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type1_2 유형의 스피커 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_2_spkPress",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type1_2 유형의 스피커 버튼 눌린 상태 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_3_btnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type1_3 유형의 선지 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type1_3_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type1_3 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type2_examPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 520,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 228,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type2 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type2_btnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 673,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type2 유형의 선지 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type2_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 673,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type2 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type2_spkPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 353,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 384.9,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type2 유형의 스피커 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type2_spkPress",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 353,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 384.9,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type2 유형의 스피커 버튼 눌린 상태 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_1_examPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type3_1 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_1_btnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_1 유형의 선지 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_1_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_1 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_2_examPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type3_2 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_2_btnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_2 유형의 선지 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_2_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_2 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_2_textBox",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_2 유형의 글상자 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_3_examPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type3_3 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_3_btnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_3 유형의 선지 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_3_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_3 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_3_textBox",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_3 유형의 글상자 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type4_btnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type4 유형의 선지 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type4_examPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type4 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type4_checkBoxPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 150,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 40,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type4 유형의 체크박스 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type4_checkMarkPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 15,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 19,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type4 유형의 체크 표시 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type4_spkPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 30,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 16,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type4 유형의 스피커 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type4_circleNum",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type4 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "wavePos",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 855,
+                "desc": "자리 x."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 27,
+                "desc": "자리 y."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 208,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 33,
+                "desc": "높이(px)."
+              }
+            ],
+            "desc": "전기 물결(elecWave) 자리와 크기."
+          },
+          {
+            "key": "type4_exam",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 563,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 245,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "type4 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_2_spkBtnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_2 유형의 문항 안 스피커 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_2_text",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_2 유형의 글자 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_3_spkBtnPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_3 유형의 문항 안 스피커 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          },
+          {
+            "key": "type3_3_text",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
+            },
+            "desc": "type3_3 유형의 글자 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
+          }
+        ],
+        "desc": "자리표. **유형 이름이 앞머리로 붙은 값들은 SpkButton·ButtonBase 가 `positions[`${유형}_이름`]` 으로 찾습니다** — 그래서 유형을 새로 쓰려면 그 유형 이름의 자리표가 여기 있어야 합니다."
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "speakerAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "idle",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 22,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 28,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 70,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 45,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "대기 상태 애니 설정."
+              },
+              {
+                "key": "play",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 22,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 28,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 70,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 45,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "재생 중 애니 설정."
+              }
+            ],
+            "desc": "스피커 버튼 애니. 대기와 재생 두 상태입니다."
+          },
+          {
+            "key": "endingAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 960,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 540,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1920,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 1080,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 1번 애니 설정."
+              },
+              {
+                "key": "2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 960,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 540,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1920,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 1080,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 2번 애니 설정."
+              },
+              {
+                "key": "3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 960,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 540,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1920,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 1080,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 3번 애니 설정."
+              }
+            ],
+            "desc": "엔딩 애니 세 벌. 열쇠가 1 · 2 · 3 입니다(Ending.ts 가 번호로 고릅니다)."
+          },
+          {
+            "key": "type2_effSize",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 518,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 332,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "type2 유형의 이펙트 크기·재생 설정."
+          },
+          {
+            "key": "type4_effSize",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 518,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 332,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "type4 유형의 이펙트 크기·재생 설정."
+          }
+        ],
+        "desc": "애니 크기·재생 설정."
+      },
+      {
+        "key": "inningConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningData",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "index",
+                  "type": "number",
+                  "required": true,
+                  "desc": "**settings.typeList 의 몇 번째 유형을 쓸지(0부터).** InningManager.change_inning 이 이 번호로 유형 인스턴스를 찾습니다. 없는 번호면 에러 메시지를 던지며 멈춥니다."
+                },
+                {
+                  "key": "layoutType",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리표에서 어느 배치를 쓸지(가로형·세로형 등). **positions 의 유형별 배열에서 이 번호의 칸을 꺼냅니다** — 없으면 {x:0, y:0} 으로 떨어져 왼쪽 위에 겹쳐 그려집니다."
+                },
+                {
+                  "key": "isSpk",
+                  "type": "bool",
+                  "required": true,
+                  "desc": "과목 스피커 버튼({mStudy}_spk)을 둘지."
+                },
+                {
+                  "key": "isSpkBtn",
+                  "type": "bool",
+                  "required": true,
+                  "desc": "문항 안 스피커 버튼(spkBtn{이닝}_{번호})을 둘지."
+                },
+                {
+                  "key": "answerNum",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "**리소스 이름에 들어가는 문항 번호.** btn{answerNum}_{선지} · btn_select{answerNum} · btn_wrong{answerNum} · btn_correct{answerNum} · exam{answerNum} 을 이 값으로 조합하고, 컨테이너 이름도 answer{answerNum}Container 가 됩니다(TypeBase.ts:34). **정답이 몇 번인지를 뜻하는 값이 아닙니다.**"
+                },
+                {
+                  "key": "correctNum",
+                  "type": "number",
+                  "required": true,
+                  "desc": "정답 선지 번호. 학생이 고른 번호와 이 값을 견줍니다."
+                },
+                {
+                  "key": "narrationType",
+                  "type": "string",
+                  "required": true,
+                  "desc": "그 문항에서 읽을 나레이션 갈래 이름. Background.ts:120 이 이 문자열로 narration 표를 찾습니다."
+                },
+                {
+                  "key": "type",
+                  "type": "string",
+                  "required": true,
+                  "desc": "유형 이름 문자열(type1_1 등). **settings.typeList 에 그 이름이 있어야 하고 index 가 가리키는 유형과 같아야 합니다** — 어긋나면 InningManager 가 에러를 던집니다."
+                },
+                {
+                  "key": "isCheckBox",
+                  "type": "bool",
+                  "optional": true,
+                  "desc": "체크박스를 둘지. **없으면 기본 true 이고, 명시적으로 false 일 때만 만들지 않습니다**(ButtonBase.ts:32). 키를 지우는 것과 false 를 적는 것이 다릅니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "이닝 하나씩. **여기가 이 모듈의 핵심 표입니다** — 어떤 유형으로 어떤 리소스를 쓸지가 다 여기서 갈립니다.",
+            "minLengthWhy": "settings.inningCount 의 칸 수만큼 필요합니다. 초안의 6 은 표본 값입니다."
+          }
+        ],
+        "desc": "이닝별 문항 설정."
+      },
+      {
+        "key": "sound",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correct",
+            "type": "asset:sound",
+            "required": true,
+            "default": "correct",
+            "desc": "정답 효과음. settings.isCorrectSound 가 켜져 있을 때 납니다."
+          },
+          {
+            "key": "wrong",
+            "type": "asset:sound",
+            "required": true,
+            "default": "wrong",
+            "desc": "오답 효과음."
+          },
+          {
+            "key": "wrong2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "wrong2"
+            ],
+            "default": "wrong2",
+            "desc": "두 번째 오답 효과음(거듭 틀렸을 때)."
+          },
+          {
+            "key": "touch",
+            "type": "asset:sound",
+            "required": true,
+            "default": "touch",
+            "desc": "터치 효과음. settings.isTouchSound 가 켜져 있을 때 납니다."
+          }
+        ],
+        "desc": "효과음 표."
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "MA",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "nar3"
+                ],
+                "default": "nar3",
+                "desc": "학습 진입 지문. (철자가 enterance 입니다 — entrance 가 아닙니다.)"
+              },
+              {
+                "key": "clear",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "alias 하나. AssetTable 에 같은 이름이 있어야 합니다."
+                },
+                "desc": "이닝을 맞혔을 때 읽는 음원 목록. 여럿이면 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 정답 반응이 납니다."
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "alias 하나. AssetTable 에 같은 이름이 있어야 합니다."
+                },
+                "desc": "틀렸을 때 읽는 음원 목록.",
+                "minLengthWhy": "하나는 있어야 오답 반응이 납니다."
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "alias 하나. AssetTable 에 같은 이름이 있어야 합니다."
+                },
+                "desc": "거듭 틀렸을 때 읽는 음원 목록.",
+                "minLengthWhy": "하나는 있어야 합니다."
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "alias 하나. AssetTable 에 같은 이름이 있어야 합니다."
+                },
+                "desc": "문항 안내 음원 목록.",
+                "minLengthWhy": "하나는 있어야 합니다."
+              },
+              {
+                "key": "hint",
+                "type": "asset:sound",
+                "required": true,
+                "default": "com1",
+                "desc": "힌트 음원. settings.showHintCount 만큼 들려줍니다."
+              },
+              {
+                "key": "answer1",
+                "type": "asset:sound",
+                "optional": true,
+                "desc": "정답 풀이 음원 1. **표본 MAL1M01W4S3 은 이 alias 가 AssetTable 에 주석으로만 있습니다** — 검사기가 「아는 결함」으로 잡아 두고 있는 자리입니다."
+              },
+              {
+                "key": "answer3",
+                "type": "asset:sound",
+                "optional": true,
+                "desc": "정답 풀이 음원 3."
+              }
+            ],
+            "desc": "수학 나레이션. settings.mStudy 와 같은 이름이어야 찾습니다."
+          }
+        ],
+        "desc": "나레이션 표. **과목 이름을 열쇠로 한 겹 더 감싸 있습니다** — MA 아래에 실제 값이 있습니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "typelist-index-type-agree",
+      "level": "error",
+      "check": "inningData[].type 이 settings.typeList 에 있는 이름이어야 하고, inningData[].index 가 그 이름의 typeList 안 차례(0부터)와 같아야 한다.",
+      "why": "InningManager.change_inning 이 index 로 인스턴스를 찾고 type 으로 이름을 견줍니다. 어긋나면 **에러를 던지며 멈춥니다** — 이 모듈에서 유일하게 소리내어 실패하는 자리입니다."
+    },
+    {
+      "id": "layout-type-in-range",
+      "level": "error",
+      "check": "inningData[].layoutType 이 그 유형 자리표(positions[유형_*])의 칸 범위 안이어야 한다.",
+      "why": "SpkButton.ts:53·67 이 `positions[키][layoutType] || {x:0,y:0}` 로 꺼냅니다. **범위를 벗어나면 에러 없이 왼쪽 위(0,0)에 겹쳐 그려집니다.**"
+    },
+    {
+      "id": "answer-num-aliases",
+      "level": "error",
+      "check": "이닝마다 btn{answerNum}_{선지번호} · btn_select{answerNum} · btn_wrong{answerNum} · btn_correct{answerNum} · exam{answerNum} 이 AssetTable 에 있어야 한다.",
+      "why": "**answerNum 은 정답 번호가 아니라 리소스 이름에 들어가는 문항 번호입니다.** 하나라도 빠지면 그 상태의 버튼이나 문제 그림이 조용히 사라집니다."
+    },
+    {
+      "id": "spk-alias-by-study",
+      "level": "error",
+      "check": "settings.mStudy 값에 맞춰 {mStudy}_spk 와 {mStudy}_spkPress 를 등록해야 한다 — 수학이면 MA_spk · MA_spkPress.",
+      "why": "alias 를 과목 이름으로 조합합니다. mStudy 를 고치고 리소스 이름을 안 고치면 스피커 버튼이 안 보입니다."
+    },
+    {
+      "id": "checkbox-key-tri-state",
+      "level": "warn",
+      "check": "체크박스를 없애려면 isCheckBox 에 false 를 명시한다 — 키를 지우면 켜집니다.",
+      "why": "ButtonBase.ts:32 가 `!== false` 로 봅니다. 키가 없으면 기본 true 입니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · bg2 · frame · wing · lever · elecWave · bgm 이 등록돼야 하고, 체크박스를 쓰는 차시는 checkBox · mark 도 있어야 한다.",
+      "why": "이름이 코드에 박혀 있고 모듈이 아무것도 등록하지 않습니다. 없으면 빌드는 통과하고 그 그림만 조용히 빠집니다. **체크박스 쪽은 isCheckBox 가 기본 true 라, 끄지 않은 채 리소스만 빠뜨리면 체크 표시가 사라집니다.**"
+    }
+  ],
+  "notes": [
+    "이닝 진행을 **액티비티 onStart 가 직접 돌립니다** — settings.inningCount 를 훑어 change_inning() 을 부르고, isInningComplete 를 100ms 마다 확인한 뒤 eop 를 띄웁니다. 훅을 줄이면 진행이 멈춥니다.",
+    "문항 유형이 여덟 개라 자리표가 유형마다 따로 있습니다. 새 유형을 쓰려면 positions 에 `{유형}_btnPos` 같은 이름의 자리표를 같이 만들어야 합니다.",
+    "8호는 MAL1M07W4S3 · MAL2M07W4S3 · MAL3M07W4S3 세 자리(정리수학)입니다."
+  ],
+  "relations": [
+    {
+      "id": "inning-count-matches",
+      "kind": "sameCount",
+      "picks": [
+        "settings.inningCount",
+        "inningConfig.inningData"
+      ],
+      "note": "settings.inningCount 의 칸 수와 inningConfig.inningData 의 칸 수가 같아야 한다.",
+      "why": "액티비티 onStart 가 inningCount 를 훑으며 이닝을 돌리고, 모듈은 inningData 에서 그 이닝 데이터를 꺼냅니다. inningData 가 짧으면 뒤쪽 이닝이 빈 화면이 됩니다."
+    },
+    {
+      "id": "debug-log-off",
+      "kind": "oneOf",
+      "pick": "settings.isShowLog",
+      "values": [
+        false
+      ],
+      "note": "settings.isShowLog 는 false.",
+      "why": "디버그 로그 스위치입니다.",
+      "level": "warn"
+    },
+    {
+      "id": "narration-under-study-key",
+      "kind": "keyIn",
+      "pick": "settings.mStudy",
+      "in": "narration",
+      "note": "narration 아래에 settings.mStudy 와 같은 이름의 열쇠가 있어야 한다.",
+      "why": "나레이션 표를 과목 이름으로 한 겹 감싸 찾습니다. 이름이 어긋나면 나레이션이 통째로 무음이 됩니다."
+    }
+  ]
+}

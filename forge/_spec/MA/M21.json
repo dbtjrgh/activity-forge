@@ -1,0 +1,473 @@
+{
+  "specVersion": 1,
+  "module": "M21",
+  "subject": "MA",
+  "title": "보석 상자 (십·일의 자리 만들기)",
+  "summary": "보석을 눌러 모으고, 열 개씩 묶은 것과 낱개를 끌어다 놓아 두 자리 수를 만드는 활동. 이닝마다 목표 수가 정해져 있습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M21",
+    "activities": [
+      "MAL3M01W2S2"
+    ],
+    "doc": "README 없음. 근거는 M21.ts 와 AnswerValidator · DragDropManager · TouchObjectManager · JewelBox · DropObject · FixedImage · Background · BlockScreen 그리고 표본 MAL3M01W2S2 입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M21",
+      "from": "@_common/module/MA/M21/M21"
+    },
+    "members": [
+      "private M21: M21 = new M21(this, quizData);"
+    ],
+    "hooks": {
+      "onInit": [
+        "await this.M21.onInit()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm');",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "await this.M21.onStart()"
+      ],
+      "onAffordanceOn": [
+        "await this.M21.onAffordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "await this.M21.onAffordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "Box",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "상자 그림. 이름이 대문자로 시작합니다."
+      },
+      {
+        "alias": "Box2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "두 번째 상자 그림."
+      },
+      {
+        "alias": "completeEffect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "완료 이펙트."
+      },
+      {
+        "alias": "dropEffect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "놓았을 때의 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. **액티비티 onStart 가 AudioManager.getSound(\"bgm\") 으로 직접 켭니다** — 모듈이 켜 주지 않습니다."
+      },
+      {
+        "alias": "correct",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "정답 효과음."
+      },
+      {
+        "alias": "wrong",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음."
+      },
+      {
+        "alias": "SL_ma_com_nar01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 나레이션."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset 파일이 없습니다. 아래 것을 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 고정된 것** — 그림 `Box` · `Box2` · `completeEffect` · `dropEffect`, 음원 `bgm`(액티비티 onStart 가 직접 켭니다) · `correct` · `wrong` · `SL_ma_com_nar01` · `SL_ma_302_s2_sfx01` · `sfx02` · `sfx04` · `sfx06` · `sfx07` · `sfx08`.\n\n**이닝 번호로 조합하는 것** (이닝은 **1 부터** 셉니다)\n- `Item{이닝}` · `JewelBox{이닝}` · `AnswerBox{이닝}` · `AnswerImage{이닝}` · `DropBoard{이닝}`\n- `Ma_L3_M1_W2_S2_Chest0{이닝}_jewel` · `Ma_L3_M1_W2_S2_Chest0{이닝}_open` — **최초 제작 차시 이름이 그대로 굳은 고정 이름**이고 `0` 을 붙여 두 자리로 만들므로 이닝이 10 을 넘으면 이름이 깨집니다\n- 아이템 번호로 조합하는 것 — `DragImage{번호}` · `DropImage{번호}` · 음원 `dragStart{번호}`\n- `DimmBox{개수}` — 화면을 가리는 판"
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "max_wrong_count",
+        "type": "number",
+        "required": true,
+        "desc": "오답 허용 횟수. 이 수에 닿으면 AnswerValidator 가 이닝을 마무리합니다(AnswerValidator.ts:47)."
+      },
+      {
+        "key": "total_correct_count",
+        "type": "number",
+        "required": true,
+        "desc": "다 맞혔다고 볼 정답 수. **AnswerValidator.ts:38 이 이 값과 맞은 개수를 견줍니다** — 실제로 맞힐 수 있는 수보다 크면 학습이 끝나지 않습니다."
+      },
+      {
+        "key": "total_inning_count",
+        "type": "number",
+        "required": true,
+        "desc": "이닝 수."
+      },
+      {
+        "key": "inning_shuffle",
+        "type": "bool",
+        "required": true,
+        "desc": "이닝 순서를 섞을지."
+      },
+      {
+        "key": "fixedImagePos",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "name",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그림 alias. 열쇠 이름이 name 이지만 값은 alias 입니다."
+            },
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "화면에 고정으로 놓이는 그림들(배경 장식).",
+        "minLengthWhy": "고정 그림이 없으면 빈 배열로 둡니다."
+      },
+      {
+        "key": "jewelPadding",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "보석 무리의 안쪽 여백."
+      },
+      {
+        "key": "jewelSpacing",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "보석 사이 간격."
+      },
+      {
+        "key": "jewelSize",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "보석 한 개 크기."
+      },
+      {
+        "key": "touchItemPositions",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 306,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "눌러서 모으는 보석이 놓이는 자리들.",
+        "minLengthWhy": "누를 것이 하나는 있어야 합니다."
+      },
+      {
+        "key": "touchedItemAddPos",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "쌓일 때마다 더할 y."
+          }
+        ],
+        "desc": "누른 보석이 쌓일 때 더해지는 자리 오프셋."
+      },
+      {
+        "key": "touchObjectSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "누르는 보석 크기."
+      },
+      {
+        "key": "touchObjectCount",
+        "type": "number",
+        "required": true,
+        "desc": "한 이닝에 누를 수 있는 보석 수."
+      },
+      {
+        "key": "touchObjectInItemData",
+        "type": "string",
+        "required": true,
+        "desc": "**이닝마다 보석 칸에 담긴 수 목록.** 열쇠가 이닝 번호(1 부터)이고 값이 수 배열입니다 — TouchObjectManager.ts:18 이 `[이닝]` 으로 꺼냅니다. **타입이 string 으로 잡혀 있는 것은 추출기가 숫자 열쇠를 못 쪼개서입니다** — 실제로는 `{ 1: [0,0,10,…], 2: […] }` 꼴 객체입니다."
+      },
+      {
+        "key": "dragItemSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "끌어다 놓는 아이템 크기."
+      },
+      {
+        "key": "dragItemPositions",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "끌어다 놓을 아이템이 처음 놓이는 자리들.",
+        "minLengthWhy": "끌 것이 하나는 있어야 합니다."
+      },
+      {
+        "key": "dropZoneSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "놓는 자리 크기(판정 범위)."
+      },
+      {
+        "key": "quizAnswers",
+        "type": "string",
+        "required": true,
+        "desc": "**이닝마다의 정답 자리 값 목록.** 열쇠가 이닝 번호(1 부터), 값이 배열입니다 — DragDropManager.ts:69 가 `[이닝][i]` 로 꺼냅니다. 표본은 `{ 1: [8, 0], 2: [9, 6] }` 처럼 십의 자리·일의 자리를 적습니다. 타입이 string 인 것은 추출기 한계입니다."
+      },
+      {
+        "key": "dropZonePositions",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "아이템을 놓는 자리들. quizAnswers 의 칸 차례와 같은 순서로 둡니다.",
+        "minLengthWhy": "놓을 자리가 하나는 있어야 합니다."
+      },
+      {
+        "key": "activityAnswers",
+        "type": "string",
+        "required": true,
+        "desc": "**이닝마다의 최종 정답 수.** 열쇠가 이닝 번호(1 부터)이고 값이 수 하나입니다 — JewelBox.ts:147 이 `[이닝]` 으로 꺼냅니다. 표본은 `{ 1: 80, 2: 96 }` 이고 **quizAnswers 의 자리 값을 이어 붙인 수와 같아야 합니다**(8·0 → 80)."
+      },
+      {
+        "key": "dropObjectTens",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "number",
+          "desc": "그 자리의 배수(10 이면 십의 자리)."
+        },
+        "desc": "놓는 자리마다의 자리값 배수. 표본은 `[10, 1]` — 첫 자리가 십의 자리, 둘째가 일의 자리입니다(DropObject.ts:35 가 `[번호]` 로 꺼냅니다).",
+        "minLengthWhy": "dropZonePositions 개수만큼 필요합니다."
+      },
+      {
+        "key": "anwserImagePos",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "정답 그림 자리. (열쇠 이름이 anwser 로 오타지만 코드가 그 이름을 읽으므로 그대로 적어야 합니다.)"
+      },
+      {
+        "key": "answerBoxPos",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "정답 상자 자리."
+      },
+      {
+        "key": "dropSpritePos",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "놓인 아이템 그림 자리."
+      },
+      {
+        "key": "jewelBoxSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "보석 상자 크기."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "inning-keys-one-based",
+      "level": "error",
+      "check": "touchObjectInItemData · quizAnswers · activityAnswers 의 열쇠는 1 부터 total_inning_count 까지여야 한다.",
+      "why": "코드가 이닝 번호를 그대로 첨자로 씁니다. 0 부터 적으면 첫 이닝에서 undefined 를 읽어 **보석도 정답도 없는 빈 화면**이 됩니다."
+    },
+    {
+      "id": "activity-answer-matches-quiz",
+      "level": "error",
+      "check": "activityAnswers[이닝] 이 quizAnswers[이닝] 의 자리 값을 이어 붙인 수와 같아야 한다.",
+      "why": "자리마다의 판정(DragDropManager)과 최종 판정(JewelBox)이 **따로** 봅니다. 어긋나면 자리는 다 맞는데 상자가 열리지 않습니다."
+    },
+    {
+      "id": "tens-matches-dropzones",
+      "level": "error",
+      "check": "dropObjectTens 의 칸 수가 dropZonePositions 개수와 같아야 한다.",
+      "why": "DropObject.ts:35 가 자리 번호로 배수를 꺼냅니다. 모자라면 그 자리의 값이 undefined 가 되어 계산이 NaN 이 됩니다."
+    },
+    {
+      "id": "total-correct-reachable",
+      "level": "error",
+      "check": "total_correct_count 가 실제로 맞힐 수 있는 수보다 크지 않아야 한다.",
+      "why": "AnswerValidator.ts:38 이 이 값과 맞은 개수를 견줍니다. 크면 다 맞혀도 **학습이 끝나지 않습니다.**"
+    },
+    {
+      "id": "chest-alias-two-digit",
+      "level": "error",
+      "check": "이닝이 9 를 넘지 않아야 한다.",
+      "why": "상자 alias 를 `Ma_L3_M1_W2_S2_Chest0${이닝}_jewel` 로 조합합니다 — 10 이면 Chest010 이 되어 이름이 깨집니다."
+    },
+    {
+      "id": "legacy-chest-alias",
+      "level": "error",
+      "check": "Ma_L3_M1_W2_S2_Chest0{n}_* 를 그 이름 그대로 등록해야 한다.",
+      "why": "**활동 이름처럼 보이지만 모듈이 찾는 고정 이름입니다.** 새 차시 이름으로 바꿔 달면 상자가 안 보입니다."
+    },
+    {
+      "id": "typo-keys-kept",
+      "level": "warn",
+      "check": "anwserImagePos 는 오타지만 그대로 적는다.",
+      "why": "코드가 그 이름으로 읽습니다. 고쳐 적으면 정답 그림 자리가 기본값으로 떨어집니다."
+    },
+    {
+      "id": "bgm-by-activity",
+      "level": "error",
+      "check": "AssetTable 에 bgm 이 있어야 하고 onStart 의 BGM 훅을 지우지 않는다.",
+      "why": "모듈이 BGM 을 켜지 않습니다. 액티비티 onStart 가 직접 켭니다."
+    }
+  ],
+  "notes": [
+    "표본이 MAL3M01W2S2 한 차시뿐이라 값의 폭을 알 수 없습니다. 새 차시를 만들 때는 그 차시를 gen clone 으로 떠 와 수만 바꾸는 것이 안전합니다.",
+    "숫자 열쇠(1 · 2 · 3)를 쓰는 세 자리는 추출기가 쪼개지 못해 스펙 타입이 string 으로 잡혀 있습니다. 화면에서 칸별 편집은 안 되고 GameData.ts 를 직접 고칩니다 — M13 과 같은 갈래입니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

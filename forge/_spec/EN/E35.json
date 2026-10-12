@@ -1,0 +1,299 @@
+{
+  "specVersion": 1,
+  "module": "E35",
+  "subject": "EN",
+  "title": "풍선 터뜨려 낱말 담기",
+  "summary": "낱말이 든 풍선들이 떠오르고, 지시에 맞는 풍선을 터뜨려 바구니에 담는 활동. 이닝마다 정답 낱말과 오답 풍선 구성이 다릅니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E35",
+    "activities": [
+      "ENL1M02W3S2",
+      "ENL1M04W3S2",
+      "ENL1M06W3S2"
+    ],
+    "doc": "README 없음. 근거는 E35.ts · Assets.ts · component/Balloon.ts · component/Basket.ts 와 표본 3차시(2·4·6호)입니다. 자리는 세 호 모두 ENL1M__W3S2 입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E35.addAsset();"
+      ],
+      "onInit": [
+        "E35.handle.onInit(quizData.balloons);",
+        "this.addChild(E35.handle);"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.volume(1);",
+        "bgm.loop(true);",
+        "bgm.play();",
+        "E35.handle.onStart(quizData);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onAffordanceOn": [
+        "E35.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "E35.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "E35",
+      "from": "@_common/module/EN/E35/E35"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "basket",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "바구니."
+      },
+      {
+        "alias": "balloon_correct",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "정답 풍선 표시."
+      },
+      {
+        "alias": "balloon_incorrect",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "오답 풍선 표시."
+      },
+      {
+        "alias": "finger",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "누르라는 손가락 표시(어포던스)."
+      },
+      {
+        "alias": "picture_particle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "그림 풍선이 터질 때의 이펙트."
+      },
+      {
+        "alias": "text_particle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "글자 풍선이 터질 때의 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. **액티비티 onStart 가 직접 켭니다.**"
+      },
+      {
+        "alias": "guide-nar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. `mainCharacter.guide(\"guide-nar\")`."
+      },
+      {
+        "alias": "finger_affordance",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "어포던스 효과음."
+      },
+      {
+        "alias": "floating-sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "풍선이 떠오를 때의 소리."
+      },
+      {
+        "alias": "correct-balloon-pop",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "정답 풍선 터지는 소리."
+      },
+      {
+        "alias": "incorrect-balloon-pop",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 풍선 터지는 소리."
+      }
+    ],
+    "providedByModule": {
+      "note": "E35.addAsset() 이 등록하는 것은 폰트와 `particle-sound` · `correct-sound` · `incorrect-sound` · 로티 `correct` 뿐입니다.\n\n**나머지는 액티비티가 넣어야 합니다.** 표본 세 차시가 모두 공통으로 등록한 것이 사실상 모듈 몫입니다:\n그림 — `bg` · `basket` · `basket-front` · `basket-in` · `balloon1`~`balloon6` · `balloon_correct` · `balloon_incorrect` · `finger` · `picture_particle` · `text_particle` · 폰트 `GangwonEduPower`\n음원 — `bgm` · `guide-nar` · `finger_affordance` · `floating-sound` · `correct-balloon-pop` · `incorrect-balloon-pop`\n\n차시 고유는 낱말마다의 `{낱말}-normal-bg` · `{낱말}-neon-bg` · `{낱말}-in-balloon` · `correct-{낱말}` 과 낱말 음원입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고, `answer_*` · `card_*` 처럼 낱말 이름이 붙은 것은 그 차시 몫입니다.",
+      "font": [
+        "NanumSquareRoundR"
+      ],
+      "sound": [
+        "particle-sound",
+        "correct-sound",
+        "incorrect-sound"
+      ],
+      "lottie": [
+        "correct"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inning",
+        "type": "number",
+        "required": true,
+        "default": 5,
+        "desc": "이닝 수 표시값. **실제 이닝 수는 `set` 배열의 칸 수입니다**(E35.ts:63·66 이 `set.length` 와 `for (const data of set)` 를 씁니다) — 두 값이 어긋나면 표시만 틀립니다."
+      },
+      {
+        "key": "balloons",
+        "type": "number",
+        "required": true,
+        "default": 4,
+        "desc": "한 이닝에 띄울 풍선 개수. **`onInit(quizData.balloons)` 로 따로 넘어갑니다.** 정답 1개 + 오답 (이 수 - 1)개가 됩니다."
+      },
+      {
+        "key": "set",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "그 이닝의 정답 낱말. **그림이 아니라 화면에 글자로 그립니다**(component/Balloon.ts:63 이 Text 로 만듭니다)."
+            },
+            {
+              "key": "correct",
+              "type": "asset:image",
+              "required": true,
+              "desc": "정답을 맞혔을 때 바구니에 담기는 그림."
+            },
+            {
+              "key": "bg",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "normal",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "기본 풍선 배경."
+                },
+                {
+                  "key": "neon",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "강조(네온) 풍선 배경."
+                }
+              ],
+              "desc": "정답 풍선의 배경 두 벌."
+            },
+            {
+              "key": "incorrect",
+              "type": "asset:image",
+              "required": true,
+              "desc": "오답으로 쓰일 그림."
+            },
+            {
+              "key": "inBalloon",
+              "type": "asset:image",
+              "required": true,
+              "desc": "풍선 안에 넣을 그림. **이 값이 있으면 그림 풍선, 없으면 글자 풍선입니다**(Balloon.ts:60 이 있는지로 갈라 Icon 또는 Word 를 만듭니다)."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 낱말 음원."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. **칸 수가 곧 이닝 수입니다.** 적은 차례대로 진행합니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      },
+      {
+        "key": "randomData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true,
+              "desc": "오답 그림 alias."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "오답 풍선에 무작위로 쓸 그림 목록. **`balloons - 1` 개보다 많아야 골라 쓸 수 있습니다.**",
+        "minLengthWhy": "오답 풍선 수보다 많아야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "set-is-inning-count",
+      "level": "error",
+      "check": "실제 이닝 수는 set 의 칸 수다 — inning 값과 맞춰 적는다.",
+      "why": "E35.ts:63·66 이 `set` 을 훑습니다. `inning` 은 표시용이라 어긋나면 이닝 표시만 틀립니다."
+    },
+    {
+      "id": "random-data-enough",
+      "level": "error",
+      "check": "randomData 의 칸 수가 balloons - 1 보다 많아야 한다.",
+      "why": "오답 풍선을 이 목록에서 골라 채웁니다. 모자라면 풍선이 비거나 같은 오답이 겹칩니다."
+    },
+    {
+      "id": "inballoon-decides-type",
+      "level": "warn",
+      "check": "글자 풍선으로 만들려면 inBalloon 키를 아예 두지 않는다.",
+      "why": "Balloon.ts:60 이 값이 있는지로 그림 풍선/글자 풍선을 가릅니다. 빈 값을 남기면 그림 풍선 경로로 갑니다."
+    },
+    {
+      "id": "word-is-text",
+      "level": "warn",
+      "check": "word 는 그림 alias 가 아니라 화면에 그릴 글자다.",
+      "why": "alias 를 적으면 그 문자열이 그대로 풍선에 찍힙니다."
+    },
+    {
+      "id": "progress-divides-by-array",
+      "level": "warn",
+      "check": "이 모듈의 진행률·정답률 계산은 배열을 수로 나눈다 — 값을 손대지 말 것.",
+      "why": "E35.ts:89·92 가 `mCompleteCount / quizData.set` 처럼 **배열을 그대로 나눕니다**(길이가 아니라 배열). 결과가 NaN 이 되는 자리인데 표본이 그대로 돌고 있어 손대지 않았습니다 — 고치려면 개발에 알리세요."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 열세 개가 모두 등록돼야 한다.",
+      "why": "모듈이 등록하는 것은 폰트와 효과음 셋뿐입니다."
+    }
+  ],
+  "notes": [
+    "표본 세 차시가 모두 ENL1M__W3S2 자리입니다.",
+    "정답 풍선 배경이 normal · neon 두 벌인데, 낱말마다 `{낱말}-normal-bg` · `{낱말}-neon-bg` 로 두 장씩 필요합니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

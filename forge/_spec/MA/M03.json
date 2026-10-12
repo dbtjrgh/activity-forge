@@ -1,0 +1,1117 @@
+{
+  "specVersion": 1,
+  "module": "M03",
+  "subject": "MA",
+  "title": "네 개 중 고르기 (협력사 공통 기반)",
+  "summary": "지시문을 듣고 버튼 네 개(btn_0 ~ btn_3) 중 맞는 것을 고르는 활동. 힌트를 볼 수 있고 이닝을 다 풀면 엔딩 연출이 나옵니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M03",
+    "activities": [
+      "MAL2M01W1S3",
+      "MAL3M03W3S3"
+    ],
+    "doc": "README 없음. 근거는 M03.ts · M03_Answer.ts · M03_Button.ts · M03_Director.ts · M03_Hint.ts · M03_Ending.ts 와 dori_common 의 Com_* 들, 표본 2차시입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M03",
+      "from": "@_common/module/MA/M03/M03"
+    },
+    "members": [
+      "private mM03: M03 = new M03();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "await this.mM03.onLoad(font, image, lottie, sound);"
+      ],
+      "onInit": [
+        "await this.mM03.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mM03.onStart();"
+      ],
+      "onEnd": [
+        "await this.mM03.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mM03.onUpdate(_ticker);"
+      ],
+      "onAffordanceOn": [
+        "await this.mM03.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mM03.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. Com_Audio.PlayBGM(\"bgm\")."
+      },
+      {
+        "alias": "click",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "터치 효과음."
+      },
+      {
+        "alias": "button",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "버튼 효과음."
+      },
+      {
+        "alias": "correct",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "정답 효과음."
+      },
+      {
+        "alias": "wrong",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음."
+      }
+    ],
+    "providedByModule": {
+      "note": "**dori_common(협력사 공통) 위에 올라간 모듈입니다** — Com_Create · Com_Audio · Com_Parent 를 씁니다. 자기 리소스는 등록하지 않고, 액티비티가 onLoad 에서 AssetTable 네 배열을 넘깁니다.\n\n**GameData 의 image · lottie 표는 열쇠가 곧 alias 입니다.** 이 스펙에 열거된 열쇠는 표본 두 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다.\n\n**이름이 코드에 박힌 음원** — `bgm`(PlayBGM) · `click` · `button` · `correct` · `wrong`(PlaySFX)."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Inning",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "current",
+            "type": "number",
+            "required": true,
+            "desc": "시작 이닝 번호(0 부터). 보통 0."
+          },
+          {
+            "key": "length",
+            "type": "number",
+            "required": true,
+            "desc": "이닝 수. **M03_Answer 배열의 칸 수와 같아야 합니다.**"
+          }
+        ],
+        "desc": "이닝 구성. dori_common 의 Com_Inning 이 이 값으로 초기화됩니다."
+      },
+      {
+        "key": "Com_BG",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "bg_background",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "화면 배경 자리와 크기. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+              }
+            ],
+            "desc": "배경 그림 배치표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다."
+          }
+        ],
+        "desc": "화면 배경."
+      },
+      {
+        "key": "M03_Director",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "0번 자리의 그림."
+              }
+            ],
+            "desc": "지시문 그림 배치표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다."
+          },
+          {
+            "key": "lottie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "0번 자리의 애니."
+              }
+            ],
+            "desc": "지시문 애니 배치표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다."
+          }
+        ],
+        "desc": "지시문을 내는 화면 요소(문제를 보여 주는 쪽)."
+      },
+      {
+        "key": "M03_Button",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "random",
+            "type": "bool",
+            "required": true,
+            "desc": "버튼 자리를 섞을지. true 면 같은 GameData 로 다시 들어가도 배치가 달라집니다."
+          },
+          {
+            "key": "saveAlias",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "btn",
+                "type": "string",
+                "required": true,
+                "desc": "버튼 그림 alias."
+              },
+              {
+                "key": "frame",
+                "type": "string",
+                "required": true,
+                "desc": "테두리 그림 alias."
+              }
+            ],
+            "desc": "포트폴리오에 저장할 때 쓰는 그림 alias 앞머리."
+          },
+          {
+            "key": "imageAlias",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "btn",
+                "type": "string",
+                "required": true,
+                "desc": "버튼 그림 alias."
+              },
+              {
+                "key": "frame",
+                "type": "string",
+                "required": true,
+                "desc": "테두리 그림 alias."
+              }
+            ],
+            "desc": "버튼과 테두리 그림 alias 앞머리."
+          },
+          {
+            "key": "scale",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "btn",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "버튼 크기."
+              },
+              {
+                "key": "frame",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "테두리 크기."
+              }
+            ],
+            "desc": "버튼·테두리 크기."
+          },
+          {
+            "key": "container",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "layout",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "btn_0",
+                    "type": "object",
+                    "required": true,
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 x (화면 가운데가 0)."
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 y (화면 가운데가 0)."
+                      },
+                      {
+                        "key": "width",
+                        "type": "number",
+                        "required": true,
+                        "desc": "너비(px)."
+                      },
+                      {
+                        "key": "height",
+                        "type": "number",
+                        "required": true,
+                        "desc": "높이(px)."
+                      }
+                    ],
+                    "desc": "btn_0 자리."
+                  },
+                  {
+                    "key": "btn_1",
+                    "type": "object",
+                    "required": true,
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 x (화면 가운데가 0)."
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 y (화면 가운데가 0)."
+                      },
+                      {
+                        "key": "width",
+                        "type": "number",
+                        "required": true,
+                        "desc": "너비(px)."
+                      },
+                      {
+                        "key": "height",
+                        "type": "number",
+                        "required": true,
+                        "desc": "높이(px)."
+                      }
+                    ],
+                    "desc": "btn_1 자리."
+                  },
+                  {
+                    "key": "btn_2",
+                    "type": "object",
+                    "required": true,
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 x (화면 가운데가 0)."
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 y (화면 가운데가 0)."
+                      },
+                      {
+                        "key": "width",
+                        "type": "number",
+                        "required": true,
+                        "desc": "너비(px)."
+                      },
+                      {
+                        "key": "height",
+                        "type": "number",
+                        "required": true,
+                        "desc": "높이(px)."
+                      }
+                    ],
+                    "desc": "btn_2 자리."
+                  },
+                  {
+                    "key": "btn_3",
+                    "type": "object",
+                    "required": true,
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 x (화면 가운데가 0)."
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true,
+                        "desc": "자리 y (화면 가운데가 0)."
+                      },
+                      {
+                        "key": "width",
+                        "type": "number",
+                        "required": true,
+                        "desc": "너비(px)."
+                      },
+                      {
+                        "key": "height",
+                        "type": "number",
+                        "required": true,
+                        "desc": "높이(px)."
+                      }
+                    ],
+                    "desc": "btn_3 자리."
+                  }
+                ],
+                "desc": "버튼 네 개의 자리. **열쇠가 btn_0 ~ btn_3 으로 고정입니다** — Com_Affordance.label.button 도 이 이름을 가리킵니다."
+              }
+            ],
+            "desc": "버튼이 놓이는 자리표."
+          }
+        ],
+        "desc": "선지 버튼 네 개."
+      },
+      {
+        "key": "M03_Hint",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "0번 자리의 그림."
+              }
+            ],
+            "desc": "힌트 그림 배치표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다."
+          },
+          {
+            "key": "lottie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "0번 자리의 애니."
+              }
+            ],
+            "desc": "힌트 애니 배치표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다."
+          },
+          {
+            "key": "area",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "area_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "area_0 영역."
+              }
+            ],
+            "desc": "힌트를 누를 수 있는 영역들."
+          }
+        ],
+        "desc": "힌트 화면."
+      },
+      {
+        "key": "M03_Answer",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 4,
+          "of": {
+            "key": "",
+            "type": "number",
+            "desc": "버튼 번호(0 = btn_0)."
+          },
+          "desc": "그 이닝의 단계별 정답 버튼 번호.",
+          "minLengthWhy": "단계 수만큼 필요합니다."
+        },
+        "desc": "**정답 표 — [이닝][단계] 가 눌러야 하는 버튼 번호(0 부터)입니다.** 바깥 칸 수가 Com_Inning.length 와 같아야 합니다.",
+        "minLengthWhy": "이닝 수만큼 필요합니다."
+      },
+      {
+        "key": "M03_Ending",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "image",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "ending_img_bg_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 배경 0번 자리와 크기."
+              },
+              {
+                "key": "ending_img_box_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 상자 0번 자리와 크기."
+              },
+              {
+                "key": "ending_img_box_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 상자 1번 자리와 크기."
+              },
+              {
+                "key": "ending_img_box_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 상자 2번 자리와 크기."
+              },
+              {
+                "key": "ending_img_box_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 상자 3번 자리와 크기."
+              },
+              {
+                "key": "ending_img_box_4",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 상자 4번 자리와 크기."
+              },
+              {
+                "key": "ending_img_mon_0",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 캐릭터 0번 자리와 크기."
+              },
+              {
+                "key": "ending_img_mon_1",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 캐릭터 1번 자리와 크기."
+              },
+              {
+                "key": "ending_img_mon_2",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 캐릭터 2번 자리와 크기."
+              },
+              {
+                "key": "ending_img_mon_3",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 캐릭터 3번 자리와 크기."
+              },
+              {
+                "key": "ending_img_mon_4",
+                "type": "object",
+                "optional": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "desc": "너비(px)."
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "desc": "높이(px)."
+                  }
+                ],
+                "desc": "엔딩 캐릭터 4번 자리와 크기."
+              }
+            ],
+            "desc": "엔딩 그림 배치표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다."
+          },
+          {
+            "key": "hide",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "label",
+                "type": "array",
+                "required": true,
+                "minLength": 0,
+                "of": {
+                  "key": "",
+                  "type": "string",
+                  "desc": "label 이름 하나."
+                },
+                "desc": "감출 요소의 label 이름 목록.",
+                "minLengthWhy": "없으면 빈 배열로 둡니다."
+              }
+            ],
+            "desc": "엔딩에서 감출 요소들."
+          },
+          {
+            "key": "style",
+            "type": "string",
+            "required": true,
+            "desc": "엔딩 연출 갈래 이름. M03_Ending 이 이 문자열로 분기합니다."
+          }
+        ],
+        "desc": "엔딩 연출."
+      },
+      {
+        "key": "Com_Affordance",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "label",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "button",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "enum",
+                  "values": [
+                    "btn_0",
+                    "btn_1",
+                    "btn_2",
+                    "btn_3"
+                  ],
+                  "desc": "버튼 이름 하나."
+                },
+                "desc": "어포던스를 띄울 버튼 이름 목록. **btn_0 ~ btn_3 중에서 고릅니다** — M03_Button.container.layout 의 열쇠와 같아야 합니다.",
+                "minLengthWhy": "하나는 있어야 어포던스가 뜹니다."
+              }
+            ],
+            "desc": "어포던스를 띄울 대상."
+          }
+        ],
+        "desc": "어포던스(누를 자리 표시) 설정."
+      }
+    ]
+  },
+  "aliasNote": "M03_1 은 폴라로이드 짝 고르기로 활동이 아예 다릅니다. 이름만 비슷하니 배치표를 볼 때 주의하세요.",
+  "rules": [
+    {
+      "id": "answer-table-shape",
+      "level": "error",
+      "check": "M03_Answer 의 바깥 칸 수가 Com_Inning.length 와 같아야 하고, 값이 0~3 이어야 한다.",
+      "why": "정답을 버튼 번호로 가리킵니다(btn_0 이 0). 범위를 벗어나면 **어느 버튼을 눌러도 정답이 되지 않아** 이닝이 끝나지 않습니다."
+    },
+    {
+      "id": "button-keys-fixed",
+      "level": "error",
+      "check": "M03_Button.container.layout 의 열쇠는 btn_0 · btn_1 · btn_2 · btn_3 이다.",
+      "why": "Com_Affordance.label.button 과 정답 번호가 이 이름·번호를 가리킵니다. 이름을 바꾸면 어포던스가 뜰 자리를 못 찾습니다."
+    },
+    {
+      "id": "image-key-is-alias",
+      "level": "error",
+      "check": "image · lottie 배치표의 열쇠가 AssetTable 의 alias 와 정확히 같아야 한다.",
+      "why": "**열쇠가 곧 alias 입니다.** 한 글자만 달라도 못 찾아 그 그림만 조용히 사라집니다 — 자리 값이 맞아도 아무것도 안 보입니다."
+    },
+    {
+      "id": "fixed-sound-registered",
+      "level": "error",
+      "check": "bgm · click · button · correct · wrong 다섯 음원이 등록돼야 한다.",
+      "why": "dori_common 의 Com_Audio 가 이름으로 찾습니다. 없으면 무음으로 통과합니다."
+    },
+    {
+      "id": "hooks-all-seven",
+      "level": "error",
+      "check": "onLoad · onInit · onStart · onEnd · onUpdate · onAffordanceOn · onAffordanceCanceled 일곱 훅을 다 넘긴다.",
+      "why": "**onUpdate 를 빠뜨리면 애니가 멈추고, 어포던스 훅을 빠뜨리면 힌트 표시가 안 나옵니다.**"
+    },
+    {
+      "id": "random-affects-repeat",
+      "level": "warn",
+      "check": "M03_Button.random 이 true 면 배치가 매번 달라진다.",
+      "why": "스크린샷을 견줄 때 헷갈리는 지점입니다."
+    }
+  ],
+  "notes": [
+    "표본이 두 차시(MAL2M01W1S3 · MAL3M03W3S3)뿐입니다. image 표의 열쇠 집합이 차시마다 다를 수 있습니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

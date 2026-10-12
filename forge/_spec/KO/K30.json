@@ -1,0 +1,456 @@
+{
+  "specVersion": 1,
+  "module": "K30",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K30",
+    "activities": [
+      "KOL1M01W1S3",
+      "KOL1M02W1S3",
+      "KOL1M03W1S3",
+      "KOL1M04W1S3",
+      "KOL1M05W1S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "K30.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "const bgSpr = new Sprite(AssetManager.get(\"bg\"));",
+        "bgSpr.anchor.set(0.5);",
+        "this.addChild(bgSpr);",
+        "K30.handle.onInit(quizData);",
+        "this.addChild(K30.handle);"
+      ],
+      "onStart": [
+        "// if(import.meta.env.PROD){",
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "// }",
+        "await K30.handle.onStart(quizData);",
+        "await SparkApp.eop.show(K30.handle.mQuizPanel.totalPercent / quizData.inning.length * 0.01);"
+      ],
+      "onUpdate": [
+        "K30.handle.onUpdate(_ticker);"
+      ],
+      "onAffordanceOn": [
+        "K30.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "K30.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "Sprite",
+        "from": "pixi.js"
+      },
+      {
+        "symbol": "K30",
+        "from": "@_common/module/KR/K30/K30"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "card_blur",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "카드 뒤 흐린 그림자. 모듈 Card.ts 가 AssetManager.get(\"card_blur\") 로 이름을 박아 부른다 — 없으면 카드가 안 뜬다. 판마다 그림이 다르다(짝수 M 폴라로이드 · 홀수 M 편지)."
+      },
+      {
+        "alias": "post",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "카드를 모으는 통(편지 판은 우체통 post.png, 폴라로이드 판은 앨범 book.png). 모듈 PostBox.ts 가 AssetManager.get(\"post\") 로 부른다 — 없으면 게임이 시작되지 않는다(2026-09-29 9호 KOL1M08W1S3 에서 빈 화면)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "setCount",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "set",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "card",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "size",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "width",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "height",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "mark",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "writeMark",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "alias",
+                      "type": "asset:image",
+                      "optional": true
+                    },
+                    {
+                      "key": "position",
+                      "type": "point",
+                      "required": true,
+                      "figma": true
+                    },
+                    {
+                      "key": "rotaion",
+                      "type": "bool",
+                      "optional": true
+                    },
+                    {
+                      "key": "scale",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "rotate",
+                      "type": "bool",
+                      "optional": true
+                    }
+                  ]
+                },
+                {
+                  "key": "stampMark",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "alias",
+                      "type": "asset:image",
+                      "optional": true
+                    },
+                    {
+                      "key": "position",
+                      "type": "point",
+                      "required": true,
+                      "figma": true
+                    },
+                    {
+                      "key": "blendMode",
+                      "type": "enum",
+                      "required": true,
+                      "values": [
+                        "normal",
+                        "overlay"
+                      ]
+                    },
+                    {
+                      "key": "scale",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "alpha",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "stamp",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "position",
+                  "type": "point",
+                  "required": true,
+                  "figma": true
+                },
+                {
+                  "key": "scale",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "sendData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "maskData",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "offsetY",
+                "type": "number",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "postData",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true
+              }
+            ]
+          },
+          {
+            "key": "cardData",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "startPos",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "endPos",
+                "type": "point",
+                "required": true,
+                "figma": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "positionData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "2",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "paper",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 2,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true
+                      }
+                    ]
+                  }
+                },
+                {
+                  "key": "stamp",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 2,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "key": "3",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "paper",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 3,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true
+                      }
+                    ]
+                  }
+                },
+                {
+                  "key": "stamp",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 3,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "x",
+                        "type": "number",
+                        "required": true
+                      },
+                      {
+                        "key": "y",
+                        "type": "number",
+                        "required": true
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "key": "resourceData",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "write",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "asset:image"
+            }
+          },
+          {
+            "key": "stamp",
+            "type": "array",
+            "required": true,
+            "minLength": 10,
+            "of": {
+              "key": "",
+              "type": "asset:image"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

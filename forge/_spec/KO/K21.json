@@ -1,0 +1,1485 @@
+{
+  "specVersion": 1,
+  "module": "K21",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K21",
+    "activities": [
+      "KOL3M01W2S2",
+      "KOL3M02W2S2",
+      "KOL3M03W2S2",
+      "KOL3M04W2S2",
+      "KOL3M05W2S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "super.onLoad()",
+        ";(quizData as any).soundUrlMap = Object.fromEntries(sound.map((s) => [s.alias, s.src]))",
+        "this.K21.OnLoad()"
+      ],
+      "onInit": [
+        "this.K21.OnInit()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm')",
+        "bgm.loop(true)",
+        "bgm.volume(0.1)",
+        "bgm.play()",
+        "this.K21.OnStart()"
+      ],
+      "onAffordanceOn": [
+        "this.K21.onAffordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "this.K21.onAffordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K21",
+      "from": "@_common/module/KR/K21/K21"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "talk",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 CharacterManager.ts 가 AssetManager.get(\"talk\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "chatBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 ChatWindow.ts 가 AssetManager.get(\"chatBg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "outLine",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 ChatWindow.ts 가 AssetManager.get(\"outLine\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "topbar",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 ChatWindow.ts 가 AssetManager.get(\"topbar\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mobile",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 ChatWindow.ts 가 AssetManager.get(\"mobile\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 ChatWindow.ts 가 AssetManager.get(\"btn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "dimd",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 ChatWindow.ts 가 AssetManager.get(\"dimd\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "replay",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 ChatWindow.ts 가 AssetManager.get(\"replay\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 InningManager.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "btn_base",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 RecordButton.ts 가 AssetManager.get(\"btn_base\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "btn_rec_base",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 RecordButton.ts 가 AssetManager.get(\"btn_rec_base\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "btn_mic",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 RecordButton.ts 가 AssetManager.get(\"btn_mic\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "btn_outline",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 RecordButton.ts 가 AssetManager.get(\"btn_outline\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "portpolio",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "endBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "default": 80
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "default": 80
+          }
+        ]
+      },
+      {
+        "key": "quizType",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "typeA",
+          "typeB"
+        ]
+      },
+      {
+        "key": "talkerA_Count",
+        "type": "number",
+        "required": true,
+        "default": 11
+      },
+      {
+        "key": "talkerB_Count",
+        "type": "number",
+        "required": true
+      },
+      {
+        "key": "settings",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningCount",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "number"
+            }
+          },
+          {
+            "key": "maxInning",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "isRandomInning",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isTouchSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isSfxSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isNarrationSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isMainCharacterSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isAffordanceTimer",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "minRecTime",
+            "type": "number",
+            "required": true,
+            "default": 3
+          },
+          {
+            "key": "isInningCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isShowLog",
+            "type": "bool",
+            "required": true,
+            "default": false
+          },
+          {
+            "key": "recoder_gain_value_pc",
+            "type": "number",
+            "required": true,
+            "default": 6
+          },
+          {
+            "key": "recoder_gain_value_mobile",
+            "type": "number",
+            "required": true,
+            "default": 4
+          }
+        ]
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "index",
+              "type": "number",
+              "required": true,
+              "default": 0
+            }
+          ]
+        }
+      },
+      {
+        "key": "positions",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "framePos",
+            "type": "point",
+            "optional": true,
+            "figma": true
+          },
+          {
+            "key": "characterPos",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "basketPos",
+            "type": "point",
+            "optional": true,
+            "figma": true
+          },
+          {
+            "key": "guest_talk_Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "host_talk_Pos1",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "recBtnPos",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "bezelPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 960,
+              "y": 860
+            }
+          },
+          {
+            "key": "topbarPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 960,
+              "y": 100
+            }
+          },
+          {
+            "key": "mobilePos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 960,
+              "y": 860
+            }
+          },
+          {
+            "key": "btnPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 1780,
+              "y": 940
+            }
+          },
+          {
+            "key": "dimdPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 225,
+              "y": 72
+            }
+          },
+          {
+            "key": "replayPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 868.51,
+              "y": 444.12
+            }
+          },
+          {
+            "key": "endBtn",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 100
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 100
+              }
+            ]
+          },
+          {
+            "key": "chattingIconPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 274.86,
+              "y": 651.49
+            }
+          },
+          {
+            "key": "chattingPos_guest",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 274.86,
+              "y": 651.49
+            }
+          },
+          {
+            "key": "chattingPos_host",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 1646,
+              "y": 854.15
+            }
+          },
+          {
+            "key": "distance",
+            "type": "number",
+            "required": true,
+            "default": 202.66
+          },
+          {
+            "key": "animalPosA",
+            "type": "array",
+            "optional": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "animalPosB",
+            "type": "array",
+            "optional": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "hi",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "hi"
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "idle"
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true
+              }
+            ]
+          },
+          {
+            "key": "in",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "in"
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "key": "out",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "talk",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "talk"
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true
+              }
+            ]
+          },
+          {
+            "key": "listen",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "listen"
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true
+              }
+            ]
+          },
+          {
+            "key": "wave",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "wave"
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 200
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 100
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true
+              }
+            ]
+          },
+          {
+            "key": "timer",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "aliasMayBeOff": "K21 은 animation.timer 를 안 읽습니다(CharacterManager.ts · RecordButton.ts 가 hi·idle·wave 만 봅니다). 완성본 8개가 등록 없이 나가 있습니다.",
+                "required": true,
+                "default": "timer"
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 270
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 270
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "sound",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correct",
+            "type": "asset:sound",
+            "required": true,
+            "default": "correct"
+          },
+          {
+            "key": "wrong",
+            "type": "asset:sound",
+            "required": true,
+            "default": "wrong"
+          },
+          {
+            "key": "wrong2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "wrong2"
+            ],
+            "default": "wrong2"
+          },
+          {
+            "key": "touch",
+            "type": "asset:sound",
+            "required": true,
+            "default": "touch"
+          },
+          {
+            "key": "recStart",
+            "type": "asset:sound",
+            "required": true,
+            "default": "recStart"
+          },
+          {
+            "key": "recEnd",
+            "type": "asset:sound",
+            "required": true,
+            "default": "recEnd"
+          }
+        ]
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "KO",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "asset:sound",
+                "required": true,
+                "default": "nar3"
+              },
+              {
+                "key": "correctP",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "correct",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "string"
+                }
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "hint",
+                "type": "asset:sound",
+                "required": true,
+                "default": "com5"
+              },
+              {
+                "key": "endBtn",
+                "type": "asset:sound",
+                "required": true,
+                "default": "com6"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "contentindex",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "guest1_1",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_1"
+          },
+          {
+            "key": "guest1_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "chat_guest1_2,"
+            ],
+            "default": "chat_guest1_2,"
+          },
+          {
+            "key": "guest1_3",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_3"
+          },
+          {
+            "key": "guest1_4",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_4"
+          },
+          {
+            "key": "guest1_5",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_5"
+          },
+          {
+            "key": "guest1_6",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_6"
+          },
+          {
+            "key": "guest1_7",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_7"
+          },
+          {
+            "key": "guest1_8",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_8"
+          },
+          {
+            "key": "guest1_9",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_9"
+          },
+          {
+            "key": "guest1_10",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_10"
+          },
+          {
+            "key": "guest1_11",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest1_11"
+          },
+          {
+            "key": "guest2_1",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_1"
+          },
+          {
+            "key": "guest2_2",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_2"
+          },
+          {
+            "key": "guest2_3",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_3"
+          },
+          {
+            "key": "guest2_4",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_4"
+          },
+          {
+            "key": "guest2_5",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_5"
+          },
+          {
+            "key": "guest2_6",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_6"
+          },
+          {
+            "key": "guest2_7",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_7"
+          },
+          {
+            "key": "guest2_8",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_8"
+          },
+          {
+            "key": "guest2_9",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_9"
+          },
+          {
+            "key": "guest2_10",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_10"
+          },
+          {
+            "key": "guest2_11",
+            "type": "asset:image",
+            "required": true,
+            "default": "chat_guest2_11"
+          },
+          {
+            "key": "host1_1_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA1_1"
+            ],
+            "default": "hostA1_1"
+          },
+          {
+            "key": "host1_1_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA1_2"
+            ],
+            "default": "hostA1_2"
+          },
+          {
+            "key": "host1_2_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA2_1"
+            ],
+            "default": "hostA2_1"
+          },
+          {
+            "key": "host1_2_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA2_2"
+            ],
+            "default": "hostA2_2"
+          },
+          {
+            "key": "host1_3_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA3_1"
+            ],
+            "default": "hostA3_1"
+          },
+          {
+            "key": "host1_3_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA3_2"
+            ],
+            "default": "hostA3_2"
+          },
+          {
+            "key": "host1_4_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA4_1"
+            ],
+            "default": "hostA4_1"
+          },
+          {
+            "key": "host1_4_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA4_2"
+            ],
+            "default": "hostA4_2"
+          },
+          {
+            "key": "host1_5_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA5_1"
+            ],
+            "default": "hostA5_1"
+          },
+          {
+            "key": "host1_5_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA5_2"
+            ],
+            "default": "hostA5_2"
+          },
+          {
+            "key": "host1_6_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA6_1"
+            ],
+            "default": "hostA6_1"
+          },
+          {
+            "key": "host1_6_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA6_2"
+            ],
+            "default": "hostA6_2"
+          },
+          {
+            "key": "host1_7_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA7_1"
+            ],
+            "default": "hostA7_1"
+          },
+          {
+            "key": "host1_7_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA7_2"
+            ],
+            "default": "hostA7_2"
+          },
+          {
+            "key": "host1_8_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA8_1"
+            ],
+            "default": "hostA8_1"
+          },
+          {
+            "key": "host1_8_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA8_2"
+            ],
+            "default": "hostA8_2"
+          },
+          {
+            "key": "host1_9_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA9_1"
+            ],
+            "default": "hostA9_1"
+          },
+          {
+            "key": "host1_9_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA9_2"
+            ],
+            "default": "hostA9_2"
+          },
+          {
+            "key": "host1_10_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA10_1"
+            ],
+            "default": "hostA10_1"
+          },
+          {
+            "key": "host1_10_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostA10_2"
+            ],
+            "default": "hostA10_2"
+          },
+          {
+            "key": "host2_1_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB1_1"
+            ],
+            "default": "hostB1_1"
+          },
+          {
+            "key": "host2_1_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB1_2"
+            ],
+            "default": "hostB1_2"
+          },
+          {
+            "key": "host2_2_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB2_1"
+            ],
+            "default": "hostB2_1"
+          },
+          {
+            "key": "host2_2_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB2_2"
+            ],
+            "default": "hostB2_2"
+          },
+          {
+            "key": "host2_3_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB3_1"
+            ],
+            "default": "hostB3_1"
+          },
+          {
+            "key": "host2_3_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB3_2"
+            ],
+            "default": "hostB3_2"
+          },
+          {
+            "key": "host2_4_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB4_1"
+            ],
+            "default": "hostB4_1"
+          },
+          {
+            "key": "host2_4_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB4_2"
+            ],
+            "default": "hostB4_2"
+          },
+          {
+            "key": "host2_5_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB5_1"
+            ],
+            "default": "hostB5_1"
+          },
+          {
+            "key": "host2_5_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB5_2"
+            ],
+            "default": "hostB5_2"
+          },
+          {
+            "key": "host2_6_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB6_1"
+            ],
+            "default": "hostB6_1"
+          },
+          {
+            "key": "host2_6_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB6_2"
+            ],
+            "default": "hostB6_2"
+          },
+          {
+            "key": "host2_7_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB7_1"
+            ],
+            "default": "hostB7_1"
+          },
+          {
+            "key": "host2_7_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB7_2"
+            ],
+            "default": "hostB7_2"
+          },
+          {
+            "key": "host2_8_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB8_1"
+            ],
+            "default": "hostB8_1"
+          },
+          {
+            "key": "host2_8_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB8_2"
+            ],
+            "default": "hostB8_2"
+          },
+          {
+            "key": "host2_9_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB9_1"
+            ],
+            "default": "hostB9_1"
+          },
+          {
+            "key": "host2_9_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB9_2"
+            ],
+            "default": "hostB9_2"
+          },
+          {
+            "key": "host2_10_1",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB10_1"
+            ],
+            "default": "hostB10_1"
+          },
+          {
+            "key": "host2_10_2",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "hostB10_2"
+            ],
+            "default": "hostB10_2"
+          }
+        ]
+      }
+    ]
+  }
+}

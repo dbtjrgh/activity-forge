@@ -1,0 +1,156 @@
+{
+  "specVersion": 1,
+  "module": "VideoPlayer",
+  "subject": "EN",
+  "title": "영상 보기 — 액자 속 영상을 재생합니다",
+  "summary": "화면 가운데 액자가 놓이고 그 안에 영상 섬네일이 뜹니다. 재생 버튼을 누르면 액자가 커지면서 물러나고 영상이 화면을 꽉 채웁니다. 도우미 캐릭터는 재생 중에 숨었다가 끝나면 다시 나옵니다. 영상이 끝나면 액자가 돌아오고 액티비티가 끝납니다. **값을 넣는 칸이 없는 유일한 갈래입니다** — 영상 파일과 그림 몇 장이 전부입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/VideoPlayer",
+    "activities": [
+      "ENL1M01W1S2",
+      "ENL1M02W1S2",
+      "ENL1M03W1S2",
+      "ENL1M04W1S2",
+      "ENL1M05W1S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "await super.onInit();",
+        "this.initVideoPlay('bgFrame', 'thumb', 'video');"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm');",
+        "bgm.loop(true);",
+        "bgm.volume(1);",
+        "bgm.play();",
+        "await SparkApp.mainMenu.mainCharacter.show()",
+        "await this.mPlayer.ready();",
+        "this.mPlayer.playLock(true);",
+        "await SparkApp.mainMenu.mainCharacter.guide( 'play' )",
+        "this.mPlayer.playLock(false);",
+        "this.mPlayer.playButtonFocusAni();",
+        "this.on('startPlay',async ()=>{",
+        "  if( bgm.playing() ){",
+        "    bgm.fade( 1, 0, 2000 );",
+        "    bgm.once( 'fade',()=>{",
+        "      bgm.stop();",
+        "    } );",
+        "  }",
+        "})",
+        "this.on('endPlay',async ()=>{",
+        "  // const nar=['end_nar01','end_nar02','end_nar03']",
+        "  // shuffleArray( nar );",
+        "  // await SparkApp.mainMenu.mainCharacter.guide( nar[0] )",
+        "  await SparkApp.eop.show(1);",
+        "})",
+        "//await AudioManager.playAsync('play');"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "VideoPlayActivity",
+      "from": "@_common/sparkLib/module/VideoPlayer/VideoPlayActivity"
+    },
+    "import": {
+      "symbol": "SparkApp",
+      "from": "@_common/sparkLib/Application"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "video",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "**영상 파일입니다.** kind 가 image 인 것이 이상해 보이지만 AssetManager 가 mp4 를 텍스처로 읽어 들이기 때문입니다. 액티비티 폴더 **바로 아래**에 둡니다(images 가 아닙니다) — `${RscPath}/video.mp4`. initVideoPlay 의 세 번째 인자로 넘기는 이름이라 다른 이름을 써도 되지만, 기존 5개가 전부 video 입니다."
+      },
+      {
+        "alias": "thumb",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "재생 전에 액자 안에 보이는 섬네일. initVideoPlay 의 두 번째 인자입니다. 영상 첫 장면을 그대로 쓰는 것이 관례입니다.",
+        "size": {
+          "w": 1280,
+          "h": 720,
+          "why": "재생을 누르면 플레이어를 1080 ÷ 썸네일 높이 만큼 키웁니다(VideoPlayActivity.ts:52). 1280×720 이면 1.5배로 화면을 채우고, 1921×1081 처럼 화면 크기로 오면 1배라 확대가 안 됩니다 — 에러도 없이. 완성본 MA 12곳 · EN 24곳이 이 크기입니다(7호 MAL1M07W1S1 · W3S1 만 1921×1081)."
+        }
+      },
+      {
+        "alias": "bgFrame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "영상을 감싸는 액자. initVideoPlay 의 첫 인자. 재생이 시작되면 1.8배로 커지며 화면 밖으로 물러나고(VideoPlayActivity.ts:58~68) 끝나면 되돌아옵니다. **가운데가 뚫려 있어야 합니다** — 영상 위에 덮이는 그림입니다."
+      },
+      {
+        "alias": "playBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "재생 버튼. VideoPlayer.ts:310·149 하드코딩. 멈춤 상태에서도 이 그림으로 돌아옵니다."
+      },
+      {
+        "alias": "pauseBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "일시정지 버튼. VideoPlayer.ts:151·166 하드코딩."
+      },
+      {
+        "alias": "closeBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "영상을 닫는 X 버튼. VideoPlayer.ts:316 하드코딩."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "액자 화면의 배경음. **모듈이 아니라 액티비티 onStart 가 직접 틉니다** — 재생이 시작되면 2초 페이드아웃하고 멈춥니다. 생성된 Activity.ts 에 그 코드가 들어 있으니 alias 이름을 바꾸면 같이 고쳐야 합니다."
+      },
+      {
+        "alias": "play",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "「재생 버튼을 눌러 보세요」 안내 나레이션. 이것이 끝날 때까지 재생 버튼이 잠깁니다(playLock). 회차마다 다른 파일이지만 alias 는 늘 play 입니다."
+      }
+    ],
+    "providedByModule": {
+      "sound": [
+        "playBTNclick"
+      ],
+      "note": "재생 버튼 클릭음만 모듈이 스스로 넣습니다 — VideoPlayer.ts:276 이 /sparklab/common/SL_en_com_sfx01.mp3 을 직접 등록합니다. 액티비티가 넣을 필요가 없고, 같은 이름으로 덮어써도 소용없습니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "unused",
+    "fields": []
+  },
+  "aliasNote": "모듈을 addChild 하지 않습니다. 액티비티 클래스가 ActivityBase 가 아니라 VideoPlayActivity 를 **상속**하고, onInit 에서 super.onInit() 을 부른 뒤 initVideoPlay(액자, 섬네일, 영상) 세 alias 를 넘깁니다. 자원 등록도 모듈이 아니라 액티비티가 직접 합니다.",
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "video · thumb · bgFrame · playBTN · pauseBTN · closeBTN · bgm · play 여덟 alias 가 AssetTable 에 있어야 한다.",
+      "why": "playBTN·pauseBTN·closeBTN 은 모듈이 이름으로 직접 찾고, 나머지는 생성된 Activity.ts 가 그 이름으로 부릅니다. 하나라도 없으면 빈 텍스처가 그려지거나 소리가 안 납니다."
+    },
+    {
+      "id": "video-at-root",
+      "level": "error",
+      "check": "video alias 의 base 가 root 여야 한다 (images 가 아니라 액티비티 폴더 바로 아래).",
+      "why": "기존 5개가 전부 `${RscPath}/video.mp4` 입니다. images 아래에 두면 경로가 어긋나 영상이 안 뜨는데, 에러는 안 납니다 — 검은 화면만 보입니다."
+    },
+    {
+      "id": "gamedata-empty-array",
+      "level": "error",
+      "check": "GameData 는 빈 배열이어야 한다 — export const quizData = [].",
+      "why": "이 모듈은 값을 하나도 안 읽습니다. 객체를 넣으면 쓰이지도 않으면서 「값이 있다」고 오해하게 만듭니다."
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "specVersion": 1,
+  "module": "E05",
+  "subject": "EN",
+  "title": "낱말 창문 — 창문을 열어 낱말 카드 보기",
+  "summary": "무대에 창문이 여러 개 서 있고 창문마다 캐릭터 그림자가 좌우로 어른거립니다. 창문을 누르면 열리면서 조명이 켜지고 그림자가 캐릭터로 바뀐 뒤, 그 낱말의 카드가 화면 가운데에 크게 떠서 소리를 냅니다. 창문을 전부 열면 완료 버튼이 나타나고, 그것을 누르면 끝납니다. 다 연 뒤에는 창문을 다시 눌러 카드를 또 볼 수 있습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E05",
+    "activities": [
+      "ENL1M01W1S1",
+      "ENL1M03W1S1",
+      "ENL1M04W1S1",
+      "ENL1M06W1S1",
+      "ENL1M11W3S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E05.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(E05.handle);",
+        "await E05.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await E05.handle.start();",
+        "// const proc = ()=>{",
+        "//   return new Promise<Blob|null>( (resolve)=>{",
+        "//     SparkApp.renderer.extract.canvas( PlaySparkLv1.handle ).toBlob!( (b:Blob|null)=>{",
+        "//       resolve(b)",
+        "//     });",
+        "//   })",
+        "// };",
+        "// SparkApp.cms.uploadPortpolio( [",
+        "//   {",
+        "//     dataKey:'image01',",
+        "//     blob_data: await proc(),",
+        "//     create_date:new Date()",
+        "//   } as PortfolioBlobInfo,",
+        "//   {",
+        "//     dataKey:'audio01',",
+        "//     blob_data: await proc(),",
+        "//     create_date:new Date()",
+        "//   } as PortfolioBlobInfo,",
+        "//   {",
+        "//     dataKey:'audio02',",
+        "//     blob_data: await proc(),",
+        "//     create_date:new Date()",
+        "//   } as PortfolioBlobInfo,",
+        "// ]);",
+        "await E05.handle.play();",
+        "await E05.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onResize": [
+        "E05.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "E05",
+        "from": "@_common/module/EN/"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경. E05.ts:50 하드코딩."
+      },
+      {
+        "alias": "stage",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "창문 한 개의 바탕판. Stage.ts:31. 창문 수만큼 이 한 장을 돌려 씁니다."
+      },
+      {
+        "alias": "light",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "창문이 열렸을 때 켜지는 조명. Stage.ts:33. **이 그림의 크기가 캐릭터를 가리는 마스크 크기를 정합니다**(Stage.ts:53~58 이 light.width/height-20 으로 사각형을 그립니다). 조명이 작으면 캐릭터가 잘립니다."
+      },
+      {
+        "alias": "finbutton",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "창문을 다 연 뒤 오른쪽 아래(870,450)에 뜨는 완료 버튼. Stage.ts:171. 크기는 100x100 으로 강제됩니다."
+      },
+      {
+        "alias": "ani_window_open",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "창문이 열리는 로티. Stage.ts:41."
+      },
+      {
+        "alias": "ani_window_close",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "창문이 닫히는 로티. Stage.ts:44 가 만들어 두기만 하고 **재생하는 코드는 주석입니다**(Stage.ts:112~118). 지금은 화면에 안 보이지만 없으면 AssetManager.get 이 빈 것을 돌려주므로 넣어 둡니다."
+      },
+      {
+        "alias": "ani_left_star",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "화면 왼쪽 위 장식. E05.ts:58. 위치가 (-1360,-279)로 모듈에 박혀 있습니다."
+      },
+      {
+        "alias": "ani_right_star",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "화면 오른쪽 위 장식. E05.ts:53. 위치 (1265,-344) 고정."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. E05.ts:77. 볼륨 0.1 로 반복 재생하고 끝날 때 2초 페이드아웃."
+      },
+      {
+        "alias": "windowsound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "창문이 열릴 때. Stage.ts:97."
+      },
+      {
+        "alias": "answersound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "캐릭터가 드러난 뒤 카드가 뜨기 직전. Stage.ts:101. 끝날 때까지 기다립니다."
+      },
+      {
+        "alias": "buttonsound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "완료 버튼을 눌렀을 때. Stage.ts:180."
+      },
+      {
+        "alias": "guide_nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작할 때 도우미가 한 번 읽는 안내. E05.ts:100. **이름이 nar02 로 박혀 있습니다** — nar01 이 아닙니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "E05.addAsset() 은 Assets.ts 를 도는데 그 목록이 통째로 주석이라 아무것도 등록하지 않습니다. 모듈이 이름으로 직접 찾는 자원까지 전부 액티비티 AssetTable 에 넣어야 합니다. 다만 정답 칭찬(correct1~3)은 예외입니다 — Stage.ts:109 가 SparkApp.mainMenu.mainCharacter.correctP() 로 넘기고, 그것은 공통 메뉴가 들고 있는 자원이라 액티비티가 넣지 않습니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "quizInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "minLengthWhy": "창문 하나가 배열 한 칸입니다. 기존 5개는 5~6칸을 씁니다. 칸 수가 그대로 창문 수이고, 전부 열어야 완료 버튼이 뜹니다(Stage.ts:132).",
+        "desc": "낱말 하나 = 창문 하나. **시작할 때 섞입니다**(E05.ts:69) — 적은 차례대로 놓이지 않습니다.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "**이 값이 alias 를 만드는 열쇠입니다.** rectangle_{word}(캐릭터) · shadow_{word}(그림자) · answercard_{word}(낱말 카드) · word_{word}(낱말 소리) 네 개가 이 값으로 조립됩니다. 그래서 기존 액티비티는 영어 낱말이 아니라 \"01\"·\"02\" 같은 **번호 문자열**을 씁니다 — 리소스 파일 이름을 번호로 맞춰 두면 낱말이 바뀌어도 여기를 안 고쳐도 됩니다."
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "figma": true,
+              "desc": "**모듈이 안 읽습니다.** 창문 자리는 randomWordPos 가 정합니다. 기존 액티비티가 다 들고 있어 남겨 두었을 뿐이니 새로 만들 때는 넣지 마세요."
+            },
+            {
+              "key": "answerCard",
+              "type": "asset:image",
+              "desc": "**모듈이 안 읽습니다.** 카드 그림은 answercard_{word} 로 찾습니다."
+            },
+            {
+              "key": "answerSound",
+              "type": "asset:sound",
+              "desc": "**모듈이 안 읽습니다.** 낱말 소리는 word_{word} 로 찾습니다."
+            }
+          ],
+          "desc": "칸 하나."
+        }
+      },
+      {
+        "key": "randomWordPos",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "minLengthWhy": "창문 수(quizInfo 칸 수)보다 적으면 그 창문에서 터집니다.",
+        "desc": "창문이 놓이는 자리표. **섞어서 씁니다**(Stage.ts:135) — 어느 낱말이 어느 자리에 갈지는 켤 때마다 다릅니다. 그래서 자리마다 특별한 뜻을 담으면 안 됩니다. 6호 ENL1M06W1S1 값: 위 줄 y=-180 에 셋(x -515·-5·505), 아래 줄 y=280 에 둘. quizInfo 보다 칸이 많으면 남는 자리는 그냥 비워집니다.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            }
+          ],
+          "desc": "칸 하나."
+        }
+      },
+      {
+        "key": "randomShadowPos",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "fixed": true,
+        "minLengthWhy": "정확히 3칸입니다. Stage.ts:29 가 0·1·2 중 하나를 뽑아 이 배열을 읽습니다.",
+        "itemLabels": [
+          "왼쪽으로 오가는 자리",
+          "아래에서 오르내리는 자리",
+          "오른쪽으로 오가는 자리"
+        ],
+        "desc": "창문 **안에서** 캐릭터가 서는 자리 셋. 창문 한가운데를 (0,0) 으로 보는 상대 좌표라 figma 변환을 하지 않습니다. 창문마다 셋 중 하나를 무작위로 골라 쓰고, **고른 번호가 움직임도 정합니다** — [0]은 좌우로, [1]은 위아래로, [2]는 좌우로 오갑니다(Character.ts:33~41). 6호 값: (-135,10) · (0,140) · (135,10).",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            }
+          ],
+          "desc": "칸 하나."
+        }
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "이름이 고정된 alias(bg · stage · light · finbutton · ani_window_open · ani_window_close · ani_left_star · ani_right_star · bgm · windowsound · answersound · buttonsound · guide_nar02)가 AssetTable 에 있어야 한다.",
+      "why": "E05.addAsset() 이 아무것도 등록하지 않으므로 액티비티가 전부 넣어야 합니다."
+    },
+    {
+      "id": "word-aliases-exist",
+      "level": "error",
+      "check": "quizInfo 의 word 값마다 rectangle_{word} · shadow_{word} · answercard_{word} · word_{word} 네 alias 가 AssetTable 에 있어야 한다.",
+      "why": "모듈이 word 값으로 alias 이름을 **조립합니다** — Character.ts:18·22, AnswerCard.ts:26·29. 하나라도 없으면 그 창문에서 빈 그림이 뜨거나 소리가 안 납니다. GameData 의 answerCard·answerSound 칸은 읽지 않으므로 거기를 고쳐도 소용없습니다."
+    },
+    {
+      "id": "window-pos-covers-quiz",
+      "level": "error",
+      "check": "randomWordPos 의 칸 수가 quizInfo 의 칸 수 이상이어야 한다.",
+      "why": "Stage.ts:148 이 mWindowPos[i] 를 막지 않고 읽고, Window 생성자가 그 값의 x 를 바로 봅니다(Stage.ts:66). 모자라면 그 창문에서 터집니다."
+    },
+    {
+      "id": "shadow-pos-exactly-three",
+      "level": "error",
+      "check": "randomShadowPos 는 정확히 3칸이어야 한다.",
+      "why": "Stage.ts:29 가 0·1·2 중 하나를 뽑아 randomShadowPos[IDX] 를 읽습니다. 적으면 터지고, 많으면 네 번째부터는 영영 안 쓰입니다. 그 번호가 캐릭터의 움직임도 정합니다 — 0=왼쪽으로 오감, 1=아래에서 오르내림, 2=오른쪽으로 오감 (Character.ts:33~41). 그래서 칸 순서가 곧 자리입니다."
+    },
+    {
+      "id": "dead-field-position",
+      "level": "warn",
+      "check": "quizInfo[].position 이 들어 있으면 경고.",
+      "why": "**모듈이 읽지 않습니다.** 창문 자리는 randomWordPos 를 섞어서 정하고(Stage.ts:135·148), quizInfo 에서 쓰는 것은 word 하나뿐입니다. 기존 액티비티 5개가 전부 들고 있고 6호에는 「좌표값 입력해서 랜덤이 안됨」 이라는 주석까지 붙어 있습니다 — 자리를 정하려던 흔적이지 지금 동작하는 값이 아닙니다."
+    },
+    {
+      "id": "dead-field-answer",
+      "level": "warn",
+      "check": "quizInfo[].answerCard · quizInfo[].answerSound 가 들어 있으면 경고.",
+      "why": "**모듈이 읽지 않습니다.** AnswerCard.ts:26·29 가 word 값으로 answercard_{word}·word_{word} 를 조립해서 찾습니다. 여기에 다른 alias 를 적어도 그대로 무시됩니다 — 바꾸려면 word 를 바꾸거나 AssetTable 의 alias 를 맞춰야 합니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

@@ -1,0 +1,884 @@
+{
+  "specVersion": 1,
+  "module": "K15",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K15",
+    "activities": [
+      "KOL1M01W3S2",
+      "KOL1M02W3S2",
+      "KOL1M03W3S2",
+      "KOL1M04W3S2",
+      "KOL1M05W3S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "super.onLoad()"
+      ],
+      "onInit": [
+        "await this.K15.OnInit()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm')",
+        "bgm.loop(true)",
+        "bgm.volume(0.1)",
+        "bgm.play()",
+        "await this.K15.OnStart()"
+      ],
+      "onAffordanceOn": [
+        "this.K15.onAffordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "this.K15.onAffordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K15",
+      "from": "@_common/module/KR/K15/K15"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 InningManager.ts 가 AssetManager.get(\"bg1\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 InningManager.ts 가 AssetManager.get(\"bg2\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "hive",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 InningManager.ts 가 AssetManager.get(\"hive\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "correctEff",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 Quiz.ts 가 AssetManager.get(\"correctEff\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "empty",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Slot.ts 가 AssetManager.get(\"empty\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "emptyOutline",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Slot.ts 가 AssetManager.get(\"emptyOutline\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "condition_0",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "condition_1",
+                "type": "number",
+                "required": true,
+                "default": 6
+              },
+              {
+                "key": "default",
+                "type": "number",
+                "required": true,
+                "default": 30
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "settings",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningCount",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "number"
+            }
+          },
+          {
+            "key": "maxInning",
+            "type": "number",
+            "required": true,
+            "default": 5
+          },
+          {
+            "key": "Item",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "asset:image"
+            }
+          },
+          {
+            "key": "letterPiece",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "string"
+              }
+            }
+          },
+          {
+            "key": "isRandomInning",
+            "type": "bool",
+            "required": true
+          },
+          {
+            "key": "isTouchSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isSfxSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isCorrectSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isInningCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isShowLog",
+            "type": "bool",
+            "required": true,
+            "default": false
+          },
+          {
+            "key": "corrctCount",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "maxChoiceBtnCount",
+            "type": "number",
+            "required": true,
+            "default": 5
+          },
+          {
+            "key": "maxTextCount",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "maxFixedCount",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "totalChoiceCount",
+            "type": "number",
+            "required": true,
+            "default": 5
+          },
+          {
+            "key": "slotSize",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 190
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "choiceList",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "index",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "quizType",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "bee",
+              "dron"
+            ]
+          },
+          {
+            "key": "bgmVolume",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "quiztype",
+            "type": "string",
+            "optional": true
+          }
+        ]
+      },
+      {
+        "key": "positions",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "hivePos",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "choice2Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "choice3Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "choice4Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "correctIndex",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "count",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "index",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "key": "correctPos",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "key": "fixedCorrectPos",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "bool"
+              }
+            }
+          },
+          {
+            "key": "itemPos",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "windowframePos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 340,
+              "y": 257.04
+            }
+          },
+          {
+            "key": "windowPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 401.46,
+              "y": 284.74
+            }
+          },
+          {
+            "key": "cloudPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "key": "inningConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningData",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "index",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "letter",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "correctPos",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "correctIndex",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "correctNum",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "textCount",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "correctCount",
+                  "type": "number",
+                  "required": true,
+                  "default": 1
+                },
+                {
+                  "key": "choiceCount",
+                  "type": "number",
+                  "required": true,
+                  "default": 4
+                },
+                {
+                  "key": "choiceListNum",
+                  "type": "number",
+                  "optional": true
+                },
+                {
+                  "key": "choiceIndices",
+                  "type": "array",
+                  "optional": true,
+                  "minLength": 4,
+                  "of": {
+                    "key": "",
+                    "type": "number"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "beeIdleAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 270
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 370
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true
+              }
+            ]
+          },
+          {
+            "key": "beeOutAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 270
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 370
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true
+              }
+            ]
+          },
+          {
+            "key": "branchPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 225.93,
+              "y": 107.58
+            }
+          },
+          {
+            "key": "branchAni",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 1140
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 810
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "key": "window",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 600
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 660
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 225
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 180
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "key": "clearEff",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 100
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 100
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "key": "effSize",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 350
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 244
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "KO",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "asset:sound",
+                "required": true,
+                "default": "startNar"
+              },
+              {
+                "key": "correctP",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "correct",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "string"
+                }
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "hint",
+                "type": "asset:sound",
+                "required": true,
+                "default": "com5"
+              },
+              {
+                "key": "pressEnd",
+                "type": "asset:sound",
+                "required": true,
+                "default": "com6"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

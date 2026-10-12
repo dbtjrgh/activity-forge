@@ -1,0 +1,515 @@
+{
+  "specVersion": 1,
+  "module": "ExploreQuiz",
+  "subject": "EN",
+  "title": "낱말 카드 고르기 — 그림을 눌러 소리를 듣고 맞는 카드를 고릅니다",
+  "summary": "한 이닝마다 그림 하나와 낱말 하나가 나옵니다. 그림을 누르면 그림이 바뀌면서 낱말 소리가 나고, 다 들으면 화면이 어두워지며 뒤집힌 카드 두 장이 올라옵니다. 스피커를 눌러 낱말을 다시 들을 수 있고, 맞는 카드를 고르면 카드가 뒤집혀 그림이 드러나고 도우미가 칭찬합니다. 틀리면 카드가 흔들리고 다시 고를 수 있습니다. 맞히면 왼쪽에 문제 그림, 오른쪽에 정답 그림이 나란히 놓인 결과 화면이 되고 다음 이닝으로 넘어갑니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/ExploreQuiz",
+    "activities": [
+      "ENL1M01W2S2",
+      "ENL1M02W2S2",
+      "ENL1M03W2S2",
+      "ENL1M04W2S2",
+      "ENL1M05W2S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ExploreQuiz.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(ExploreQuiz.handle);",
+        "await ExploreQuiz.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await ExploreQuiz.handle.start();",
+        "await ExploreQuiz.handle.play();",
+        "await ExploreQuiz.handle.finish();",
+        "await SparkApp.eop.show( ExploreQuiz.handle.completePercent );"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "ExploreQuiz",
+        "from": "@_common/module/EN"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 전체 배경. ExploreQuiz.ts:52 하드코딩. 이닝마다 바뀌는 inning[].bg 와 다릅니다 — 그 뒤에 늘 깔리는 바탕입니다."
+      },
+      {
+        "alias": "speaker01",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "문제 쪽 스피커 단추 그림. QuizPanel.ts:30 이 SoundButton.init(sound, \"speaker01\") 로 넘깁니다."
+      },
+      {
+        "alias": "speaker02",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "카드 쪽 스피커 단추 그림. AnswerPanel.ts:121·190."
+      },
+      {
+        "alias": "spk_idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "스피커가 가만히 있을 때. SoundButton.ts:26 하드코딩. 자리도 (5,-5) 로 박혀 있습니다."
+      },
+      {
+        "alias": "spk_wave",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "소리가 날 때 퍼지는 물결. SoundButton.ts:31. 되풀이 재생입니다."
+      },
+      {
+        "alias": "correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 카드에 뜨는 표시 — **가로 배치용**. AnswerPanel.ts:38. mode 가 horizontal 이거나 안 적었을 때 씁니다."
+      },
+      {
+        "alias": "correct_vert",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "같은 표시의 **세로 배치용**. AnswerPanel.ts:34. mode 가 vertical 일 때만 쓰지만, 기존 7개가 mode 와 상관없이 둘 다 넣고 있습니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. ExploreQuiz.ts:63 getSound(\"bgm\"). 소리 크기 0.5 로 되풀이합니다."
+      },
+      {
+        "alias": "SL_en_com_nar72",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작할 때 도우미가 하는 안내. ExploreQuiz.ts 의 play() 가 guide(\"SL_en_com_nar72\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.**"
+      },
+      {
+        "alias": "SL_en_com_sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞는 카드를 골랐을 때. AnswerPanel.ts:129·141."
+      },
+      {
+        "alias": "SL_en_com_sfx05",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "카드가 뒤집힐 때. AnswerPanel.ts:71."
+      },
+      {
+        "alias": "SL_en_com_sfx10",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "문제 그림을 눌렀을 때. QuizPanel.ts:95."
+      }
+    ],
+    "providedByModule": {
+      "note": "ExploreQuiz.addAsset() 은 Assets.ts 를 도는데 그 목록이 통째로 주석이라 아무것도 등록하지 않습니다. 모듈이 이름으로 찾는 자원까지 전부 액티비티 AssetTable 에 넣어야 합니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "mode",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "horizontal",
+          "vertical"
+        ],
+        "desc": "카드 두 장을 어떻게 놓을지. **맞았다는 표시 로티도 이걸 따릅니다** — vertical 이면 correct_vert, 아니면 correct (AnswerPanel.ts:32-40). 안 적으면 horizontal 로 봅니다."
+      },
+      {
+        "key": "shuffleInning",
+        "type": "bool",
+        "optional": true,
+        "desc": "이닝 차례를 열 때마다 섞을지. ExploreQuiz.ts:48. 기존 7개가 다 false 입니다 — 낱말을 배우는 차례가 있는 회차라 섞으면 안 됩니다.",
+        "default": false
+      },
+      {
+        "key": "cards",
+        "type": "object",
+        "required": true,
+        "desc": "이 회차의 낱말 카드. 이닝이 answerCardIndex 로 골라 씁니다. c1 부터 차례로, 낱말 수만큼. 가운데를 지우면 그 이닝이 빈 카드를 읽습니다.",
+        "fields": [],
+        "series": {
+          "prefix": "c",
+          "min": 2,
+          "label": "낱말 카드",
+          "of": {
+            "type": "object",
+            "fields": [
+              {
+                "key": "imgAlias",
+                "type": "asset:image",
+                "required": true,
+                "desc": "뒤집었을 때 드러나는 앞면 그림. AnswerPanel.ts:66 이 이 이름으로 찾습니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "desc": "카드가 올라올 때 스피커 단추가 들려 주는 낱말 소리. AnswerPanel.ts:121·188. **정답으로 쓰이는 카드에만 필요합니다** — 오답으로만 나오는 카드는 소리를 안 들려 주므로 빈 글자로 둡니다(ENL1M01W2S2 의 c7 이 그렇습니다).",
+                "optional": true
+              }
+            ],
+            "desc": "카드 한 장. **열쇠가 c1 · c2 · … 로 번호가 늘어납니다** — 낱말 수만큼 두고, 회차마다 개수가 달라 스펙에 미리 적어 두지 않습니다."
+          }
+        }
+      },
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "bg",
+              "type": "asset:image",
+              "required": true,
+              "desc": "이 이닝의 배경 그림. PageView.ts:78 이 이닝이 바뀔 때마다 갈아 끼웁니다. 그림자 효과가 자동으로 붙습니다."
+            },
+            {
+              "key": "quiz",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "imgAlias",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 2,
+                  "of": {
+                    "key": "",
+                    "type": "asset:image",
+                    "desc": "그 상태의 그림."
+                  },
+                  "desc": "문제 그림 **두 장**. [0] 은 누르기 전, [1] 은 누른 뒤입니다. QuizPanel.ts:54 가 [1] 을 먼저 잡아 두고 씁니다.",
+                  "fixed": true,
+                  "itemLabels": [
+                    "누르기 전",
+                    "누른 뒤"
+                  ]
+                },
+                {
+                  "key": "wordAlias",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "문제 낱말을 그림으로 만든 것. QuizPanel.ts:31. 글자가 아니라 이미지입니다."
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "문제 그림을 눌렀을 때 나는 낱말 소리."
+                },
+                {
+                  "key": "pos",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true,
+                      "desc": "fromFigma 켜면 figma 의 **왼쪽(X)**. 끄면 화면 한가운데 기준 (왼쪽이 음수)."
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true,
+                      "desc": "fromFigma 켜면 figma 의 **상단(Y)**. 끄면 화면 한가운데 기준 (위쪽이 음수)."
+                    },
+                    {
+                      "key": "noAni",
+                      "type": "bool",
+                      "required": true,
+                      "default": true,
+                      "desc": "true 면 스르륵 안 움직이고 바로 그 자리. 기존 18개가 다 true."
+                    },
+                    {
+                      "key": "fromFigma",
+                      "type": "bool",
+                      "optional": true,
+                      "desc": "켜면 x·y 에 figma 의 왼쪽·상단을 그대로 적습니다. 크기는 안 적습니다. 이닝마다 따로. (QuizPanel.ts:70)"
+                    }
+                  ],
+                  "desc": "문제 그림 자리. 그림 한가운데가 기준점입니다."
+                },
+                {
+                  "key": "wordpos",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true,
+                      "desc": "왼쪽이 음수."
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true,
+                      "desc": "위쪽이 음수. 기존 18개가 −600~+400 사이."
+                    },
+                    {
+                      "key": "noAni",
+                      "type": "bool",
+                      "optional": true,
+                      "desc": "true 면 바로 그 자리. 기존 18개가 다 true."
+                    }
+                  ],
+                  "desc": "문제 낱말 자리. **화면 한가운데 기준** — figma 값을 그대로 넣으면 안 됩니다."
+                }
+              ],
+              "desc": "위쪽 문제 자리 — 그림과 낱말, 그리고 소리 단추."
+            },
+            {
+              "key": "answer",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "answerCardBG",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "카드 **뒷면** 그림. 두 장이 같은 뒷면을 씁니다 — AnswerPanel.ts:205·209 가 한 값을 둘 다에 넘깁니다."
+                },
+                {
+                  "key": "answerCardIndex",
+                  "type": "string",
+                  "required": true,
+                  "desc": "맞는 카드. **cards 의 열쇠 이름**입니다(c1 같은). 그림이 아니라 이름입니다."
+                },
+                {
+                  "key": "wrongAnswerCardIndex",
+                  "type": "string",
+                  "optional": true,
+                  "desc": "틀린 카드. 비워 두면 **cards 에서 정답을 뺀 나머지 중 하나를 무작위로** 뽑습니다(AnswerPanel.ts:211-224). 기존 7개는 다 손으로 적어 두었습니다 — 뜻이 너무 가까운 낱말이 짝으로 나오면 문제가 안 되기 때문입니다."
+                }
+              ],
+              "desc": "아래에서 올라오는 카드 두 장."
+            },
+            {
+              "key": "result",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "quizImgAlias",
+                  "type": "asset:image",
+                  "optional": true,
+                  "desc": "왼쪽에 남길 문제 그림. 비우면 왼쪽 그림 없이 낱말만 남습니다(ResultPanel.ts:26)."
+                },
+                {
+                  "key": "resultImgAlias",
+                  "type": "asset:image",
+                  "optional": true,
+                  "desc": "오른쪽에 놓을 정답 그림. 비우면 안 그립니다(ResultPanel.ts:34)."
+                },
+                {
+                  "key": "resultWordAlias",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "오른쪽 낱말 그림. ResultPanel.ts:44 — **이건 비울 수 없습니다.**"
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "결과 화면에서 들려 주는 낱말 소리. 대개 그 카드의 sound 와 같습니다."
+                },
+                {
+                  "key": "pos",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true,
+                      "desc": "자리 x (화면 가운데가 0)."
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true,
+                      "desc": "자리 y (화면 가운데가 0)."
+                    },
+                    {
+                      "key": "noAni",
+                      "type": "bool",
+                      "optional": true,
+                      "desc": "true 면 스르륵 움직이지 않고 바로 놓입니다."
+                    }
+                  ],
+                  "desc": "오른쪽 정답 그림 자리."
+                },
+                {
+                  "key": "wordpos",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true,
+                      "desc": "자리 x (화면 가운데가 0)."
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true,
+                      "desc": "자리 y (화면 가운데가 0)."
+                    },
+                    {
+                      "key": "noAni",
+                      "type": "bool",
+                      "optional": true,
+                      "desc": "true 면 스르륵 움직이지 않고 바로 놓입니다."
+                    }
+                  ],
+                  "desc": "오른쪽 낱말 자리."
+                },
+                {
+                  "key": "quizImgPos",
+                  "type": "point",
+                  "optional": true,
+                  "figma": true,
+                  "desc": "왼쪽 문제 그림 자리. 안 적으면 모듈이 잡은 자리에 둡니다."
+                }
+              ],
+              "desc": "맞힌 뒤 나오는 화면 — 왼쪽에 문제, 오른쪽에 정답."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 하나가 문제 하나입니다. 기존 7개가 4~6개였습니다.",
+        "minLengthWhy": "한 이닝뿐이면 이닝 표시가 의미가 없고, 오답 카드를 뽑을 다른 카드도 있어야 합니다. 기존 7개는 4~6개입니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · speaker01 · speaker02 · spk_idle · spk_wave · correct · correct_vert · bgm · SL_en_com_nar72 · SL_en_com_sfx04 · SL_en_com_sfx05 · SL_en_com_sfx10 이 AssetTable 에 있어야 한다.",
+      "why": "addAsset() 이 아무것도 등록하지 않으므로 액티비티가 전부 넣어야 합니다."
+    },
+    {
+      "id": "answer-card-needs-sound",
+      "level": "error",
+      "check": "inning[].answer.answerCardIndex 가 가리키는 카드에는 sound 가 있어야 한다.",
+      "why": "AnswerPanel.ts:121 이 그 카드의 sound 로 스피커 단추를 만듭니다. 비어 있으면 getSound(\"\") 가 되어 눌러도 아무 소리가 안 납니다. 오답으로만 쓰는 카드는 안 넣어도 됩니다."
+    },
+    {
+      "id": "wrong-differs-from-answer",
+      "level": "error",
+      "check": "inning[].answer 의 wrongAnswerCardIndex 가 answerCardIndex 와 달라야 한다.",
+      "why": "같으면 카드 두 장이 똑같아져 어느 쪽을 눌러도 하나는 오답 처리됩니다."
+    },
+    {
+      "id": "mode-matches-correct-lottie",
+      "level": "warn",
+      "check": "mode 가 vertical 이면 correct_vert 가, 아니면 correct 가 AssetTable 에 있어야 한다.",
+      "why": "AnswerPanel.ts:32-40 이 mode 로 갈라 하나만 씁니다. 안 쓰는 쪽이 빠져도 안 터지지만, 기존 7개가 둘 다 넣고 있어 빠뜨린 것으로 봅니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ],
+  "relations": [
+    {
+      "id": "answer-card-index-exists",
+      "kind": "keyIn",
+      "pick": "inning[].answer.answerCardIndex",
+      "in": "cards",
+      "note": "inning[].answer.answerCardIndex 와 wrongAnswerCardIndex 가 cards 에 있는 열쇠여야 한다.",
+      "why": "AnswerPanel.ts:66 이 cards[열쇠].imgAlias 를 그대로 씁니다. 없는 이름이면 undefined 를 AssetManager.get 에 넘겨 그 이닝에서 카드가 안 보이거나 터집니다. 오타가 나기 제일 쉬운 자리입니다 — 그림 이름이 아니라 열쇠 이름을 적어야 하는데 둘이 헷갈립니다."
+    },
+    {
+      "id": "answer-card-index-exists#wrong",
+      "kind": "keyIn",
+      "pick": "inning[].answer.wrongAnswerCardIndex",
+      "in": "cards",
+      "note": "inning[].answer.answerCardIndex 와 wrongAnswerCardIndex 가 cards 에 있는 열쇠여야 한다.",
+      "why": "AnswerPanel.ts:66 이 cards[열쇠].imgAlias 를 그대로 씁니다. 없는 이름이면 undefined 를 AssetManager.get 에 넘겨 그 이닝에서 카드가 안 보이거나 터집니다. 오타가 나기 제일 쉬운 자리입니다 — 그림 이름이 아니라 열쇠 이름을 적어야 하는데 둘이 헷갈립니다."
+    },
+    {
+      "id": "cards-at-least-two",
+      "kind": "count",
+      "pick": "cards",
+      "min": 2,
+      "note": "cards 가 두 개 이상이어야 한다.",
+      "why": "wrongAnswerCardIndex 를 비우면 AnswerPanel.ts:211 이 정답을 뺀 나머지에서 하나를 뽑습니다. 카드가 하나뿐이면 뽑을 것이 없어 빈 카드가 올라옵니다."
+    },
+    {
+      "id": "quiz-img-two-states",
+      "kind": "count",
+      "pick": "inning[].quiz.imgAlias",
+      "min": 2,
+      "max": 2,
+      "note": "inning[].quiz.imgAlias 가 정확히 두 칸이어야 한다.",
+      "why": "QuizPanel.ts:54 가 [1] 을(누른 뒤) 먼저 잡습니다. 한 칸이면 undefined 가 되어 누른 순간 그림이 사라집니다."
+    },
+    {
+      "id": "fromfigma-needs-figma-numbers",
+      "kind": "range",
+      "each": "inning",
+      "when": {
+        "pick": "quiz.pos.fromFigma",
+        "is": true
+      },
+      "pick": "quiz.pos.x",
+      "min": 0,
+      "max": 1920,
+      "note": "inning[].quiz.pos.fromFigma 가 true 면 x 는 0~1920, y 는 0~1080 안이어야 한다.",
+      "why": "figma 의 왼쪽·상단은 화면 안쪽 값이라 음수가 안 나옵니다. 음수라면 **화면 좌표를 적어 놓고 표시만 켜 둔 것**입니다 — 원본을 떠 왔을 때 잘 생깁니다. 모듈이 거기에 다시 -960 을 더해 그림이 화면 밖으로 나갑니다.",
+      "level": "warn"
+    },
+    {
+      "id": "fromfigma-needs-figma-numbers#y",
+      "kind": "range",
+      "each": "inning",
+      "when": {
+        "pick": "quiz.pos.fromFigma",
+        "is": true
+      },
+      "pick": "quiz.pos.y",
+      "min": 0,
+      "max": 1080,
+      "note": "inning[].quiz.pos.fromFigma 가 true 면 x 는 0~1920, y 는 0~1080 안이어야 한다.",
+      "why": "figma 의 왼쪽·상단은 화면 안쪽 값이라 음수가 안 나옵니다. 음수라면 **화면 좌표를 적어 놓고 표시만 켜 둔 것**입니다 — 원본을 떠 왔을 때 잘 생깁니다. 모듈이 거기에 다시 -960 을 더해 그림이 화면 밖으로 나갑니다.",
+      "level": "warn"
+    }
+  ]
+}

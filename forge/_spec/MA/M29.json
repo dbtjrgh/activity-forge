@@ -1,0 +1,339 @@
+{
+  "specVersion": 1,
+  "module": "M29",
+  "subject": "MA",
+  "title": "이젤에 그리기 (대칭선 보고 그리기)",
+  "summary": "이젤에 종이가 올라오고, 색연필과 굵기를 골라 그림을 그리는 활동. 종이마다 대칭선(가로·세로·대각)이 안내로 깔립니다. 완료 버튼을 누르면 그린 것이 포트폴리오로 저장됩니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M29",
+    "activities": [
+      "MAL1M03W2S1",
+      "MAL1M11W3S2",
+      "MAL2M03W2S1",
+      "MAL2M11W3S1",
+      "MAL3M03W2S1"
+    ],
+    "doc": "README 없음. 근거는 M29.ts · PlayStage.ts · compo/Easel.ts · compo/DrawPanel.ts · compo/ToolBar.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M29.addAsset();",
+        "ButtonNext.addAsset();",
+        "ButtonComplete.addAsset();"
+      ],
+      "onInit": [
+        "M29.handle.init(quizData);",
+        "this.addChild(M29.handle);"
+      ],
+      "onStart": [
+        "M29.handle.start();",
+        "await M29.handle.play();",
+        "await M29.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "M29",
+        "from": "@_common/module/MA/M29/M29"
+      },
+      {
+        "symbol": "ButtonNext",
+        "from": "@_common/sparkLib/component/Buttons/ButtonNext"
+      },
+      {
+        "symbol": "ButtonComplete",
+        "from": "@_common/sparkLib/component/Buttons/ButtonComplete"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경. 모듈이 AssetManager.get(\"bg\") 로 찾지만 등록해 주지 않습니다. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. AudioManager.getSound(\"bgm\")."
+      }
+    ],
+    "providedByModule": {
+      "note": "M29.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M29 에 있습니다(별도 repo). 다음·완료 버튼은 액티비티 onLoad 가 `ButtonNext.addAsset()` · `ButtonComplete.addAsset()` 로 따로 부릅니다 — 이 두 줄을 빠뜨리면 버튼이 안 보입니다.\n\n**모듈이 등록하지 않는데 코드가 이름으로 찾는 것** — `bg` 와 도우미 캐릭터 애니 아홉 개(`{Bmon|Pmon|Rmon}_idle` · `_talk` · `_end`). 캐릭터는 quizData.mon 이 고른 색 세 개만 실제로 쓰이지만, 코드가 세 색을 다 참조하므로 쓰는 색은 반드시 등록해야 합니다.\n\n**이름을 조합해 찾거나 GameData 가 가리키는 자원** — required 에는 이름이 고정된 것만 적을 수 있어서 여기에 규칙을 둡니다.\n- `{mon}_idle` (lottie) — 도우미 캐릭터 대기 애니. quizData.mon 이 Bmon 이면 **Bmon_idle** 입니다.\n- `{mon}_talk` (lottie) — 말하기 애니. Bmon_talk 꼴.\n- `{mon}_end` (lottie) — 마무리 애니. Bmon_end 꼴.",
+      "font": [
+        "NanumSquareRoundR"
+      ],
+      "image": [
+        "easel",
+        "paper",
+        "horizontal-line",
+        "vertical-line",
+        "diagonal-line",
+        "color-black",
+        "color-red",
+        "color-orange",
+        "color-yellow",
+        "color-green",
+        "color-blue",
+        "color-pink",
+        "color-black-on",
+        "color-red-on",
+        "color-orange-on",
+        "color-yellow-on",
+        "color-green-on",
+        "color-blue-on",
+        "color-pink-on",
+        "color-bar",
+        "stroke-bar",
+        "thickness-20",
+        "thickness-26",
+        "return",
+        "trash"
+      ],
+      "sound": [
+        "select-sound",
+        "click-sound",
+        "particle-sound",
+        "guide_nar",
+        "mon_start_nar",
+        "mon_again_nar",
+        "mon_end_nar"
+      ],
+      "lottie": [
+        "particle_ef"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "mon",
+        "type": "string",
+        "required": true,
+        "desc": "도우미 캐릭터 색. Bmon(파랑) · Pmon(보라) · Rmon(빨강) 중 하나이고, **애니 alias 를 `{이 값}_idle` · `_talk` · `_end` 로 조합합니다**(M29.ts:55 가 PlayStage 로 넘깁니다). 세 애니를 그 이름으로 등록해야 합니다."
+      },
+      {
+        "key": "paper",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true,
+              "desc": "종이 그림."
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "종이가 이젤에 놓이는 자리."
+            },
+            {
+              "key": "line",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "diagonal-line",
+                "horizontal-line",
+                "vertical-line"
+              ],
+              "desc": "안내로 깔리는 대칭선. **값이 곧 alias 입니다** — DrawPanel.ts:92 가 AssetManager.get(data.line) 을 그대로 부르므로 horizontal-line · vertical-line · diagonal-line 세 이름만 됩니다(모듈이 그 세 장을 물고 있습니다). diagonal-line 일 때는 코드가 오버레이를 45도 돌립니다."
+            },
+            {
+              "key": "maskAlias",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "paper"
+              ],
+              "default": "paper",
+              "desc": "그릴 수 있는 영역을 정하는 마스크 그림. 종이 모양 그대로라 paper 를 씁니다 — DrawPanel.ts:61 이 이 그림의 모양으로 획을 자릅니다."
+            },
+            {
+              "key": "size",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "default": 700,
+                  "desc": "너비(px)."
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "default": 700,
+                  "desc": "높이(px)."
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": -72,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "종이 크기와 마스크 자리."
+            },
+            {
+              "key": "rotation",
+              "type": "string",
+              "required": true,
+              "desc": "종이를 기울이는 각(라디안). Easel.ts:77 이 DrawPanel 의 `rotaition` 세터에 넣습니다 — **세터 이름이 오타지만 부르는 쪽도 같은 오타라 동작은 합니다**(get 은 rotation, set 은 rotaition 인 비대칭 접근자). 값이 계산식이면 `{\"__expr\": \"Math.PI / 4\"}` 꼴로 적습니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "종이 목록. **칸 하나가 그림 한 장이고, 다음 가기 버튼으로 넘어갑니다.**",
+        "minLengthWhy": "그릴 종이가 하나는 있어야 합니다."
+      },
+      {
+        "key": "tool",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "color",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "color",
+                  "type": "string",
+                  "required": true,
+                  "desc": "실제로 그려지는 선 색(#RRGGBB 또는 색 이름). 아이콘 그림과 따로이므로 **아이콘과 선 색이 어긋날 수 있습니다** — 짝을 맞춰 적으세요."
+                },
+                {
+                  "key": "normal",
+                  "type": "string",
+                  "required": true,
+                  "desc": "안 고른 상태의 아이콘 alias. 모듈이 물고 있는 color-{색} 을 씁니다."
+                },
+                {
+                  "key": "on",
+                  "type": "string",
+                  "required": true,
+                  "desc": "고른 상태의 아이콘 alias. color-{색}-on 을 씁니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "색연필 목록. 모듈이 물고 있는 일곱 색(검정·빨강·주황·노랑·초록·파랑·분홍) 안에서 고릅니다.",
+            "minLengthWhy": "색이 하나는 있어야 그릴 수 있습니다."
+          },
+          {
+            "key": "stroke",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "thickness-20",
+                    "thickness-26"
+                  ],
+                  "desc": "굵기 아이콘 그림. ToolBar.ts:36 이 이 이름으로 찾습니다."
+                },
+                {
+                  "key": "thickness",
+                  "type": "number",
+                  "required": true,
+                  "desc": "실제 선 굵기(px). 아이콘 이름의 숫자와 맞춰 적는 것이 관례입니다 — 어긋나도 동작은 하지만 보이는 것과 그려지는 것이 달라집니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "굵기 목록. 모듈이 물고 있는 것은 thickness-20 · thickness-26 두 장입니다 — thickness-15 는 Asset.ts 에 주석 처리돼 있어 **쓸 수 없습니다.**",
+            "minLengthWhy": "굵기가 하나는 있어야 합니다."
+          }
+        ],
+        "desc": "그리기 도구 목록."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "line-alias-enum",
+      "level": "error",
+      "check": "paper[].line 은 horizontal-line · vertical-line · diagonal-line 중 하나.",
+      "why": "**값을 그대로 alias 로 씁니다**(DrawPanel.ts:92). 다른 이름이면 안내선이 안 보이고, 대각선일 때만 45도 회전이 걸리므로 이름을 바꿔 쓰면 방향도 어긋납니다."
+    },
+    {
+      "id": "thickness-15-unavailable",
+      "level": "error",
+      "check": "stroke 에 thickness-15 를 쓰지 않는다.",
+      "why": "Asset.ts 에 그 줄이 주석 처리돼 있어 모듈이 등록하지 않습니다 — 굵기 아이콘 하나가 빈칸으로 남습니다."
+    },
+    {
+      "id": "mon-anim-registered",
+      "level": "error",
+      "check": "quizData.mon 값에 맞춰 {mon}_idle · {mon}_talk · {mon}_end 세 애니를 등록해야 한다.",
+      "why": "alias 를 색 이름으로 조합하는데 모듈이 등록해 주지는 않습니다. 없으면 도우미가 안 보입니다."
+    },
+    {
+      "id": "button-assets-loaded",
+      "level": "error",
+      "check": "onLoad 에 ButtonNext.addAsset() 과 ButtonComplete.addAsset() 이 있어야 한다.",
+      "why": "다음·완료 버튼 리소스는 M29.addAsset() 이 넣지 않습니다. 빠뜨리면 버튼이 안 보여 **다음 종이로 넘어갈 수 없습니다.**"
+    },
+    {
+      "id": "color-icon-pair",
+      "level": "warn",
+      "check": "color[].color 와 normal · on 아이콘의 색이 같은 색을 가리켜야 한다.",
+      "why": "선 색과 아이콘 그림이 따로입니다. 어긋나면 파란 아이콘을 눌렀는데 빨간 선이 그려집니다 — 에러는 없습니다."
+    },
+    {
+      "id": "mask-matches-paper",
+      "level": "warn",
+      "check": "maskAlias 는 종이 모양과 같은 그림으로 둔다.",
+      "why": "이 그림의 모양으로 획을 자릅니다(DrawPanel.ts:61). 종이보다 작으면 종이 가장자리에 그릴 수 없습니다."
+    }
+  ],
+  "notes": [
+    "그린 결과는 완료 버튼에서 포트폴리오로 저장됩니다. 종이·마스크 크기를 바꾸면 저장 결과도 같이 확인해야 합니다.",
+    "DrawPanel 의 세터 이름이 `rotaition` 으로 오타지만 부르는 쪽(Easel.ts:77)도 같은 이름이라 동작합니다. 고치려면 두 곳을 같이 고쳐야 하니 개발과 협의하세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

@@ -1,0 +1,446 @@
+{
+  "specVersion": 1,
+  "module": "E36",
+  "subject": "EN",
+  "title": "크레인으로 공 집기 (낱말 듣고 고르기)",
+  "summary": "아래 늘어선 공 중에서 문제에 맞는 것을 크레인으로 집어 파이프에 넣는 활동. 좌우 버튼으로 크레인을 옮기고 집기 버튼으로 내립니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E36",
+    "activities": [
+      "ENL2M02W3S2",
+      "ENL2M04W3S2",
+      "ENL2M06W3S2",
+      "ENL2M11W2S2"
+    ],
+    "doc": "README 없음. 근거는 E36.ts · Asset.ts · component/ 와 표본 4차시(1·2·4·6호)입니다. **자리가 ENL2M__W2S2 와 ENL2M__W3S2 로 옮겨 다녔습니다.**"
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E36.addAsset();"
+      ],
+      "onInit": [
+        "E36.handle.onInit();",
+        "this.addChild(E36.handle);"
+      ],
+      "onStart": [
+        "await E36.handle.start();",
+        "await E36.handle.play(quizData);",
+        "await E36.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onResize": [
+        "E36.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "E36",
+      "from": "@_common/module/EN"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "machine",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "크레인 기계 몸통."
+      },
+      {
+        "alias": "crane_stick",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "크레인 줄."
+      },
+      {
+        "alias": "crane_left_arm1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "왼쪽 집게 1단."
+      },
+      {
+        "alias": "crane_left_arm2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "왼쪽 집게 2단."
+      },
+      {
+        "alias": "crane_right_arm1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "오른쪽 집게 1단."
+      },
+      {
+        "alias": "crane_right_arm2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "오른쪽 집게 2단."
+      },
+      {
+        "alias": "crane_fail",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "집기 실패한 집게 모양."
+      },
+      {
+        "alias": "grab_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "집기 버튼."
+      },
+      {
+        "alias": "press_grab_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "집기 버튼 눌린 상태."
+      },
+      {
+        "alias": "left_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "왼쪽 이동 버튼."
+      },
+      {
+        "alias": "press_left_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "왼쪽 버튼 눌린 상태."
+      },
+      {
+        "alias": "right_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "오른쪽 이동 버튼."
+      },
+      {
+        "alias": "press_right_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "오른쪽 버튼 눌린 상태."
+      },
+      {
+        "alias": "pipe",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "집은 공을 넣는 파이프."
+      },
+      {
+        "alias": "pipe_entrance",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "파이프 입구."
+      },
+      {
+        "alias": "questionBoard",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "문제 판. GameData 의 questionBoard.texture 가 기본·강조 그림을 가리킵니다."
+      },
+      {
+        "alias": "correct_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음."
+      },
+      {
+        "alias": "guide_nar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. **모듈이 이름을 박아 부릅니다.**"
+      },
+      {
+        "alias": "grab_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "집는 소리."
+      },
+      {
+        "alias": "move_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "움직이는 소리."
+      },
+      {
+        "alias": "pipe_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "파이프에 넣는 소리."
+      },
+      {
+        "alias": "correct_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "정답 효과음."
+      },
+      {
+        "alias": "incorrect_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 E36.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+      }
+    ],
+    "providedByModule": {
+      "note": "E36.addAsset() 이 등록하는 것은 폰트와 `bg` · 로티 `correct` · 도우미 음원 `inning-start1`~`3` · `correct-nar1`~`3` · `incorrect-nar1`~`3` 입니다.\n\n**나머지는 액티비티가 넣어야 합니다.** 표본 네 차시가 모두 공통으로 등록한 것이 사실상 모듈 몫입니다:\n그림 — `machine` · `crane_stick` · `crane_left_arm1`·`arm2` · `crane_right_arm1`·`arm2` · `crane_fail` · `grab_btn` · `press_grab_btn` · `left_btn` · `press_left_btn` · `right_btn` · `press_right_btn` · `pipe` · `pipe_entrance` · `questionBoard` · `btn_click` · 로티 `correct_ef`\n음원 — `bgm` · `guide_nar` · `grab_sound` · `move_sound` · `pipe_sound` · `correct_sound` · `incorrect_sound`\n\n차시 고유는 `{낱말}_ball` · `{낱말}_ball_on` · `{낱말}_sound` 입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고 낱말 이름이 붙은 것은 그 차시 몫입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "set",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "그 이닝의 정답 낱말. **아래 optionBall.balls[].name 과 이 값으로 짝을 찾습니다** — 글자까지 같아야 합니다."
+            },
+            {
+              "key": "popup",
+              "type": "asset:image",
+              "required": true,
+              "desc": "정답을 맞혔을 때 뜨는 확대 그림."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 문제 음원."
+            },
+            {
+              "key": "questionBoard",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "texture",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "basic",
+                      "type": "asset:image",
+                      "required": true,
+                      "desc": "기본 그림."
+                    },
+                    {
+                      "key": "on",
+                      "type": "asset:image",
+                      "required": true,
+                      "desc": "강조(정답 표시) 그림."
+                    }
+                  ],
+                  "desc": "문제 판 그림 두 벌."
+                }
+              ],
+              "desc": "그 이닝의 문제 판 그림."
+            },
+            {
+              "key": "option",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "name",
+                  "type": "string",
+                  "required": true,
+                  "desc": "정답 공 이름. **optionBall.balls[].name 과 같아야 합니다.**"
+                },
+                {
+                  "key": "correct",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "basic",
+                      "type": "asset:image",
+                      "required": true,
+                      "desc": "기본 그림."
+                    },
+                    {
+                      "key": "on",
+                      "type": "string",
+                      "required": true,
+                      "desc": "강조 그림. **타입이 string 으로 잡혀 있지만 그림 alias 입니다.**"
+                    }
+                  ],
+                  "desc": "정답 공 그림 두 벌."
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "정답 공의 낱말 음원."
+                }
+              ],
+              "desc": "그 이닝의 정답 공 정보."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. **칸 수가 곧 이닝 수입니다.** 적은 차례대로 진행합니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      },
+      {
+        "key": "optionBall",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "set",
+            "type": "number",
+            "required": true,
+            "default": 3,
+            "desc": "한 화면에 늘어놓을 공 개수."
+          },
+          {
+            "key": "gap",
+            "type": "number",
+            "required": true,
+            "default": 430,
+            "desc": "공 사이 간격(px)."
+          },
+          {
+            "key": "balls",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "name",
+                  "type": "string",
+                  "required": true,
+                  "desc": "공 이름. set[].word 와 글자까지 같아야 짝이 됩니다."
+                },
+                {
+                  "key": "texture",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "basic",
+                      "type": "asset:image",
+                      "required": true,
+                      "desc": "기본 그림."
+                    },
+                    {
+                      "key": "on",
+                      "type": "asset:image",
+                      "required": true,
+                      "desc": "강조 그림."
+                    }
+                  ],
+                  "desc": "공 그림 두 벌."
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "그 공의 낱말 음원."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "고를 수 있는 공 목록. **`name` 으로 set[].word 와 짝지어집니다.**",
+            "minLengthWhy": "고를 것이 둘은 있어야 문제가 됩니다."
+          },
+          {
+            "key": "position",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "공이 놓이는 자리들. **optionBall.set 개수만큼 필요합니다.**",
+            "minLengthWhy": "set 개수만큼 필요합니다."
+          }
+        ],
+        "desc": "아래 늘어서는 공들의 구성과 배치."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "word-name-match",
+      "level": "error",
+      "check": "set[].word 와 set[].option.name 이 optionBall.balls[].name 중 하나와 글자까지 같아야 한다.",
+      "why": "이름 문자열로 정답 공을 찾습니다. 한 글자만 달라도 **정답 공이 없는 이닝이 되어 끝나지 않습니다.**"
+    },
+    {
+      "id": "position-covers-set",
+      "level": "error",
+      "check": "optionBall.position 의 자리 수가 optionBall.set 개수보다 적지 않아야 한다.",
+      "why": "공을 자리표에서 하나씩 꺼내 놓습니다. 모자라면 뒤쪽 공이 undefined 자리로 갑니다."
+    },
+    {
+      "id": "balls-cover-words",
+      "level": "error",
+      "check": "모든 이닝의 정답 낱말이 balls 목록에 들어 있어야 한다.",
+      "why": "한 이닝이라도 정답 공이 목록에 없으면 그 이닝에서 진행이 막힙니다."
+    },
+    {
+      "id": "texture-two-states",
+      "level": "error",
+      "check": "공·문제 판 그림은 basic 과 on 두 벌을 다 채운다.",
+      "why": "강조 상태가 없으면 골랐는지 눈에 보이지 않습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 스물네 개가 모두 등록돼야 한다.",
+      "why": "모듈이 등록하는 것은 폰트·배경·정답 로티·도우미 음원뿐입니다."
+    }
+  ],
+  "notes": [
+    "표본이 1·2·4·6호 네 차시이고 자리가 W2S2 와 W3S2 로 옮겨 다녔습니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

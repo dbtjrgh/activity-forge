@@ -1,0 +1,1845 @@
+{
+  "specVersion": 1,
+  "module": "M42",
+  "subject": "MA",
+  "title": "카드 뒤집어 짝 맞추기",
+  "summary": "뒤집힌 카드들 중 두 장을 골라 같은 그림이면 짝을 맞추는 활동. 카드 종류는 모듈이 미리 정해 둔 사전(car · robot · apple … 24가지)에서 고릅니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M42",
+    "activities": [
+      "MAL1M03W2S2",
+      "MAL1M04W1S3",
+      "MAL2M03W2S2",
+      "MAL3M03W2S2"
+    ],
+    "doc": "README 없음. 근거는 M42.ts · Asset.ts · component/ 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M42.addAsset();"
+      ],
+      "onInit": [
+        "M42.handle.init(quizData);",
+        "this.addChild(M42.handle);"
+      ],
+      "onStart": [
+        "M42.handle.start();",
+        "await M42.handle.play(quizData);",
+        "await M42.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M42",
+      "from": "@_common/module/MA/M42/M42"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경."
+      },
+      {
+        "alias": "correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 모듈이 AudioManager.getSound(\"bgm\") 으로 찾습니다."
+      },
+      {
+        "alias": "s3_nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. mainCharacter.guide(\"s3_nar02\")."
+      },
+      {
+        "alias": "s3_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "s3_sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "s3_sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "com_sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      },
+      {
+        "alias": "com_sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      },
+      {
+        "alias": "com_sfx05",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      }
+    ],
+    "providedByModule": {
+      "note": "모듈이 등록하는 것은 폰트 하나뿐입니다.\n\n**이름이 코드에 박힌 것** — 그림 `bg` · 로티 `correct` · 음원 `bgm`(모듈이 getSound 로 찾습니다) · `s3_sfx01` · `s3_sfx02` · `s3_sfx04` · `com_sfx02` · `com_sfx04` · `com_sfx05` · 지문 `s3_nar02`(mainCharacter.guide).\n\n카드 그림·음원은 **cardAliasInfo 가 가리킵니다** — 표본 관례는 `card_f_{종류}{1|2}`(앞면) · `card_a_{종류}` · `card_b_{종류}` · `card_back{n}`(뒷면)입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "cardPos",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 6,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "string",
+                "required": true,
+                "desc": "자리 x. **타입이 string 인 것은 표본이 계산식을 적었기 때문입니다** — 값은 px 수입니다."
+              },
+              {
+                "key": "y",
+                "type": "string",
+                "required": true,
+                "desc": "자리 y (계산식으로 적을 수 있습니다)."
+              },
+              {
+                "key": "angle",
+                "type": "number",
+                "required": true,
+                "desc": "카드를 기울이는 각(도)."
+              },
+              {
+                "key": "focus",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "left",
+                  "right"
+                ],
+                "desc": "카드가 뒤집힐 때 어느 쪽 앞면을 쓸지 — left 또는 right. cardAliasInfo[종류].front 의 두 그림 중 하나를 고릅니다."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "그 이닝의 카드 자리들.",
+          "minLengthWhy": "짝 맞추기라 **짝수여야 합니다.**"
+        },
+        "desc": "**카드 자리표 — [이닝][카드 번호]** 두 겹 배열입니다. 칸 수가 그 이닝에 깔 카드 수입니다.",
+        "minLengthWhy": "이닝 수만큼 필요합니다."
+      },
+      {
+        "key": "cardAliasInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "car",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`car` 카드의 그림·음원."
+          },
+          {
+            "key": "robot",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`robot` 카드의 그림·음원."
+          },
+          {
+            "key": "rocket",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`rocket` 카드의 그림·음원."
+          },
+          {
+            "key": "dall",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`dall` 카드의 그림·음원."
+          },
+          {
+            "key": "drum",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`drum` 카드의 그림·음원."
+          },
+          {
+            "key": "toy",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`toy` 카드의 그림·음원."
+          },
+          {
+            "key": "apple",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`apple` 카드의 그림·음원."
+          },
+          {
+            "key": "banana",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`banana` 카드의 그림·음원."
+          },
+          {
+            "key": "grapes",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`grapes` 카드의 그림·음원."
+          },
+          {
+            "key": "carrot",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`carrot` 카드의 그림·음원."
+          },
+          {
+            "key": "peach",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`peach` 카드의 그림·음원."
+          },
+          {
+            "key": "broccoli",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`broccoli` 카드의 그림·음원."
+          },
+          {
+            "key": "candyFluff",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`candyFluff` 카드의 그림·음원."
+          },
+          {
+            "key": "waffle",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`waffle` 카드의 그림·음원."
+          },
+          {
+            "key": "iceCream",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`iceCream` 카드의 그림·음원."
+          },
+          {
+            "key": "donut",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`donut` 카드의 그림·음원."
+          },
+          {
+            "key": "macaroon",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`macaroon` 카드의 그림·음원."
+          },
+          {
+            "key": "bread",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`bread` 카드의 그림·음원."
+          },
+          {
+            "key": "russia",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`russia` 카드의 그림·음원."
+          },
+          {
+            "key": "swiss",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`swiss` 카드의 그림·음원."
+          },
+          {
+            "key": "germany",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`germany` 카드의 그림·음원."
+          },
+          {
+            "key": "austria",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`austria` 카드의 그림·음원."
+          },
+          {
+            "key": "canada",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`canada` 카드의 그림·음원."
+          },
+          {
+            "key": "thailand",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "bigCard",
+                "type": "asset:image",
+                "required": true,
+                "desc": "짝을 맞혔을 때 크게 보여 주는 그림."
+              },
+              {
+                "key": "front",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "left",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "왼쪽 앞면 그림."
+                  },
+                  {
+                    "key": "right",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "오른쪽 앞면 그림."
+                  }
+                ],
+                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+              },
+              {
+                "key": "correctFront",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:image",
+                  "desc": "그림 alias 하나."
+                },
+                "desc": "짝을 맞힌 뒤 앞면으로 바뀌는 그림들.",
+                "minLengthWhy": "하나는 있어야 맞힌 뒤 그림이 바뀝니다."
+              },
+              {
+                "key": "sound",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "카드를 뒤집을 때 재생할 음원들.",
+                "minLengthWhy": "하나는 있어야 소리가 납니다."
+              },
+              {
+                "key": "correctSound",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "짝을 맞혔을 때 재생할 음원."
+              }
+            ],
+            "desc": "`thailand` 카드의 그림·음원."
+          }
+        ],
+        "desc": "**카드 종류 사전.** 열쇠가 종류 이름(car · robot · rocket · dall · drum · toy · apple · banana · grapes · carrot · peach · broccoli · candyFluff · waffle · iceCream · donut · macaroon · bread · russia · swiss · germany · austria · canada · thailand — 24가지)이고, inningData[].quizWord 가 이 이름들을 가리킵니다. **활동에서 쓰는 종류만 채우면 되고, 안 쓰는 종류는 값을 비워 두어도 됩니다** — 다만 alias 가 AssetTable 에 없으면 그 종류를 쓰는 순간 카드가 사라집니다."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "quizWord",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "string",
+                "desc": "종류 이름 하나(car · apple 등)."
+              },
+              "desc": "그 이닝에 깔 카드 종류 이름들. **cardAliasInfo 의 열쇠 중에서 고릅니다.** 짝 맞추기라 같은 종류가 두 장씩 필요합니다.",
+              "minLengthWhy": "종류가 하나는 있어야 합니다."
+            },
+            {
+              "key": "cardBackAlias",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그 이닝의 카드 뒷면 그림. 표본 관례는 card_back1 · card_back2 입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. **cardPos 의 칸 수와 같아야 합니다.**",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "quizword-in-dictionary",
+      "level": "error",
+      "check": "inningData[].quizWord 의 이름이 cardAliasInfo 의 열쇠 중에 있어야 하고, 그 종류의 alias 가 AssetTable 에 있어야 한다.",
+      "why": "종류 이름으로 사전을 찾습니다. 없는 이름이면 카드 그림이 undefined 가 되어 **뒷면만 있는 카드**가 됩니다."
+    },
+    {
+      "id": "card-count-even",
+      "level": "error",
+      "check": "cardPos[이닝] 의 자리 수가 짝수여야 하고, quizWord 종류 수 × 2 와 같아야 한다.",
+      "why": "짝 맞추기입니다. 홀수면 짝이 없는 카드가 남아 **이닝이 끝나지 않습니다.**"
+    },
+    {
+      "id": "inning-arrays-match",
+      "level": "error",
+      "check": "cardPos 의 칸 수와 inningData 의 칸 수가 같아야 한다.",
+      "why": "이닝 번호를 첨자로 씁니다. 어긋나면 그 이닝에서 카드 자리를 못 찾습니다."
+    },
+    {
+      "id": "focus-picks-front",
+      "level": "warn",
+      "check": "cardPos[].focus 는 left 또는 right 다.",
+      "why": "cardAliasInfo[종류].front 의 두 그림 중 하나를 고릅니다. 다른 값이면 앞면이 안 보입니다."
+    },
+    {
+      "id": "coordinates-may-be-expr",
+      "level": "warn",
+      "check": "cardPos 의 x · y 는 px 수다 — 계산식으로 적으려면 `{\"__expr\": \"…\"}` 를 쓴다.",
+      "why": "표본이 계산식을 적어 스펙 타입이 string 으로 잡혀 있습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · correct · bgm · s3_nar02 · s3_sfx01 · s3_sfx02 · s3_sfx04 · com_sfx02 · com_sfx04 · com_sfx05 을 등록해야 한다.",
+      "why": "이름이 코드에 박혀 있고 모듈은 폰트만 등록합니다."
+    },
+    {
+      "id": "eop-not-called",
+      "level": "warn",
+      "check": "onStart 에 eop 호출이 없다 — 표본 그대로 둔다.",
+      "why": "표본 훅에 eop 가 없습니다. 임의로 넣으면 화면이 겹칩니다."
+    }
+  ],
+  "notes": [
+    "카드 사전이 24종류로 크게 잡혀 있습니다. 표본 MAL1M03W2S2 는 그중 여섯 종류(car · rocket · robot · dall · drum · toy)만 씁니다.",
+    "onStart 가 `M42.handle.play(quizData)` 로 **GameData 를 다시 넘깁니다** — init 에서 이미 받았는데도 그렇습니다. 표본 그대로 두세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

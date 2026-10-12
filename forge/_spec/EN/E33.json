@@ -1,0 +1,400 @@
+{
+  "specVersion": 1,
+  "module": "E33",
+  "subject": "EN",
+  "title": "파이프에 공 굴리기 (낱말 듣고 길 고르기)",
+  "summary": "파이프를 이어 만든 길에 공을 굴려 목표 자리로 보내는 활동. 낱말을 듣고 맞는 모니터 쪽으로 길을 잡습니다. 제한 시간이 있습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E33",
+    "activities": [
+      "ENL2M02W1S3",
+      "ENL2M04W1S3",
+      "ENL2M06W1S3"
+    ],
+    "doc": "README 없음. 근거는 E33.ts(class GameMap) · Ball.ts · Pipe.ts · Button.ts · AnswerCard.ts · EndingPage.ts 와 표본 3차시(2·4·6호)입니다. 자리는 세 호 모두 ENL2M__W1S3 입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "this.addChild(GameMap.handle);",
+        "GameMap.handle.init(quizData);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await GameMap.handle.start();",
+        "await GameMap.handle.play();",
+        "await GameMap.handle.end();",
+        "SparkApp.eop.show();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요.",
+        "GameMap.handle.mBall.update();",
+        "GameMap.handle.mTimer.update(_ticker.deltaTime);",
+        "// console.log(GameMap.handle.mTimer.mTime);"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "GameMap",
+        "from": "@_common/module/EN/E33/E33"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "ball_dimmed",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "아직 못 쓰는 공."
+      },
+      {
+        "alias": "btn_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "버튼 배경."
+      },
+      {
+        "alias": "btn_body",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "버튼 몸통."
+      },
+      {
+        "alias": "btn_mask",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "버튼 마스크."
+      },
+      {
+        "alias": "pipe_floor",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "바닥 파이프."
+      },
+      {
+        "alias": "pipe_horizon",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "가로 파이프."
+      },
+      {
+        "alias": "pipe_vertical",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "세로 파이프."
+      },
+      {
+        "alias": "pipe_left",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "왼쪽으로 굽는 파이프."
+      },
+      {
+        "alias": "pipe_right",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "오른쪽으로 굽는 파이프."
+      },
+      {
+        "alias": "correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트."
+      },
+      {
+        "alias": "inCorrect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "오답 이펙트. (열쇠 C 가 대문자입니다.)"
+      },
+      {
+        "alias": "endpage_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 화면 배경."
+      },
+      {
+        "alias": "timer05",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "타이머 5초 표시."
+      },
+      {
+        "alias": "timer10",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "타이머 10초 표시."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음."
+      },
+      {
+        "alias": "sound_timer",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "타이머 소리. **getSound 로 길이를 재서 쓰므로 없으면 타이밍이 어긋납니다.**"
+      },
+      {
+        "alias": "sound_click",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "터치 효과음."
+      },
+      {
+        "alias": "sound_incorrect",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "오답 효과음."
+      },
+      {
+        "alias": "sound_particle",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "이펙트 효과음."
+      },
+      {
+        "alias": "sound_ballBounce",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공 튕기는 소리."
+      },
+      {
+        "alias": "sound_ballCascade",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공 굴러가는 소리."
+      },
+      {
+        "alias": "sound_ballFall",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공 떨어지는 소리."
+      },
+      {
+        "alias": "nar03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 지문. **모듈이 이름을 박아 부릅니다.**"
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다.** 표본 세 차시가 **모두 공통으로 등록한 alias 38개**가 사실상 모듈 몫입니다:\n그림 — `bg` · `ball_dimmed` · `btn_bg` · `btn_body` · `btn_mask` · `btn_left` · `btn_right` · `pipe_floor` · `pipe_horizon` · `pipe_left` · `pipe_right` · `pipe_vertical` · `correct` · `inCorrect` · `endpage_bg` · `stamp01`~`stamp03` · `timer` · `timer05` · `timer10` · 폰트 `Jalnan2`\n음원 — `bgm` · `sound_timer` · `sound_click` · `sound_incorrect` · `sound_particle` · `sound_ballBounce` · `sound_ballCascade` · `sound_ballFall` · `sound_ballIn` · `sound_jingle` · `sound_stamp` · `sound_eop` · 지문 `nar03`~`nar06`\n\n**`nar03` 은 모듈이 부릅니다**(`mainCharacter.guide(\"nar03\")`). 차시 고유는 `ball_{낱말}` · `card_{낱말}` 과 낱말 음원입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고, `answer_*` · `card_*` 처럼 낱말 이름이 붙은 것은 그 차시 몫입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "wordArray",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "asset:image",
+          "desc": "낱말 카드 그림 alias 하나."
+        },
+        "desc": "그 차시에 쓰는 낱말 카드 그림들.",
+        "minLengthWhy": "낱말이 하나는 있어야 합니다."
+      },
+      {
+        "key": "posInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "monitorPos",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": -195,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "낱말이 뜨는 모니터 자리들. **공을 보낼 후보 자리이기도 합니다.**",
+            "minLengthWhy": "고를 곳이 둘은 있어야 문제가 됩니다."
+          },
+          {
+            "key": "ballDestinationPos",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 195,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "공이 도착할 자리들. **monitorPos 와 같은 개수·차례로 짝지어집니다.**",
+            "minLengthWhy": "monitorPos 와 같은 수만큼 필요합니다."
+          }
+        ],
+        "desc": "모니터와 공 목표 자리."
+      },
+      {
+        "key": "inningInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 5,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "ball",
+                "type": "string",
+                "optional": true,
+                "default": "",
+                "desc": "그 문제에 쓸 공 그림 alias. **타입이 string 이지만 그림 alias 입니다.**"
+              },
+              {
+                "key": "sound",
+                "type": "string",
+                "optional": true,
+                "default": "",
+                "desc": "낱말 음원 alias."
+              },
+              {
+                "key": "monitor",
+                "type": "string",
+                "optional": true,
+                "default": "",
+                "desc": "모니터에 띄울 그림 alias."
+              },
+              {
+                "key": "answerCard",
+                "type": "string",
+                "optional": true,
+                "default": "",
+                "desc": "정답 낱말 카드 그림 alias."
+              },
+              {
+                "key": "map",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "bool",
+                  "desc": "그 자리가 정답인지."
+                },
+                "desc": "**자리마다 정답인지 아닌지.** 칸 수가 monitorPos 개수와 같아야 하고 `true` 가 정답 자리입니다.",
+                "minLengthWhy": "monitorPos 개수만큼 필요합니다."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "그 이닝의 문제들.",
+          "minLengthWhy": "문제가 하나는 있어야 합니다."
+        },
+        "desc": "**이닝 목록 — 두 겹 배열입니다.** 바깥이 이닝, 안쪽이 그 이닝에서 낼 문제들입니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "aliasNote": "**클래스 이름이 `GameMap` 입니다** — 폴더는 `EN/E33` 인데 export 는 `GameMap` 이고, 액티비티도 `import { GameMap } from \"@_common/module/EN/E33/E33\"` 로 씁니다. **같은 이름의 클래스가 `KR/K32` 에도 있어** 경로로 갈라야 합니다.",
+  "rules": [
+    {
+      "id": "map-matches-monitor",
+      "level": "error",
+      "check": "inningInfo[][].map 의 칸 수가 posInfo.monitorPos 개수와 같아야 한다.",
+      "why": "자리 번호로 정답 여부를 찾습니다. 어긋나면 뒤쪽 자리가 undefined 가 되어 **그 자리로 보내도 판정이 안 됩니다.**"
+    },
+    {
+      "id": "monitor-destination-pair",
+      "level": "error",
+      "check": "monitorPos 와 ballDestinationPos 의 개수·차례가 같아야 한다.",
+      "why": "같은 번호로 짝지어 공을 보냅니다. 모자라면 공이 undefined 자리로 날아갑니다."
+    },
+    {
+      "id": "one-correct-per-quiz",
+      "level": "error",
+      "check": "문제마다 map 에 true 가 정확히 하나 있어야 한다.",
+      "why": "모듈이 검사하지 않습니다. 없으면 맞힐 수 없고, 둘 이상이면 어디로 보내도 정답이 됩니다."
+    },
+    {
+      "id": "gamemap-import-path",
+      "level": "error",
+      "check": "import 는 `{ GameMap } from \"@_common/module/EN/E33/E33\"` 다 — 배럴(`@_common/module/EN`)로 쓰지 않는다.",
+      "why": "**클래스 이름이 폴더 이름과 다르고, 같은 이름이 KR/K32 에도 있습니다.** 경로를 줄이면 엉뚱한 과목 모듈이 붙을 수 있습니다."
+    },
+    {
+      "id": "timer-sound-length",
+      "level": "error",
+      "check": "sound_timer 를 등록해야 한다.",
+      "why": "`getSound` 로 길이를 재서 제한 시간 연출을 맞춥니다. 없으면 소리만이 아니라 **타이머 타이밍이 어긋납니다.**"
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 스물네 개가 모두 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다."
+    },
+    {
+      "id": "incorrect-capital-c",
+      "level": "warn",
+      "check": "오답 이펙트 alias 는 `inCorrect` 다(C 가 대문자).",
+      "why": "짝이 되는 `correct` 는 소문자입니다. 이름이 섞여 있어 틀리기 쉽고, 틀리면 오답 이펙트만 안 나옵니다."
+    }
+  ],
+  "notes": [
+    "표본 세 차시가 모두 ENL2M__W1S3 자리입니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

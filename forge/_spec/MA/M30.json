@@ -1,0 +1,445 @@
+{
+  "specVersion": 1,
+  "module": "M30",
+  "subject": "MA",
+  "title": "썸네일 골라 사진 찍고 꾸미기 · 영상 보기",
+  "summary": "썸네일 3~7개 중 하나를 골라 사진을 찍은 뒤, 두 번째 화면에서 그 사진을 꾸미거나(editorPanel) 사진첩 영상으로 봅니다(videoPanel). 완성본 15개 가운데 꾸미기 7 · 영상 8. **9호 L3W2S1 · L3W4S1 이 어느 쪽인지는 기획서가 정합니다** — L3 는 2·4·5·6호가 영상, 7호가 꾸미기였습니다. M30_3 은 이 모듈에서 꾸미기만 떼어 낸 것입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M30",
+    "activities": [
+      "MAL1M02W4S1",
+      "MAL2M02W4S1",
+      "MAL3M02W4S1",
+      "MAL1M04W4S1",
+      "MAL2M04W4S1",
+      "MAL3M04W4S1",
+      "MAL1M05W2S1",
+      "MAL2M05W2S1",
+      "MAL3M05W2S1",
+      "MAL1M11W4S1",
+      "MAL2M11W2S3",
+      "MAL3M11W4S1",
+      "MAL1M06W4S1",
+      "MAL2M06W4S1",
+      "MAL3M06W4S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M30.assetLoad();",
+        "VideoRecordButton.addAsset();"
+      ],
+      "onInit": [
+        "await M30.handle.onInit(quizData);",
+        "this.addChild(M30.handle);"
+      ],
+      "onStart": [
+        "await M30.handle.start();",
+        "await M30.handle.play();",
+        "await M30.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M30",
+      "from": "@_common/module/MA/M30/M30"
+    },
+    "imports": [
+      {
+        "symbol": "VideoRecordButton",
+        "from": "@_common/sparkLib/component/VideoRecordButton"
+      }
+    ],
+    "importsWhy": "VideoPanel 이 VideoRecordButton 을 만들므로 그 그림을 먼저 등록합니다. 완성본은 L2 · L3 9개가 부르고 L1 6개는 안 부릅니다(L1 은 다 꾸미기라 영상 화면이 안 뜸). 9호 칸이 L3 이고 불러도 L1 에 해가 없어 늘 넣습니다."
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "particle_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Book.ts 가 AssetManager.get(\"particle_ef\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "camera_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"camera_ef\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "camera-off",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"camera-off\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "camera",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"camera\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "camera-return",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"camera-return\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "camera-click",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"camera-click\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "camera-return-click",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"camera-return-click\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "three",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"three\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "two",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"two\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "one",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/CameraPanel.ts 가 AssetManager.get(\"one\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "completeBtn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/EndColoringBtn.ts 가 AssetManager.get(\"completeBtn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "thumbnail-box",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/ThumnailBox.ts 가 AssetManager.get(\"thumbnail-box\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "prev-btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/ThumnailBox.ts 가 AssetManager.get(\"prev-btn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "next-btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/ThumnailBox.ts 가 AssetManager.get(\"next-btn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "prev-btn-click",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/ThumnailBox.ts 가 AssetManager.get(\"prev-btn-click\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "next-btn-click",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/ThumnailBox.ts 가 AssetManager.get(\"next-btn-click\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "array",
+    "minLength": 2,
+    "minLengthWhy": "칸 하나가 화면 하나입니다 — [0] 썸네일 고르기 · 사진 찍기(cameraPanel), [1] 꾸미기(editorPanel) 또는 영상(videoPanel). M30.ts 가 quizData[0].frameData 와 quizData[1].panel 을 자리로 읽으므로 **이 차례여야 하고 늘거나 줄지 않습니다.**",
+    "fields": [],
+    "of": {
+      "key": "",
+      "type": "object",
+      "fields": [
+        {
+          "key": "panel",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "cameraPanel",
+            "editorPanel",
+            "videoPanel"
+          ],
+          "desc": "이 칸이 어느 화면인지. [0] 은 cameraPanel, [1] 은 editorPanel 또는 videoPanel."
+        },
+        {
+          "key": "frameData",
+          "type": "array",
+          "optional": true,
+          "minLength": 3,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "scene",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "base",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "썸네일 기본 그림."
+                  },
+                  {
+                    "key": "on",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "썸네일을 골랐을 때 그림."
+                  }
+                ],
+                "desc": "썸네일 바에 놓이는 그림 한 벌 — 관례상 thumbnail{n} · thumbnail{n}-on."
+              },
+              {
+                "key": "frame",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "texture",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "썸네일을 고르면 뜨는 사진 틀 그림. 관례상 frame{n} — **번호가 썸네일과 1:1** 입니다."
+                  },
+                  {
+                    "key": "position",
+                    "type": "point",
+                    "required": true,
+                    "figma": true,
+                    "desc": "사진 틀이 놓이는 자리. 틀마다 다릅니다."
+                  },
+                  {
+                    "key": "guidePose",
+                    "type": "object",
+                    "optional": true,
+                    "fields": [
+                      {
+                        "key": "texture",
+                        "type": "asset:image",
+                        "required": true,
+                        "desc": "따라 할 자세 그림."
+                      },
+                      {
+                        "key": "position",
+                        "type": "point",
+                        "required": true,
+                        "figma": true,
+                        "desc": "자세 그림이 놓이는 자리."
+                      }
+                    ],
+                    "desc": "사진 틀 위에 띄우는 자세 안내. 있을 때만 CameraPanel 이 그립니다 — 완성본 15개 중 4개(5호 L2 · L3, 7호 L2 · L3 가운데)가 씁니다."
+                  }
+                ],
+                "desc": "썸네일을 고르면 뜨는 사진 틀."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "썸네일 목록 — cameraPanel 칸에만 둡니다. 칸 수가 곧 썸네일 수입니다(완성본 3 · 4 · 7)."
+        },
+        {
+          "key": "toolData",
+          "type": "array",
+          "optional": true,
+          "minLength": 3,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "type",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "color",
+                  "pattern",
+                  "sticker"
+                ],
+                "desc": "도구 갈래. ToolBox 가 이 글자로 도구를 찾고, 도구 그림(`{type}` · `{type}-on` · `{type}-off`)과 상자(`{type}-depth-box` · `{type}-depth-stroke`)도 이 이름으로 부릅니다. 지우개는 넣지 않습니다(모듈이 따로 그립니다)."
+              },
+              {
+                "key": "box",
+                "type": "asset:image",
+                "required": true,
+                "desc": "상자 그림 이름. **모듈은 이 값을 안 읽고** `{type}-depth-box` 를 부릅니다 — 완성본이 다 적어 두어 남깁니다."
+              },
+              {
+                "key": "info",
+                "type": "array",
+                "required": true,
+                "minLength": 5,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "depth",
+                      "type": "asset:image",
+                      "required": true,
+                      "desc": "고를 거리 그림 이름. 고른 그림은 `{depth}-on` 으로 부르므로 그 짝도 AssetTable 에 있어야 합니다."
+                    },
+                    {
+                      "key": "color",
+                      "type": "array",
+                      "optional": true,
+                      "minLength": 1,
+                      "of": {
+                        "key": "",
+                        "type": "string",
+                        "desc": "색 하나(#RRGGBB)."
+                      },
+                      "desc": "선 색 목록. color 갈래에서만 씁니다."
+                    }
+                  ],
+                  "desc": "칸 하나."
+                },
+                "desc": "그 도구의 고를 거리 목록(완성본 color 5 · pattern 5 · sticker 10)."
+              },
+              {
+                "key": "gap",
+                "type": "number",
+                "required": true,
+                "desc": "고를 거리 목록의 세로 간격(px). 완성본은 color 40 · pattern 14 · sticker 30."
+              },
+              {
+                "key": "drag",
+                "type": "bool",
+                "required": true,
+                "desc": "끌어다 붙이는 도구인가. 완성본은 pattern 만 true."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "꾸미기 도구 목록 — editorPanel 칸에만 둡니다."
+        },
+        {
+          "key": "photoBook",
+          "type": "object",
+          "optional": true,
+          "fields": [
+            {
+              "key": "snapShot",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "position",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "찍은 사진이 놓이는 자리."
+                }
+              ],
+              "desc": "찍은 사진."
+            },
+            {
+              "key": "frame",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "position",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "사진 틀이 놓이는 자리."
+                }
+              ],
+              "desc": "사진첩 속 사진 틀."
+            }
+          ],
+          "desc": "사진첩 영상 화면 — videoPanel 칸에만 둡니다."
+        }
+      ],
+      "desc": "칸 하나 = 화면 하나."
+    }
+  },
+  "relations": [
+    {
+      "id": "camera-has-frames",
+      "kind": "present",
+      "each": "[]",
+      "when": {
+        "pick": "panel",
+        "is": "cameraPanel"
+      },
+      "note": "cameraPanel 칸에는 frameData 가 있어야 한다.",
+      "why": "CameraPanel.init 이 quizData[0].frameData 로 썸네일을 만듭니다. 없으면 고를 것이 없는 화면이 뜹니다.",
+      "picks": [
+        "frameData"
+      ]
+    },
+    {
+      "id": "editor-has-tools",
+      "kind": "present",
+      "each": "[]",
+      "when": {
+        "pick": "panel",
+        "is": "editorPanel"
+      },
+      "note": "editorPanel 칸에는 toolData 가 있어야 한다.",
+      "why": "Editor.init 이 quizData[1].toolData 로 도구를 만듭니다.",
+      "picks": [
+        "toolData"
+      ]
+    },
+    {
+      "id": "video-has-photobook",
+      "kind": "present",
+      "each": "[]",
+      "when": {
+        "pick": "panel",
+        "is": "videoPanel"
+      },
+      "note": "videoPanel 칸에는 photoBook 이 있어야 한다.",
+      "why": "VideoPanel.init 이 quizData[1].photoBook 으로 사진첩을 놓습니다.",
+      "picks": [
+        "photoBook"
+      ]
+    },
+    {
+      "id": "thumbnail-alias",
+      "kind": "isAlias",
+      "pick": "[].frameData[].scene.base",
+      "note": "frameData[] 의 scene.base · scene.on · frame.texture 는 AssetTable 의 alias 여야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 오류만 찍고 지나가서, 썸네일이나 사진 틀이 화면에서 사라집니다."
+    },
+    {
+      "id": "thumbnail-alias#on",
+      "kind": "isAlias",
+      "pick": "[].frameData[].scene.on",
+      "note": "frameData[] 의 scene.base · scene.on · frame.texture 는 AssetTable 의 alias 여야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 오류만 찍고 지나가서, 썸네일이나 사진 틀이 화면에서 사라집니다."
+    },
+    {
+      "id": "thumbnail-alias#frame",
+      "kind": "isAlias",
+      "pick": "[].frameData[].frame.texture",
+      "note": "frameData[] 의 scene.base · scene.on · frame.texture 는 AssetTable 의 alias 여야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 오류만 찍고 지나가서, 썸네일이나 사진 틀이 화면에서 사라집니다."
+    }
+  ]
+}

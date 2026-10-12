@@ -1,0 +1,379 @@
+{
+  "specVersion": 1,
+  "module": "K35",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K35",
+    "activities": [
+      "KOL1M02W2S3",
+      "KOL1M04W2S3",
+      "KOL1M06W2S3",
+      "KOL1M11W1S3",
+      "KOL3M01W2S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "K35.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "await K35.handle.onInit(quizData.layerData);",
+        "this.addChild(K35.handle);"
+      ],
+      "onStart": [
+        "await K35.handle.onStart(quizData);",
+        "await SparkApp.eop.show(K35.handle.totalPercent / quizData.inningData.length * 0.01);"
+      ],
+      "onAffordanceOn": [
+        "K35.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "K35.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "K35",
+        "from": "@_common/module/KR/K35/K35"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 K35.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "layerData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "quizBox",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "children",
+                "type": "array",
+                "optional": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "alias",
+                      "type": "asset:image",
+                      "required": true,
+                      "default": "question_board"
+                    },
+                    {
+                      "key": "position",
+                      "type": "point",
+                      "required": true,
+                      "figma": true,
+                      "default": {
+                        "x": 0,
+                        "y": 0
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "key": "answerBox",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true
+              },
+              {
+                "key": "random",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "childrenPos",
+                "type": "array",
+                "optional": true,
+                "minLength": 4,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "quiz",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "target",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "particle",
+                      "type": "object",
+                      "required": true,
+                      "fields": [
+                        {
+                          "key": "alias",
+                          "type": "asset:lottie",
+                          "required": true
+                        }
+                      ]
+                    },
+                    {
+                      "key": "targetData",
+                      "type": "array",
+                      "required": true,
+                      "minLength": 2,
+                      "of": {
+                        "key": "",
+                        "type": "object",
+                        "fields": [
+                          {
+                            "key": "id",
+                            "type": "string",
+                            "required": true
+                          },
+                          {
+                            "key": "texture",
+                            "type": "asset:image",
+                            "required": true
+                          },
+                          {
+                            "key": "sound",
+                            "type": "asset:sound",
+                            "optional": true
+                          },
+                          {
+                            "key": "x",
+                            "type": "number",
+                            "required": true
+                          },
+                          {
+                            "key": "y",
+                            "type": "number",
+                            "required": true
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "key": "question",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "position",
+                      "type": "point",
+                      "required": true,
+                      "figma": true
+                    },
+                    {
+                      "key": "text",
+                      "type": "object",
+                      "required": true,
+                      "fields": [
+                        {
+                          "key": "alias",
+                          "type": "asset:image",
+                          "required": true
+                        },
+                        {
+                          "key": "position",
+                          "type": "point",
+                          "required": true,
+                          "figma": true,
+                          "default": {
+                            "x": 0,
+                            "y": 0
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "key": "answerSentence",
+                  "type": "object",
+                  "required": true,
+                  "fields": [
+                    {
+                      "key": "texture",
+                      "type": "asset:image",
+                      "required": true
+                    },
+                    {
+                      "key": "x",
+                      "type": "number",
+                      "required": true,
+                      "default": 0
+                    },
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "required": true,
+                      "default": 0
+                    },
+                    {
+                      "key": "sound",
+                      "type": "asset:sound",
+                      "required": true
+                    },
+                    {
+                      "key": "particle",
+                      "type": "object",
+                      "required": true,
+                      "fields": [
+                        {
+                          "key": "alias",
+                          "type": "asset:lottie",
+                          "required": true
+                        },
+                        {
+                          "key": "position",
+                          "type": "point",
+                          "required": true,
+                          "figma": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "key": "quizImg",
+                  "type": "object",
+                  "optional": true,
+                  "fields": [
+                    {
+                      "key": "alias",
+                      "type": "asset:image",
+                      "required": true
+                    },
+                    {
+                      "key": "position",
+                      "type": "point",
+                      "required": true,
+                      "figma": true,
+                      "default": {
+                        "x": 0,
+                        "y": -140
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "answer",
+              "type": "array",
+              "required": true,
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "id",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "key": "type",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "image",
+                      "imagtext",
+                      "text"
+                    ]
+                  },
+                  {
+                    "key": "texture",
+                    "type": "asset:image",
+                    "required": true
+                  },
+                  {
+                    "key": "sound",
+                    "type": "asset:sound",
+                    "optional": true
+                  },
+                  {
+                    "key": "position",
+                    "type": "point",
+                    "required": true,
+                    "figma": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

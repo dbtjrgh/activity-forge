@@ -1,0 +1,4823 @@
+{
+  "specVersion": 1,
+  "module": "K02",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K02",
+    "activities": [
+      "KOL2M01W1S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "super.onLoad()"
+      ],
+      "onInit": [
+        "await this.K02.onInit()"
+      ],
+      "onStart": [
+        "await this.K02.onStart()"
+      ],
+      "onUpdate": [
+        "  //"
+      ],
+      "onAffordanceOn": [
+        "await this.K02.onAffordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K02.onAffordanceCancel()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "K02",
+        "from": "@_common/module/KR/K02/K02.ts"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "isRandom",
+        "type": "bool",
+        "required": true
+      },
+      {
+        "key": "inningCount",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "number"
+        }
+      },
+      {
+        "key": "endBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "bookBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "bookBtnCompleteInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "nameTagInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "characterInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "centerX",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "centerY",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "soundMap",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      },
+      {
+        "key": "backgroundConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "appleConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 99.14
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 108.32
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 5
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "orangeConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 96.62
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 107.17
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 5
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "grapeConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 5
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "bananaConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 3976.47
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 401.29
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 127.67
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 119.11
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 5
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "kiwiConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 73.97
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 88.38
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 5
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "stemConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 5
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 33.95
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 6
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "sinkConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "sink_base",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "sink_gray",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "sink_gray_mask",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "chopping_board",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "choppingBoardBound",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "knifeIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "parasolConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "basketConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "cartContainerPos",
+        "type": "point",
+        "required": true,
+        "figma": true
+      },
+      {
+        "key": "cartConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "cartTireConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "vinylHouseConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "bananaBundleConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "trayConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "0",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "blankBarConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "string",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "completeBtnConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "blankConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 6
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "correctConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 7
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "nameTagConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 40
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 130
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 7
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "grayLabel",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 460
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 150
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 9
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "colorLabel",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 40
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 460
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 150
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 10
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "bookBtn",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "bookBtnComplete",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "dimd",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "book",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "popupCloseBtn",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "appleTreeBoundConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "orangeTreeBoundConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "bananaTreeBoundConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "grapeTreeBoundConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1.5
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "kiwiTreeBoundConfig",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1.5
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "applePositionData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "0",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true
+          }
+        ]
+      },
+      {
+        "key": "orangePositionData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "0",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true
+          }
+        ]
+      },
+      {
+        "key": "grapePositionData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "0",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true
+          }
+        ]
+      },
+      {
+        "key": "bananaPositionData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "0",
+            "type": "point",
+            "required": true,
+            "figma": true
+          }
+        ]
+      },
+      {
+        "key": "kiwiPositionData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "0",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true
+          }
+        ]
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "appleTreeIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "appleTreeTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "orangeTreeIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "orangeTreeTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "grapeTreeIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "grapeTreeTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "bananaTreeIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "bananaTreeTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "kiwiTreeIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "kiwiTreeTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "sunIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "sunTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "faucetIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "faucetTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "knifeIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "knifeTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "knifeCut",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "waterWave",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "appleCut",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "orangeCut",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "grapeCut",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "bananaCut",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "kiwiCut",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "boyIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "boyTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "boyAppleEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "boyOrangeEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "boyGrapeEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "boyBananaEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "boyKiwiEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "girlIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "girlTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "girlAppleEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "girlOrangeEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "girlGrapeEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "girlBananaEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "girlKiwiEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "waterDrop",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:lottie",
+                  "required": true
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 0
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 0
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "default": 150
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "default": 150
+                },
+                {
+                  "key": "zIndex",
+                  "type": "number",
+                  "required": true,
+                  "default": 5
+                },
+                {
+                  "key": "anchor",
+                  "type": "number",
+                  "required": true,
+                  "default": 0.5
+                },
+                {
+                  "key": "alpha",
+                  "type": "number",
+                  "required": true,
+                  "default": 1
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": true
+                },
+                {
+                  "key": "autoPlay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "corrEffect",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:lottie",
+                  "required": true
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": -135
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": -125
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "default": 250
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "default": 250
+                },
+                {
+                  "key": "zIndex",
+                  "type": "number",
+                  "required": true,
+                  "default": 8
+                },
+                {
+                  "key": "anchor",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "alpha",
+                  "type": "number",
+                  "required": true,
+                  "default": 1
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": false
+                },
+                {
+                  "key": "autoPlay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "twinkle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "grandfaIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "grandfaTap",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "grandfaCorrect",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          },
+          {
+            "key": "grandfaEffect",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

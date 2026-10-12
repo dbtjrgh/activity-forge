@@ -1,0 +1,269 @@
+{
+  "specVersion": 1,
+  "module": "E09",
+  "subject": "EN",
+  "title": "낱말 사진 찍기 — 사진기로 낱말을 찍어 앨범에 붙입니다",
+  "summary": "사진기 화면 안에 그림이 들어옵니다. 초점이 맞을 때까지 기다렸다 셔터를 누르면 찰칵 찍히고 폴라로이드가 인쇄되어 나옵니다. 낱말 수만큼 찍고 나면 화면이 바뀌면서 찍은 사진들이 압정으로 벽에 붙고, 한 장씩 넘겨 보며 낱말을 다시 듣습니다. 이닝 차례는 열 때마다 섞입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E09",
+    "activities": [
+      "ENL2M01W1S3",
+      "ENL2M03W1S3",
+      "ENL2M05W1S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E09.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(E09.handle);",
+        "await E09.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await E09.handle.start();",
+        "await E09.handle.play();",
+        "await E09.handle.finish();",
+        "//EOP",
+        "SparkApp.eop.show(E09.handle.completePercent);"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "E09",
+        "from": "@_common/module/EN"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경. E09 가 이 이름으로 찾습니다."
+      },
+      {
+        "alias": "play_bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "사진 찍는 동안의 배경음. **bgm 이 아닙니다** — 이름이 둘로 갈려 있습니다."
+      },
+      {
+        "alias": "review_bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "다 찍고 앨범을 넘겨 볼 때의 배경음."
+      },
+      {
+        "alias": "nar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작할 때 도우미가 하는 안내. E09.ts:90 이 guide(\"nar\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.**"
+      }
+    ],
+    "providedByModule": {
+      "note": "**사진기와 압정, 셔터 소리는 모듈 것입니다.** Assets.ts 가 사진기·셔터 단추·플래시·초점 틀·압정 여섯·효과음을 등록합니다. **액티비티는 낱말마다 딸린 그림 일곱 벌과 소리, 그리고 배경·배경음 둘을 넣습니다.**",
+      "image": [
+        "camera",
+        "shutter_btn",
+        "flash",
+        "gray_focus",
+        "frame_white",
+        "frame_gray",
+        "tack01~tack06 (압정)"
+      ],
+      "lottie": [
+        "particle",
+        "flash_lottie"
+      ],
+      "sound": [
+        "shutter_sound",
+        "focus_sound",
+        "print_sound",
+        "wrong_sound",
+        "particle_sound"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "quizInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "낱말 글자. 그림이 아니라 글자 그대로입니다."
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "사진기 화면 안 그림 자리."
+            },
+            {
+              "key": "scale",
+              "type": "number",
+              "required": true,
+              "desc": "그 그림 크기 비율. 기존 3개가 0.85~0.95 를 씁니다 — 그림마다 다르게 맞춘 값입니다."
+            },
+            {
+              "key": "quiz",
+              "type": "asset:image",
+              "required": true,
+              "desc": "사진기 화면에 잡히는 그림."
+            },
+            {
+              "key": "photo",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "normal",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "초점이 안 맞은 흐린 상태."
+                },
+                {
+                  "key": "focus",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "초점이 맞은 또렷한 상태. 이때 셔터가 눌립니다."
+                }
+              ],
+              "desc": "초점 두 상태."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 낱말을 읽는 소리."
+            },
+            {
+              "key": "polaroid",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "인쇄되어 나오는 폴라로이드 사진."
+            },
+            {
+              "key": "review",
+              "type": "asset:image",
+              "required": true,
+              "desc": "앨범에 붙는 사진. polaroid 와 다른 그림입니다."
+            },
+            {
+              "key": "sticker",
+              "type": "asset:image",
+              "required": true,
+              "desc": "테두리가 있는 스티커."
+            },
+            {
+              "key": "nolineSticker",
+              "type": "asset:image",
+              "required": true,
+              "desc": "테두리가 없는 스티커. **사진 위에 붙는 쪽**입니다 — 기존 회차 주석에 그렇게 적혀 있습니다."
+            },
+            {
+              "key": "tack",
+              "type": "string",
+              "required": true,
+              "desc": "앨범에 꽂을 압정. **모듈이 들고 있는 tack01~tack06 중 하나**입니다. 낱말마다 다른 것을 골라 씁니다."
+            },
+            {
+              "key": "popup",
+              "type": "asset:image",
+              "required": true,
+              "desc": "찍고 나서 크게 뜨는 그림."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "낱말 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — E09.ts:99. 섞은 그 차례가 앨범에도 그대로 이어집니다.",
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 3개는 5개씩입니다."
+      },
+      {
+        "key": "reviewData",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "낱말 글자. quizInfo 의 word 와 같게 적습니다."
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "앨범에서 그 낱말이 놓일 자리."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "앨범 화면에서 낱말이 놓일 자리. quizInfo 와 낱말이 같아야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · play_bgm · review_bgm · nar 이 AssetTable 에 있어야 한다.",
+      "why": "사진기와 압정은 모듈이 들고 있지만 배경·배경음 둘·안내는 회차 몫입니다. **배경음 이름이 bgm 이 아니라 둘로 갈려 있어** 다른 모듈에서 베껴 오면 틀리기 쉽습니다."
+    },
+    {
+      "id": "tack-is-module-asset",
+      "level": "error",
+      "check": "quizInfo[].tack 이 tack01~tack06 중 하나여야 한다.",
+      "why": "모듈이 들고 있는 여섯 개뿐입니다. 회차 AssetTable 에 없는 이름이라 오타가 나면 앨범에서 압정이 안 보입니다."
+    },
+    {
+      "id": "photo-two-states",
+      "level": "error",
+      "check": "photo.normal 과 photo.focus 가 서로 다른 alias 여야 한다.",
+      "why": "초점이 맞았다는 것이 이 그림이 바뀌는 것으로 나타납니다. 같으면 언제 눌러야 할지 알 수가 없습니다."
+    },
+    {
+      "id": "quizinfo-shuffled",
+      "level": "warn",
+      "check": "quizInfo 의 차례에 뜻이 있으면 안 된다.",
+      "why": "E09.ts:95-99 가 sort(() => Math.random() - 0.5) 로 섞습니다. **끄는 값이 없습니다.**"
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

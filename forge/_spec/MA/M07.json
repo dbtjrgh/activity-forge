@@ -1,0 +1,1235 @@
+{
+  "specVersion": 1,
+  "module": "M07",
+  "subject": "MA",
+  "title": "블록 쌓아 올라가기 (UFO 까지)",
+  "summary": "블록을 쌓아 캐릭터가 위로 올라가게 하는 활동. 목표 개수만큼 쌓으면 UFO 에 닿고, 쌓은 개수를 세어 답합니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M07",
+    "activities": [
+      "MAL2M01W3S3",
+      "MAL2M11W1S3",
+      "MAL3M01W1S3"
+    ],
+    "doc": "README 없음. 근거는 M07.ts · JumpQuizManager.ts · Block.ts · CountObj.ts · Monster.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M07",
+      "from": "@_common/module/MA/M07/M07"
+    },
+    "members": [
+      "private mM07: M07 = new M07();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "await this.mM07.onLoad(font, image, lottie, sound);"
+      ],
+      "onInit": [
+        "await this.mM07.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mM07.onStart();"
+      ],
+      "onUpdate": [
+        "this.mM07.onUpdate(_ticker.deltaTime);"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "BG1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경. 자리는 bgLayout."
+      },
+      {
+        "alias": "light",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "핀 조명. 자리는 pinLightLayout."
+      },
+      {
+        "alias": "ufo",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "UFO. 자리는 ufoLayout."
+      },
+      {
+        "alias": "bigufo",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "큰 UFO. 자리는 bigufoLayout."
+      },
+      {
+        "alias": "particle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "파티클. 크기는 animation.particle."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 모듈이 AudioManager.getSound(\"bgm\") 으로 찾습니다."
+      },
+      {
+        "alias": "301sfx2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음. 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다."
+      },
+      {
+        "alias": "301sfx3",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음. 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다."
+      },
+      {
+        "alias": "301sfx4",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음. 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다."
+      },
+      {
+        "alias": "301sfx5",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음. 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다."
+      },
+      {
+        "alias": "301sfx6",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음. 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다."
+      },
+      {
+        "alias": "301sfx7",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음. 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다."
+      },
+      {
+        "alias": "301sfx8",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음. 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다."
+      },
+      {
+        "alias": "301sfx9",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음. 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — 액티비티 onLoad 가 AssetTable 네 배열을 그대로 넘깁니다(`mM07.onLoad(font, image, lottie, sound)`).\n\n**이름이 코드에 박힌 그림** — `BG1` · `item` · `light` · `star` · `starMotion` · `ufo` · `bigufo` · `particle`\n**음원** — `bgm`(모듈이 getSound 로 찾습니다) · `getItem` · `301sfx2` ~ `301sfx9`(여덟 개)\n**번호로 조합하는 것** — 블록 그림 `block{번호}` · 개수 음원 `num{maxBlockCount}`. **개수 음원은 목표 개수 그 수로 이름을 만듭니다** — maxBlockCount 가 7 이면 `num7` 이 있어야 합니다.\n\nnarration 의 com* 이름은 도우미 공통 음원 관례입니다. MainCharacter 가 이미 물고 있으면 다시 등록하지 마세요.\n\n**아이템·별 연출은 쓰는 차시만 필요합니다** — `item` · `star` · `starMotion` · `getItem` 네 개는 표본 셋 중 둘만 등록해 두었고 MAL3M01W1S3 은 없습니다(그 차시는 아이템·별 연출을 쓰지 않습니다). 모든 차시에 있어야 하는 것이 아니라 required 목록에서는 뺐습니다 — **연출을 쓰면서 빠뜨리면 그 그림만 조용히 사라집니다.**"
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningCount",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "number",
+          "desc": "이닝 번호."
+        },
+        "desc": "이닝 목록. **칸의 값이 아니라 칸 수가 이닝 수입니다.**",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      },
+      {
+        "key": "maxInning",
+        "type": "number",
+        "required": true,
+        "default": 1,
+        "desc": "이닝 최대 수."
+      },
+      {
+        "key": "isTouchSound",
+        "type": "bool",
+        "required": true,
+        "default": true,
+        "desc": "터치 효과음을 낼지."
+      },
+      {
+        "key": "isCorrectSound",
+        "type": "bool",
+        "required": true,
+        "default": true,
+        "desc": "정답 효과음을 낼지."
+      },
+      {
+        "key": "isInningCompleteActivation",
+        "type": "bool",
+        "required": true,
+        "default": true,
+        "desc": "이닝을 마칠 때 완료 연출을 켤지."
+      },
+      {
+        "key": "isRandomInning",
+        "type": "bool",
+        "optional": true,
+        "desc": "이닝 순서를 섞을지."
+      },
+      {
+        "key": "isNarrationSound",
+        "type": "bool",
+        "optional": true,
+        "desc": "나레이션을 재생할지."
+      },
+      {
+        "key": "isSfxSound",
+        "type": "bool",
+        "required": true,
+        "default": true,
+        "desc": "효과음 전체를 켤지."
+      },
+      {
+        "key": "isEndingShow",
+        "type": "bool",
+        "required": true,
+        "default": true,
+        "desc": "엔딩 연출을 보여 줄지."
+      },
+      {
+        "key": "maxBlockCount",
+        "type": "number",
+        "required": true,
+        "desc": "쌓아야 하는 블록 수. **개수 음원 alias 를 `num{이 값}` 으로 조합합니다** — 그 이름의 음원이 있어야 합니다."
+      },
+      {
+        "key": "footHeight",
+        "type": "number",
+        "required": true,
+        "desc": "블록 한 칸 높이(px). 캐릭터가 올라가는 간격입니다."
+      },
+      {
+        "key": "textPos",
+        "type": "number",
+        "required": true,
+        "default": 0,
+        "desc": "개수 글자 자리(세로)."
+      },
+      {
+        "key": "blockType",
+        "type": "number",
+        "required": true,
+        "desc": "블록 갈래 번호. 그림 alias 를 `block{번호}` 로 조합합니다."
+      },
+      {
+        "key": "blockSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "블록 크기."
+      },
+      {
+        "key": "alignPosX",
+        "type": "number",
+        "required": true,
+        "desc": "블록이 쌓이는 가로 기준 위치."
+      },
+      {
+        "key": "blockInterval",
+        "type": "number",
+        "required": true,
+        "desc": "블록 사이 간격(px)."
+      },
+      {
+        "key": "lastNumNar",
+        "type": "asset:sound",
+        "optional": true,
+        "desc": "마지막 수를 읽는 음원."
+      },
+      {
+        "key": "countNumLayout",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "개수 표시 자리."
+      },
+      {
+        "key": "characterLayout",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "캐릭터 자리."
+      },
+      {
+        "key": "characterSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 267.47,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 327.76,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "캐릭터 크기."
+      },
+      {
+        "key": "bgLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "배경 조각 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "objLayout",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 695,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "물건 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 적습니다."
+      },
+      {
+        "key": "clickarea",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "누를 수 있는 영역. **clickareaLayout 과 둘이 다 있습니다** — 표본이 둘을 같이 두고 있어 어느 쪽이 실제로 쓰이는지는 코드를 봐야 합니다."
+      },
+      {
+        "key": "pinLightLayout",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "desc": "핀 조명 자리."
+      },
+      {
+        "key": "ufoLayout",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 817.5,
+          "y": 33.54
+        },
+        "desc": "UFO 자리."
+      },
+      {
+        "key": "bigufoLayout",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 532.5,
+          "y": 226.62
+        },
+        "desc": "큰 UFO 자리."
+      },
+      {
+        "key": "starLayout",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 910,
+          "y": 339.47
+        },
+        "desc": "별 자리."
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correct",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 482,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 461,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`correct` 애니 설정."
+          },
+          {
+            "key": "fail01",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`fail01` 애니 설정."
+          },
+          {
+            "key": "fail02",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`fail02` 애니 설정."
+          },
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`idle` 애니 설정."
+          },
+          {
+            "key": "idletalk",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`idletalk` 애니 설정."
+          },
+          {
+            "key": "jump01",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`jump01` 애니 설정."
+          },
+          {
+            "key": "jump02",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`jump02` 애니 설정."
+          },
+          {
+            "key": "jump03",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`jump03` 애니 설정."
+          },
+          {
+            "key": "lookupidle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`lookupidle` 애니 설정."
+          },
+          {
+            "key": "lookupidleend",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`lookupidleend` 애니 설정."
+          },
+          {
+            "key": "lookupin",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`lookupin` 애니 설정."
+          },
+          {
+            "key": "lookupout",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 300.48,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 327.74,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`lookupout` 애니 설정."
+          },
+          {
+            "key": "particle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`particle` 애니 설정."
+          },
+          {
+            "key": "star",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 450,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 220,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`star` 애니 설정."
+          },
+          {
+            "key": "bgEf",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 218,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 410,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "`bgEf` 애니 설정."
+          }
+        ],
+        "desc": "애니 크기·재생 설정. 열쇠 이름이 곧 애니 alias 입니다."
+      },
+      {
+        "key": "sound",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correct",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "correct",
+                "desc": "음원 alias."
+              }
+            ],
+            "desc": "정답 효과음."
+          },
+          {
+            "key": "wrong",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "string",
+                "required": true,
+                "default": "wrong",
+                "desc": "음원 alias."
+              }
+            ],
+            "desc": "오답 효과음."
+          },
+          {
+            "key": "wrong2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "string",
+                "required": true,
+                "default": "wrong2",
+                "desc": "음원 alias."
+              }
+            ],
+            "desc": "거듭 틀렸을 때의 효과음."
+          },
+          {
+            "key": "touch",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "string",
+                "required": true,
+                "default": "touch",
+                "desc": "음원 alias."
+              }
+            ],
+            "desc": "터치 효과음."
+          }
+        ],
+        "desc": "효과음 표. **각 항목이 { alias } 객체로 감싸 있습니다.** correct 의 타입이 asset:lottie 로 잡혀 있는 것은 초안이 값 생김새를 잘못 짚은 것이고, 실제로는 음원 alias 입니다."
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "MA",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "asset:sound",
+                "required": true,
+                "default": "301nar2",
+                "desc": "학습 진입 지문. (철자가 enterance 입니다.)"
+              },
+              {
+                "key": "clear",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "enum",
+                  "values": [
+                    "com14",
+                    "com15",
+                    "com16"
+                  ],
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "이닝을 맞혔을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "enum",
+                  "values": [
+                    "com10",
+                    "com8",
+                    "com9"
+                  ],
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "enum",
+                  "values": [
+                    "com17",
+                    "com18",
+                    "com19"
+                  ],
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "거듭 틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "enum",
+                  "values": [
+                    "com5",
+                    "com6",
+                    "com7"
+                  ],
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "안내 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "hint",
+                "type": "string",
+                "required": true,
+                "default": "com1",
+                "desc": "힌트 음원. **타입이 string 이지만 음원 alias 입니다.**"
+              }
+            ],
+            "desc": "수학 나레이션."
+          }
+        ],
+        "desc": "나레이션 표. **과목 이름으로 한 겹 감싸 있습니다.**"
+      },
+      {
+        "key": "overLabLength",
+        "type": "number",
+        "optional": true,
+        "desc": "겹침 허용 길이(px)."
+      },
+      {
+        "key": "clickareaLayout",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          }
+        ],
+        "desc": "누를 수 있는 영역(다른 이름의 같은 값). clickarea 와 짝을 맞춰 두는 것이 안전합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "num-alias-by-count",
+      "level": "error",
+      "check": "maxBlockCount 값에 맞는 `num{값}` 음원이 있어야 한다.",
+      "why": "개수 음원 alias 를 그 수로 조합합니다. 목표를 7 로 바꾸고 num7 을 안 넣으면 **마지막에 개수를 읽어 주지 않습니다.**"
+    },
+    {
+      "id": "block-alias-by-type",
+      "level": "error",
+      "check": "blockType 값에 맞는 `block{번호}` 그림이 있어야 한다.",
+      "why": "블록 그림 alias 를 갈래 번호로 조합합니다. 없으면 블록이 안 보여 쌓을 수 없습니다."
+    },
+    {
+      "id": "sound-wrapped-in-alias",
+      "level": "error",
+      "check": "sound 의 각 항목은 { alias: … } 객체로 적는다.",
+      "why": "문자열로 바로 적으면 코드가 .alias 를 읽어 undefined 가 되고 그 소리만 조용히 빠집니다."
+    },
+    {
+      "id": "onupdate-required",
+      "level": "error",
+      "check": "onUpdate 에서 M07.onUpdate(ticker.deltaTime) 를 불러야 한다.",
+      "why": "블록이 올라가고 캐릭터가 뛰는 것이 매 프레임 갱신입니다. 훅을 빠뜨리면 화면이 멈춥니다. **인자가 ticker 가 아니라 ticker.deltaTime 입니다.**"
+    },
+    {
+      "id": "asset-table-passed-whole",
+      "level": "warn",
+      "check": "onLoad 가 AssetTable 네 배열을 그대로 넘기는 훅을 지우지 않는다.",
+      "why": "이 모듈은 alias 를 AssetTable 에서 직접 골라 씁니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "BG1 · light · ufo · bigufo · particle · bgm · 301sfx2~301sfx9 가 등록돼야 하고, 아이템·별 연출을 쓰면 item · star · starMotion · getItem 도 있어야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다. 없는 그림은 console.error 만 찍고 사라지고, 없는 음원은 무음으로 통과합니다."
+    },
+    {
+      "id": "clickarea-duplicated",
+      "level": "warn",
+      "check": "clickarea 와 clickareaLayout 을 같은 값으로 둔다.",
+      "why": "표본이 두 이름을 다 두고 있습니다. 어느 쪽이 실제로 쓰이는지 갈려 있어 한쪽만 고치면 판정 범위가 안 바뀝니다."
+    }
+  ],
+  "notes": [
+    "음원 이름 앞머리 301 은 최초 제작 회차가 굳은 것입니다. 새 차시에서도 그 alias 로 등록합니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

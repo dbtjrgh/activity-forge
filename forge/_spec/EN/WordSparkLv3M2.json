@@ -1,0 +1,386 @@
+{
+  "specVersion": 1,
+  "module": "WordSparkLv3M2",
+  "subject": "EN",
+  "title": "파이프 조립해 물탱크 채우기 (낱말 철자)",
+  "summary": "물탱크로 이어지는 파이프에 빠진 부품(동그라미·손잡이·작은관)을 색칠된 것 중에서 골라 끼우는 활동. 파이프를 다 채우면 물이 흐릅니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/WordSparkLv3M2",
+    "activities": [
+      "ENL3M02W1S3",
+      "ENL3M04W1S3",
+      "ENL3M06W1S3"
+    ],
+    "doc": "README 없음. 근거는 WordSparkLv3M2.ts · MainScene.ts · Scene.ts · Pipe.ts · OptionManager.ts · AnswerCard.ts · Bg.ts 와 표본 3차시(2·4·6호)입니다. 자리는 세 호 모두 ENL3M__W1S3 입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "WordSparkLv3M2.handle.init(quizData);",
+        "this.addChild(WordSparkLv3M2.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await WordSparkLv3M2.handle.start();",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"nar02\");",
+        "await WordSparkLv3M2.handle.play();",
+        "await WordSparkLv3M2.handle.finish();",
+        "await SparkApp.eop.show( WordSparkLv3M2.handle.completePercent );"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "WordSparkLv3M2",
+        "from": "@_common/module/EN"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "bg1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경 1."
+      },
+      {
+        "alias": "bg2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경 2."
+      },
+      {
+        "alias": "conveyor1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "부품이 흘러오는 컨베이어 1."
+      },
+      {
+        "alias": "conveyor2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "컨베이어 2."
+      },
+      {
+        "alias": "water_tank",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "물탱크."
+      },
+      {
+        "alias": "water_tank_masking",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "물탱크 마스크."
+      },
+      {
+        "alias": "tank_mask",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "물이 차오르는 것을 잘라 주는 마스크."
+      },
+      {
+        "alias": "correct_eff",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음."
+      },
+      {
+        "alias": "nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. **액티비티 onStart 가 이름을 박아 부릅니다.**"
+      },
+      {
+        "alias": "sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "com_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      },
+      {
+        "alias": "com_sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      },
+      {
+        "alias": "com_sfx05",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다.** 표본 세 차시가 모두 공통으로 등록한 alias 61개가 사실상 모듈 몫입니다:\n그림 — `bg` · `bg1` · `bg2` · `bg_next` · `conveyor1` · `conveyor2` · `water_tank` · `water_tank_masking` · `tank_mask` · `pipe01`~`pipe03` 과 그 부품(`pipe0N_circle` · `pipe0N_handle` · `pipe0N_minipipe` 및 각 `_outline`) · `dimmed_{부품}_pipe0N` 아홉 장 · 로티 `pipe0N_ani` · `correct_eff` · 폰트 `GangwonEduPower`\n음원 — `bgm` · `nar02` · `sfx01`~`sfx03` · `com_sfx01` · `com_sfx04` · `com_sfx05` · 도우미 `com_nar01`~`03` · `com_nar07`~`12`\n\n코드가 이름을 박아 찾는 것은 `bg` · `bg1` · `bg2` · `conveyor1` · `conveyor2` · `water_tank` · `water_tank_masking` · `tank_mask` · `correct_eff` · `bgm` · `sfx01`~`sfx03` · `com_sfx01` · `com_sfx04` · `com_sfx05` 이고, **`nar02` 는 액티비티 onStart 가 부릅니다.**\n\n차시 고유는 `{낱말}_img` · `dimmed_{낱말}_img` · `answercard_{낱말}` 입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고 낱말 이름이 붙은 것은 그 차시 몫입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "pipeData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "pipeImg",
+              "type": "asset:image",
+              "required": true,
+              "desc": "파이프 그림."
+            },
+            {
+              "key": "pipeAni",
+              "type": "asset:lottie",
+              "required": true,
+              "desc": "파이프 애니(물이 흐르는 것)."
+            },
+            {
+              "key": "pipePos",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "파이프 자리."
+            },
+            {
+              "key": "pipeAniPos",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "파이프 애니 자리."
+            },
+            {
+              "key": "dimmedOptionList",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "img",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "어두운 부품 그림. 표본은 `dimmed_{부품}_pipe0N` 꼴입니다."
+                  },
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  },
+                  {
+                    "key": "word",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "circle",
+                      "handle",
+                      "minipipe"
+                    ],
+                    "desc": "부품 갈래 — circle(동그라미) · handle(손잡이) · minipipe(작은관). **아래 colorOptionList 의 word 와 이 값으로 짝을 찾습니다.**"
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 파이프에서 **빠져 있는 자리들**(어두운 부품). 여기에 색칠된 부품을 끼웁니다.",
+              "minLengthWhy": "빠진 자리가 하나는 있어야 문제가 됩니다."
+            },
+            {
+              "key": "colorOptionList",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "outlineImg",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "부품 테두리 그림."
+                  },
+                  {
+                    "key": "img",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "부품 그림."
+                  },
+                  {
+                    "key": "word",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "circle",
+                      "handle",
+                      "minipipe"
+                    ],
+                    "desc": "부품 갈래 — circle · handle · minipipe. **dimmedOptionList 의 word 와 같아야 끼워집니다.**"
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "끼울 수 있는 색칠된 부품들. `word` 로 빠진 자리와 짝지어집니다.",
+              "minLengthWhy": "고를 것이 하나는 있어야 합니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "파이프 목록. **칸 하나가 파이프 한 벌이고, 표본은 세 벌(pipe01~pipe03)입니다.**",
+        "minLengthWhy": "파이프가 하나는 있어야 합니다."
+      },
+      {
+        "key": "quizInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "그 이닝의 낱말. **화면에 글자로 그립니다.**"
+            },
+            {
+              "key": "dimmedWordImg",
+              "type": "asset:image",
+              "required": true,
+              "desc": "낱말 그림(흐린 것)."
+            },
+            {
+              "key": "wordImg",
+              "type": "asset:image",
+              "required": true,
+              "desc": "낱말 그림(맞힌 뒤)."
+            },
+            {
+              "key": "answerCard",
+              "type": "asset:image",
+              "required": true,
+              "desc": "정답 낱말 카드 그림."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 낱말 음원."
+            },
+            {
+              "key": "wordOffsetY",
+              "type": "number",
+              "optional": true,
+              "desc": "낱말 글자를 위아래로 얼마나 밀지(px). 낱말 길이에 따라 손봅니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록 — 낱말 하나가 이닝 하나입니다. 적은 차례대로 진행합니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "aliasNote": "`WordSparkLv1` 과 이름이 비슷하지만 다른 모듈입니다 — Lv1 은 GameData 뿌리가 배열이고 이쪽은 객체입니다. 배치표를 볼 때 주의하세요.",
+  "rules": [
+    {
+      "id": "word-kind-match",
+      "level": "error",
+      "check": "dimmedOptionList[].word 와 colorOptionList[].word 가 circle · handle · minipipe 중 같은 값으로 짝지어져야 한다.",
+      "why": "부품 갈래 이름으로 끼울 수 있는지 판정합니다. 짝이 없으면 **그 자리를 채울 방법이 없어 파이프가 완성되지 않습니다.**"
+    },
+    {
+      "id": "color-options-cover",
+      "level": "error",
+      "check": "빠진 자리에 쓰이는 모든 갈래가 colorOptionList 에 있어야 한다.",
+      "why": "한 갈래라도 빠지면 그 자리에서 진행이 막힙니다."
+    },
+    {
+      "id": "pipe-count-matches-quiz",
+      "level": "warn",
+      "check": "pipeData 의 파이프 수와 quizInfo 의 이닝 수를 맞춰 둔다.",
+      "why": "표본은 파이프 3벌 · 이닝 수는 낱말 수만큼입니다. 파이프가 모자라면 뒤쪽 이닝에서 쓸 파이프가 없습니다."
+    },
+    {
+      "id": "word-is-text",
+      "level": "warn",
+      "check": "quizInfo[].word 는 그림 alias 가 아니라 화면에 그릴 낱말이다.",
+      "why": "alias 를 적으면 그 문자열이 그대로 찍힙니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 열일곱 개가 모두 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다."
+    },
+    {
+      "id": "not-wordsparklv1",
+      "level": "warn",
+      "check": "WordSparkLv1 과 혼동하지 않는다.",
+      "why": "이름이 비슷하지만 다른 모듈이고 GameData 짜임도 다릅니다(Lv1 은 뿌리가 배열)."
+    }
+  ],
+  "notes": [
+    "표본 세 차시가 모두 ENL3M__W1S3 자리입니다.",
+    "부품 갈래가 circle · handle · minipipe 세 가지로 고정입니다. 새 갈래가 필요하면 모듈 수정이 필요하니 개발에 요청하세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

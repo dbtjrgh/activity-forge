@@ -1,0 +1,2402 @@
+{
+  "specVersion": 1,
+  "module": "M15",
+  "subject": "MA",
+  "title": "점 이어 길 만들기 (색깔 점 순서대로)",
+  "summary": "색마다 번호가 붙은 점들을 순서대로 이어 길을 만드는 활동. 차가 그 길을 따라 달리고, 새들이 자리마다 놓입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M15",
+    "activities": [
+      "MAL1M01W2S3"
+    ],
+    "doc": "README 없음. 근거는 M15.ts · M15_ImageData.ts · M15_LottieData.ts · M15_Sound.ts · M15_Fade.ts · M15_Scale.ts 와 표본 MAL1M01W2S3 입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "M15",
+        "from": "@_common/module/MA/M15/M15"
+      },
+      {
+        "symbol": "AssetTable",
+        "from": "./AssetTable",
+        "ns": true
+      }
+    ],
+    "members": [
+      "private mM15 = new M15();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "await this.mM15.onLoad({",
+        "  font: AssetTable.font,",
+        "  image: AssetTable.image,",
+        "  sound: AssetTable.sound,",
+        "  lottie: AssetTable.lottie,",
+        "  wrongNar: AssetTable.wrongNar,",
+        "  correctNar: AssetTable.correctNar,",
+        "  movingNar: AssetTable.movingNar,",
+        "  endNar: AssetTable.endNar,",
+        "  eopNar: AssetTable.eopNar,",
+        "  spritePathLabel: AssetTable.spritePathLabel,",
+        "  animationPathLabel: AssetTable.animationPathLabel,",
+        "});"
+      ],
+      "onInit": [
+        "await this.mM15.onInit(this, quizData, {",
+        "  font: AssetTable.font,",
+        "  image: AssetTable.image,",
+        "  sound: AssetTable.sound,",
+        "  lottie: AssetTable.lottie,",
+        "  wrongNar: AssetTable.wrongNar,",
+        "  correctNar: AssetTable.correctNar,",
+        "  movingNar: AssetTable.movingNar,",
+        "  endNar: AssetTable.endNar,",
+        "  eopNar: AssetTable.eopNar,",
+        "  spritePathLabel: AssetTable.spritePathLabel,",
+        "  animationPathLabel: AssetTable.animationPathLabel,",
+        "});"
+      ],
+      "onStart": [
+        "await this.mM15.onStart();"
+      ],
+      "onEnd": [
+        "await this.mM15.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mM15.onUpdate();"
+      ],
+      "onAffordanceOn": [
+        "await this.mM15.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mM15.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "background",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경. 자리는 quizData.background."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 모듈이 AudioManager.getSound(\"bgm\") 으로 찾습니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 AssetTable 을 통째로 받습니다** — 그것도 네 배열만이 아니라 **나레이션 목록까지 따로 받습니다**: `mM15.onLoad({ font, image, sound, lottie, wrongNar, correctNar, movingNar, endNar, … })`. 즉 **AssetTable.ts 가 `wrongNar` 같은 배열을 따로 export 해야 합니다** — 보통 AssetTable 에는 없는 것이라 클론할 때 통째로 빠뜨리기 쉽습니다. 검사기도 이 자리를 「아는 결함」으로 두고 있습니다(스펙 형식이 그런 자리를 아직 못 적습니다).\n\n**이름이 코드에 박힌 것** — 그림 `background` · 음원 `bgm`(getSound). 나머지는 GameData 의 숫자 열쇠 표가 자리를 정하고 그림 이름은 M15_ImageData · M15_LottieData 가 정합니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "background",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          }
+        ],
+        "desc": "배경 배치."
+      },
+      {
+        "key": "car",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "4번 칸."
+          }
+        ],
+        "desc": "차가 지나갈 자리들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "face",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "5번 칸."
+          },
+          {
+            "key": "6",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "6번 칸."
+          },
+          {
+            "key": "7",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "7번 칸."
+          },
+          {
+            "key": "8",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "8번 칸."
+          },
+          {
+            "key": "9",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "9번 칸."
+          },
+          {
+            "key": "10",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "10번 칸."
+          },
+          {
+            "key": "11",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "11번 칸."
+          },
+          {
+            "key": "12",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "12번 칸."
+          }
+        ],
+        "desc": "표정 자리들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "purpleDot",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "3번 칸."
+          }
+        ],
+        "desc": "보라 점들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "blueDot",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "5번 칸."
+          },
+          {
+            "key": "6",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "6번 칸."
+          },
+          {
+            "key": "7",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "7번 칸."
+          }
+        ],
+        "desc": "파랑 점들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "yellowDot",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "5번 칸."
+          }
+        ],
+        "desc": "노랑 점들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "redDot",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "5번 칸."
+          },
+          {
+            "key": "6",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "6번 칸."
+          },
+          {
+            "key": "7",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "7번 칸."
+          },
+          {
+            "key": "8",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "8번 칸."
+          },
+          {
+            "key": "9",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "9번 칸."
+          }
+        ],
+        "desc": "빨강 점들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "purpleNumber",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "3번 칸."
+          }
+        ],
+        "desc": "보라 점에 적히는 번호 자리들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "blueNumber",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "5번 칸."
+          },
+          {
+            "key": "6",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "6번 칸."
+          },
+          {
+            "key": "7",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "7번 칸."
+          }
+        ],
+        "desc": "파랑 점 번호 자리들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "yellowNumber",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "5번 칸."
+          }
+        ],
+        "desc": "노랑 점 번호 자리들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "redNumber",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "5번 칸."
+          },
+          {
+            "key": "6",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "6번 칸."
+          },
+          {
+            "key": "7",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "7번 칸."
+          },
+          {
+            "key": "8",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "8번 칸."
+          },
+          {
+            "key": "9",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "9번 칸."
+          }
+        ],
+        "desc": "빨강 점 번호 자리들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "bird",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "5번 칸."
+          },
+          {
+            "key": "6",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "6번 칸."
+          },
+          {
+            "key": "7",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "7번 칸."
+          },
+          {
+            "key": "8",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "8번 칸."
+          },
+          {
+            "key": "9",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "9번 칸."
+          },
+          {
+            "key": "10",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              }
+            ],
+            "desc": "10번 칸."
+          }
+        ],
+        "desc": "새 배치들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "dotPos",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 960,
+                  "desc": "자리 y (화면 가운데가 0)."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "array",
+            "required": true,
+            "minLength": 7,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y (화면 가운데가 0)."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y (화면 가운데가 0)."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "array",
+            "required": true,
+            "minLength": 9,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y (화면 가운데가 0)."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "4번 칸."
+          }
+        ],
+        "desc": "점 무리 자리표. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "birdPos",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "4번 칸."
+          },
+          {
+            "key": "5",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "5번 칸."
+          },
+          {
+            "key": "6",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "6번 칸."
+          },
+          {
+            "key": "7",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "7번 칸."
+          },
+          {
+            "key": "8",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "8번 칸."
+          },
+          {
+            "key": "9",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "9번 칸."
+          },
+          {
+            "key": "10",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "10번 칸."
+          }
+        ],
+        "desc": "새 자리들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "particle",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "1번 칸."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "2번 칸."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "3번 칸."
+          },
+          {
+            "key": "4",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "4번 칸."
+          }
+        ],
+        "desc": "파티클 배치들. **열쇠가 숫자입니다 — 1 부터 세는 순서 번호**이고, 같은 색의 Dot 과 Number 는 번호가 짝을 이룹니다."
+      },
+      {
+        "key": "rmonOpenCar",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "대기 상태의 배치."
+          },
+          {
+            "key": "end",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "마무리 상태의 배치."
+          }
+        ],
+        "desc": "빨강 캐릭터의 오픈카 배치 두 벌."
+      },
+      {
+        "key": "rmonTruck",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "대기 상태의 배치."
+          },
+          {
+            "key": "end",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "마무리 상태의 배치."
+          }
+        ],
+        "desc": "빨강 캐릭터의 트럭 배치 두 벌."
+      },
+      {
+        "key": "pmonOpenCar",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "대기 상태의 배치."
+          },
+          {
+            "key": "end",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "마무리 상태의 배치."
+          }
+        ],
+        "desc": "보라 캐릭터의 오픈카 배치 두 벌."
+      },
+      {
+        "key": "pmonTruck",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "대기 상태의 배치."
+          },
+          {
+            "key": "end",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              }
+            ],
+            "desc": "마무리 상태의 배치."
+          }
+        ],
+        "desc": "보라 캐릭터의 트럭 배치 두 벌."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "narration-arrays-exported",
+      "level": "error",
+      "check": "AssetTable.ts 가 wrongNar · correctNar · movingNar · endNar 같은 나레이션 배열을 export 해야 한다.",
+      "why": "**onLoad 가 그것들을 따로 받습니다.** 보통 AssetTable 에는 없는 export 라, 다른 차시에서 클론하면 통째로 빠져 **나레이션이 전부 무음**이 됩니다. 훅에 적힌 이름을 그대로 맞추세요."
+    },
+    {
+      "id": "dot-number-pairs",
+      "level": "error",
+      "check": "색마다 Dot 과 Number 의 숫자 열쇠 집합이 같아야 한다(purpleDot↔purpleNumber 등).",
+      "why": "점과 그 위에 적히는 번호를 같은 열쇠로 찾습니다. 한쪽이 빠지면 그 점에 번호가 안 적혀 **순서를 알 수 없습니다.**"
+    },
+    {
+      "id": "keys-one-based",
+      "level": "error",
+      "check": "숫자 열쇠는 1 부터 이어져야 한다 — 중간이 비면 안 된다.",
+      "why": "번호를 순서로 씁니다. 3 이 빠지면 2 다음에 4 로 건너뛰지 못하고 그 자리에서 멈춥니다."
+    },
+    {
+      "id": "bird-pairs",
+      "level": "error",
+      "check": "bird 와 birdPos 의 열쇠 집합이 같아야 한다.",
+      "why": "새 배치와 자리를 같은 번호로 찾습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "background 와 bgm 을 등록해야 한다.",
+      "why": "이름이 코드에 박혀 있습니다."
+    },
+    {
+      "id": "asset-table-passed-whole",
+      "level": "warn",
+      "check": "onLoad 의 객체 인자를 줄이지 않는다.",
+      "why": "이 모듈은 AssetTable 의 여러 export 를 이름으로 받습니다. 하나만 빠져도 그 갈래가 통째로 안 붙습니다."
+    }
+  ],
+  "notes": [
+    "표본이 MAL1M01W2S3 한 차시뿐입니다.",
+    "숫자 열쇠를 쓰는 표가 열넷이나 됩니다. 값을 손으로 만들지 말고 표본을 gen clone 으로 떠 와 고치세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

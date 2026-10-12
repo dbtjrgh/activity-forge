@@ -1,0 +1,279 @@
+{
+  "specVersion": 1,
+  "module": "MIB",
+  "subject": "MA",
+  "title": "인터북 (그림책 넘겨 보기)",
+  "summary": "책 표지를 꾹 눌러 펼치고, 씬을 순서대로 넘기며 이야기를 보는 활동. 씬마다 자동으로 넘어가거나(auto) 학생이 터치해야 넘어갑니다(touch). 탐색수학 차시에 붙습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/MIB",
+    "activities": [
+      "MAL2M06W1S1",
+      "MAL2M06W3S1",
+      "MAL3M06W1S1",
+      "MAL3M06W3S1"
+    ],
+    "doc": "README 없음. 근거는 MIB.ts · Scene.ts · SceneSetting.ts · BG.ts 와 6호 네 차시(MAL2M06W1S1 · MAL2M06W3S1 · MAL3M06W1S1 · MAL3M06W3S1)입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "MIB.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(MIB.handle);",
+        "await MIB.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await MIB.handle.start();",
+        "await MIB.handle.play();",
+        "await MIB.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "MIB",
+        "from": "@/_common/module/MA/MIB/MIB"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": false,
+        "boundTo": "quizData.bgAlias",
+        "note": "화면 배경. alias 는 자유지만 관례상 bg 이고 quizData.bgAlias 가 그 이름을 가리킵니다. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "**모듈이 등록하지 않습니다.** MIB.playBGM() 의 기본 인자가 \"bgm\" 이고 AudioManager.getSound(\"bgm\") 으로 찾으므로 액티비티가 이 이름으로 등록해야 합니다. Assets.ts 에 bgm 줄이 주석 처리돼 있어 빠뜨리기 쉽습니다 — 없으면 getSound 가 undefined 를 주고 BGM 만 조용히 안 나옵니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "MIB.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/MIB 에 있습니다(별도 repo). 같은 alias 를 두 번 addAsset 하면 PixiJS 가 「[Resolver] already has key … overwriting」 경고를 내고 나중 것으로 덮습니다.",
+      "image": [
+        "closeBTN"
+      ],
+      "sound": [
+        "nar1",
+        "sfx01",
+        "sfx02",
+        "sfx03"
+      ],
+      "lottie": [
+        "affordance",
+        "particle"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "bgAlias",
+        "type": "asset:image",
+        "required": true,
+        "default": "bg",
+        "desc": "배경 이미지 alias. BG.init() 이 이 값으로 AssetManager.get 을 부릅니다. 씬마다 배경을 바꾸는 자리(BG.changBG)는 코드에 있지만 GameData 로는 아직 못 넘깁니다 — quizData.bg 를 읽으려던 코드가 주석으로 남아 있습니다."
+      },
+      {
+        "key": "sceneData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "scene",
+              "type": "string",
+              "required": true,
+              "desc": "씬 이름. **코드는 읽지 않습니다** — 사람이 알아보기 위한 표시이고 순서는 배열 차례가 정합니다."
+            },
+            {
+              "key": "cover",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "책 표지 이미지. 이 키가 있으면 그 씬은 표지로 다뤄집니다 — 커버만 점점 커지며 등장하고, 표지를 눌러야 넘어갑니다. **본문 씬에는 두지 말 것**(Scene.ts 가 키가 있는지로 판정하므로 빈 값이라도 표지 취급이 됩니다). 마지막 씬에서 되돌아갈 표지도 이 값에서 찾습니다."
+            },
+            {
+              "key": "coverBg",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "표지 뒤에 깔리는 배경. cover 가 있는 씬에서만 씁니다."
+            },
+            {
+              "key": "mode",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "auto",
+                "touch"
+              ],
+              "desc": "씬을 넘기는 방법. auto = 나레이션이 끝나면 저절로 넘어갑니다. touch = 학생이 어포던스(또는 표지)를 눌러야 넘어갑니다."
+            },
+            {
+              "key": "title",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "씬 위에 얹는 제목 이미지. 있으면 1.5초 머무른 뒤 나레이션이 시작됩니다."
+            },
+            {
+              "key": "nar",
+              "type": "array",
+              "optional": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "asset:sound",
+                "desc": "나레이션 alias 하나."
+              },
+              "desc": "그 씬에서 순서대로 재생할 나레이션 alias 목록. 비워 두면 나레이션 없이 지나갑니다."
+            },
+            {
+              "key": "trans",
+              "type": "enum",
+              "optional": true,
+              "values": [
+                "fade",
+                "slide",
+                "zoom",
+                "wipe"
+              ],
+              "desc": "**이 씬에서 다음 씬으로 넘어갈 때**의 전환 방식. 다음 씬이 아니라 지금 씬에 적습니다(MIB.play 가 이전 Scene 의 값을 읽습니다). 코드가 다루는 것은 fade · slide · zoom · wipe 네 가지이고, 값이 없거나 다른 것이면 전환 없이 바로 바뀝니다."
+            },
+            {
+              "key": "img",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "씬 본문 그림."
+            },
+            {
+              "key": "inter",
+              "type": "object",
+              "optional": true,
+              "fields": [
+                {
+                  "key": "type",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "touch"
+                  ],
+                  "default": "touch",
+                  "desc": "지금은 touch 하나뿐입니다. Scene.ts 의 switch 가 그 값만 다룹니다."
+                },
+                {
+                  "key": "affScale",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "어포던스·파티클 로티의 배율. 생략하면 1."
+                },
+                {
+                  "key": "affPos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "어포던스가 놓이는 자리. 정답 파티클도 같은 자리에 뜹니다."
+                },
+                {
+                  "key": "affordanceSfx",
+                  "type": "asset:sound",
+                  "optional": true,
+                  "desc": "어포던스를 누른 순간 재생할 효과음. 모듈이 등록해 둔 sfx01 · sfx02 · sfx03 중에서 고릅니다. 초안에 빠져 있던 칸입니다 — Scene.ts:95 가 읽습니다."
+                }
+              ],
+              "desc": "터치로 넘기는 씬의 어포던스(누를 자리 표시). mode 가 touch 인데 이 값이 없으면 **누를 것이 안 그려져 진행이 막힙니다** — 표지 씬은 표지 자체가 버튼이라 예외입니다."
+            },
+            {
+              "key": "wait",
+              "type": "number",
+              "optional": true,
+              "desc": "나레이션 전에 멈춰 있을 시간(ms). 그림을 보여 주고 나서 말을 시키고 싶을 때 씁니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "씬 목록. **적은 순서대로 재생하고 셔플하지 않습니다.** 첫 씬([0])만 진행이 다릅니다 — start() 가 화면까지 미리 올려 두고, 나레이션은 play() 에서 시작합니다.",
+        "minLengthWhy": "6호 네 차시가 19~21개씩입니다. 초안의 19 는 표본 최솟값일 뿐이라, 표지·본문·마지막이 되는 3 으로 낮췄습니다."
+      }
+    ]
+  },
+  "aliases": [
+    "인터북",
+    "InterBook"
+  ],
+  "aliasNote": "**인터북 모듈은 MIB 입니다.** 1~5호는 sparkLib 의 InterBook 을 썼고 6호부터 MIB 로 바뀌었습니다 — 배치표 기계 판정이 앞선 다섯 호를 세어 InterBook 을 고르는데 그것은 옛 모듈입니다. WBS 는 모듈 칸을 '-' 로 두고 옆 칸에 '인터북' 이라고 적습니다.",
+  "rules": [
+    {
+      "id": "cover-key-presence",
+      "level": "error",
+      "check": "표지가 아닌 씬에는 cover 키를 두지 않는다(빈 값도 안 된다).",
+      "why": "Scene.ts 가 값이 아니라 **키가 있는지**로 표지를 판정합니다. 빈 플레이스홀더를 남기면 본문 씬이 표지처럼 동작합니다."
+    },
+    {
+      "id": "trans-on-source-scene",
+      "level": "warn",
+      "check": "trans 는 넘어갈 씬이 아니라 지금 씬에 적는다.",
+      "why": "한 칸씩 밀려 적으면 전환이 엉뚱한 자리에서 일어납니다. 에러는 나지 않습니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "cover · coverBg · title · img · nar[] 의 alias 가 모두 AssetTable 에 있어야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 console.error 만 찍고 지나가서 그림이 사라진 것처럼 보입니다. 음원은 AudioManager 가 즉시 통과시켜 무음으로 진행합니다."
+    },
+    {
+      "id": "eop-after-finish",
+      "level": "error",
+      "check": "onStart 가 finish() 뒤에 SparkApp.eop.show(1) 을 불러야 한다.",
+      "why": "MIB.finish() 는 BGM 페이드아웃만 합니다. eop 를 안 부르면 학습이 끝나지 않습니다."
+    }
+  ],
+  "notes": [
+    "씬 수가 20 안팎이라 GameData 가 길어집니다. 6호 네 차시 중 하나를 gen clone 으로 떠 와서 그림·음원 alias 만 바꾸는 것이 빠릅니다.",
+    "8호는 L2·L3 의 W1S1 · W3S1 네 차시가 이 모듈입니다. L1 의 같은 자리는 영상(VideoPlayer)입니다."
+  ],
+  "relations": [
+    {
+      "id": "touch-needs-inter",
+      "kind": "present",
+      "each": "sceneData",
+      "when": {
+        "pick": "mode",
+        "is": "touch"
+      },
+      "picks": [
+        "cover",
+        "inter"
+      ],
+      "any": true,
+      "note": "mode 가 'touch' 인 씬은 cover 가 있거나 inter 가 있어야 한다.",
+      "why": "둘 다 없으면 누를 것이 화면에 없어 **그 씬에서 진행이 멈춥니다.** 모듈이 검사하지 않습니다."
+    },
+    {
+      "id": "cover-exists-once",
+      "kind": "present",
+      "picks": [
+        "sceneData[].cover"
+      ],
+      "note": "cover 가 있는 씬이 적어도 하나 있어야 한다.",
+      "why": "MIB.play 가 sceneData.find(s => s.cover) 로 표지를 찾아 마지막에 되돌아갑니다. 없으면 마지막 씬에서 되돌아갈 곳이 없습니다.",
+      "level": "warn"
+    }
+  ]
+}

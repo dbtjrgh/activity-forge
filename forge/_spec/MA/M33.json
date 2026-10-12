@@ -1,0 +1,614 @@
+{
+  "specVersion": 1,
+  "module": "M33",
+  "subject": "MA",
+  "title": "지오보드 (핀 이어 도형 만들기)",
+  "summary": "핀이 격자로 박힌 판에서 핀과 핀을 이어 선을 만들고, 정답 도형을 완성하는 활동. 붓(색)을 골라 그을 수 있고 이닝마다 만들 도형이 다릅니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M33",
+    "activities": [
+      "MAL1M03W2S3",
+      "MAL1M11W3S3",
+      "MAL2M03W2S3",
+      "MAL2M11W3S2",
+      "MAL3M03W2S3"
+    ],
+    "doc": "README 없음. 근거는 M33.ts · GeoBoard.ts · GeoLine.ts · InningBar.ts · SelectPanel.ts · EndingPage.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "M33.handle.init(quizData);",
+        "this.addChild(M33.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await M33.handle.start();",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"guide_nar01\");",
+        "await M33.handle.play();",
+        "await M33.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "M33",
+        "from": "@/_common/module/MA/M33/M33"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경."
+      },
+      {
+        "alias": "board",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "핀이 박히는 판."
+      },
+      {
+        "alias": "pin",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "핀. 격자 수만큼 이 한 장을 돌려 씁니다."
+      },
+      {
+        "alias": "guide_nar01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. **액티비티 onStart 가 부릅니다.**"
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 모듈이 AudioManager.getSound(\"bgm\") 으로 찾습니다."
+      },
+      {
+        "alias": "MAL3M03W2S3_correct_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 GeoBoard.ts 가 AssetManager.get(\"MAL3M03W2S3_correct_ef\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "new_pin",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 GeoLine.ts 가 AssetManager.get(\"new_pin\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset 파일이 없습니다. 아래를 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 코드에 박힌 그림** — `bg` · `mainBg` · `board` · `gamePanel` · `mask` · `pin` · `new_pin` · `pix_pin` · `top_bar` · `middle_bar` · `bottom_bar` · `inningbar` · `hint_btn` · `hint_btn_click` · `fin_btn` · `selectBg` · `selectPanel` · `endBg` · `End_in` · `End_out` · `rocket` · `mon_idle` · `mon_Talk`(**T 가 대문자**) · `mon_correct`\n**최초 제작 차시 이름이 굳은 것** — `MAL3M03W2S3_Pmon` · `MAL3M03W2S3_correct_ef`. 활동 이름이 아니라 고정 이름이니 새 차시에서도 이 alias 로 등록합니다.\n**음원** — `bgm`(액티비티가 켜지 않고 모듈이 getSound 로 찾습니다) · `sound_touch` · `sound_stretch_line` · `sound_line_correct` · `sound_line_incorrect` · `sound_inning_correct` · `mon_nar01` · `mon_nar02` · `mon_nar03`\n**지문** — `guide_nar01`(액티비티 onStart 가 부름) · `guide_nar02`(모듈이 부름). **두 개가 다 필요합니다.**\n\n`guide_nar02` 는 모듈이 mainCharacter.guide 로 부르지만 **표본 MAL1M03W2S3 에는 등록돼 있지 않습니다** — 그 차시에서는 이 지문이 무음으로 지나갑니다. 새로 만들 때 지문을 두 개 쓸 생각이면 등록하세요. 모든 차시에 있어야 하는 것은 아니라 required 목록에는 두지 않았습니다.\n\n`mon_Talk` 는 표본 다섯 중 넷이 등록했고 **MAL3M03W2S3 만 빠져 있습니다** — 그 차시에서는 도우미가 말할 때 그림이 사라집니다. 빠뜨린 것으로 보이지만 확인되지 않아 required 목록에서는 뺐습니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "gameInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "useInningSelect",
+            "type": "bool",
+            "required": true,
+            "desc": "이닝을 카드로 골라 들어가게 할지. true 면 selectBg · selectPanel 과 이닝마다 selectInningImg 가 필요합니다."
+          },
+          {
+            "key": "showLineBrushPalette",
+            "type": "bool",
+            "required": true,
+            "desc": "붓(색) 고르는 판을 보여 줄지. false 면 brushInfo 를 적어도 안 보입니다."
+          },
+          {
+            "key": "useCustomInningBar",
+            "type": "bool",
+            "required": true,
+            "desc": "이닝 띠를 활동 고유 그림으로 그릴지. true 면 inningBarInfo.barArrInfo 가 필요합니다."
+          },
+          {
+            "key": "lv",
+            "type": "number",
+            "required": true,
+            "desc": "난도 표시. 코드 분기에 쓰입니다."
+          }
+        ],
+        "desc": "활동 전체 스위치."
+      },
+      {
+        "key": "mapInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "격자 왼쪽 위 x."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "격자 왼쪽 위 y."
+          },
+          {
+            "key": "offsetX",
+            "type": "number",
+            "required": true,
+            "desc": "핀 사이 가로 간격(px)."
+          },
+          {
+            "key": "offsetY",
+            "type": "number",
+            "required": true,
+            "desc": "핀 사이 세로 간격(px)."
+          },
+          {
+            "key": "countX",
+            "type": "number",
+            "required": true,
+            "desc": "가로 핀 수."
+          },
+          {
+            "key": "countY",
+            "type": "number",
+            "required": true,
+            "default": 5,
+            "desc": "세로 핀 수."
+          }
+        ],
+        "desc": "핀 격자. **핀 번호는 이 격자에서 1 부터 좌→우, 위→아래로 붙습니다** — 아래 points 값이 그 번호입니다."
+      },
+      {
+        "key": "inningBarInfo",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "inningNumber",
+            "type": "number",
+            "required": true,
+            "default": 5,
+            "desc": "이닝 수. **inningInfo 배열의 칸 수와 같아야 합니다.**"
+          },
+          {
+            "key": "colorInfo",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "enum",
+              "values": [
+                "#43C313",
+                "#64DB00",
+                "#FF908C",
+                "#FFAB00",
+                "#FFE412"
+              ],
+              "desc": "색 하나(#RRGGBB)."
+            },
+            "desc": "이닝마다 띠에 쓸 색. 목록에 없는 색도 문자열로 그대로 씁니다.",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          },
+          {
+            "key": "barArrInfo",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "emptyImg",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "아직 안 푼 칸 그림."
+                },
+                {
+                  "key": "colorImg",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "다 푼 칸 그림."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "이닝 띠 칸 그림. useCustomInningBar 가 true 일 때 씁니다.",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          }
+        ],
+        "desc": "위쪽 이닝 띠."
+      },
+      {
+        "key": "inningInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "recreateMap",
+              "type": "bool",
+              "optional": true,
+              "desc": "그 이닝에서 격자를 다시 그릴지. true 면 newMapInfo 의 격자를 씁니다."
+            },
+            {
+              "key": "lineInfo",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "img",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "안내선 그림."
+                },
+                {
+                  "key": "type",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "diagonal",
+                    "horizon",
+                    "vertical"
+                  ],
+                  "desc": "안내선 방향 — diagonal(대각) · horizon(가로) · vertical(세로)."
+                }
+              ],
+              "desc": "그 이닝의 안내선."
+            },
+            {
+              "key": "resultAni",
+              "type": "asset:lottie",
+              "required": true,
+              "desc": "이닝을 맞혔을 때의 애니."
+            },
+            {
+              "key": "preDrawPoint",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "color",
+                    "type": "string",
+                    "required": true,
+                    "desc": "선 색(#RRGGBB 문자열)."
+                  },
+                  {
+                    "key": "points",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 2,
+                    "of": {
+                      "key": "",
+                      "type": "number",
+                      "desc": "핀 번호 하나(1 부터)."
+                    },
+                    "desc": "이을 **핀 번호** 목록. mapInfo 격자에서 1 부터 좌→우, 위→아래로 셉니다(GeoBoard.ts:251 이 `[번호 - 1]` 로 핀을 찾습니다).",
+                    "minLengthWhy": "선 하나에 핀이 둘은 있어야 합니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "이닝을 시작할 때 이미 그어져 있는 선들. 문제의 일부로 미리 보여 줍니다.",
+              "minLengthWhy": "미리 그을 선이 없으면 빈 배열로 둡니다."
+            },
+            {
+              "key": "moveDrawPoint",
+              "type": "array",
+              "optional": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "color",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "#FF5050",
+                      "#FF5050 "
+                    ],
+                    "desc": "선 색(#RRGGBB 문자열)."
+                  },
+                  {
+                    "key": "points",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 2,
+                    "of": {
+                      "key": "",
+                      "type": "number",
+                      "desc": "핀 번호 하나(1 부터)."
+                    },
+                    "desc": "이을 **핀 번호** 목록. mapInfo 격자에서 1 부터 좌→우, 위→아래로 셉니다(GeoBoard.ts:251 이 `[번호 - 1]` 로 핀을 찾습니다).",
+                    "minLengthWhy": "선 하나에 핀이 둘은 있어야 합니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "학생이 옮길 수 있는 선들.",
+              "minLengthWhy": "옮길 선이 없으면 빈 배열로 둡니다."
+            },
+            {
+              "key": "answerPoint",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "color",
+                    "type": "string",
+                    "required": true,
+                    "desc": "선 색(#RRGGBB 문자열)."
+                  },
+                  {
+                    "key": "points",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 2,
+                    "of": {
+                      "key": "",
+                      "type": "number",
+                      "desc": "핀 번호 하나(1 부터)."
+                    },
+                    "desc": "이을 **핀 번호** 목록. mapInfo 격자에서 1 부터 좌→우, 위→아래로 셉니다(GeoBoard.ts:251 이 `[번호 - 1]` 로 핀을 찾습니다).",
+                    "minLengthWhy": "선 하나에 핀이 둘은 있어야 합니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "**정답 도형을 이루는 선들.** GeoBoard.ts:70 이 고른 붓 색과 `answerPoint[i].color` 를 견주므로 **색까지 맞아야 정답입니다.** 배열 차례가 겹치는 순서(zIndex)도 정합니다 — 첫 칸이 가장 위로 옵니다(GeoBoard.ts:91).",
+              "minLengthWhy": "정답 선이 하나는 있어야 합니다."
+            },
+            {
+              "key": "possiblePlayPoint",
+              "type": "array",
+              "optional": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "number",
+                "desc": "핀 번호 하나(1 부터)."
+              },
+              "desc": "그 이닝에서 **누를 수 있는 핀 번호들**(1 부터). 여기 없는 핀은 눌러도 반응하지 않습니다(GeoBoard.ts:250~251).",
+              "minLengthWhy": "누를 수 있는 핀이 둘은 있어야 선을 그을 수 있습니다."
+            },
+            {
+              "key": "showGuideLine",
+              "type": "bool",
+              "required": true,
+              "desc": "안내선을 보여 줄지. false 면 guideLine 을 적어도 안 보입니다."
+            },
+            {
+              "key": "guideLine",
+              "type": "array",
+              "optional": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "color",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "#CCC"
+                    ],
+                    "default": "#CCC",
+                    "desc": "선 색(#RRGGBB 문자열)."
+                  },
+                  {
+                    "key": "points",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 2,
+                    "of": {
+                      "key": "",
+                      "type": "number",
+                      "desc": "핀 번호 하나(1 부터)."
+                    },
+                    "desc": "이을 **핀 번호** 목록. mapInfo 격자에서 1 부터 좌→우, 위→아래로 셉니다(GeoBoard.ts:251 이 `[번호 - 1]` 로 핀을 찾습니다).",
+                    "minLengthWhy": "선 하나에 핀이 둘은 있어야 합니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "흐리게 깔아 주는 안내 도형. showGuideLine 이 true 일 때 보입니다.",
+              "minLengthWhy": "안내선이 없으면 빈 배열로 둡니다."
+            },
+            {
+              "key": "selectlineImg",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "선을 고른 상태의 그림."
+            },
+            {
+              "key": "selectInningImg",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "이닝 고르기 화면의 카드 그림. useInningSelect 가 true 일 때 씁니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. 이닝 하나가 만들 도형 하나입니다.",
+        "minLengthWhy": "inningBarInfo.inningNumber 만큼 필요합니다."
+      },
+      {
+        "key": "newMapInfo",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "격자 왼쪽 위 x."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "격자 왼쪽 위 y."
+          },
+          {
+            "key": "offsetX",
+            "type": "number",
+            "required": true,
+            "desc": "핀 사이 가로 간격(px)."
+          },
+          {
+            "key": "offsetY",
+            "type": "number",
+            "required": true,
+            "desc": "핀 사이 세로 간격(px)."
+          },
+          {
+            "key": "countX",
+            "type": "number",
+            "required": true,
+            "desc": "가로 핀 수."
+          },
+          {
+            "key": "countY",
+            "type": "number",
+            "required": true,
+            "desc": "세로 핀 수."
+          }
+        ],
+        "desc": "recreateMap 이 true 인 이닝에서 쓸 다른 격자. mapInfo 와 같은 짜임입니다."
+      },
+      {
+        "key": "brushInfo",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "brushArr",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "color",
+                  "type": "string",
+                  "required": true,
+                  "desc": "붓 색(#RRGGBB). answerPoint[].color 와 글자까지 같아야 합니다."
+                },
+                {
+                  "key": "img",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "붓 아이콘 그림."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "붓 목록. **정답 판정에 색이 쓰이므로 answerPoint 의 색이 이 목록에 있어야 합니다.**",
+            "minLengthWhy": "붓이 하나는 있어야 그을 수 있습니다."
+          },
+          {
+            "key": "showBrushCount",
+            "type": "number",
+            "required": true,
+            "desc": "판에 보일 붓 개수. brushArr 보다 크면 빈칸이 생깁니다."
+          }
+        ],
+        "desc": "붓(색) 판."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "points-are-pin-numbers",
+      "level": "error",
+      "check": "preDrawPoint · moveDrawPoint · answerPoint · guideLine 의 points 와 possiblePlayPoint 값은 1 부터 세는 핀 번호이고, mapInfo.countX × countY 범위 안이어야 한다.",
+      "why": "GeoBoard.ts:251 이 `mPinArr[번호 - 1]` 로 찾습니다. 0 을 적으면 -1 첨자가 되고, 범위를 넘으면 undefined 핀을 읽어 **그 선이 안 그려집니다.**"
+    },
+    {
+      "id": "answer-color-in-brush",
+      "level": "error",
+      "check": "answerPoint[].color 가 brushInfo.brushArr 의 color 중 하나와 **글자까지 같아야** 한다.",
+      "why": "GeoBoard.ts:70 이 고른 붓 색과 정답 색을 문자열로 견줍니다. `#FF5050` 과 `#FF5050 `(뒤에 빈칸)처럼 한 글자만 달라도 **맞게 그었는데 정답이 되지 않습니다** — 초안 enum 에 실제로 빈칸이 붙은 값이 섞여 있습니다."
+    },
+    {
+      "id": "playable-pins-cover-answer",
+      "level": "error",
+      "check": "answerPoint 의 모든 핀 번호가 possiblePlayPoint 에 들어 있어야 한다.",
+      "why": "누를 수 없는 핀은 이을 수 없습니다. 정답 도형에 그런 핀이 있으면 **이닝을 끝낼 방법이 없습니다.**"
+    },
+    {
+      "id": "inning-count-matches",
+      "level": "error",
+      "check": "inningBarInfo.inningNumber 와 inningInfo 칸 수, colorInfo 칸 수가 같아야 한다.",
+      "why": "띠를 이닝 수만큼 그리고 색을 이닝 번호로 꺼냅니다. 어긋나면 띠가 모자라거나 색이 undefined 가 됩니다."
+    },
+    {
+      "id": "switches-gate-data",
+      "level": "warn",
+      "check": "showLineBrushPalette · useCustomInningBar · useInningSelect · showGuideLine 이 false 면 짝이 되는 값은 안 쓰인다.",
+      "why": "「값을 넣었는데 안 나온다」의 대부분이 이 스위치입니다."
+    },
+    {
+      "id": "mon-talk-capital-t",
+      "level": "error",
+      "check": "도우미 말하기 그림 alias 는 mon_Talk 다(T 가 대문자). 등록도 빠뜨리지 말 것.",
+      "why": "같은 모듈 안에서 mon_idle · mon_correct 는 소문자인데 이것만 대문자입니다. 소문자로 적으면 말할 때 도우미가 사라집니다 — **표본 MAL3M03W2S3 이 실제로 이 alias 를 등록하지 않았습니다.**"
+    },
+    {
+      "id": "two-guide-narrations",
+      "level": "warn",
+      "check": "지문을 두 개 쓰려면 guide_nar01 과 guide_nar02 를 둘 다 등록한다.",
+      "why": "01 은 액티비티 onStart 가, 02 는 모듈이 부릅니다. **표본 MAL1M03W2S3 은 02 를 등록하지 않아 그 지문이 무음으로 지나갑니다** — 의도한 것인지 확인되지 않았습니다."
+    },
+    {
+      "id": "eop-not-called",
+      "level": "warn",
+      "check": "이 모듈은 onStart 에 eop 호출이 없다 — 표본 그대로 둔다.",
+      "why": "표본 훅에 eop 가 없습니다. 마무리 화면(EndingPage)이 그 몫을 합니다. 임의로 넣으면 화면이 겹칩니다."
+    }
+  ],
+  "notes": [
+    "핀 번호가 1 부터인 것이 이 모듈의 가장 큰 함정입니다. 좌표가 아니라 번호라 눈으로는 검산이 안 되니, 격자를 그려 놓고 세어 확인하세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

@@ -1,0 +1,346 @@
+{
+  "specVersion": 1,
+  "module": "E37",
+  "subject": "EN",
+  "title": "가방 스캔해서 낱말 철자 맞추기",
+  "summary": "가방을 스캐너에 통과시키면 안에 든 물건이 보이고, 그 낱말의 철자 카드를 순서대로 놓아 맞히는 활동. 통과하면 초록불, 틀리면 빨간불이 켜집니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E37",
+    "activities": [
+      "ENL3M02W3S2",
+      "ENL3M03W3S2",
+      "ENL3M05W3S2",
+      "ENL3M11W2S3"
+    ],
+    "doc": "README 없음. 근거는 E37.ts · Baggage.ts · Scanner.ts · CardManager.ts 와 표본 4차시(1·2·3·5호)입니다. **자리가 ENL3M__W2S3 와 ENL3M__W3S2 로 옮겨 다녔습니다.**"
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "E37.handle.init(quizData);",
+        "this.addChild(E37.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await E37.handle.start();",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"nar02\");",
+        "await E37.handle.play();",
+        "await E37.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "E37",
+        "from": "@_common/module/EN/E37/E37"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "scanner",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "스캐너 몸통."
+      },
+      {
+        "alias": "scan_bar",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "스캔 막대."
+      },
+      {
+        "alias": "greenLight",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "통과 신호등(초록)."
+      },
+      {
+        "alias": "redLight",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "실패 신호등(빨강)."
+      },
+      {
+        "alias": "light_green",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "초록불 켜진 그림."
+      },
+      {
+        "alias": "light_red",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "빨간불 켜진 그림."
+      },
+      {
+        "alias": "card_blank",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "빈 철자 카드."
+      },
+      {
+        "alias": "card_outline",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "철자 카드 테두리."
+      },
+      {
+        "alias": "card_spell",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "철자가 적힌 카드 바탕."
+      },
+      {
+        "alias": "correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음."
+      },
+      {
+        "alias": "nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. **액티비티 onStart 가 이름을 박아 부릅니다.**"
+      },
+      {
+        "alias": "sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "com_sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      },
+      {
+        "alias": "com_sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      },
+      {
+        "alias": "com_sfx05",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다.** 표본 네 차시가 모두 공통으로 등록한 alias 42개가 사실상 모듈 몫입니다:\n그림 — `bg` · `scanner` · `scan_bar` · `greenLight` · `redLight` · `light_green` · `light_red` · `card_blank` · `card_outline` · `card_spell` · `bag_1`~`bag_5` · `suitcase_1`~`suitcase_4` · `dimmed_bag` · `dimmed_suitcase` · `outline_dimmed_bag` · `outline_dimmed_suitcase` · 로티 `correct` · 폰트 `GangwonEduPower`\n음원 — `bgm` · `nar02` · `sfx01`~`sfx03` · `com_sfx02` · `com_sfx04` · `com_sfx05` · 도우미 `com_nar01`~`03` · `com_nar07`~`09` · `com_nar13`~`15`\n\n**`nar02` 는 액티비티 onStart 가 부릅니다.** 차시 고유는 `{낱말}` · `dimmed_{낱말}` · `sound_{낱말}` 입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고 낱말 이름이 붙은 것은 그 차시 몫입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "baggageInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "baggage",
+              "type": "asset:image",
+              "required": true,
+              "desc": "가방 그림. 표본은 `bag_1`~`bag_5` · `suitcase_1`~`suitcase_4` 입니다."
+            },
+            {
+              "key": "dimmedBaggage",
+              "type": "asset:image",
+              "required": true,
+              "desc": "스캔 전(어두운) 가방 그림."
+            },
+            {
+              "key": "dimmedBaggageZoom",
+              "type": "asset:image",
+              "required": true,
+              "desc": "스캔 중 확대된 어두운 가방 그림."
+            },
+            {
+              "key": "color",
+              "type": "string",
+              "required": true,
+              "desc": "가방 색 이름. 이닝의 `color` 와 짝을 맞춥니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "쓸 수 있는 가방 종류들. 이닝이 `baggage` 이름으로 이 목록을 골라 씁니다.",
+        "minLengthWhy": "가방이 하나는 있어야 합니다."
+      },
+      {
+        "key": "wordInfo",
+        "type": "object",
+        "optional": true,
+        "fields": [],
+        "desc": "**코드가 읽지 않습니다.** 초안이 표본에서 빈 객체로 떠 온 자리이고, 모듈 어디에서도 참조하지 않습니다. 새로 만들 때는 넣지 마세요."
+      },
+      {
+        "key": "iningInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "spell",
+                    "type": "string",
+                    "required": true,
+                    "desc": "그 카드에 적힐 철자. **그림이 아니라 화면에 글자로 그립니다.**"
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝 낱말의 **철자 카드 목록**. 칸 하나가 카드 한 장이고, 적은 차례가 정답 순서입니다.",
+              "minLengthWhy": "철자가 하나는 있어야 합니다."
+            },
+            {
+              "key": "wordImg",
+              "type": "asset:image",
+              "required": true,
+              "desc": "가방 안에 든 물건 그림."
+            },
+            {
+              "key": "dimmedWordImg",
+              "type": "asset:image",
+              "required": true,
+              "desc": "스캔 전(어두운) 물건 그림."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 낱말 음원."
+            },
+            {
+              "key": "baggage",
+              "type": "string",
+              "optional": true,
+              "default": "",
+              "desc": "쓸 가방 그림 alias. **baggageInfo 의 baggage 중 하나여야 합니다.**"
+            },
+            {
+              "key": "dimmedBaggage",
+              "type": "string",
+              "optional": true,
+              "default": "",
+              "desc": "그 가방의 어두운 그림 alias. baggageInfo 의 값과 맞춰 적습니다."
+            },
+            {
+              "key": "dimmedBaggageZoom",
+              "type": "string",
+              "optional": true,
+              "default": "",
+              "desc": "그 가방의 확대된 어두운 그림 alias."
+            },
+            {
+              "key": "color",
+              "type": "string",
+              "optional": true,
+              "default": "",
+              "desc": "그 가방의 색 이름. baggageInfo 의 color 와 맞춰 적습니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. (열쇠 철자가 `iningInfo` 입니다.) 적은 차례대로 진행합니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "aliasNote": "`E37_1` 은 다른 호가 쓰는 변형입니다. 두 폴더는 파일도 내용도 달라 서로 바꿔 쓸 수 없습니다.",
+  "rules": [
+    {
+      "id": "baggage-refs-exist",
+      "level": "error",
+      "check": "iningInfo[].baggage · dimmedBaggage · dimmedBaggageZoom · color 가 baggageInfo 의 한 칸과 일관되게 맞아야 한다.",
+      "why": "가방 그림 네 값이 따로 적혀 있어 서로 어긋날 수 있습니다. 어긋나면 스캔 전후 그림이 다른 가방이 됩니다 — 에러는 없습니다."
+    },
+    {
+      "id": "spell-order-is-answer",
+      "level": "error",
+      "check": "word[].spell 의 차례가 낱말의 철자 순서여야 한다.",
+      "why": "적은 차례가 곧 정답입니다. 순서가 틀리면 맞게 놓아도 오답이 됩니다."
+    },
+    {
+      "id": "spell-is-text",
+      "level": "warn",
+      "check": "spell 은 그림 alias 가 아니라 화면에 그릴 글자다.",
+      "why": "alias 를 적으면 그 문자열이 그대로 카드에 찍힙니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 열아홉 개가 모두 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다."
+    },
+    {
+      "id": "typo-key-kept",
+      "level": "warn",
+      "check": "열쇠는 `iningInfo` 철자 그대로 적는다.",
+      "why": "코드가 그 이름으로 읽습니다."
+    }
+  ],
+  "notes": [
+    "표본이 1·2·3·5호 네 차시이고 자리가 W2S3 와 W3S2 로 옮겨 다녔습니다.",
+    "**8호는 ENL3M07W3S2 한 자리이고 지금 「리소스 대기」입니다** — 진행판에서 남은 13차시 중 하나입니다."
+  ]
+}

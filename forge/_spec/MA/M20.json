@@ -1,0 +1,1723 @@
+{
+  "specVersion": 1,
+  "module": "M20",
+  "subject": "MA",
+  "title": "숫자 따라 그리기 (색칠 팔레트)",
+  "summary": "화면에 숫자 모양의 밑그림이 있고, 팔레트에서 색을 골라 획을 따라 그리는 활동. 몸·팔·다리 부위마다 그릴 자리가 정해져 있습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M20",
+    "activities": [
+      "MAL1M01W2S1",
+      "MAL1M11W1S2"
+    ],
+    "doc": "README 없음. 근거는 M20.ts · M20_SetupNumbers.ts · M20_DrawingNumbers.ts · M20_AnimationNumbers.ts · M20_NumberManager.ts 와 표본 2차시입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M20",
+      "from": "@_common/module/MA/M20/M20"
+    },
+    "members": [
+      "private mM20 = new M20();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "super.onLoad();",
+        "await this.mM20.onLoad(font, lottie, image, sound);"
+      ],
+      "onInit": [
+        "await this.mM20.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mM20.onStart();"
+      ],
+      "onAffordanceOn": [
+        "await this.mM20.OnAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mM20.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bGConfig",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경. **GameData 열쇠 이름이 곧 alias 입니다.**"
+      },
+      {
+        "alias": "bGConfig2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "두 번째 배경."
+      },
+      {
+        "alias": "palbg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "팔레트 배경."
+      },
+      {
+        "alias": "tree",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "나무 장식."
+      },
+      {
+        "alias": "bg2bar",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "두 번째 화면의 막대."
+      },
+      {
+        "alias": "bg2baricon",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "막대 아이콘."
+      },
+      {
+        "alias": "nextbtn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다음 가기 버튼."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 볼륨은 quizData.bgmVolume."
+      },
+      {
+        "alias": "bgm2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "두 번째 배경음."
+      },
+      {
+        "alias": "drawing",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "획을 그을 때의 소리. **getSound 와 play 로 둘 다 쓰입니다.**"
+      },
+      {
+        "alias": "drawbtntouch",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "그리기 버튼 효과음."
+      },
+      {
+        "alias": "startnar1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작 지문 1."
+      },
+      {
+        "alias": "startnar2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작 지문 2."
+      },
+      {
+        "alias": "startnar3",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작 지문 3."
+      },
+      {
+        "alias": "threenar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "세 번째 안내 지문."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — 액티비티 onLoad 가 AssetTable 네 배열을 그대로 넘깁니다(`mM20.onLoad(font, lottie, image, sound)` — **인자 차례가 font · lottie · image · sound 입니다**).\n\n**GameData 의 배치 열쇠가 곧 alias 입니다** — 모듈이 `AssetManager.get(\"bGConfig\")` 처럼 GameData 열쇠 이름으로 그림을 찾습니다. 그래서 `bGConfig` · `bGConfig2` · `palbg` · `tree` · `bg2bar` · `bg2baricon` · `nextbtn` 은 **그 이름 그대로 AssetTable 에 있어야 합니다.**\n\n**음원** — `bgm` · `bgm2`(둘 다 getSound) · `drawing` · `drawbtntouch`\n**지문** — `startnar1` · `startnar2` · `startnar3` · `threenar`(mainCharacter.guide)"
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "bgmVolume",
+        "type": "number",
+        "required": true,
+        "desc": "배경음 볼륨(0~1)."
+      },
+      {
+        "key": "bGConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "`bGConfig` 의 배치. **열쇠가 곧 alias 입니다** — 모듈이 AssetManager.get(\"bGConfig\") 로 찾습니다."
+      },
+      {
+        "key": "bGConfig2",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "`bGConfig2` 의 배치. **열쇠가 곧 alias 입니다** — 모듈이 AssetManager.get(\"bGConfig2\") 로 찾습니다."
+      },
+      {
+        "key": "palbg",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "`palbg` 의 배치. **열쇠가 곧 alias 입니다** — 모듈이 AssetManager.get(\"palbg\") 로 찾습니다."
+      },
+      {
+        "key": "tree",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "`tree` 의 배치. **열쇠가 곧 alias 입니다** — 모듈이 AssetManager.get(\"tree\") 로 찾습니다."
+      },
+      {
+        "key": "bg2bar",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "`bg2bar` 의 배치. **열쇠가 곧 alias 입니다** — 모듈이 AssetManager.get(\"bg2bar\") 로 찾습니다."
+      },
+      {
+        "key": "bg2baricon",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "`bg2baricon` 의 배치. **열쇠가 곧 alias 입니다** — 모듈이 AssetManager.get(\"bg2baricon\") 로 찾습니다."
+      },
+      {
+        "key": "nextbtn",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "`nextbtn` 의 배치. **열쇠가 곧 alias 입니다** — 모듈이 AssetManager.get(\"nextbtn\") 로 찾습니다."
+      },
+      {
+        "key": "endbtn",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "`endbtn` 의 배치. **열쇠가 곧 alias 입니다** — 모듈이 AssetManager.get(\"endbtn\") 로 찾습니다."
+      },
+      {
+        "key": "nextBtnGap",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "desc": "가로 간격(px)."
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "desc": "세로 간격(px)."
+          }
+        ],
+        "desc": "다음 버튼의 어포던스가 버튼에서 얼마나 떨어질지."
+      },
+      {
+        "key": "endBtnGap",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "desc": "가로 간격(px)."
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "desc": "세로 간격(px)."
+          }
+        ],
+        "desc": "완료 버튼의 어포던스가 버튼에서 얼마나 떨어질지."
+      },
+      {
+        "key": "affordanceNar1",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "어포던스 지문 1. 한동안 안 누르면 읽어 줍니다."
+      },
+      {
+        "key": "affordanceNar2",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "어포던스 지문 2. 한동안 안 누르면 읽어 줍니다."
+      },
+      {
+        "key": "affordanceNar3",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "어포던스 지문 3. 한동안 안 누르면 읽어 줍니다."
+      },
+      {
+        "key": "palcolor",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 905,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "팔레트 색 칸 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "palcolorwhite",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "팔레트 흰색 칸 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "firstNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "첫 숫자 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "faceEyeNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "얼굴 눈 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "faceMouthOutNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "입 바깥선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "faceMouthInNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "입 안쪽 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "bodyOutNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "desc": "높이(px)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "몸 바깥선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "bodyOutNum10",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "desc": "높이(px)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "몸 바깥선(10 단위) 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "bodyNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "optional": true,
+              "desc": "너비(px)."
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "optional": true,
+              "desc": "높이(px)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "몸 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "linebodyNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "몸 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "armlNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "왼팔 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "linearmlNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "왼팔 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "arml1pxNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "왼팔 1px 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "armrNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "오른팔 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "linearmrNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "오른팔 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "armr1pxNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "오른팔 1px 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "footlNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "왼발 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "linefootlNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "왼발 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "footl1pxNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "왼발 1px 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "footrNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "오른발 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "linefootrNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "오른발 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "footr1pxNum",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "자리 x (화면 가운데가 0)."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "자리 y (화면 가운데가 0)."
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0,
+              "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1,
+              "desc": "투명도(0~1)."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "오른발 1px 선 의 배치들. **칸 차례가 곧 그 부위의 순번**이고, 칸마다 자리·크기·기준점·투명도를 적습니다.",
+        "minLengthWhy": "그 부위에 쓸 개수만큼 필요합니다."
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "numlarmLayout",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y (화면 가운데가 0)."
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "desc": "너비(px)."
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "desc": "높이(px)."
+                },
+                {
+                  "key": "autoPlay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "올라오는 순간 재생할지."
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "반복 재생할지."
+                },
+                {
+                  "key": "anchor",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "왼팔 애니 자리들.",
+            "minLengthWhy": "그 부위 애니 개수만큼 필요합니다."
+          },
+          {
+            "key": "numrarmLayout",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y (화면 가운데가 0)."
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "desc": "너비(px)."
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "desc": "높이(px)."
+                },
+                {
+                  "key": "autoPlay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "올라오는 순간 재생할지."
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "반복 재생할지."
+                },
+                {
+                  "key": "anchor",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "오른팔 애니 자리들.",
+            "minLengthWhy": "그 부위 애니 개수만큼 필요합니다."
+          },
+          {
+            "key": "numlfootLayout",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y (화면 가운데가 0)."
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "desc": "너비(px)."
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "desc": "높이(px)."
+                },
+                {
+                  "key": "autoPlay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "올라오는 순간 재생할지."
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "반복 재생할지."
+                },
+                {
+                  "key": "anchor",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "왼발 애니 자리들.",
+            "minLengthWhy": "그 부위 애니 개수만큼 필요합니다."
+          },
+          {
+            "key": "numrfootLayout",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y (화면 가운데가 0)."
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "desc": "너비(px)."
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "desc": "높이(px)."
+                },
+                {
+                  "key": "autoPlay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "올라오는 순간 재생할지."
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "반복 재생할지."
+                },
+                {
+                  "key": "anchor",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "오른발 애니 자리들.",
+            "minLengthWhy": "그 부위 애니 개수만큼 필요합니다."
+          }
+        ],
+        "desc": "부위별 애니 배치."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "key-is-alias",
+      "level": "error",
+      "check": "bGConfig · bGConfig2 · palbg · tree · bg2bar · bg2baricon · nextbtn 을 그 이름 그대로 AssetTable 에 등록해야 한다.",
+      "why": "**GameData 열쇠 이름이 곧 alias 입니다** — 모듈이 AssetManager.get(열쇠) 로 찾습니다. 열쇠를 알아보기 쉽게 바꿔 적으면 그 그림이 통째로 사라집니다."
+    },
+    {
+      "id": "onload-arg-order",
+      "level": "error",
+      "check": "onLoad 는 mM20.onLoad(font, lottie, image, sound) 차례로 넘긴다.",
+      "why": "**다른 모듈과 인자 차례가 다릅니다**(보통 font · image · lottie · sound). 바꿔 넘기면 그림과 애니가 서로 엉켜 아무것도 안 보입니다."
+    },
+    {
+      "id": "part-arrays-match-drawing",
+      "level": "error",
+      "check": "부위별 배치 배열의 칸 수가 그 부위에 실제로 그릴 획 수와 같아야 한다.",
+      "why": "칸 차례로 획을 놓습니다. 모자라면 뒤쪽 획이 없어 **그림을 완성할 수 없습니다.**"
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 열다섯 개가 모두 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다. 없는 그림은 console.error 만 찍고 사라지고, 없는 음원은 무음으로 통과합니다."
+    },
+    {
+      "id": "drawing-sound-both-ways",
+      "level": "warn",
+      "check": "`drawing` 음원은 getSound 와 play 로 둘 다 쓰인다.",
+      "why": "길이를 재는 쪽과 재생하는 쪽이 같은 alias 를 봅니다. 없으면 획 소리와 타이밍이 함께 어긋납니다."
+    },
+    {
+      "id": "affordance-hooks",
+      "level": "error",
+      "check": "onAffordanceOn 은 M20.OnAffordanceOn() 을 부른다 — **대문자 O 입니다.**",
+      "why": "짝이 되는 onAffordanceCanceled 는 소문자 o 입니다(onAffordanceCanceled). 이름이 섞여 있어 클론할 때 틀리기 쉽고, 틀리면 어포던스가 안 뜹니다."
+    }
+  ],
+  "notes": [
+    "표본이 두 차시(MAL1M01W2S1 · MAL1M11W1S2)뿐입니다.",
+    "부위 배열이 스물두 개나 됩니다. 값을 손으로 만들지 말고 표본을 gen clone 으로 떠 와 고치세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

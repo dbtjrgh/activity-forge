@@ -1,0 +1,694 @@
+{
+  "specVersion": 1,
+  "module": "M10",
+  "subject": "MA",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M10",
+    "activities": [
+      "KOL1M02W4S1",
+      "KOL1M04W4S1",
+      "KOL1M06W4S1",
+      "MAL2M01W3S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "super.onLoad()"
+      ],
+      "onInit": [
+        "this.M10.OnInit()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm')",
+        "bgm.loop(true)",
+        "bgm.volume(0.1)",
+        "bgm.play()",
+        "this.M10.OnStart()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M10",
+      "from": "@_common/module/MA/M10/M10"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "settings",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "subject",
+            "type": "string",
+            "required": true
+          },
+          {
+            "key": "inningCount",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "number"
+            }
+          },
+          {
+            "key": "maxInning",
+            "type": "number",
+            "required": true,
+            "default": 5
+          },
+          {
+            "key": "lastInning",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "isTouchSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isCorrectSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isInningCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isRandomInning",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isNarrationSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isSfxSound",
+            "type": "bool",
+            "required": true,
+            "default": true
+          },
+          {
+            "key": "isEndingShow",
+            "type": "bool",
+            "required": true
+          },
+          {
+            "key": "isMatchingPoint",
+            "type": "bool",
+            "required": true
+          },
+          {
+            "key": "isDotTouchSound",
+            "type": "bool",
+            "required": true,
+            "default": false
+          },
+          {
+            "key": "PenSize",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 100
+              }
+            ]
+          },
+          {
+            "key": "correctPercent",
+            "type": "number",
+            "required": true,
+            "default": 95
+          },
+          {
+            "key": "dotStartSize",
+            "type": "number",
+            "required": true,
+            "default": 31
+          },
+          {
+            "key": "dotEndSize",
+            "type": "number",
+            "required": true,
+            "default": 20
+          },
+          {
+            "key": "wrongCount",
+            "type": "number",
+            "required": true,
+            "default": 2
+          },
+          {
+            "key": "startDotWidth",
+            "type": "number",
+            "required": true,
+            "default": 61
+          },
+          {
+            "key": "normalDotWidth",
+            "type": "number",
+            "required": true,
+            "default": 36
+          },
+          {
+            "key": "brightnessValue",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "objAlpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "DrawingColor",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "string"
+            }
+          },
+          {
+            "key": "CompleteColor",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "string"
+            }
+          },
+          {
+            "key": "firstLineFill",
+            "type": "bool",
+            "optional": true
+          }
+        ]
+      },
+      {
+        "key": "inningdata",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "index",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "maxObj",
+              "type": "number",
+              "required": true,
+              "default": 10
+            },
+            {
+              "key": "points",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "targetCount",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "positions",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningBgPos",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "endingObjPos",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "objPos",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 11,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "key": "pointPos",
+            "type": "array",
+            "required": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 11,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "key": "obj1",
+            "type": "point",
+            "optional": true,
+            "figma": true
+          },
+          {
+            "key": "numberPos",
+            "type": "array",
+            "optional": true,
+            "minLength": 4,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 11,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correctEff",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "key": "bMonEnd",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "sound",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correct",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "correct"
+              }
+            ]
+          },
+          {
+            "key": "wrong",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "default": "wrong"
+              }
+            ]
+          },
+          {
+            "key": "wrong2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "default": "wrong2"
+              }
+            ]
+          },
+          {
+            "key": "touch",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "default": "touch"
+              }
+            ]
+          },
+          {
+            "key": "clear",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "default": "clear"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "KO",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "asset:sound",
+                "required": true
+              },
+              {
+                "key": "correct",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "clear",
+                "type": "array",
+                "optional": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "string"
+                }
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "hint",
+                "type": "asset:sound",
+                "required": true,
+                "default": "com5"
+              },
+              {
+                "key": "pressEnd",
+                "type": "asset:sound",
+                "optional": true
+              },
+              {
+                "key": "correctP",
+                "type": "array",
+                "optional": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "endBtn",
+                "type": "asset:sound",
+                "optional": true
+              }
+            ]
+          },
+          {
+            "key": "MA",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "asset:sound",
+                "required": true
+              },
+              {
+                "key": "ending",
+                "type": "asset:sound",
+                "required": true
+              },
+              {
+                "key": "clear",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 3,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound"
+                }
+              },
+              {
+                "key": "hint",
+                "type": "asset:sound",
+                "required": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

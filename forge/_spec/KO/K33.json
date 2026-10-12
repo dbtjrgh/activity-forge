@@ -1,0 +1,364 @@
+{
+  "specVersion": 1,
+  "module": "K33",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K33",
+    "activities": [
+      "KOL2M01W2S2",
+      "KOL2M02W2S2",
+      "KOL2M03W2S2",
+      "KOL2M04W2S2",
+      "KOL2M05W2S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "K33.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "K33.handle.onInit(quizData.setPosition);",
+        "this.addChild(K33.handle);"
+      ],
+      "onStart": [
+        "// if(import.meta.env.PROD){",
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "// }",
+        "await K33.handle.onStart(quizData.inningData);",
+        "await SparkApp.eop.show(K33.handle.totalPercent / quizData.inningData.length * 0.01);"
+      ],
+      "onAffordanceOn": [
+        "K33.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "K33.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "K33",
+        "from": "@_common/module/KR/K33/K33"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "conf",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/AnswerPanel.ts 가 AssetManager.get(\"conf\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/BG.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg_light",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/BG.ts 가 AssetManager.get(\"bg_light\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mc_correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/MC.ts 가 AssetManager.get(\"mc_correct\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mc_end",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/MC.ts 가 AssetManager.get(\"mc_end\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mc_guide",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/MC.ts 가 AssetManager.get(\"mc_guide\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mc_idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/MC.ts 가 AssetManager.get(\"mc_idle\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mc_incorrect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/MC.ts 가 AssetManager.get(\"mc_incorrect\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mc_listen",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/MC.ts 가 AssetManager.get(\"mc_listen\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mc_talk",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/MC.ts 가 AssetManager.get(\"mc_talk\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "quizbar",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/QuizBar.ts 가 AssetManager.get(\"quizbar\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "quizbar_cover",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/QuizBar.ts 가 AssetManager.get(\"quizbar_cover\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "quizbar_active",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/QuizBar.ts 가 AssetManager.get(\"quizbar_active\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "timer",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Timer.ts 가 AssetManager.get(\"timer\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "mixed": true
+            },
+            {
+              "key": "answer",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true
+                },
+                {
+                  "key": "image",
+                  "type": "asset:image",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "bar",
+              "type": "array",
+              "required": true,
+              "minLength": 5,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "label",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "key": "sound",
+                    "type": "asset:sound",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "key": "setPosition",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "bg",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "light",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "position",
+                    "type": "point",
+                    "required": true,
+                    "figma": true
+                  },
+                  {
+                    "key": "radius",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "key": "tint",
+                    "type": "object",
+                    "required": true,
+                    "fields": [
+                      {
+                        "key": "basic",
+                        "type": "enum",
+                        "required": true,
+                        "values": [
+                          "#4D7DB7",
+                          "#afa7f9"
+                        ]
+                      },
+                      {
+                        "key": "normal",
+                        "type": "array",
+                        "required": true,
+                        "minLength": 2,
+                        "of": {
+                          "key": "",
+                          "type": "enum",
+                          "values": [
+                            "#295D9A",
+                            "#4D7DB7",
+                            "#afa7f9",
+                            "#bcb7ff"
+                          ]
+                        }
+                      },
+                      {
+                        "key": "correct",
+                        "type": "array",
+                        "required": true,
+                        "minLength": 2,
+                        "of": {
+                          "key": "",
+                          "type": "enum",
+                          "values": [
+                            "#295D9A",
+                            "#FFE285",
+                            "#afa7f9",
+                            "#ffe285"
+                          ]
+                        }
+                      },
+                      {
+                        "key": "incorrect",
+                        "type": "array",
+                        "required": true,
+                        "minLength": 2,
+                        "of": {
+                          "key": "",
+                          "type": "enum",
+                          "values": [
+                            "#295D9A",
+                            "#FF7B5D",
+                            "#afa7f9",
+                            "#f98566"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "key": "mc",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "shadow",
+                "type": "asset:image",
+                "optional": true
+              },
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true
+              }
+            ]
+          },
+          {
+            "key": "quizBox",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true
+              }
+            ]
+          },
+          {
+            "key": "answerPanel",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "voices": {
+    "KOL2M04W2S2": {
+      "gender": "여",
+      "why": "작업대 질문에서 대사 성우를 정했습니다 (2026-10-06 seokho.yu(유석호) · KOL2M08W2S2 에서 정했습니다)"
+    },
+    "KOL2M06W2S2": {
+      "gender": "여",
+      "why": "작업대 질문에서 대사 성우를 정했습니다 (2026-10-06 seokho.yu(유석호) · KOL2M08W2S2 에서 정했습니다)"
+    },
+    "KOL2M08W2S2": {
+      "gender": "남",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-06 seokho.yu(유석호) · KOL2M08W2S2 에서 정했습니다)"
+    }
+  }
+}

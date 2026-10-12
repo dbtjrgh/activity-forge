@@ -1,0 +1,985 @@
+{
+  "specVersion": 1,
+  "module": "M04",
+  "subject": "MA",
+  "title": "도형 길 따라 쿠키 먹기",
+  "summary": "캐릭터가 도형 모양의 길을 따라 돌면서 쿠키를 먹는 활동. 몬스터를 피하고 목표 개수만큼 먹으면 이닝이 끝납니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M04",
+    "activities": [
+      "MAL2M01W2S3"
+    ],
+    "doc": "README 없음. 근거는 M04.ts · InningManager.ts · Quiz.ts · ShapePath.ts · Cookie.ts · Player.ts · Dust.ts 와 표본 MAL2M01W2S3 입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M04",
+      "from": "@_common/module/MA/M04/M04"
+    },
+    "members": [
+      "private M04: M04 = new M04(this, quizData);"
+    ],
+    "hooks": {
+      "onLoad": [
+        "super.onLoad()"
+      ],
+      "onInit": [
+        "await this.M04.OnInit()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm')",
+        "bgm.loop(true)",
+        "bgm.volume(0.1)",
+        "bgm.play()",
+        "await this.M04.OnStart()"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "dish",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "접시. 자리는 positions.dishPos."
+      },
+      {
+        "alias": "playerBox",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "캐릭터 칸."
+      },
+      {
+        "alias": "lastNum",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마지막 수 표시. 자리는 positions.lastNumPos."
+      },
+      {
+        "alias": "idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "캐릭터 대기 애니. 크기는 animation.bMonIdle."
+      },
+      {
+        "alias": "eat",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "먹는 애니. 크기는 animation.bMonEat."
+      },
+      {
+        "alias": "incorrect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "오답 애니. 크기는 animation.bMonIncorrect."
+      },
+      {
+        "alias": "end",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "마무리 애니. 크기는 animation.bMonEnd."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 액티비티 onStart 가 직접 켭니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset 파일이 없습니다.\n\n**이름이 코드에 박힌 것** — 그림 `bg` · `dish` · `playerBox` · `lastNum` · 애니 `idle` · `eat` · `incorrect` · `end` · 음원 `bgm`(액티비티 onStart 가 직접 켭니다).\n\n**번호·이름으로 조합하는 것** — `obj{번호}`(쿠키·물건) · `press_{버튼이름}`(눌린 버튼. settings.btnName 값 앞에 press_ 를 붙입니다)."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "settings",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningCount",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "이닝 번호."
+            },
+            "desc": "이닝 목록. **칸의 값이 아니라 칸 수가 이닝 수입니다.**",
+            "minLengthWhy": "이닝이 하나는 있어야 합니다."
+          },
+          {
+            "key": "maxInning",
+            "type": "number",
+            "required": true,
+            "desc": "이닝 최대 수. 진행률 표시가 씁니다."
+          },
+          {
+            "key": "isTouchSound",
+            "type": "bool",
+            "required": true,
+            "desc": "터치 효과음을 낼지."
+          },
+          {
+            "key": "isCorrectSound",
+            "type": "bool",
+            "required": true,
+            "desc": "정답 효과음을 낼지."
+          },
+          {
+            "key": "isInningCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "desc": "이닝을 마칠 때 완료 연출을 켤지."
+          },
+          {
+            "key": "isCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "desc": "학습을 마칠 때 완료 연출을 켤지."
+          },
+          {
+            "key": "isSfxSound",
+            "type": "bool",
+            "required": true,
+            "desc": "효과음 전체를 켤지."
+          },
+          {
+            "key": "isNarrationSound",
+            "type": "bool",
+            "required": true,
+            "desc": "나레이션을 재생할지."
+          },
+          {
+            "key": "isMainCharacterSound",
+            "type": "bool",
+            "required": true,
+            "desc": "도우미 캐릭터 음원을 재생할지."
+          },
+          {
+            "key": "isRandomInning",
+            "type": "bool",
+            "required": true,
+            "desc": "이닝 순서를 섞을지."
+          },
+          {
+            "key": "isShowLog",
+            "type": "bool",
+            "required": true,
+            "desc": "**디버그 로그 스위치입니다. 양산에서는 false 로 둡니다.**"
+          },
+          {
+            "key": "moveTime",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "그 이닝의 시간(ms)."
+            },
+            "desc": "이닝마다 캐릭터가 한 바퀴 도는 시간(ms). 작을수록 빨라 난도가 올라갑니다.",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          },
+          {
+            "key": "triggerCount",
+            "type": "array",
+            "required": true,
+            "minLength": 0,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "개수 지점 하나."
+            },
+            "desc": "**연출이 끼어드는 개수 지점들.** Quiz.ts:313~314 가 지금 먹은 개수가 이 목록에 있는지 봅니다 — 예를 들어 [5, 10] 이면 5개·10개째에 무언가 일어납니다.",
+            "minLengthWhy": "없으면 빈 배열로 둡니다."
+          },
+          {
+            "key": "btnName",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "asset:image",
+              "desc": "버튼 alias 하나."
+            },
+            "desc": "버튼 그림 alias 들. **눌린 상태는 `press_{이 값}` 으로 조합하므로 그 그림도 같이 있어야 합니다.**",
+            "minLengthWhy": "버튼이 하나는 있어야 합니다."
+          },
+          {
+            "key": "clockwiseIndex1",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "되살아날 자리 번호."
+            },
+            "desc": "시계 방향 되살아나는 자리표 1번. Quiz.ts:429·431 이 부딪힌 자리 번호로 이 배열을 찾아 다음 자리를 정합니다.",
+            "minLengthWhy": "길 자리 수만큼 필요합니다."
+          },
+          {
+            "key": "clockwiseIndex2",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "되살아날 자리 번호."
+            },
+            "desc": "시계 방향 되살아나는 자리표 2번. Quiz.ts:429·431 이 부딪힌 자리 번호로 이 배열을 찾아 다음 자리를 정합니다.",
+            "minLengthWhy": "길 자리 수만큼 필요합니다."
+          },
+          {
+            "key": "cookieRadius",
+            "type": "number",
+            "required": true,
+            "desc": "쿠키 충돌 반지름(px). Quiz.ts:501 이 이 값으로 먹었는지 판정합니다 — 작으면 지나쳐도 안 먹습니다."
+          },
+          {
+            "key": "monsterRadius",
+            "type": "number",
+            "required": true,
+            "desc": "몬스터 충돌 반지름(px) — 실기기용."
+          },
+          {
+            "key": "monsterRadius_pc",
+            "type": "number",
+            "required": true,
+            "desc": "몬스터 충돌 반지름(px) — PC 용. **기기에 따라 다른 값을 씁니다.**"
+          },
+          {
+            "key": "characterEatCookieRadius",
+            "type": "number",
+            "required": true,
+            "desc": "캐릭터가 쿠키를 먹는 판정 반지름(px)."
+          },
+          {
+            "key": "characterMonsterRadius",
+            "type": "number",
+            "required": true,
+            "desc": "캐릭터가 몬스터에 부딪히는 판정 반지름(px)."
+          },
+          {
+            "key": "isDebugOn",
+            "type": "bool",
+            "required": true,
+            "desc": "**디버그 표시 스위치입니다. 양산에서는 false 로 둡니다.**"
+          }
+        ],
+        "desc": "활동 전체 스위치와 판정 값."
+      },
+      {
+        "key": "inningConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningdata",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "index",
+                  "type": "number",
+                  "required": true,
+                  "desc": "이닝 번호."
+                },
+                {
+                  "key": "maxoObj",
+                  "type": "number",
+                  "required": true,
+                  "desc": "그 이닝에 놓을 쿠키 수. (열쇠 이름이 maxoObj 로 오타로 보이지만 코드가 그 이름을 읽습니다.) **[0] 칸만 쓰입니다.**"
+                },
+                {
+                  "key": "pathPoints",
+                  "type": "number",
+                  "required": true,
+                  "desc": "길을 이룰 점 개수. 도형의 각을 정합니다(ShapePath.ts:26). **[0] 칸만 쓰입니다.**"
+                },
+                {
+                  "key": "targetCount",
+                  "type": "number",
+                  "required": true,
+                  "desc": "먹어야 하는 개수. 이 수에 닿으면 이닝이 끝납니다(Quiz.ts:323). **[0] 칸만 쓰입니다.**"
+                },
+                {
+                  "key": "type",
+                  "type": "number",
+                  "required": true,
+                  "desc": "도형 갈래 번호(원 · 삼각형 · 사각형 등)."
+                },
+                {
+                  "key": "time",
+                  "type": "number",
+                  "required": true,
+                  "desc": "제한 시간(ms). **[0] 칸만 쓰입니다.**"
+                },
+                {
+                  "key": "isCounter",
+                  "type": "bool",
+                  "required": true,
+                  "desc": "개수 표시를 보여 줄지."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "이닝 하나씩. (열쇠가 inningdata — d 가 소문자입니다.) **모듈이 실제로 읽는 것은 [0] 칸뿐입니다** — targetCount · time · pathPoints · maxoObj 를 모두 `inningdata[0]` 에서 꺼냅니다(Quiz.ts:323·357·409 · ShapePath.ts:26 · Cookie.ts:25). 둘째 칸부터는 적어도 무시됩니다.",
+            "minLengthWhy": "적어도 한 칸은 있어야 합니다."
+          }
+        ],
+        "desc": "이닝별 설정. **아래 경고를 꼭 읽으세요 — 모듈이 첫 칸만 읽습니다.**"
+      },
+      {
+        "key": "positions",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "centerPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "길의 중심점. 도형 길을 이 점 기준으로 만듭니다."
+          },
+          {
+            "key": "shapePos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "도형 그림 자리."
+          },
+          {
+            "key": "dishPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "접시 자리."
+          },
+          {
+            "key": "countPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "개수 표시 자리."
+          },
+          {
+            "key": "lastNumPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "마지막 수 표시 자리."
+          },
+          {
+            "key": "objPosList",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 10,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 갈래의 쿠키 자리들.",
+              "minLengthWhy": "maxoObj 만큼 필요합니다."
+            },
+            "desc": "쿠키 자리표. **두 겹 배열 — [도형 갈래][쿠키 번호]** 입니다.",
+            "minLengthWhy": "쓰는 도형 갈래 수만큼 필요합니다."
+          },
+          {
+            "key": "btnPos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "버튼 자리들.",
+            "minLengthWhy": "쓰는 개수만큼 적습니다."
+          },
+          {
+            "key": "press_btnPos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "눌린 버튼 자리들. btnPos 와 같은 개수·차례로 둡니다.",
+            "minLengthWhy": "쓰는 개수만큼 적습니다."
+          },
+          {
+            "key": "circle_1_Pos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "원형 길의 기준 자리."
+          },
+          {
+            "key": "triangle_Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "삼각형 길의 꼭짓점 자리들.",
+            "minLengthWhy": "쓰는 개수만큼 적습니다."
+          },
+          {
+            "key": "rectangle_Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "자리 y."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "사각형 길의 꼭짓점 자리들.",
+            "minLengthWhy": "쓰는 개수만큼 적습니다."
+          },
+          {
+            "key": "monsterPosList",
+            "type": "array",
+            "required": true,
+            "minLength": 0,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 y."
+                },
+                {
+                  "key": "rad",
+                  "type": "number",
+                  "required": true,
+                  "desc": "몬스터가 도는 각(라디안)."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "몬스터 자리들.",
+            "minLengthWhy": "없으면 빈 배열로 둡니다."
+          },
+          {
+            "key": "bMonEndPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "마무리 애니 자리."
+          }
+        ],
+        "desc": "자리표."
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "clearEff",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "정답 이펙트 설정."
+          },
+          {
+            "key": "dust",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "먼지 이펙트 설정."
+          },
+          {
+            "key": "bMonEat",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "먹는 애니(`eat`) 설정."
+          },
+          {
+            "key": "bMonIdle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "대기 애니(`idle`) 설정."
+          },
+          {
+            "key": "bMonIncorrect",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "오답 애니(`incorrect`) 설정."
+          },
+          {
+            "key": "bMonEnd",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "마무리 애니(`end`) 설정."
+          }
+        ],
+        "desc": "애니 크기·재생 설정. 열쇠 이름이 리소스 alias 와 다릅니다 — bMonIdle 은 `idle` 애니의 설정입니다."
+      },
+      {
+        "key": "sound",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correct",
+            "type": "asset:sound",
+            "required": true,
+            "desc": "정답 효과음."
+          },
+          {
+            "key": "wrong",
+            "type": "asset:sound",
+            "required": true,
+            "desc": "오답 효과음."
+          },
+          {
+            "key": "wrong2",
+            "type": "asset:sound",
+            "required": true,
+            "desc": "거듭 틀렸을 때의 효과음."
+          },
+          {
+            "key": "touch",
+            "type": "asset:sound",
+            "required": true,
+            "desc": "터치 효과음."
+          }
+        ],
+        "desc": "효과음 표."
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "MA",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "enterance 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "clear",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "이닝을 맞혔을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "correct",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "정답 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "wrong2",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "거듭 틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "안내 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "hint",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "힌트 음원."
+              },
+              {
+                "key": "hint2",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "두 번째 힌트 음원."
+              }
+            ],
+            "desc": "수학 나레이션."
+          }
+        ],
+        "desc": "나레이션 표. **과목 이름으로 한 겹 감싸 있습니다** — MA 아래에 값이 있습니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "only-first-inning-config",
+      "level": "error",
+      "check": "이닝마다 다른 targetCount · time · pathPoints · maxoObj 를 주려 하지 말 것 — 모듈이 inningdata[0] 만 읽는다.",
+      "why": "**Quiz.ts:323·357·409 · ShapePath.ts:26 · Cookie.ts:25 가 모두 첨자 0 으로 고정돼 있습니다.** 둘째 이닝부터 값을 바꿔 적어도 첫 칸 값으로 진행합니다 — 「이닝마다 난도를 올렸는데 안 바뀐다」의 원인입니다. 이닝별로 달라야 하면 개발에 요청하세요."
+    },
+    {
+      "id": "press-button-pair",
+      "level": "error",
+      "check": "settings.btnName 의 alias 마다 `press_{그 이름}` 그림도 있어야 하고, btnPos 와 press_btnPos 의 자리 수가 같아야 한다.",
+      "why": "눌린 상태를 이름 앞에 press_ 를 붙여 찾습니다. 없으면 누르는 순간 버튼이 사라집니다."
+    },
+    {
+      "id": "objposlist-covers-cookies",
+      "level": "error",
+      "check": "objPosList[갈래] 의 자리 수가 maxoObj 보다 적지 않아야 한다.",
+      "why": "Cookie.ts:25 가 maxoObj 만큼 쿠키를 놓습니다. 자리가 모자라면 undefined 자리를 읽어 쿠키가 화면 밖으로 갑니다."
+    },
+    {
+      "id": "target-not-more-than-cookies",
+      "level": "error",
+      "check": "targetCount 가 maxoObj 보다 크지 않아야 한다.",
+      "why": "다 먹어도 목표에 닿지 못해 **이닝이 끝나지 않습니다.**"
+    },
+    {
+      "id": "clockwise-index-in-range",
+      "level": "error",
+      "check": "clockwiseIndex1 · clockwiseIndex2 의 값이 길 자리 번호 범위 안이어야 한다.",
+      "why": "Quiz.ts:429·431 이 이 값을 그대로 자리 번호로 씁니다. 범위를 넘으면 캐릭터가 없는 자리로 되살아납니다."
+    },
+    {
+      "id": "radius-touchable",
+      "level": "warn",
+      "check": "cookieRadius · characterEatCookieRadius 를 지나치게 작게 두지 않는다.",
+      "why": "충돌 판정이 그림이 아니라 이 반지름으로만 이뤄집니다(Quiz.ts:501). 작으면 쿠키 위를 지나가도 안 먹습니다."
+    },
+    {
+      "id": "debug-flags-off",
+      "level": "error",
+      "check": "settings.isShowLog 와 isDebugOn 은 false.",
+      "why": "디버그 스위치입니다. isDebugOn 을 켜면 판정 원이 화면에 그려집니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · dish · playerBox · lastNum · idle · eat · incorrect · end · bgm 이 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다."
+    }
+  ],
+  "notes": [
+    "표본이 MAL2M01W2S3 한 차시뿐입니다.",
+    "몬스터 충돌 반지름이 실기기용(monsterRadius)과 PC 용(monsterRadius_pc)으로 나뉘어 있습니다. 실기기에서 꼭 확인하세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

@@ -1,0 +1,295 @@
+{
+  "specVersion": 1,
+  "module": "M24",
+  "subject": "MA",
+  "title": "대화로 묻고 고르기",
+  "summary": "캐릭터가 말풍선으로 대화를 주고받다가 문제를 내고, 아래 선택판에서 맞는 아이콘을 고르는 활동. 이닝마다 대화 한 벌과 선지 한 벌이 있습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M24",
+    "activities": [
+      "MAL1M02W1S2",
+      "MAL2M02W1S2",
+      "MAL2M11W2S1",
+      "MAL3M02W1S2",
+      "MAL3M11W2S1"
+    ],
+    "doc": "README 없음. 근거는 M24.ts · QuizChat.ts · SelectPanel.ts · DialogBox.ts · DialogIcon.ts 와 표본 5차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M24.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild( M24.handle );",
+        "await M24.handle.init( quizData );"
+      ],
+      "onStart": [
+        "// SparkApp.activeAffordanceWaiter(true);",
+        "await M24.handle.start();",
+        "await M24.handle.play();",
+        "await M24.handle.finish();",
+        "await SparkApp.eop.show(M24.handle.mInningIncorCount / quizData.inningData.length);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onResize": [
+        "M24.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "M24",
+        "from": "@_common/module/MA"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경. 모듈이 AssetManager.get(\"bg\") 로 찾지만 등록해 주지는 않습니다 — 액티비티가 넣어야 합니다. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+      },
+      {
+        "alias": "panel_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "선택판 배경. bg 와 같은 이유로 액티비티가 넣어야 합니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "M24.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M24 에 있습니다(별도 repo).\n\n**모듈이 등록하지 않는데 코드가 이름으로 찾는 것이 둘 있습니다** — `bg` 와 `panel_bg` 입니다. 활동 배경이라 액티비티가 넣어야 합니다.\n\n영어 공통 음원(SL_en_com_*)이 섞여 있는 것은 이 모듈이 영어 활동에서 먼저 쓰였기 때문입니다. 수학 차시에서도 그대로 등록돼 있으니 지우지 마세요.",
+      "sound": [
+        "bgm",
+        "SL_ma_cor_sfx01",
+        "SL_ma_inc_sfx01",
+        "SL_ma_105_s2_sfxr01",
+        "SL_ma_105_s2_sfxr02",
+        "SL_ma_105_s2_sfxr03",
+        "SL_ma_105_s2_sfxr04",
+        "SL_ma_m24_nar01",
+        "SL_ma_m24_nar02",
+        "SL_ma_m24_nar03",
+        "SL_ma_m24_nar04",
+        "SL_ma_m24_nar05",
+        "SL_ma_m24_nar06",
+        "SL_ma_m24_nar07"
+      ],
+      "image": [
+        "answer_panel",
+        "dialog_Bmon",
+        "dialog_Pmon",
+        "dialog_Rmon",
+        "dialog_Bmon_deco",
+        "tbox",
+        "answer_Bmon01",
+        "answer_Bmon02",
+        "hint_Bmon",
+        "answer_Rmon01",
+        "answer_Rmon02",
+        "hint_Rmon",
+        "answer_Pmon01",
+        "answer_Pmon02",
+        "hint_Pmon",
+        "notebook",
+        "key01_bg",
+        "key01_body",
+        "key02_bg",
+        "key02_body",
+        "return_icon"
+      ],
+      "lottie": [
+        "Bmon_idle",
+        "Bmon_talk",
+        "Bmon_answer1",
+        "Bmon_answer2",
+        "Bmon_hint",
+        "Pmon_idle",
+        "Pmon_talk",
+        "Pmon_answer1",
+        "Pmon_answer2",
+        "Pmon_hint",
+        "Rmon_idle",
+        "Rmon_talk",
+        "Rmon_answer1",
+        "Rmon_answer2",
+        "Rmon_hint",
+        "correct_ef",
+        "Tbox_dots"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "answerImageAlias",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그 이닝 정답을 보여 주는 그림."
+            },
+            {
+              "key": "answerSoundAlias",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "정답을 읽어 주는 음원."
+            },
+            {
+              "key": "quizGap",
+              "type": "number",
+              "required": true,
+              "desc": "선택판 아이콘 사이 간격(px). 아이콘 크기를 바꾸면 같이 조정합니다."
+            },
+            {
+              "key": "quiz",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "panelIcon",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "선지 아이콘 그림."
+                  },
+                  {
+                    "key": "correct",
+                    "type": "bool",
+                    "required": true,
+                    "desc": "이 선지가 정답인지. SelectPanel.ts:59·68 이 이 값으로 정답·오답을 갈라 연출합니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "선택판에 놓이는 선지들. **correct 가 true 인 칸이 정답입니다.**",
+              "minLengthWhy": "고를 것이 하나면 문제가 성립하지 않습니다."
+            },
+            {
+              "key": "dialog",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "character",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "Bmon",
+                      "Pmon",
+                      "Rmon"
+                    ],
+                    "desc": "말하는 캐릭터. Bmon(파랑) · Pmon(보라) · Rmon(빨강) 이고, 말풍선(dialog_{캐릭터})과 애니({캐릭터}_idle · _talk 등) alias 를 이 값으로 조합합니다."
+                  },
+                  {
+                    "key": "dialog",
+                    "type": "string",
+                    "required": true,
+                    "desc": "말풍선에 넣을 글자. **그림이 아니라 문자열입니다** — 코드가 Text 로 그립니다."
+                  },
+                  {
+                    "key": "answerMon",
+                    "type": "number",
+                    "required": true,
+                    "desc": "그 대화에서 보여 줄 정답 아이콘 번호. **alias 를 `answer_{캐릭터}{두 자리 번호}` 로 조합합니다**(SelectPanel.ts:108 이 padStart(2,\"0\") 을 씁니다) — 1 이면 answer_Bmon01. 모듈이 물고 있는 것은 캐릭터마다 01 · 02 두 개뿐이라 **3 이상을 적으면 아이콘이 사라집니다.**"
+                  },
+                  {
+                    "key": "sound",
+                    "type": "asset:sound",
+                    "required": true,
+                    "desc": "그 대화를 읽는 음원."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝의 대화 순서. 적은 차례대로 말합니다 — **셔플하지 않습니다**(M24.play 의 shuffleArray 가 주석 처리돼 있습니다).",
+              "minLengthWhy": "대화가 하나는 있어야 문제를 낼 수 있습니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. 이닝 수가 곧 화면 위 이닝 표시 개수입니다. **셔플하지 않습니다** — M24.play 의 shuffleArray 두 줄이 주석 처리돼 있습니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "exactly-one-correct",
+      "level": "error",
+      "check": "이닝마다 quiz 안에 correct: true 가 정확히 하나 있어야 한다.",
+      "why": "모듈이 검사하지 않습니다. 없으면 정답을 고를 수 없어 이닝이 끝나지 않고, 둘 이상이면 어느 것을 눌러도 정답이 됩니다."
+    },
+    {
+      "id": "answer-mon-range",
+      "level": "error",
+      "check": "dialog[].answerMon 은 1 또는 2 여야 한다.",
+      "why": "alias 를 answer_{캐릭터}0{번호} 로 조합하는데 모듈이 가진 것은 캐릭터마다 01 · 02 뿐입니다. 3 이상이면 없는 alias 가 되어 **아이콘이 조용히 사라집니다.**"
+    },
+    {
+      "id": "character-enum",
+      "level": "error",
+      "check": "dialog[].character 는 Bmon · Pmon · Rmon 중 하나.",
+      "why": "말풍선·애니·정답 아이콘 alias 를 모두 이 값으로 조합합니다. 다른 값이면 그 대화가 통째로 안 보입니다."
+    },
+    {
+      "id": "bg-panel-registered",
+      "level": "error",
+      "check": "AssetTable 에 bg 와 panel_bg 가 있어야 한다.",
+      "why": "모듈이 이름으로 찾지만 등록해 주지 않습니다 — 다른 리소스는 다 모듈이 물고 있어서 이 둘만 빠뜨리기 쉽습니다."
+    },
+    {
+      "id": "dialog-is-text",
+      "level": "warn",
+      "check": "dialog 는 그림 alias 가 아니라 화면에 그릴 글자다.",
+      "why": "alias 를 적으면 그 문자열이 그대로 말풍선에 찍힙니다."
+    },
+    {
+      "id": "eop-uses-incorrect-count",
+      "level": "warn",
+      "check": "onStart 의 eop.show 인자를 그대로 둔다 — M24.handle.mInningIncorCount / inningData.length.",
+      "why": "정답률이 아니라 **마지막 이닝의 오답 수**를 이닝 수로 나눈 값입니다. 모듈이 averagePercent() 에서 오답 7회 이상·2회 이하로 등급을 가르는 것과 셈이 다릅니다 — 표본이 그렇게 쓰고 있어 그대로 적어 둡니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "answerImageAlias · answerSoundAlias · quiz[].panelIcon · dialog[].sound 의 alias 가 있어야 한다.",
+      "why": "없는 그림은 console.error 만 찍고 사라지고, 없는 음원은 무음으로 통과합니다."
+    }
+  ],
+  "notes": [
+    "이닝도 대화도 셔플하지 않습니다 — M24.play 의 shuffleArray 두 줄이 주석 처리돼 있습니다. 순서를 바꾸려면 GameData 차례를 바꿉니다.",
+    "노트북·열쇠 리소스(notebook · key01_* · key02_*)는 모듈이 물고 있지만 지금 play 흐름에서 mNoteBook.start 가 주석 처리돼 있어 쓰이지 않습니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

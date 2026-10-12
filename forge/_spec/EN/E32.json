@@ -1,0 +1,253 @@
+{
+  "specVersion": 1,
+  "module": "E32",
+  "subject": "EN",
+  "title": "슬롯머신 돌려 낱말 맞추기",
+  "summary": "버튼을 눌러 슬롯머신 세 줄을 돌리고, 멈춘 그림이 정답과 맞는지 보는 활동. 이닝 순서는 코드가 섞습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E32",
+    "activities": [
+      "ENL1M02W1S3",
+      "ENL1M04W1S3",
+      "ENL1M06W1S3"
+    ],
+    "doc": "README 없음. 근거는 E32.ts · SlotMachine.ts · StartButton.ts · AnswerCard.ts 와 표본 3차시(2·4·6호)입니다. 자리는 세 호 모두 ENL1M__W1S3 입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "E32.handle.init(quizData);",
+        "this.addChild(E32.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await E32.handle.start();",
+        "E32.handle.setTouchLock(true);",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"SL_en_105_s3_nar03\");",
+        "E32.handle.setTouchLock(false);",
+        "await E32.handle.play();",
+        "await E32.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "E32",
+        "from": "@_common/module/EN"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "slot_machine",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "슬롯머신 몸통."
+      },
+      {
+        "alias": "slot_masking",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "슬롯 창을 잘라 주는 마스크."
+      },
+      {
+        "alias": "mask",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 마스크."
+      },
+      {
+        "alias": "button",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "돌리기 버튼."
+      },
+      {
+        "alias": "button_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "버튼 배경."
+      },
+      {
+        "alias": "button_mask",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "버튼 마스크."
+      },
+      {
+        "alias": "slot_light",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "슬롯 조명."
+      },
+      {
+        "alias": "slot_particle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "슬롯 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음."
+      },
+      {
+        "alias": "SL_en_105_s3_nar03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. **액티비티 onStart 가 이름을 박아 부릅니다** — 이름 앞머리 105 는 최초 제작 회차가 굳은 것입니다."
+      },
+      {
+        "alias": "SL_en_105_s3_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "SL_en_105_s3_sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "SL_en_com_sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      },
+      {
+        "alias": "SL_en_com_sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "공통 효과음."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다.** 표본 세 차시가 **모두 공통으로 등록한 alias 33개**가 사실상 모듈 몫입니다:\n`bg` · `button` · `button_bg` · `button_mask` · `mask` · `border_circle` · `slot_machine` · `slot_masking` · `slot_light` · `slot_particle` · `slot_img01`~`03` · `slot1_1`~`slot3_4`(줄×칸 12장) · `bgm` · `SL_en_105_s3_nar03` · `SL_en_105_s3_sfx01`·`sfx02` · `SL_en_com_sfx01`~`sfx03` · 폰트 `NanumSquareRoundR`.\n\n코드가 이름을 박아 찾는 것은 `bg` · `button` · `button_bg` · `button_mask` · `mask` · `slot_machine` · `slot_masking` · `slot_light` · `slot_particle` · `bgm` · `SL_en_105_s3_sfx01`·`sfx02` · `SL_en_com_sfx01`·`sfx02` 이고, **지문 `SL_en_105_s3_nar03` 은 액티비티 onStart 가 부릅니다.**\n\n차시마다 다른 것은 `slot1_5`·`slot1_6` 처럼 **늘어난 칸**과 `answercard_{낱말}` · `SL_en_word_{낱말}` 입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고, `answer_*` · `card_*` 처럼 낱말 이름이 붙은 것은 그 차시 몫입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "slotList",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 4,
+          "of": {
+            "key": "",
+            "type": "asset:image",
+            "desc": "그림 alias 하나."
+          },
+          "desc": "그 줄에 돌아갈 그림들.",
+          "minLengthWhy": "돌릴 그림이 둘은 있어야 슬롯이 돕니다."
+        },
+        "desc": "**슬롯 줄마다 돌아갈 그림들 — [줄][칸] 두 겹 배열입니다.** SlotMachine.ts:28 이 `slotList[줄번호]` 를 복사해 씁니다. 표본은 세 줄이고 칸이 4~6개입니다(`slot1_1`~`slot1_6` 꼴).",
+        "minLengthWhy": "줄 수만큼 필요합니다(표본은 3)."
+      },
+      {
+        "key": "infoList",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "answerSlot",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "asset:image",
+                "desc": "그 줄의 정답 그림."
+              },
+              "desc": "그 이닝의 정답 그림들. 줄마다 하나씩이라 **줄 수와 같아야 합니다.**",
+              "minLengthWhy": "줄 수만큼 필요합니다(표본은 3)."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 낱말 음원."
+            },
+            {
+              "key": "answerCard",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그 이닝의 정답 낱말 카드 그림."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. **E32.ts:60 이 이 배열을 섞습니다** — 적은 차례는 진행 순서가 아닙니다. 칸 수가 곧 이닝 수입니다(inningDisplay).",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "answerslot-matches-rows",
+      "level": "error",
+      "check": "infoList[].answerSlot 의 칸 수가 slotList 의 줄 수와 같아야 한다.",
+      "why": "줄마다 정답 그림을 하나씩 봅니다. 모자라면 그 줄은 판정이 되지 않아 **이닝이 끝나지 않습니다.**"
+    },
+    {
+      "id": "answer-in-slot-list",
+      "level": "error",
+      "check": "answerSlot 의 그림이 그 줄의 slotList 안에 있어야 한다.",
+      "why": "슬롯에 없는 그림은 아무리 돌려도 나오지 않습니다 — 정답에 닿을 방법이 없습니다."
+    },
+    {
+      "id": "inning-order-shuffled",
+      "level": "warn",
+      "check": "infoList 의 순서로 진행 차례를 정하려 하지 말 것 — 섞입니다.",
+      "why": "E32.ts:60 이 `shuffleArray(infoList)` 를 부릅니다. 난도를 순서로 조절할 수 없습니다."
+    },
+    {
+      "id": "slot-cells-enough",
+      "level": "warn",
+      "check": "줄마다 돌릴 그림이 최소 두 장 이상이어야 한다.",
+      "why": "한 장이면 돌아가는 느낌이 없고 늘 정답이 됩니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "위 required 목록의 alias 열다섯 개가 모두 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다."
+    }
+  ],
+  "notes": [
+    "표본 세 차시가 모두 ENL1M__W1S3 자리입니다.",
+    "음원 이름 앞머리 `SL_en_105_s3_` 는 최초 제작 회차(5호 3차시)가 굳은 것입니다. 새 차시에서도 그 alias 로 등록합니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

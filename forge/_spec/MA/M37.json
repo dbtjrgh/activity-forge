@@ -1,0 +1,395 @@
+{
+  "specVersion": 1,
+  "module": "M37",
+  "subject": "MA",
+  "title": "목표수 만들기(모으기)",
+  "summary": "개미가 든 목표수를 보고, 판에 놓인 숫자 칸 중 합이 목표수가 되는 두 칸을 연달아 터치해 짝을 지어 없애는 활동. 판의 숫자가 모두 사라지면 이닝 종료.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M37",
+    "activities": [
+      "MAL1M07W3S3"
+    ],
+    "doc": "sparkon_common/_common/module/MA/M37/README.md — GameData 규칙은 §6, 리소스 규칙은 §8, 양산 체크리스트는 §9.",
+    "note": "첫 적용 차시가 MAL1M07W3S3 입니다. 스펙은 모듈 코드(M37.ts · component/Ant.ts · component/QuizPanel.ts)와 README 를 읽어 적고, 그 차시로 대조했습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M37.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(M37.handle);",
+        "await M37.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await M37.handle.start();",
+        "await M37.handle.play();",
+        "await M37.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ],
+      "onEnd": [],
+      "onUpdate": [],
+      "onAffordanceOn": [
+        "M37.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "M37.handle.onAffordanceCanceled();"
+      ],
+      "onResize": [
+        "M37.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "M37",
+        "from": "@_common/module/MA/M37/M37"
+      }
+    ]
+  },
+  "assets": {
+    "providedByModule": {
+      "note": "M37.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것.\n\n**이름을 조합해 찾거나 GameData 가 가리키는 자원** — required 에는 이름이 고정된 것만 적을 수 있어서 여기에 규칙을 둡니다.\n- `cell{색}_{숫자}` (image) — 색+숫자가 한 장에 그려진 칸(터치 전). 266x266. **코드가 cells 의 [숫자,색] 으로 alias 를 조합해 찾습니다** — 색은 1=노랑 2=보라 3=하늘 4=초록 5=핑크. 없는 조합은 AssetManager.get 이 console.error 만 찍고 칸이 사라진 것처럼 보입니다. 터치 후(눌린) 칸 이미지는 아직 반입되지 않았고 현재는 tint 로 처리합니다.",
+      "sound": [
+        "bgm",
+        "SL_ma_com_sfx01",
+        "SL_ma_cor_sfx01",
+        "SL_ma_inc_sfx02",
+        "SL_ma_m37_guide_nar01",
+        "SL_ma_m37_guide_nar02"
+      ]
+    },
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경. 3840x2160, 스케일 조정 없이 화면 가운데 정렬. 활동별 교체."
+      },
+      {
+        "alias": "panel_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "활동 구역 판. 1250x780. **판 크기는 이 리소스 크기로 결정됩니다** — GameData 에 panelSize 를 적어도 무시됩니다. 이닝마다 판 크기가 달라지는 기획이 오면 개발에 요청하세요."
+      },
+      {
+        "alias": "cell_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "숫자가 놓이지 않은 빈 칸(주황 홈). 266x245. cells 의 null 자리에 보입니다."
+      },
+      {
+        "alias": "ant_in",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "개미 등장. 580x600 / 30fps / 루프. alias 는 ant_{상태} 로 고정 — 코드가 상태 이름으로 조합해 찾습니다."
+      },
+      {
+        "alias": "ant_idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "개미 대기."
+      },
+      {
+        "alias": "ant_talk",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "개미 말하기."
+      },
+      {
+        "alias": "ant_out",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "개미 퇴장. 4종이 같은 리그여서 목표수 부착 위치가 상태와 무관하게 같아야 합니다 — 애니를 교체할 때 이 조건을 지키지 않으면 숫자가 따로 떠 보입니다. 위치 이동은 애니가 아니라 코드(gsap)가 합니다."
+      },
+      {
+        "alias": "NanumSquareRoundEB",
+        "kind": "font",
+        "fixedAlias": true,
+        "note": "목표수 렌더용. 목표수는 이미지가 아니라 폰트로 그리므로 개미 이미지는 이닝 수와 무관하게 한 벌이면 됩니다. 두 자리 수도 원 안에 들어가도록 자동으로 줄입니다."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "object",
+    "fields": [
+      {
+        "key": "startNarration",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "학습 시작 지문. 도우미 캐릭터가 읽습니다."
+      },
+      {
+        "key": "layout",
+        "type": "object",
+        "optional": true,
+        "desc": "배치·크기 값. 전부 생략 가능하고, 생략하면 모듈 기본값을 씁니다. 차시마다 판이나 개미 자리를 옮겨야 할 때만 적습니다.",
+        "fields": [
+          {
+            "key": "ant",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "pos",
+                "type": "point",
+                "optional": true,
+                "figma": true,
+                "desc": "개미 기본 위치. 이닝의 ant.pos 가 있으면 그것이 앞섭니다."
+              },
+              {
+                "key": "numberOffset",
+                "type": "point",
+                "optional": true,
+                "default": {
+                  "x": -43,
+                  "y": -72
+                },
+                "desc": "개미가 든 원 안에서 목표수가 놓이는 자리."
+              },
+              {
+                "key": "numberArea",
+                "type": "number",
+                "optional": true,
+                "default": 355,
+                "desc": "목표수가 들어갈 원의 지름(px). 두 자리 수를 줄이는 기준입니다."
+              },
+              {
+                "key": "numberFontSize",
+                "type": "number",
+                "optional": true,
+                "default": 240,
+                "desc": "목표수 글자 크기(px). 두 자리 수는 원 안에 들어가도록 자동으로 줄어듭니다."
+              },
+              {
+                "key": "numberColor",
+                "type": "number",
+                "optional": true,
+                "default": 5586235,
+                "desc": "0x553B3B."
+              }
+            ],
+            "desc": "개미(문제를 든 캐릭터) 배치 값들. 생략하면 모듈 기본값을 씁니다."
+          },
+          {
+            "key": "panel",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "pos",
+                "type": "point",
+                "optional": true,
+                "default": {
+                  "x": 260,
+                  "y": 110
+                },
+                "figma": true,
+                "desc": "활동 구역 판의 중심."
+              },
+              {
+                "key": "padding",
+                "type": "number",
+                "optional": true,
+                "default": 40,
+                "desc": "판 안쪽 여백. 칸 크기 자동 계산이 이 여백에 격자를 맞춥니다."
+              },
+              {
+                "key": "gap",
+                "type": "point",
+                "optional": true,
+                "default": {
+                  "x": 16,
+                  "y": 16
+                },
+                "desc": "칸 간격 기본값. 이닝의 gap 이 있으면 그것이 앞섭니다."
+              }
+            ],
+            "desc": "활동 구역 판 배치 값들. 생략하면 모듈 기본값을 씁니다."
+          },
+          {
+            "key": "cell",
+            "type": "object",
+            "optional": true,
+            "fields": [
+              {
+                "key": "sourceSize",
+                "type": "number",
+                "optional": true,
+                "default": 266,
+                "desc": "칸 이미지의 원본 한 변(px). 자동 계산이 이 값을 넘기지 않습니다."
+              }
+            ],
+            "desc": "칸 크기 기준 값. 생략하면 모듈 기본값을 씁니다."
+          }
+        ]
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 두 개로는 의미가 없습니다. 기획 확정 범위가 3~5개입니다.",
+        "desc": "적은 순서대로 진행합니다 — 셔플하지 않습니다.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "target",
+              "type": "number",
+              "required": true,
+              "desc": "개미가 든 목표수. 두 칸의 합이 이 수가 되어야 짝이 됩니다."
+            },
+            {
+              "key": "ant",
+              "type": "object",
+              "required": true,
+              "desc": "**개미가 말하는 음원은 전부 이 안에 모입니다.** 밖에 적으면 조용히 무시되고 무음으로 진행됩니다.",
+              "fields": [
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "optional": true,
+                  "figma": true,
+                  "desc": "도착 위치. 생략하면 직전 이닝 위치를 유지합니다 — 1이닝에만 적고 이후는 생략하는 것이 보통입니다."
+                },
+                {
+                  "key": "startNarration",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "문제 음원. 등장 후 재생하고, 개미를 터치하면 다시 송출합니다."
+                },
+                {
+                  "key": "endNarration",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "이닝 완료 음원. 퇴장하며 송출합니다."
+                }
+              ]
+            },
+            {
+              "key": "cells",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "minLengthWhy": "판에 숫자가 하나도 없으면 이닝이 시작과 동시에 끝납니다.",
+              "desc": "**배열 모양이 곧 격자 모양**입니다 — 행·열 수를 따로 적지 않습니다. 최대 6열 x 4행. 격자는 판 중심 기준으로 자동 정렬되므로 좌표를 손으로 잡지 않습니다. 칸 하나는 [숫자, 색] 이고 null 은 숫자가 놓이지 않은 자리(cell_bg 가 보입니다).",
+              "of": {
+                "key": "",
+                "type": "array",
+                "mixed": true,
+                "desc": "한 행. 칸은 [숫자, 색] 또는 null 입니다."
+              }
+            },
+            {
+              "key": "correctNarration",
+              "type": "object",
+              "required": true,
+              "desc": "**먼저 선택한 숫자별** 정답 음원. 열쇠가 숫자(1·2·3…)이고 값이 음원 alias 입니다 — { 1: \"…nar15\", 2: \"…nar16\" } 꼴. 짝이 항상 2개여서 먼저 고른 숫자가 정해지면 나머지도 정해지므로, **이닝에 놓인 숫자 종류마다 하나씩** 필요합니다(목표수 5 이닝에 1·2·3·4 가 놓이면 4개). 스펙의 series 는 prefix 가 글자로 시작해야 해서 숫자 열쇠를 적을 수 없습니다 — 그래서 fields 를 비워 두고 값을 그대로 씁니다. 화면은 이 칸을 그려 주지 못합니다.",
+              "fields": []
+            },
+            {
+              "key": "cellSize",
+              "type": "number",
+              "optional": true,
+              "desc": "칸 한 변(px). 생략하면 판 안쪽 여백에 격자가 들어가도록 줄여서 자동 계산합니다(3x2 는 266 원본 그대로, 6x4 는 163). 원본 266 을 넘기지 말 것 — 직접 적은 값은 그대로 쓰므로 판을 넘칩니다."
+            },
+            {
+              "key": "gap",
+              "type": "point",
+              "optional": true,
+              "desc": "칸 간격. 생략하면 layout.panel.gap 을 씁니다."
+            }
+          ],
+          "desc": "칸 하나."
+        }
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "pairs-must-close",
+      "level": "error",
+      "check": "이닝마다 cells 의 숫자를 target 기준으로 완전히 짝지을 수 있어야 한다.",
+      "why": "하나라도 남으면 **이닝이 끝나지 않아 다음 이닝으로 넘어가지 못합니다.** 모듈이 검사하지 않고 에러도 내지 않습니다."
+    },
+    {
+      "id": "cell-count-even",
+      "level": "error",
+      "check": "숫자가 놓인 칸 수(null 이 아닌 칸)가 짝수여야 한다.",
+      "why": "홀수면 완전히 짝지을 수 없어 위 조건이 성립하지 않습니다."
+    },
+    {
+      "id": "cell-alias-exists",
+      "level": "error",
+      "check": "cells 의 [숫자,색] 조합마다 AssetTable.image 에 alias cell{색}_{숫자} 가 있어야 한다.",
+      "why": "없는 조합은 AssetManager.get 이 console.error 만 찍고 **칸이 화면에서 사라진 것처럼** 보입니다."
+    },
+    {
+      "id": "correct-narration-complete",
+      "level": "error",
+      "check": "correctNarration 의 열쇠가 그 이닝에 놓인 숫자 종류를 다 덮어야 한다.",
+      "why": "하나 빠지면 **그 숫자를 먼저 골랐을 때만 무음**이 됩니다. 진행은 막히지 않아 눈으로 발견되지 않습니다."
+    },
+    {
+      "id": "narration-inside-ant",
+      "level": "error",
+      "check": "문제·완료 음원은 inningData[].ant 안에 있어야 한다.",
+      "why": "ant 밖에 적으면 조용히 무시됩니다."
+    }
+  ],
+  "relations": [
+    {
+      "id": "inning-count",
+      "kind": "count",
+      "pick": "inningData",
+      "min": 3,
+      "max": 5,
+      "note": "inningData 는 3~5개.",
+      "why": "기획 확정 범위입니다."
+    },
+    {
+      "id": "grid-limit",
+      "kind": "count",
+      "pick": "inningData[].cells",
+      "max": 4,
+      "note": "cells 는 6열 x 4행을 넘지 않는다.",
+      "why": "넘으면 칸이 판 밖으로 나갑니다."
+    },
+    {
+      "id": "grid-limit#cols",
+      "kind": "count",
+      "pick": "inningData[].cells[]",
+      "max": 6,
+      "note": "cells 는 6열 x 4행을 넘지 않는다.",
+      "why": "넘으면 칸이 판 밖으로 나갑니다."
+    },
+    {
+      "id": "sound-alias-exists",
+      "kind": "isAlias",
+      "pick": "inningData[].correctNarration",
+      "of": "values",
+      "as": "sound",
+      "note": "모든 음원 alias 가 AssetTable.sound 에 있어야 한다.",
+      "why": "없는 alias 는 AudioManager.playAsync 가 즉시 통과시켜 **무음으로 진행**합니다. 진행이 막히지 않으므로 눈으로는 발견되지 않습니다."
+    },
+    {
+      "id": "panel-size-unsupported",
+      "kind": "absent",
+      "pick": "panelSize",
+      "note": "GameData 에 panelSize 를 적지 않는다.",
+      "why": "아직 지원하지 않아 무시됩니다. 판은 panel_bg 리소스 크기(1250x780)로 그려집니다.",
+      "level": "warn"
+    }
+  ]
+}

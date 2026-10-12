@@ -1,0 +1,419 @@
+{
+  "specVersion": 1,
+  "module": "ExploreMakeLv3",
+  "subject": "EN",
+  "title": "나만의 이야기책 짓기 — 표지를 고르고 칸마다 골라 채워 책을 냅니다",
+  "summary": "먼저 책 표지를 고릅니다. 책이 펼쳐지면 인물·배경 같은 칸이 차례로 나오고, 칸마다 고를 것 셋이 놓입니다. 문제 칸(quiz)은 맞는 것을 골라야 넘어가고, 고르기 칸(choice)은 마음에 드는 것을 고릅니다. 고른 것이 그 칸의 빈자리에 붙습니다. 다 채우면 이름을 적고 책이 완성되어 불꽃이 터집니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/ExploreMakeLv3",
+    "activities": [
+      "ENL3M01W2S3",
+      "ENL3M02W2S3",
+      "ENL3M03W2S3",
+      "ENL3M04W2S3",
+      "ENL3M05W2S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ExploreMakeLv3.addAsset();"
+      ],
+      "onInit": [
+        "// 화면 진입시 성취율 업로드",
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "await ExploreMakeLv3.handle.init( quizData )",
+        "this.addChild( ExploreMakeLv3.handle )"
+      ],
+      "onStart": [
+        "await ExploreMakeLv3.handle.start();",
+        "await ExploreMakeLv3.handle.play();",
+        "await ExploreMakeLv3.handle.finish();",
+        "console.log(\">>>acticity\",ExploreMakeLv3.handle.totalPercent)",
+        "await SparkApp.eop.show((ExploreMakeLv3.handle.totalPercent / ExploreMakeLv3.handle.mQuizCount) * 0.01);"
+      ],
+      "onResize": [
+        "ExploreMakeLv3.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "ExploreMakeLv3",
+        "from": "@_common/module/EN"
+      }
+    ]
+  },
+  "assets": {
+    "required": [],
+    "providedByModule": {
+      "note": "**책과 칸, 안내까지 모듈 것입니다.** Assets.ts 가 배경·책 표지 여러 벌·펼친 책·칸 판·이름표·단추·불꽃·효과음·시작 안내를 등록합니다(90개). **액티비티는 그 이야기의 낱말 그림과 고를 것들의 그림만 넣습니다** — 회차가 넣어야 할 이름이 GameData 에만 있고 고정 자원은 없습니다.",
+      "image": [
+        "bg",
+        "book01~book06",
+        "book_open02~06",
+        "bookTitle",
+        "title",
+        "by",
+        "by_line",
+        "name",
+        "nametag",
+        "answerPanel",
+        "contentsPanel01~04",
+        "quiz01~04_blank",
+        "write02~write06",
+        "section01~04"
+      ],
+      "lottie": [
+        "firework",
+        "fireworks"
+      ],
+      "sound": [
+        "bgm",
+        "nar03-1 · nar03-2 (시작 안내)",
+        "sfx02·03·04·11·14·15"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "book",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "default",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "book01"
+            ],
+            "default": "book01",
+            "desc": "처음에 놓이는 표지. book01 하나뿐입니다."
+          },
+          {
+            "key": "title",
+            "type": "asset:sound",
+            "required": true,
+            "default": "title",
+            "desc": "책 제목을 읽어 주는 소리."
+          },
+          {
+            "key": "position",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "책이 놓일 자리."
+          },
+          {
+            "key": "choice",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "img",
+                  "type": "string",
+                  "required": true,
+                  "desc": "표지 그림(닫힌 모습)."
+                },
+                {
+                  "key": "answer",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "그 표지에 딸린 주제 그림."
+                },
+                {
+                  "key": "panel",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "write02",
+                    "write03",
+                    "write04",
+                    "write05",
+                    "write06"
+                  ],
+                  "desc": "그 표지를 골랐을 때 쓰는 이름 적는 판. write02~write06 중 하나입니다."
+                },
+                {
+                  "key": "color",
+                  "type": "number",
+                  "required": true,
+                  "desc": "그 표지의 글자 색. **0x 로 시작하는 숫자**로 적습니다 — 다른 모듈처럼 #RRGGBB 글자가 아닙니다."
+                },
+                {
+                  "key": "bookOpen",
+                  "type": "string",
+                  "required": true,
+                  "desc": "그 표지를 폈을 때의 그림. img 와 번호를 맞춥니다(book05 → book_open05)."
+                },
+                {
+                  "key": "sound",
+                  "type": "string",
+                  "optional": true,
+                  "default": "",
+                  "desc": "고를 때 나는 소리. 기존 5개가 다 빈 글자입니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "고를 수 있는 표지. 기존 5개가 다 **셋**입니다.",
+            "minLengthWhy": "고를 것이 하나뿐이면 고르는 뜻이 없습니다."
+          }
+        ],
+        "desc": "표지 고르기."
+      },
+      {
+        "key": "contents",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "targetContentIDX",
+              "type": "number",
+              "required": true,
+              "desc": "이 칸이 책의 몇 번째 자리에 붙는지. 대개 배열 번호와 같게 둡니다."
+            },
+            {
+              "key": "isLeft",
+              "type": "bool",
+              "required": true,
+              "desc": "펼친 책의 왼쪽 면인지. false 면 오른쪽입니다."
+            },
+            {
+              "key": "type",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "choice",
+                "quiz"
+              ],
+              "desc": "**quiz 는 맞는 것을 골라야 넘어가고, choice 는 무엇을 골라도 넘어갑니다.**"
+            },
+            {
+              "key": "sectionTitle",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "section01",
+                "section02",
+                "section03",
+                "section04"
+              ],
+              "desc": "칸 제목 그림. section01~04 중 하나입니다."
+            },
+            {
+              "key": "soundBTNPos",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "그 칸의 소리 단추 자리."
+            },
+            {
+              "key": "pos",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "그 칸이 놓일 자리."
+            },
+            {
+              "key": "blank",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "img",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "quiz01_blank",
+                    "quiz02_blank",
+                    "quiz03_blank",
+                    "quiz04_blank"
+                  ],
+                  "desc": "빈자리 그림. quiz01_blank~quiz04_blank 중 하나입니다."
+                },
+                {
+                  "key": "offsetX",
+                  "type": "number",
+                  "required": true,
+                  "desc": "빈자리를 가로로 미는 값."
+                },
+                {
+                  "key": "offsetY",
+                  "type": "number",
+                  "required": true,
+                  "desc": "세로로 미는 값."
+                }
+              ],
+              "desc": "고른 것이 들어갈 빈자리."
+            },
+            {
+              "key": "answer",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "string",
+                "desc": "이름 하나."
+              },
+              "desc": "맞았을 때 빈자리에 들어가는 그림. **배열입니다** — 여럿이면 차례로 들어갑니다."
+            },
+            {
+              "key": "panelBG",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "contentsPanel01",
+                "contentsPanel02",
+                "contentsPanel03",
+                "contentsPanel04"
+              ],
+              "desc": "고르기 판 배경. contentsPanel01~04 중 하나입니다."
+            },
+            {
+              "key": "tab",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "string",
+                "desc": "이름 하나."
+              },
+              "desc": "판 위의 갈피 그림 두 장. 켠 것과 끈 것을 함께 적습니다."
+            },
+            {
+              "key": "itemPos",
+              "type": "array",
+              "required": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "가로 자리."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "세로 자리."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "고를 것들이 놓일 자리. **item 칸 수와 같아야 합니다.**"
+            },
+            {
+              "key": "item",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "img",
+                    "type": "string",
+                    "required": true,
+                    "desc": "그 후보의 그림."
+                  },
+                  {
+                    "key": "answer",
+                    "type": "bool",
+                    "required": true,
+                    "desc": "맞는 것인지. **quiz 칸은 정확히 하나만 true**, choice 칸은 다 true 로 둡니다."
+                  },
+                  {
+                    "key": "sound",
+                    "type": "string",
+                    "optional": true,
+                    "desc": "그 후보를 눌렀을 때 나는 소리. 기존 5개가 대개 빈 글자로 둡니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "고를 것들. 기존 5개가 다 **셋**입니다."
+            },
+            {
+              "key": "narration",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "nar05",
+                "nar06",
+                "nar07",
+                "nar08"
+              ],
+              "desc": "그 칸에서 도우미가 하는 안내. 칸마다 다릅니다."
+            },
+            {
+              "key": "randomPos",
+              "type": "bool",
+              "optional": true,
+              "desc": "후보를 놓을 때 itemPos 차례를 섞을지. 기존 5개가 다 false 입니다 — 정답 자리가 늘 같아지지 않게 하려면 켭니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "책 안의 칸들. **차례가 곧 채우는 순서**입니다. 기존 5개가 4~6칸입니다.",
+        "minLengthWhy": "칸이 하나뿐이면 책이 안 됩니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "quiz-content-one-answer",
+      "level": "error",
+      "check": "type 이 quiz 인 칸은 item 중 answer 가 정확히 하나여야 한다.",
+      "why": "맞혀야 넘어가는 칸입니다. 없으면 **그 칸을 넘어갈 수가 없습니다.**"
+    },
+    {
+      "id": "itempos-matches-item",
+      "level": "error",
+      "check": "itemPos 칸 수가 item 칸 수와 같아야 한다.",
+      "why": "자리표가 모자라면 마지막 후보가 undefined 자리로 가서 (0,0) 에 겹칩니다."
+    },
+    {
+      "id": "bookopen-matches-img",
+      "level": "warn",
+      "check": "book.choice[].bookOpen 번호가 img 번호와 같아야 한다.",
+      "why": "book05 를 골랐는데 book_open02 가 펴지면 표지와 속이 어긋납니다. 번호가 손으로 적히는 자리라 베낄 때 틀립니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

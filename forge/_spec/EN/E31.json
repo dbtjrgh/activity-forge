@@ -1,0 +1,305 @@
+{
+  "specVersion": 1,
+  "module": "E31",
+  "subject": "EN",
+  "title": "세 줄 슬롯 맞추기 (레버로 돌려 낱말 완성)",
+  "summary": "가로 세 줄짜리 슬롯이 있고, 레버를 당겨 줄을 돌려 가운데에 정답 그림 세 장을 맞추는 활동. 줄마다 놓이는 그림이 정해져 있습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E31",
+    "activities": [
+      "ENL3M02W1S1",
+      "ENL3M04W1S1",
+      "ENL3M06W1S1",
+      "ENL3M11W3S1"
+    ],
+    "doc": "README 없음. 근거는 E31.ts · SlotManager.ts · AnswerCard.ts 와 표본 4차시(1·2·4·6호)입니다. **자리가 ENL3M__W1S1 과 ENL3M__W3S1 로 옮겨 다녔습니다.**"
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "this.addChild(E31.handle);",
+        "E31.handle.init(quizData);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await E31.handle.start();",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"nar03\");",
+        "await E31.handle.play();",
+        "await E31.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "E31",
+        "from": "@_common/module/EN/E31/E31"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "board",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "슬롯 판."
+      },
+      {
+        "alias": "grid",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "슬롯 칸 격자."
+      },
+      {
+        "alias": "lever",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "당기는 레버."
+      },
+      {
+        "alias": "masking",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "슬롯 창을 잘라 주는 마스크."
+      },
+      {
+        "alias": "particle_all",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "세 줄을 다 맞혔을 때의 이펙트."
+      },
+      {
+        "alias": "particle_row",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "한 줄을 맞혔을 때의 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음."
+      },
+      {
+        "alias": "nar03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. **액티비티 onStart 가 이름을 박아 부릅니다.**"
+      },
+      {
+        "alias": "sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다.** 표본 네 차시가 **모두 공통으로 등록한 alias 20개**가 사실상 모듈 몫입니다:\n`bg` · `board` · `grid` · `lever` · `masking` · `particle_all` · `particle_row` · `bgm` · `sfx01`~`sfx04` · `nar03` · `com_nar01`·`com_nar02`·`com_nar03` · `com_nar10`·`com_nar11`·`com_nar12` · 폰트 `NanumSquareRoundR`.\n\n코드가 이름을 박아 찾는 것은 `bg` · `board` · `grid` · `lever` · `masking` · `particle_all` · `particle_row` · `bgm` · `sfx01`~`sfx04` 이고, **`nar03` 은 액티비티 onStart 가 부릅니다.** `com_nar*` 는 도우미 공통 음원 관례입니다.\n\n낱말 리소스(`answercard_{낱말}` · `{낱말}_1`~`_3`)는 차시 고유입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고, `answer_*` · `card_*` 처럼 낱말 이름이 붙은 것은 그 차시 몫입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "slotItems",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그 칸에 놓일 그림."
+            },
+            {
+              "key": "checkIndex",
+              "type": "number",
+              "required": true,
+              "desc": "**정답 판정 번호.** 슬롯 가운데에 온 칸의 이 값과 이닝의 `checkIndex` 를 견줍니다(SlotManager.ts:306). 같아야 정답입니다."
+            },
+            {
+              "key": "row",
+              "type": "number",
+              "required": true,
+              "desc": "이 그림이 놓일 줄 번호. **1 부터 셉니다**(SlotManager.ts:427 이 `row == i + 1` 로 봅니다) — 0 을 적으면 어느 줄에도 안 놓입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "슬롯 줄에 놓일 그림들의 기본 목록. 이닝마다 따로 주려면 `iningInfoList[].slotItem` 을 씁니다.",
+        "minLengthWhy": "줄마다 돌릴 그림이 필요합니다."
+      },
+      {
+        "key": "iningInfoList",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "answerSlot",
+              "type": "array",
+              "required": true,
+              "minLength": 3,
+              "of": {
+                "key": "",
+                "type": "asset:image",
+                "desc": "그 줄의 정답 그림."
+              },
+              "desc": "그 이닝의 정답 그림 **세 장**. SlotManager.ts:397~399 가 `[0]`·`[1]`·`[2]` 를 그대로 꺼내 씁니다 — **세 장 고정입니다.**",
+              "minLengthWhy": "세 줄이라 정확히 3장이어야 합니다."
+            },
+            {
+              "key": "slotItem",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "alias",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "그 칸에 놓일 그림."
+                  },
+                  {
+                    "key": "checkIndex",
+                    "type": "number",
+                    "required": true,
+                    "desc": "**정답 판정 번호.** 슬롯 가운데에 온 칸의 이 값과 이닝의 `checkIndex` 를 견줍니다(SlotManager.ts:306). 같아야 정답입니다."
+                  },
+                  {
+                    "key": "row",
+                    "type": "number",
+                    "required": true,
+                    "desc": "이 그림이 놓일 줄 번호. **1 부터 셉니다**(SlotManager.ts:427 이 `row == i + 1` 로 봅니다) — 0 을 적으면 어느 줄에도 안 놓입니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝에서 슬롯에 채울 그림들. 위 `slotItems` 대신 이닝마다 갈아 끼울 때 씁니다.",
+              "minLengthWhy": "줄마다 돌릴 그림이 필요합니다."
+            },
+            {
+              "key": "answerCard",
+              "type": "asset:image",
+              "required": true,
+              "desc": "그 이닝의 정답 낱말 카드 그림."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 낱말 음원."
+            },
+            {
+              "key": "checkIndex",
+              "type": "number",
+              "required": true,
+              "desc": "**그 이닝의 정답 번호.** 가운데에 온 칸의 `checkIndex` 와 이 값을 견줍니다(SlotManager.ts:306). 슬롯 그림들의 checkIndex 중 하나여야 합니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. (열쇠 철자가 `iningInfoList` 입니다.)",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "checkindex-must-exist",
+      "level": "error",
+      "check": "이닝의 checkIndex 와 같은 값을 가진 그림이 그 이닝 슬롯 목록에 있어야 한다.",
+      "why": "가운데 칸의 번호와 견줍니다. 없는 번호면 **아무리 돌려도 정답이 되지 않아 이닝이 끝나지 않습니다.**"
+    },
+    {
+      "id": "rows-covered",
+      "level": "error",
+      "check": "세 줄(row 1·2·3)마다 돌릴 그림이 충분히 있어야 한다.",
+      "why": "줄이 비면 그 줄은 돌 것이 없어 맞출 수 없습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · board · grid · lever · masking · particle_all · particle_row · bgm · nar03 · sfx01~sfx04 이 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다."
+    },
+    {
+      "id": "typo-key-kept",
+      "level": "warn",
+      "check": "열쇠는 `iningInfoList` 철자 그대로 적는다.",
+      "why": "코드가 그 이름으로 읽습니다."
+    }
+  ],
+  "notes": [
+    "표본이 1·2·4·6호 네 차시이고 자리가 W1S1 과 W3S1 로 옮겨 다녔습니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ],
+  "relations": [
+    {
+      "id": "answerslot-exactly-three",
+      "kind": "count",
+      "pick": "iningInfoList[].answerSlot",
+      "min": 3,
+      "max": 3,
+      "note": "iningInfoList[].answerSlot 은 정확히 3장이어야 한다.",
+      "why": "SlotManager.ts:397~399 가 `[0]`·`[1]`·`[2]` 를 직접 꺼냅니다. 두 장이면 세 번째가 undefined 가 되어 **정답 표시가 깨집니다.**"
+    },
+    {
+      "id": "row-is-one-based",
+      "kind": "range",
+      "pick": "iningInfoList[].slotItem[].row",
+      "min": 1,
+      "note": "slotItem[].row 는 1 부터 세는 줄 번호다.",
+      "why": "SlotManager.ts:427 이 `row == i + 1` 로 봅니다. 0 부터 적으면 **그 그림이 어느 줄에도 안 놓입니다.**"
+    }
+  ]
+}

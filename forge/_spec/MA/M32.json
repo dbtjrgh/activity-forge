@@ -1,0 +1,425 @@
+{
+  "specVersion": 1,
+  "module": "M32",
+  "subject": "MA",
+  "title": "찾아서 노트에 채우기",
+  "summary": "배경 그림 속에 숨은 것들을 눌러 찾고, 찾은 것을 오른쪽 노트에 채워 나가는 활동. 이닝마다 찾을 목록이 달라지고 위쪽 이닝 띠에 진행이 표시됩니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M32",
+    "activities": [
+      "MAL1M02W3S3",
+      "MAL1M06W1S3",
+      "MAL1M11W2S3",
+      "MAL2M02W3S3",
+      "MAL2M06W1S3"
+    ],
+    "doc": "README 없음. 근거는 M32.ts · BG.ts · InningBar.ts · NotePanel.ts · CorrectPanel.ts · MonterAni.ts 와 표본 3차시입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M32.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(M32.handle);",
+        "await M32.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await M32.handle.start();",
+        "await M32.handle.play();",
+        "await M32.handle.finish();",
+        "await SparkApp.eop.show();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "M32",
+        "from": "@_common/module/MA/"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": false,
+        "boundTo": "quizData.bg[]",
+        "note": "배경 그림들. 배열이라 여러 장을 겹칠 수 있습니다. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "M32.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M32 에 있습니다(별도 repo).\n\n**로티 alias 가 MAL1M02W3S3_ 로 시작하는 것은 최초 제작 차시 이름이 그대로 굳은 것입니다** — 활동 이름이 아니라 모듈이 찾는 고정 이름이니 새 차시에서도 바꾸지 마세요. 도우미 색은 이 이름 안에 들어 있어(MAL1M02W3S3_Bmon_talk 등) inningData[].mon 값이 그중 하나를 고릅니다.\n\n배경(bg)만 GameData 가 가리키고 액티비티가 넣습니다.",
+      "font": [
+        "NanumSquareRoundR",
+        "NanumSquareRoundB",
+        "NanumSquareRoundEB"
+      ],
+      "image": [
+        "inningbar_bg",
+        "inning_off",
+        "inning_on",
+        "item_bg",
+        "item_bg2",
+        "mag_button",
+        "note",
+        "note_next_btn",
+        "note_next_btn_p",
+        "note_prev_btn",
+        "note_prev_btn_p",
+        "popup_option_close_btn_n"
+      ],
+      "sound": [
+        "bgm",
+        "SL_ma_cor_sfx01",
+        "SL_ma_inc_sfx02"
+      ],
+      "lottie": [
+        "MAL1M02W3S3_correct_ef",
+        "MAL1M02W3S3_Bmon_talk",
+        "MAL1M02W3S3_Pmon_talk",
+        "MAL1M02W3S3_Rmon_talk"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "startnarration",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "학습 시작 지문. (열쇠가 소문자 n 입니다 — startNarration 이 아닙니다.)"
+      },
+      {
+        "key": "bg",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "asset:image",
+          "desc": "배경 그림 alias 하나."
+        },
+        "desc": "배경 그림들. 적은 차례대로 겹쳐 깔립니다.",
+        "minLengthWhy": "배경이 한 장은 있어야 합니다."
+      },
+      {
+        "key": "items",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "type",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "deco-image",
+                "deco-lottie",
+                "item"
+              ],
+              "desc": "그 칸의 갈래. **item** = 눌러서 찾는 대상 · **deco-image** = 누를 수 없는 그림 장식 · **deco-lottie** = 누를 수 없는 애니 장식."
+            },
+            {
+              "key": "lottie",
+              "type": "asset:lottie",
+              "optional": true,
+              "desc": "애니 alias. type 이 deco-lottie 이거나 애니로 그리는 대상에 씁니다."
+            },
+            {
+              "key": "pos",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "놓이는 자리."
+            },
+            {
+              "key": "anchor",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "기준점(0~1 비율). 0.5,0.5 가 가운데입니다."
+            },
+            {
+              "key": "touch",
+              "type": "bool",
+              "optional": true,
+              "desc": "누를 수 있는지. **애니 자동재생과 반대로 묶여 있습니다** — BG.ts:22 가 `autoplay: !touch` 로 잡으므로, touch: true 인 것은 누를 때까지 애니가 멈춰 있습니다."
+            },
+            {
+              "key": "image",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "그림 alias. 애니가 아닌 것에 씁니다."
+            },
+            {
+              "key": "name",
+              "type": "string",
+              "optional": true,
+              "desc": "**연결 이름.** 이닝 띠와 노트가 이 이름으로 대상을 찾습니다(M32.ts:143 · NotePanel.ts:171). 한 글자만 달라도 찾은 것이 노트에 안 채워집니다."
+            },
+            {
+              "key": "alias",
+              "type": "object",
+              "optional": true,
+              "fields": [
+                {
+                  "key": "normal",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "기본 그림."
+                },
+                {
+                  "key": "highlight",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "강조 그림."
+                }
+              ],
+              "desc": "대상 그림 두 벌 — 기본과 강조(찾을 때 반짝이는 것)."
+            },
+            {
+              "key": "popup",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "눌렀을 때 뜨는 확대 그림."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "optional": true,
+              "desc": "눌렀을 때 재생할 음원. 노트에 채워질 때도 이 소리를 다시 냅니다(NotePanel.ts:172)."
+            },
+            {
+              "key": "inningbar",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "이닝 띠에 보일 아이콘 그림."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "배경 위에 놓이는 것들 — 찾을 대상과 장식이 섞여 있습니다. **name 이 이 모듈의 연결 열쇠입니다**: 이닝 띠(inningbar.item)와 노트(notePanel.item)가 같은 name 으로 이 목록을 찾습니다(M32.ts:143·190).",
+        "minLengthWhy": "놓을 것이 하나는 있어야 합니다."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "label",
+              "type": "string",
+              "required": true,
+              "desc": "이닝 이름표. 사람이 알아보기 위한 표시입니다."
+            },
+            {
+              "key": "narr",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 이닝의 지시문 음원."
+            },
+            {
+              "key": "mon",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "Bmon",
+                "Pmon",
+                "Rmon"
+              ],
+              "desc": "도우미 캐릭터 색. 애니 alias 는 모듈이 `MAL1M02W3S3_{색}_talk` 로 물고 있습니다 — 액티비티가 따로 등록할 것은 없습니다."
+            },
+            {
+              "key": "inningbar",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "icon",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "띠 앞에 붙는 아이콘."
+                },
+                {
+                  "key": "item",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 1,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "name",
+                        "type": "string",
+                        "required": true,
+                        "desc": "items 의 name 과 같아야 합니다. InningBar.ts:261 이 이 이름으로 아직 못 찾은 것을 셉니다."
+                      },
+                      {
+                        "key": "normal",
+                        "type": "asset:image",
+                        "required": true,
+                        "desc": "아직 못 찾았을 때의 그림."
+                      },
+                      {
+                        "key": "correct",
+                        "type": "asset:image",
+                        "required": true,
+                        "desc": "찾은 뒤로 바뀌는 그림."
+                      }
+                    ],
+                    "desc": "칸 하나."
+                  },
+                  "desc": "그 이닝에서 찾아야 하는 것들. **name 으로 items 목록과 짝지어집니다.**",
+                  "minLengthWhy": "찾을 것이 하나는 있어야 합니다."
+                }
+              ],
+              "desc": "위쪽 이닝 띠. 그 이닝에서 찾아야 하는 것들이 여기 늘어섭니다."
+            },
+            {
+              "key": "notePanel",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "label",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "노트 제목 그림."
+                },
+                {
+                  "key": "item",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 1,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "name",
+                        "type": "string",
+                        "required": true,
+                        "desc": "items 의 name 과 같아야 합니다. NotePanel.ts:171 이 이 이름으로 배경 대상을 찾아 소리를 냅니다."
+                      },
+                      {
+                        "key": "normal",
+                        "type": "asset:image",
+                        "required": true,
+                        "desc": "빈 칸 그림."
+                      },
+                      {
+                        "key": "correct",
+                        "type": "asset:image",
+                        "required": true,
+                        "desc": "채워진 칸 그림."
+                      }
+                    ],
+                    "desc": "칸 하나."
+                  },
+                  "desc": "노트에 채워질 칸들. **name 으로 items 목록과 짝지어집니다.**",
+                  "minLengthWhy": "칸이 하나는 있어야 합니다."
+                },
+                {
+                  "key": "align",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "노트 칸 정렬 방식 번호. **0 도 뜻이 있는 값입니다** — NotePanel.ts:229 가 `info.align || info.align == 0` 으로 봅니다. 생략하면 기본 정렬입니다."
+                }
+              ],
+              "desc": "오른쪽 노트 한 장."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. 이닝마다 찾을 목록과 노트 한 장이 있습니다.",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      },
+      {
+        "key": "finishNarration",
+        "type": "asset:sound",
+        "optional": true,
+        "desc": "학습을 마칠 때 읽는 음원."
+      },
+      {
+        "key": "disuseCommonCorrect",
+        "type": "bool",
+        "optional": true,
+        "desc": "공통 정답 패널을 쓰지 않을지. true 면 CorrectPanel 이 공통 연출을 건너뜁니다(CorrectPanel.ts:26) — 활동 고유 연출을 쓸 때만 켭니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "name-links-three-lists",
+      "level": "error",
+      "check": "inningbar.item[].name 과 notePanel.item[].name 이 items[].name 중 하나와 정확히 같아야 한다.",
+      "why": "**이 모듈은 name 하나로 세 목록을 잇습니다**(M32.ts:143·190 · NotePanel.ts:171 · InningBar.ts:261). 이름이 어긋나면 눌러서 찾아도 띠와 노트가 채워지지 않아 **이닝이 끝나지 않습니다.** 에러는 없습니다."
+    },
+    {
+      "id": "touch-items-have-name",
+      "level": "error",
+      "check": "type 이 item 인 칸은 name 이 있어야 한다.",
+      "why": "장식(deco-*)은 이름이 없어도 되지만, 찾는 대상은 이름으로 연결됩니다. 이름이 없으면 찾아도 아무 일이 없습니다."
+    },
+    {
+      "id": "touch-controls-autoplay",
+      "level": "warn",
+      "check": "장식 애니를 저절로 돌리려면 touch 를 false 로 둔다.",
+      "why": "BG.ts:22 가 `autoplay: !touch` 입니다 — touch: true 로 두면 애니가 멈춰 있습니다. 두 뜻이 한 값에 묶여 있어 헷갈립니다."
+    },
+    {
+      "id": "align-zero-is-value",
+      "level": "warn",
+      "check": "정렬을 0 으로 두고 싶으면 0 을 적는다 — 키를 지우면 기본 정렬이 된다.",
+      "why": "NotePanel.ts:229 가 0 을 값으로 받아들이도록 따로 검사합니다. 키를 지우는 것과 0 은 다릅니다."
+    },
+    {
+      "id": "legacy-lottie-alias",
+      "level": "warn",
+      "check": "MAL1M02W3S3_ 로 시작하는 로티는 모듈이 물고 있으니 액티비티에서 등록하지 않는다.",
+      "why": "활동 이름처럼 보이지만 모듈 공용 이름입니다. 같은 alias 를 다시 등록하면 PixiJS 가 덮어씁니다."
+    },
+    {
+      "id": "start-narration-lowercase",
+      "level": "warn",
+      "check": "시작 지문 열쇠는 startnarration 이다(소문자 n).",
+      "why": "다른 모듈은 startNarration 을 씁니다. 대문자로 적으면 조용히 무음으로 시작합니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "bg[] · items[] 의 그림·애니·음원 alias 가 AssetTable 에 있어야 한다.",
+      "why": "없는 그림은 console.error 만 찍고 사라지고, 없는 음원은 무음으로 통과합니다."
+    }
+  ],
+  "notes": [
+    "eop 는 액티비티 onStart 가 부릅니다. 모듈은 부르지 않습니다.",
+    "노트 넘기기 버튼(note_prev_btn · note_next_btn)은 모듈이 물고 있습니다. 노트가 여러 장일 때 자동으로 붙습니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

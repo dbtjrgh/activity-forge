@@ -1,0 +1,265 @@
+{
+  "specVersion": 1,
+  "module": "E06",
+  "subject": "EN",
+  "title": "스티커 불빛 찾기 — 낱말 스티커 모으기",
+  "summary": "어두운 판에 손전등 불빛을 비춰 숨은 스티커 그림을 찾고, 찾으면 팝업과 낱말 소리가 나온 뒤 낱말 스티커가 붙습니다. 다 찾으면 완료 단추가 뜹니다. 칸 하나가 스티커 하나(그림 · 팝업 · 낱말 한 벌)입니다. 완성본 ENL2M01W1S1 · ENL2M04W1S1 은 6칸, ENL2M06W1S1 은 8칸입니다(ENL2M11W1S1 은 quizData 가 빈 뼈대라 표본에서 뺐습니다).",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E06",
+    "activities": [
+      "ENL2M01W1S1",
+      "ENL2M04W1S1",
+      "ENL2M06W1S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E06.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(E06.handle);",
+        "await E06.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await E06.handle.start();",
+        "await E06.handle.play();",
+        "await E06.handle.finish();",
+        "await SparkApp.eop.show( E06.handle.completePercent );"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "E06",
+        "from": "@_common/module/EN"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "supporter",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/LIght.ts 가 AssetManager.get(\"supporter\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "light",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/LIght.ts 가 AssetManager.get(\"light\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "beam",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/LIght.ts 가 AssetManager.get(\"beam\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "noShadowBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/StickerBoard.ts 가 AssetManager.get(\"noShadowBg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/StickerBoard.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "finish_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 E06.ts 가 AssetManager.get(\"finish_btn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "모듈 E06.ts 가 AudioManager.getSound(\"bgm\") 로 부르는 배경음 — 이름을 박아 부르므로 없으면 소리가 조용히 빠진다. 완성본 셋 다 가짐(2026-09-30)."
+      },
+      {
+        "alias": "endBtn",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "모듈 E06.ts 완료 단추 소리 — 이름을 박아 부르므로 없으면 소리가 조용히 빠진다. 완성본 셋 다 가짐(2026-09-30)."
+      },
+      {
+        "alias": "lightShow",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "모듈 component/MaskLayout.ts 불빛 소리 — 이름을 박아 부르므로 없으면 소리가 조용히 빠진다. 완성본 셋 다 가짐(2026-09-30)."
+      },
+      {
+        "alias": "sfx4",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "모듈 component/MaskLayout.ts 스티커를 찾을 때 소리 — 이름을 박아 부르므로 없으면 소리가 조용히 빠진다. 완성본 셋 다 가짐(2026-09-30)."
+      },
+      {
+        "alias": "nar2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "모듈 E06.ts 가 guide(\"nar2\") 로 부르는 지시문 — 이름을 박아 부르므로 없으면 소리가 조용히 빠진다. 완성본 셋 다 가짐(2026-09-30)."
+      },
+      {
+        "alias": "cheer1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "모듈 component/MaskLayout.ts 가 cheer1~3 가운데 하나를 칭찬으로 부름 — 이름을 박아 부르므로 없으면 소리가 조용히 빠진다. 완성본 셋 다 가짐(2026-09-30)."
+      },
+      {
+        "alias": "cheer2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "모듈 같은 칭찬 셋 가운데 하나 — 이름을 박아 부르므로 없으면 소리가 조용히 빠진다. 완성본 셋 다 가짐(2026-09-30)."
+      },
+      {
+        "alias": "cheer3",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "모듈 같은 칭찬 셋 가운데 하나 — 이름을 박아 부르므로 없으면 소리가 조용히 빠진다. 완성본 셋 다 가짐(2026-09-30)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "array",
+    "minLength": 1,
+    "minLengthWhy": "칸 하나가 스티커 하나입니다. MaskLayout 이 quizData 를 다 돌고, 찾은 수가 quizData.length 와 같으면 끝납니다 — 수는 기획이 정합니다(완성본 6 · 6 · 8).",
+    "fields": [],
+    "of": {
+      "key": "",
+      "type": "object",
+      "fields": [
+        {
+          "key": "image",
+          "type": "object",
+          "required": true,
+          "desc": "판에 숨은 스티커 그림.",
+          "fields": [
+            {
+              "key": "id",
+              "type": "string",
+              "required": true,
+              "desc": "이 칸의 이름 — 관례상 낱말 그대로(big · small …). **popup.id · word.id 와 같게** 둡니다(완성본 셋 다 같음)."
+            },
+            {
+              "key": "texture",
+              "type": "asset:image",
+              "required": true,
+              "desc": "스티커 그림. 관례상 sImg01 · sImg02 … (sticker_img01.png)."
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "판 위에서 스티커 그림이 놓이는 자리(화면 좌표)."
+            }
+          ]
+        },
+        {
+          "key": "popup",
+          "type": "object",
+          "required": true,
+          "desc": "스티커를 찾으면 뜨는 팝업. Popup.ts 가 id 로 낱말 소리를 냅니다.",
+          "fields": [
+            {
+              "key": "id",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "팝업이 뜰 때 나오는 낱말 소리 — image.id 와 같은 낱말(AudioManager.getSound(data.id))."
+            },
+            {
+              "key": "texture",
+              "type": "asset:image",
+              "required": true,
+              "desc": "팝업 그림. 관례상 popup01 · popup02 …"
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "팝업이 뜨는 자리. 완성본 4 · 6호는 image.position 과 같고, 1호는 달랐습니다."
+            }
+          ]
+        },
+        {
+          "key": "word",
+          "type": "object",
+          "required": true,
+          "desc": "찾은 뒤 스티커에 붙는 낱말 조각.",
+          "fields": [
+            {
+              "key": "id",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "낱말 조각을 누르면 나오는 소리(StickerItem.ts AudioManager.getSound(data.word.id)). image.id 와 같은 낱말."
+            },
+            {
+              "key": "texture",
+              "type": "asset:image",
+              "required": true,
+              "desc": "낱말 조각 그림. 관례상 sWord01 · sWord02 … (sticker_word01.png)."
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "desc": "**스티커 그림에서 떨어진 거리**(화면 좌표 아님) — 예 {x: 280, y: -80}. StickerItem 안에서 그림 기준으로 놓입니다."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "relations": [
+    {
+      "id": "sticker-textures",
+      "kind": "isAlias",
+      "pick": "[].image.texture",
+      "note": "image · popup · word 의 texture 는 다 AssetTable 에 있어야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 console.error 만 찍고 지나가서 스티커가 화면에서 사라진 것처럼 보입니다."
+    },
+    {
+      "id": "sticker-textures#popup",
+      "kind": "isAlias",
+      "pick": "[].popup.texture",
+      "note": "image · popup · word 의 texture 는 다 AssetTable 에 있어야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 console.error 만 찍고 지나가서 스티커가 화면에서 사라진 것처럼 보입니다."
+    },
+    {
+      "id": "sticker-textures#word",
+      "kind": "isAlias",
+      "pick": "[].word.texture",
+      "note": "image · popup · word 의 texture 는 다 AssetTable 에 있어야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 console.error 만 찍고 지나가서 스티커가 화면에서 사라진 것처럼 보입니다."
+    },
+    {
+      "id": "word-sound",
+      "kind": "isAlias",
+      "pick": "[].word.id",
+      "note": "word.id · popup.id 는 낱말 소리 alias 다 — AssetTable 에 있어야 한다.",
+      "why": "없으면 스티커를 찾아도 낱말 소리가 안 납니다. 오류 없이 조용합니다."
+    },
+    {
+      "id": "word-sound#popup",
+      "kind": "isAlias",
+      "pick": "[].popup.id",
+      "note": "word.id · popup.id 는 낱말 소리 alias 다 — AssetTable 에 있어야 한다.",
+      "why": "없으면 스티커를 찾아도 낱말 소리가 안 납니다. 오류 없이 조용합니다."
+    }
+  ]
+}

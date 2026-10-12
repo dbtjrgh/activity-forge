@@ -1,0 +1,511 @@
+{
+  "specVersion": 1,
+  "module": "E25",
+  "subject": "EN",
+  "title": "선생님과 문자 대화 — 물음에 그림이나 목소리로 답합니다",
+  "summary": "휴대전화 화면에 선생님 말풍선이 하나씩 올라옵니다. 물음이 뜨면 아래에서 답을 고릅니다 — 이모티콘을 고르는 칸, 그림을 고르는 칸, 녹음해서 답하는 칸이 섞여 있습니다. 고르거나 녹음하면 내 말풍선으로 올라가고 대화가 이어집니다. 끝나면 나눈 대화를 다시 들어 볼 수 있습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E25",
+    "activities": [
+      "ENL3M05W4S1",
+      "ENL3M06W4S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "RecordButton.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(E25.handle);",
+        "await E25.handle.init(quizData);",
+        "// SparkApp.cms.updateCompleteProgress(0.5);",
+        "// // 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "// const bg = new Sprite(AssetManager.get(\"bg\"));",
+        "// bg.anchor.set(0.5);",
+        "// this.addChild(bg);",
+        "// Chatpannel.handle.init(quizData);",
+        "// this.addChild(Chatpannel.handle);",
+        "// UserInput.handle.init();",
+        "// this.addChild(UserInput.handle);",
+        "// ReplayFrame.handle.init();",
+        "// this.addChild(ReplayFrame.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await E25.handle.start();",
+        "await E25.handle.play();",
+        "await E25.handle.finish();",
+        "// const bgm = AudioManager.getSound(\"bgm\");",
+        "// bgm.loop(true);",
+        "// bgm.volume(0.2);",
+        "// bgm.play();",
+        "// await SparkApp.mainMenu.mainCharacter.guide(\"nar03\");",
+        "// // await AudioManager.playAsync(\"nar03\");",
+        "// Replay.handle.finishButton();",
+        "// this.addChild(Replay.handle.mFinBtn);",
+        "// shuffleArray(quizData.selectImgList.choice);",
+        "// for (const info of quizData.chatList) {",
+        "//   console.log(\"[info.type]\", info.type);",
+        "//   switch (info.type) {",
+        "//     case \"dialog\": {",
+        "//       const dia = new DialogItem(info);",
+        "//       Chatpannel.handle.setPointeLock(true);",
+        "//       await Chatpannel.handle.leftPushChat(dia);",
+        "//       // 포트폴리오 ---------------------------------------------------------------",
+        "//       Chatpannel.handle.portfolioData.push({",
+        "//         dataKey: `question${info.inning.toString().padStart(2, \"0\")}`,",
+        "//         contents: info.answer,",
+        "//       });",
+        "//       //--------------------------------------------------------------------------",
+        "//       Chatpannel.handle.setPointeLock(false);",
+        "//       break;",
+        "//     }",
+        "//     case \"inputEmo\": {",
+        "//       const emo = new WaitInput();",
+        "//       await Chatpannel.handle.rightPushChat(emo);",
+        "//       await UserInput.handle.show(\"input\");",
+        "//       const result = await UserInput.handle.emoBox.waitChoice(info, \"inputEmo\");",
+        "//       Chatpannel.handle.setPointeLock(true);",
+        "//       Chatpannel.handle.popChat(emo);",
+        "//       await UserInput.handle.close();",
+        "//       await delay(500);",
+        "//       await Chatpannel.handle.rightPushChat(new EmoIcon(result));",
+        "//       // 포트폴리오 ---------------------------------------------------------------",
+        "//       Chatpannel.handle.portfolioData.push({",
+        "//         dataKey: `emotion${info.inning.toString().padStart(2, \"0\")}`,",
+        "//         contents: result.img,",
+        "//       });",
+        "//       Chatpannel.handle.portfolioData.push({",
+        "//         dataKey: `emo_audio${info.inning.toString().padStart(2, \"0\")}`,",
+        "//         contents: result.mySound,",
+        "//       });",
+        "//       // -------------------------------------------------------------------------",
+        "//       Chatpannel.handle.completeCount += 1;",
+        "//       await SparkApp.cms.updateProgress(Chatpannel.handle.completeCount / 6);",
+        "//       Chatpannel.handle.setPointeLock(false);",
+        "//       break;",
+        "//     }",
+        "//     case \"selectImg\": {",
+        "//       const emo = new WaitInput();",
+        "//       await Chatpannel.handle.rightPushChat(emo);",
+        "//       await UserInput.handle.show(\"input\");",
+        "//       console.log(\"selectImg info = \", info);",
+        "//       const result = await UserInput.handle.emoBox.waitChoice(info, \"selectImg\");",
+        "//       Chatpannel.handle.setPointeLock(true);",
+        "//       await UserInput.handle.close();",
+        "//       await Chatpannel.handle.popChat(emo);",
+        "//       await Chatpannel.handle.rightPushChat(new ImageIcon(result.img));",
+        "//       await Chatpannel.handle.rightPushChat(new TextureItem(result));",
+        "//       // 포트폴리오 ---------------------------------------------------------------",
+        "//       Chatpannel.handle.portfolioData.push({",
+        "//         dataKey: `answer${info.inning.toString().padStart(2, \"0\")}`,",
+        "//         contents: result.texture,",
+        "//       });",
+        "//       // -------------------------------------------------------------------------",
+        "//       Chatpannel.handle.completeCount += 1;",
+        "//       await SparkApp.cms.updateProgress(Chatpannel.handle.completeCount / 6);",
+        "//       Chatpannel.handle.setPointeLock(false);",
+        "//       await UserInput.handle.show(\"record\");",
+        "//       const recordResult = await UserInput.handle.recordBox.waitRecord(info);",
+        "//       // const recordResult = await UserInput.handle.recordBox.waitRecord();",
+        "//       Chatpannel.handle.setPointeLock(true);",
+        "//       await Chatpannel.handle.popChat(new TextureItem(result));",
+        "//       await Chatpannel.handle.rightPushChat(new RecordItem(result, recordResult));",
+        "//       await UserInput.handle.close();",
+        "//       await Chatpannel.handle.leftPushChat(new DialogItem(result));",
+        "//       console.log(\">>>>>>\", result.answer);",
+        "//       // 포트폴리오 ---------------------------------------------------------------",
+        "//       Chatpannel.handle.portfolioData.push({",
+        "//         dataKey: `answerT${info.inning.toString().padStart(2, \"0\")}`,",
+        "//         contents: result.answer,",
+        "//       });",
+        "//       // -------------------------------------------------------------------------",
+        "//       Chatpannel.handle.completeCount += 1;",
+        "//       await SparkApp.cms.updateProgress(Chatpannel.handle.completeCount / 6);",
+        "//       Chatpannel.handle.setPointeLock(false);",
+        "//       break;",
+        "//     }",
+        "//     case \"replay\": {",
+        "//       await Chatpannel.handle.leftPushChat(new Replay());",
+        "//     }",
+        "//   }",
+        "// }",
+        "// //replay 부분",
+        "// Replay.handle.mFinBtn.visible = true;",
+        "// //종료 버튼 클릭 로직",
+        "// Replay.handle.mFinBtn.on(\"pointerup\", async () => {",
+        "//   Chatpannel.handle.mReplayFinishFlag = true;",
+        "//   Replay.handle.mFinBtn.visible = false;",
+        "//   const portfolioArray: Array<any> = [];",
+        "//   Chatpannel.handle.portfolioData.map((data: any) =>",
+        "//     portfolioArray.push({",
+        "//       ...data,",
+        "//       create_date: new Date(),",
+        "//     }),",
+        "//   );",
+        "//   console.log(\">>>>portfolio\", portfolioArray);",
+        "//   SparkApp.cms.uploadPortpolio(portfolioArray);",
+        "//   await SparkApp.eop.show(1);",
+        "// });"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "RecordButton",
+        "from": "@/_common/module/EN/E25/RecordButton"
+      },
+      {
+        "symbol": "E25",
+        "from": "@/_common/module/EN/E25/E25"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경."
+      },
+      {
+        "alias": "phone",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "휴대전화 틀."
+      },
+      {
+        "alias": "chatbubble",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "말풍선."
+      },
+      {
+        "alias": "teacher",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "선생님 그림."
+      },
+      {
+        "alias": "teachertalk",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "선생님이 말할 때의 그림."
+      },
+      {
+        "alias": "emoBox",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "이모티콘 고르는 칸의 바탕."
+      },
+      {
+        "alias": "finishButton",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다 했다고 누르는 단추."
+      },
+      {
+        "alias": "closeFrameBtn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "창을 닫는 단추."
+      },
+      {
+        "alias": "replayBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다시 듣기 칸 바탕."
+      },
+      {
+        "alias": "replayImg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다시 듣기 그림."
+      },
+      {
+        "alias": "dotwave",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "선생님이 입력 중일 때 뜨는 점 세 개."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. E25 가 getSound(\"bgm\") 으로 찾습니다."
+      },
+      {
+        "alias": "nar03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작할 때 도우미가 하는 안내. E25.ts:52 가 guide(\"nar03\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.**"
+      },
+      {
+        "alias": "touchSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "무엇을 누를 때."
+      },
+      {
+        "alias": "touchBarSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "아래 칸을 누를 때."
+      },
+      {
+        "alias": "startRecordSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "녹음이 시작될 때."
+      },
+      {
+        "alias": "endRecordSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "녹음이 멈출 때."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈에는 Assets 파일이 없습니다.** 등록하는 곳이 아예 없어서 휴대전화 틀·말풍선·선생님 그림까지 **전부 액티비티가 넣습니다.** 예외는 녹음 단추 넷으로, onLoad 에 적힌 RecordButton.addAsset() 이 공용 폴더에서 가져옵니다.",
+      "image": [
+        "record_btn_n",
+        "record_btn_guage",
+        "record_btn_icon",
+        "record_btn_mark"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "selectImgPos",
+        "type": "array",
+        "optional": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "가로 자리."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 580,
+              "desc": "세로 자리. 기존 2개가 다 580 입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "그림을 고르는 칸에서 후보가 놓일 자리. **칸 수가 곧 한 번에 보이는 후보 수**입니다 — 기존 2개가 둘씩입니다."
+      },
+      {
+        "key": "selectImgList",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "choice",
+            "type": "array",
+            "optional": true,
+            "minLength": 0,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [],
+              "desc": "칸 하나."
+            },
+            "desc": "후보 목록. 기존 2개가 비어 있습니다. **E25.ts:57 이 여기를 섞습니다** — 비어 있으면 아무 일도 안 일어납니다."
+          }
+        ],
+        "desc": "그림 고르기에 쓸 후보 묶음. ⚠️ **기존 2개는 이 안이 통째로 주석입니다** — 실제로는 chatList 안의 choice 를 씁니다. 껍데기만 남은 자리로 보입니다."
+      },
+      {
+        "key": "chatList",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "inning",
+              "type": "number",
+              "required": true,
+              "desc": "이 줄이 몇 번째 이닝인지. **물음과 답이 같은 번호**를 씁니다 — 이 번호로 이닝 표시가 올라갑니다."
+            },
+            {
+              "key": "type",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "dialog",
+                "inputEmo",
+                "replay",
+                "selectImg"
+              ],
+              "desc": "이 줄의 성격. dialog 는 선생님 말, inputEmo 는 이모티콘 고르기, selectImg 는 그림 고르기, replay 는 다시 듣기입니다."
+            },
+            {
+              "key": "answer",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "선생님 말풍선에 들어갈 글 그림. dialog 에서 씁니다."
+            },
+            {
+              "key": "teacherSound",
+              "type": "asset:sound",
+              "optional": true,
+              "desc": "선생님이 하는 말소리."
+            },
+            {
+              "key": "outlineAnswer",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "같은 글의 테두리 그림. 말풍선 크기를 재는 데 씁니다."
+            },
+            {
+              "key": "choice",
+              "type": "array",
+              "optional": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "img",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "고르는 칸에 뜨는 그림."
+                  },
+                  {
+                    "key": "animation",
+                    "type": "asset:lottie",
+                    "optional": true,
+                    "desc": "고른 뒤 말풍선에서 움직이는 로티. inputEmo 에서 씁니다."
+                  },
+                  {
+                    "key": "mySound",
+                    "type": "string",
+                    "required": true,
+                    "desc": "내 말풍선에서 나는 소리."
+                  },
+                  {
+                    "key": "position",
+                    "type": "point",
+                    "optional": true,
+                    "figma": true,
+                    "desc": "그 후보가 놓일 자리. selectImgPos 와 같은 값을 적습니다."
+                  },
+                  {
+                    "key": "texture",
+                    "type": "asset:image",
+                    "optional": true,
+                    "desc": "고른 뒤 말풍선에 들어갈 글 그림."
+                  },
+                  {
+                    "key": "outlineTexture",
+                    "type": "asset:image",
+                    "optional": true,
+                    "desc": "그 글의 테두리 그림."
+                  },
+                  {
+                    "key": "finRecordTexture",
+                    "type": "asset:image",
+                    "optional": true,
+                    "desc": "녹음을 마친 뒤 말풍선에 남는 그림."
+                  },
+                  {
+                    "key": "answer",
+                    "type": "asset:image",
+                    "optional": true,
+                    "desc": "그 답에 딸린 글 그림."
+                  },
+                  {
+                    "key": "outlineAnswer",
+                    "type": "asset:image",
+                    "optional": true,
+                    "desc": "그 글의 테두리 그림."
+                  },
+                  {
+                    "key": "teacherSound",
+                    "type": "asset:sound",
+                    "optional": true,
+                    "desc": "그 답에 선생님이 하는 대꾸."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "아이가 고를 것들. inputEmo·selectImg 에서 씁니다. **칸 수가 selectImgPos 와 같아야 합니다**(selectImg 일 때)."
+            },
+            {
+              "key": "img",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "그 줄에 붙는 그림."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "대화 한 줄이 한 칸입니다. **차례가 곧 대화 순서**입니다.",
+        "minLengthWhy": "물음과 답이 한 쌍이라 최소 둘입니다. 기존 2개는 여덟~열 줄입니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · phone · chatbubble · teacher · teachertalk · emoBox · finishButton · closeFrameBtn · replayBg · replayImg · dotwave · bgm · nar03 · touchSound · touchBarSound · startRecordSound · endRecordSound 가 AssetTable 에 있어야 한다.",
+      "why": "**이 모듈에는 Assets 파일이 없습니다.** 녹음 단추 넷만 RecordButton.addAsset() 이 공용 폴더에서 가져오고, 나머지는 전부 회차 몫입니다."
+    },
+    {
+      "id": "chat-inning-paired",
+      "level": "error",
+      "check": "chatList 의 같은 inning 번호가 물음과 답으로 짝을 이뤄야 한다.",
+      "why": "이닝 표시가 이 번호로 올라갑니다. 짝이 안 맞으면 물음만 있고 답할 자리가 없는 이닝이 생겨 **거기서 멈춥니다.**"
+    },
+    {
+      "id": "choice-matches-selectimgpos",
+      "level": "error",
+      "check": "type 이 selectImg 인 줄의 choice 칸 수가 selectImgPos 칸 수와 같아야 한다.",
+      "why": "자리표가 모자라면 마지막 후보가 (0,0) 으로 겹칩니다."
+    },
+    {
+      "id": "selectimglist-empty",
+      "level": "warn",
+      "check": "selectImgList.choice 가 비어 있으면 경고.",
+      "why": "기존 2개는 이 안을 통째로 주석 처리해 두고 chatList 의 choice 를 씁니다. **껍데기만 남은 자리로 보이지만** E25.ts:57 이 여기를 섞고 있어, 쓸 생각이면 채워야 하고 안 쓸 생각이면 왜 비었는지 알고 있어야 합니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

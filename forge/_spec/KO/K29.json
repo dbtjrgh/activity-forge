@@ -1,0 +1,650 @@
+{
+  "specVersion": 1,
+  "module": "K29",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K29",
+    "activities": [
+      "KOL3M01W4S1",
+      "KOL3M02W4S1",
+      "KOL3M03W4S1",
+      "KOL3M04W4S1",
+      "KOL3M05W4S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "super.onLoad();"
+      ],
+      "onInit": [
+        "await this.K29.init();"
+      ],
+      "onStart": [
+        "await this.K29.Start();"
+      ],
+      "onAffordanceOn": [
+        "await this.K29.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K29.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K29",
+      "from": "@_common/module/KR/K29/K29"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "effect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 Target.ts 가 AssetManager.get(\"effect\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "default",
+                "type": "number",
+                "required": true,
+                "default": 30
+              },
+              {
+                "key": "condition_0",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "condition_1",
+                "type": "number",
+                "required": true,
+                "default": 6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "maxInning",
+        "type": "number",
+        "required": true
+      },
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "setCount",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "targetCount",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "roadCount",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "isInningEndAniPlay",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isUseInningStartAni",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isUseInningIdleAni",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isUseInningJumpAni",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isUseInningEndAni",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isUseAfterJumpImage",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "jumpMotionDelayTime",
+        "type": "number",
+        "required": true,
+        "default": 3000
+      },
+      {
+        "key": "targetMovingDist",
+        "type": "number",
+        "required": true,
+        "default": 400
+      },
+      {
+        "key": "isStartAni",
+        "type": "bool",
+        "required": true,
+        "default": false
+      },
+      {
+        "key": "isZoomEvent",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isPlaySound",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "isInningRandom",
+        "type": "bool",
+        "required": true,
+        "default": false
+      },
+      {
+        "key": "firstNarTime",
+        "type": "number",
+        "required": true,
+        "default": 2000
+      },
+      {
+        "key": "normalNarTime",
+        "type": "number",
+        "required": true,
+        "default": 0
+      },
+      {
+        "key": "extraBg",
+        "type": "number",
+        "required": true,
+        "default": 0
+      },
+      {
+        "key": "roadName",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "road"
+        ],
+        "default": "road"
+      },
+      {
+        "key": "isObj",
+        "type": "bool",
+        "required": true,
+        "default": false
+      },
+      {
+        "key": "inningBlank",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "number"
+          }
+        }
+      },
+      {
+        "key": "targetName",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "roadOver"
+        ],
+        "default": "roadOver"
+      },
+      {
+        "key": "issynthesisTarget",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "startTime",
+        "type": "number",
+        "required": true,
+        "default": 3000
+      },
+      {
+        "key": "roadNarTime",
+        "type": "number",
+        "required": true,
+        "default": 1000
+      },
+      {
+        "key": "createTargetWay",
+        "type": "number",
+        "required": true,
+        "default": 1
+      },
+      {
+        "key": "allTargetList",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "number"
+          }
+        }
+      },
+      {
+        "key": "goalPos",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "dropTargetPos",
+        "type": "array",
+        "required": true,
+        "minLength": 10,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "roadPos",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "effPos",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "autoplay",
+            "type": "bool",
+            "required": true,
+            "default": false
+          },
+          {
+            "key": "loop",
+            "type": "bool",
+            "required": true,
+            "default": false
+          }
+        ]
+      },
+      {
+        "key": "inningStartAni",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": -211
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 490
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": false
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningJumpAni",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": false
+            }
+          ]
+        }
+      },
+      {
+        "key": "afterJumpIdle",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": false
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningIdleAni",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": true
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningEndAni",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "autoplay",
+              "type": "bool",
+              "required": true,
+              "default": false
+            },
+            {
+              "key": "loop",
+              "type": "bool",
+              "required": true,
+              "default": false
+            }
+          ]
+        }
+      },
+      {
+        "key": "dropTargetSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 360
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 170
+          }
+        ]
+      },
+      {
+        "key": "bg",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "afforData",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "label",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "dropTarget",
+                "type": "array",
+                "required": true,
+                "minLength": 2,
+                "of": {
+                  "key": "",
+                  "type": "enum",
+                  "values": [
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

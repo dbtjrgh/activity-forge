@@ -1,0 +1,999 @@
+{
+  "specVersion": 1,
+  "module": "M14",
+  "subject": "MA",
+  "title": "가게에서 물건 담기 (수만큼 카트에)",
+  "summary": "진열장에서 물건을 끌어다 카트에 담는 활동. 전광판이 담은 개수를 세어 주고, 이닝마다 담아야 하는 수와 물건 갈래가 다릅니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M14",
+    "activities": [
+      "MAL2M01W2S2"
+    ],
+    "doc": "README 없음. 근거는 M14.ts · InningManager.ts · Quiz.ts · Billboard.ts · DragBase.ts · DragObject.ts 와 표본 MAL2M01W2S2 입니다."
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M14",
+      "from": "@_common/module/MA/M14/M14"
+    },
+    "members": [
+      "private M14 = new M14(this, quizData);"
+    ],
+    "hooks": {
+      "onLoad": [
+        "super.onLoad()"
+      ],
+      "onInit": [
+        "await this.M14.OnInit()"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm')",
+        "bgm.loop(true)",
+        "bgm.volume(0.1)",
+        "bgm.play()",
+        "await this.M14.OnStart()"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "billboard",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "전광판. 자리는 positions.billboardPos."
+      },
+      {
+        "alias": "cart",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "카트. 자리는 positions.cartPos."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 액티비티 onStart 가 직접 켭니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset 파일이 없습니다.\n\n**이름이 코드에 박힌 것** — 그림 `bg` · `billboard`(전광판) · `cart` · 음원 `bgm`(액티비티 onStart 가 직접 켭니다).\n\n**이닝 번호로 조합하는 것** — `car{이닝}` · `car_{이닝}` (**둘 다 찾는 자리가 있습니다**) · `obj_{이닝}` · `obj_{이닝}_{이닝}` · `outLine_{이닝}` · `showCase_{이닝}` · `shutter{이닝}`."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "settings",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningCount",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "number",
+              "desc": "이닝 번호."
+            },
+            "desc": "이닝 목록. **칸의 값이 아니라 칸 수가 이닝 수입니다.**",
+            "minLengthWhy": "이닝이 하나는 있어야 합니다."
+          },
+          {
+            "key": "maxInning",
+            "type": "number",
+            "required": true,
+            "desc": "이닝 최대 수. 진행률 표시가 씁니다."
+          },
+          {
+            "key": "isTouchSound",
+            "type": "bool",
+            "required": true,
+            "desc": "터치 효과음을 낼지."
+          },
+          {
+            "key": "isCorrectSound",
+            "type": "bool",
+            "required": true,
+            "desc": "정답 효과음을 낼지."
+          },
+          {
+            "key": "isInningCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "desc": "이닝을 마칠 때 완료 연출을 켤지."
+          },
+          {
+            "key": "isCompleteActivation",
+            "type": "bool",
+            "required": true,
+            "desc": "학습을 마칠 때 완료 연출을 켤지."
+          },
+          {
+            "key": "isRandomInning",
+            "type": "bool",
+            "required": true,
+            "desc": "이닝 순서를 섞을지."
+          },
+          {
+            "key": "isShowCasePosRandom",
+            "type": "bool",
+            "required": true,
+            "desc": "진열장 자리를 섞을지. true 면 같은 GameData 로 다시 들어가도 배치가 달라집니다."
+          },
+          {
+            "key": "correctCount",
+            "type": "number",
+            "required": true,
+            "desc": "정답으로 볼 개수."
+          },
+          {
+            "key": "intervalTime",
+            "type": "number",
+            "required": true,
+            "desc": "동작 사이 간격(ms)."
+          },
+          {
+            "key": "cartMoveTime",
+            "type": "number",
+            "required": true,
+            "desc": "카트가 움직이는 시간(ms)."
+          },
+          {
+            "key": "showHintCount",
+            "type": "number",
+            "required": true,
+            "desc": "힌트를 몇 번까지 보여 줄지."
+          },
+          {
+            "key": "isAffordanceTimer",
+            "type": "bool",
+            "required": true,
+            "desc": "일정 시간 안 누르면 어포던스를 띄울지."
+          },
+          {
+            "key": "isNarrationSound",
+            "type": "bool",
+            "required": true,
+            "desc": "나레이션을 재생할지."
+          },
+          {
+            "key": "isSfxSound",
+            "type": "bool",
+            "required": true,
+            "desc": "효과음 전체를 켤지."
+          },
+          {
+            "key": "isMainCharacterSound",
+            "type": "bool",
+            "required": true,
+            "desc": "도우미 캐릭터 음원을 재생할지."
+          },
+          {
+            "key": "isEndingShow",
+            "type": "bool",
+            "required": true,
+            "desc": "엔딩 연출을 보여 줄지."
+          },
+          {
+            "key": "isShowLog",
+            "type": "bool",
+            "required": true,
+            "desc": "**디버그 로그 스위치입니다. 양산에서는 false 로 둡니다.**"
+          }
+        ],
+        "desc": "활동 전체 스위치와 진행 값."
+      },
+      {
+        "key": "positions",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "carPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "차 자리."
+          },
+          {
+            "key": "showCasePos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 359,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝의 진열 칸 자리들.",
+              "minLengthWhy": "그 이닝에 놓을 물건 수만큼 필요합니다."
+            },
+            "desc": "진열장 자리표. **두 겹 배열 — [이닝][칸 번호]** 입니다.",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          },
+          {
+            "key": "billboardPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "전광판 자리."
+          },
+          {
+            "key": "cartPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "카트 자리."
+          },
+          {
+            "key": "facePos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "표정 애니 자리."
+          },
+          {
+            "key": "carImagePos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "차 그림 자리."
+          },
+          {
+            "key": "shutterPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "셔터 자리."
+          },
+          {
+            "key": "item2_Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 10,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝의 자리들.",
+              "minLengthWhy": "그 이닝에 놓을 개수만큼 필요합니다."
+            },
+            "desc": "2번 갈래 물건의 자리표. **두 겹 배열 — [이닝][칸 번호]** 입니다. (1번 갈래는 showCasePos 를 씁니다.)",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          },
+          {
+            "key": "item3_Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 10,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝의 자리들.",
+              "minLengthWhy": "그 이닝에 놓을 개수만큼 필요합니다."
+            },
+            "desc": "3번 갈래 물건의 자리표. **두 겹 배열 — [이닝][칸 번호]** 입니다. (1번 갈래는 showCasePos 를 씁니다.)",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          },
+          {
+            "key": "item4_Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 10,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝의 자리들.",
+              "minLengthWhy": "그 이닝에 놓을 개수만큼 필요합니다."
+            },
+            "desc": "4번 갈래 물건의 자리표. **두 겹 배열 — [이닝][칸 번호]** 입니다. (1번 갈래는 showCasePos 를 씁니다.)",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          },
+          {
+            "key": "item5_Pos",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 10,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 x."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝의 자리들.",
+              "minLengthWhy": "그 이닝에 놓을 개수만큼 필요합니다."
+            },
+            "desc": "5번 갈래 물건의 자리표. **두 겹 배열 — [이닝][칸 번호]** 입니다. (1번 갈래는 showCasePos 를 씁니다.)",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          },
+          {
+            "key": "cartItemPos_inCart",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "string",
+                  "required": true,
+                  "desc": "자리 x (계산식으로 적을 수 있습니다)."
+                },
+                {
+                  "key": "y",
+                  "type": "string",
+                  "required": true,
+                  "desc": "자리 y (계산식으로 적을 수 있습니다)."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "카트에 담긴 물건이 놓이는 자리들. **x · y 타입이 string 으로 잡혀 있는 것은 표본이 계산식을 적었기 때문입니다** — 값은 px 수입니다.",
+            "minLengthWhy": "카트에 담을 수 있는 개수만큼 필요합니다."
+          },
+          {
+            "key": "cartItemPos_inQuiz",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x."
+                },
+                {
+                  "key": "y",
+                  "type": "string",
+                  "required": true,
+                  "desc": "자리 y (계산식으로 적을 수 있습니다)."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "문제 화면에서 카트 물건이 놓이는 자리들.",
+            "minLengthWhy": "카트에 담을 수 있는 개수만큼 필요합니다."
+          }
+        ],
+        "desc": "자리표."
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "car",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "차 애니 설정."
+          },
+          {
+            "key": "face",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "표정 애니 설정."
+          },
+          {
+            "key": "clear",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복할지."
+              }
+            ],
+            "desc": "정답 애니 설정."
+          }
+        ],
+        "desc": "애니 크기·재생 설정."
+      },
+      {
+        "key": "inningConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "inningData",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "index",
+                  "type": "number",
+                  "required": true,
+                  "desc": "이닝 번호."
+                },
+                {
+                  "key": "name",
+                  "type": "string",
+                  "required": true,
+                  "desc": "이닝 이름표. 사람이 알아보기 위한 표시입니다."
+                },
+                {
+                  "key": "billboard",
+                  "type": "bool",
+                  "required": true,
+                  "default": true,
+                  "desc": "전광판을 쓸지."
+                },
+                {
+                  "key": "value",
+                  "type": "number",
+                  "required": true,
+                  "desc": "그 이닝의 목표 수."
+                },
+                {
+                  "key": "lineCount",
+                  "type": "number",
+                  "required": true,
+                  "desc": "진열 줄 수."
+                },
+                {
+                  "key": "count",
+                  "type": "number",
+                  "required": true,
+                  "default": 10,
+                  "desc": "그 이닝에 놓을 물건 수."
+                },
+                {
+                  "key": "type",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "물건 갈래 번호. 자리표를 item{갈래}_Pos 에서 찾습니다(1번은 showCasePos)."
+                },
+                {
+                  "key": "type1_count",
+                  "type": "number",
+                  "required": true,
+                  "default": 10,
+                  "desc": "1번 갈래 물건 개수."
+                },
+                {
+                  "key": "type2_count",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "2번 갈래 물건 개수."
+                },
+                {
+                  "key": "type3_count",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "3번 갈래 물건 개수."
+                },
+                {
+                  "key": "type4_count",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "4번 갈래 물건 개수."
+                },
+                {
+                  "key": "type5_count",
+                  "type": "number",
+                  "required": true,
+                  "default": 0,
+                  "desc": "5번 갈래 물건 개수."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "이닝 하나씩.",
+            "minLengthWhy": "settings.inningCount 의 칸 수만큼 필요합니다."
+          },
+          {
+            "key": "typeData",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "type1",
+                  "type": "number",
+                  "required": true,
+                  "desc": "읽히지 않습니다."
+                },
+                {
+                  "key": "type2",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "읽히지 않습니다."
+                },
+                {
+                  "key": "type3",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "읽히지 않습니다."
+                },
+                {
+                  "key": "type4",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "읽히지 않습니다."
+                },
+                {
+                  "key": "type5",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "읽히지 않습니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "**코드가 읽지 않습니다.** 갈래별 개수를 따로 적던 옛 자리이고, 지금은 inningData[].type{n}_count 를 씁니다. 새로 만들 때는 넣지 마세요.",
+            "minLengthWhy": "코드가 읽지 않으므로 개수는 뜻이 없습니다."
+          },
+          {
+            "key": "item_lineState",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "line1",
+                    "type": "bool",
+                    "optional": true,
+                    "desc": "1번 줄을 쓸지."
+                  },
+                  {
+                    "key": "line2",
+                    "type": "bool",
+                    "optional": true,
+                    "desc": "2번 줄을 쓸지."
+                  },
+                  {
+                    "key": "line3",
+                    "type": "bool",
+                    "optional": true,
+                    "desc": "3번 줄을 쓸지."
+                  },
+                  {
+                    "key": "line4",
+                    "type": "bool",
+                    "optional": true,
+                    "desc": "4번 줄을 쓸지."
+                  },
+                  {
+                    "key": "line5",
+                    "type": "bool",
+                    "optional": true,
+                    "desc": "5번 줄을 쓸지."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 이닝의 칸들.",
+              "minLengthWhy": "그 이닝의 진열 칸 수만큼 필요합니다."
+            },
+            "desc": "**이닝마다 진열 줄이 채워진 상태** — [이닝][칸] 두 겹 배열이고 칸마다 line1~line5 를 켜고 끕니다(Quiz.ts:146 이 이닝 번호로 찾습니다).",
+            "minLengthWhy": "이닝 수만큼 필요합니다."
+          },
+          {
+            "key": "lineItemList",
+            "type": "array",
+            "required": true,
+            "minLength": 1,
+            "of": {
+              "key": "",
+              "type": "array",
+              "minLength": 11,
+              "of": {
+                "key": "",
+                "type": "bool",
+                "desc": "읽히지 않습니다."
+              },
+              "desc": "읽히지 않습니다."
+            },
+            "desc": "**코드가 읽지 않습니다.** 줄별 물건 유무를 적던 옛 자리이고 지금은 item_lineState 를 씁니다. 새로 만들 때는 넣지 마세요.",
+            "minLengthWhy": "코드가 읽지 않으므로 개수는 뜻이 없습니다."
+          }
+        ],
+        "desc": "이닝별 설정."
+      },
+      {
+        "key": "gameSound",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "correct",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "alias."
+              }
+            ],
+            "desc": "정답 효과음."
+          },
+          {
+            "key": "wrong",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "alias."
+              }
+            ],
+            "desc": "오답 효과음."
+          },
+          {
+            "key": "wrong2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "alias."
+              }
+            ],
+            "desc": "거듭 틀렸을 때의 효과음."
+          },
+          {
+            "key": "touch",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "alias."
+              }
+            ],
+            "desc": "터치 효과음."
+          }
+        ],
+        "desc": "효과음 표. **각 항목이 { alias } 객체로 한 겹 감싸 있습니다** — M04 의 sound 와 짜임이 다릅니다."
+      },
+      {
+        "key": "narration",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "MA",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "enterance",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "학습 진입 지문. (철자가 enterance 입니다.)"
+              },
+              {
+                "key": "clear",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "이닝을 맞혔을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "correct",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "정답 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "wrong",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "guide",
+                "type": "array",
+                "required": true,
+                "minLength": 1,
+                "of": {
+                  "key": "",
+                  "type": "asset:sound",
+                  "desc": "음원 alias 하나."
+                },
+                "desc": "안내 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+              },
+              {
+                "key": "hint",
+                "type": "asset:sound",
+                "required": true,
+                "desc": "힌트 음원."
+              }
+            ],
+            "desc": "수학 나레이션."
+          }
+        ],
+        "desc": "나레이션 표. **과목 이름으로 한 겹 감싸 있습니다** — MA 아래에 값이 있습니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "pos-tables-cover-innings",
+      "level": "error",
+      "check": "showCasePos · item2_Pos ~ item5_Pos · item_lineState 의 칸 수가 이닝 수만큼 있어야 한다.",
+      "why": "모두 이닝 번호를 첨자로 씁니다. 모자라면 그 이닝에서 undefined 를 읽어 진열장이 비어 버립니다."
+    },
+    {
+      "id": "type-count-matches-pos",
+      "level": "error",
+      "check": "inningData[].type{n}_count 만큼의 자리가 item{n}_Pos[이닝] 에 있어야 한다(1번 갈래는 showCasePos).",
+      "why": "개수만큼 자리표에서 꺼내 놓습니다. 모자라면 뒤쪽 물건이 화면 밖으로 갑니다 — **담을 수 없어 이닝이 끝나지 않습니다.**"
+    },
+    {
+      "id": "value-reachable",
+      "level": "error",
+      "check": "inningData[].value 가 그 이닝에 놓인 물건 총수보다 크지 않아야 한다.",
+      "why": "다 담아도 목표에 닿지 못해 이닝이 끝나지 않습니다."
+    },
+    {
+      "id": "cart-pos-enough",
+      "level": "error",
+      "check": "cartItemPos_inCart 의 자리 수가 담을 수 있는 최대 개수보다 적지 않아야 한다.",
+      "why": "담긴 물건을 이 자리표에서 꺼내 놓습니다. 모자라면 나중에 담은 것이 사라진 것처럼 보입니다."
+    },
+    {
+      "id": "no-unused-fields",
+      "level": "warn",
+      "check": "typeData 와 lineItemList 는 적지 않는다.",
+      "why": "**둘 다 코드가 읽지 않습니다.** 지금 쓰이는 것은 inningData[].type{n}_count 와 item_lineState 입니다. 남겨 두면 「값을 고쳤는데 안 바뀐다」가 됩니다."
+    },
+    {
+      "id": "car-alias-two-forms",
+      "level": "error",
+      "check": "차 그림은 `car{이닝}` 과 `car_{이닝}` 두 이름 모두 등록해 두는 것이 안전하다.",
+      "why": "코드에 두 꼴이 다 있습니다(밑줄 있는 것과 없는 것). 어느 경로가 어느 이름을 쓰는지 갈려 있어, 하나만 넣으면 특정 상황에서만 차가 사라집니다."
+    },
+    {
+      "id": "game-sound-wrapped",
+      "level": "error",
+      "check": "gameSound 의 각 항목은 { alias: … } 객체로 적는다.",
+      "why": "문자열로 바로 적으면 코드가 .alias 를 읽어 undefined 가 되고 그 소리만 조용히 빠집니다."
+    },
+    {
+      "id": "debug-log-off",
+      "level": "error",
+      "check": "settings.isShowLog 는 false.",
+      "why": "디버그 로그 스위치입니다."
+    }
+  ],
+  "notes": [
+    "표본이 MAL2M01W2S2 한 차시뿐입니다.",
+    "자리 값 일부(cartItemPos_*)를 표본이 계산식으로 적어 두어 스펙 타입이 string 으로 잡혀 있습니다. 값은 px 수이고, 계산식으로 적으려면 `{\"__expr\": \"…\"}` 꼴을 씁니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

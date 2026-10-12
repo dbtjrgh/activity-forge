@@ -1,0 +1,3232 @@
+{
+  "specVersion": 1,
+  "module": "K05",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K05",
+    "activities": [
+      "KOL2M01W2S1",
+      "KOL2M02W2S1",
+      "KOL2M03W2S1",
+      "KOL2M04W2S1",
+      "KOL2M05W2S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "await this.K05.onInit();"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound('bgm');",
+        "bgm.loop(true);",
+        "bgm.volume(0.1);",
+        "bgm.play();",
+        "await this.K05.onStart();"
+      ],
+      "onAffordanceOn": [
+        "await this.K05.onAfforcanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K05.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K05",
+      "from": "@_common/module/KR/K05/K05"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "GreenBG",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 DragObject.ts 가 AssetManager.get(\"GreenBG\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "DefaultFrame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Drawing.ts 가 AssetManager.get(\"DefaultFrame\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "DragFrameOut1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Drawing.ts 가 AssetManager.get(\"DragFrameOut1\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "DragFrameIn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Drawing.ts 가 AssetManager.get(\"DragFrameIn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "click",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 Drawing.ts 가 AssetManager.get(\"click\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "nextbtn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Drawing.ts 가 AssetManager.get(\"nextbtn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "YellowBG",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 K05.ts 가 AssetManager.get(\"YellowBG\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "PanelBook",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 K05.ts 가 AssetManager.get(\"PanelBook\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "PaletteBG2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 K05.ts 가 AssetManager.get(\"PaletteBG2\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "PaletteBG",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 K05.ts 가 AssetManager.get(\"PaletteBG\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "PaletteFrame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 K05.ts 가 AssetManager.get(\"PaletteFrame\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "completebtn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 K05.ts 가 AssetManager.get(\"completebtn\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "intro",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 K05.ts 가 AssetManager.get(\"intro\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "PaintEraseWhite",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Paints.ts 가 AssetManager.get(\"PaintEraseWhite\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "PaintWhite",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 Paints.ts 가 AssetManager.get(\"PaintWhite\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 11개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "portpolio",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "default": 0
+                  },
+                  {
+                    "key": "width",
+                    "type": "number",
+                    "required": true,
+                    "default": 1920
+                  },
+                  {
+                    "key": "height",
+                    "type": "number",
+                    "required": true,
+                    "default": 1080
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "stickerCount",
+        "type": "number",
+        "required": true,
+        "default": 3
+      },
+      {
+        "key": "wordCount",
+        "type": "number",
+        "required": true,
+        "default": 5
+      },
+      {
+        "key": "tempText",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "enum",
+          "values": [
+            "B",
+            "K",
+            "O",
+            "P",
+            "S"
+          ]
+        }
+      },
+      {
+        "key": "isEasel",
+        "type": "bool",
+        "required": true
+      },
+      {
+        "key": "rainbow",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "string"
+        }
+      },
+      {
+        "key": "colors",
+        "type": "array",
+        "required": true,
+        "minLength": 9,
+        "of": {
+          "key": "",
+          "type": "string"
+        }
+      },
+      {
+        "key": "endBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "default": 80
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "default": 80
+          }
+        ]
+      },
+      {
+        "key": "nextBtnInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "gapX",
+            "type": "number",
+            "required": true,
+            "default": 80
+          },
+          {
+            "key": "gapY",
+            "type": "number",
+            "required": true,
+            "default": 80
+          }
+        ]
+      },
+      {
+        "key": "paintPosY",
+        "type": "number",
+        "required": true,
+        "default": 905.18
+      },
+      {
+        "key": "paintSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 87.62
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 78.01
+          }
+        ]
+      },
+      {
+        "key": "eraseSize",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 73.27
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 96.05
+          }
+        ]
+      },
+      {
+        "key": "GreenBG",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": -960
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": -540
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "GreenBG"
+          }
+        ]
+      },
+      {
+        "key": "YellowBG",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": -960
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": -540
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "YellowBG"
+          }
+        ]
+      },
+      {
+        "key": "PanelB",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PanelB"
+          }
+        ]
+      },
+      {
+        "key": "PanelS",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PanelS"
+          }
+        ]
+      },
+      {
+        "key": "PanelO",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PanelO"
+          }
+        ]
+      },
+      {
+        "key": "PanelK",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PanelK"
+          }
+        ]
+      },
+      {
+        "key": "PanelP",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PanelP"
+          }
+        ]
+      },
+      {
+        "key": "PanelBg",
+        "type": "point",
+        "required": true,
+        "figma": true,
+        "default": {
+          "x": 228.12,
+          "y": 110
+        }
+      },
+      {
+        "key": "PanelBook",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 251.45
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 119.86
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PanelBook"
+          }
+        ]
+      },
+      {
+        "key": "PaletteBG",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 280
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 860.04
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaletteBG"
+          }
+        ]
+      },
+      {
+        "key": "PaletteBG2",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 280
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 870.04
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaletteBG2"
+          }
+        ]
+      },
+      {
+        "key": "PaletteFrame",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 280
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 860.04
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaletteFrame"
+          }
+        ]
+      },
+      {
+        "key": "PaintRainbow",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 334.1
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 905.18
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintRainbow"
+          }
+        ]
+      },
+      {
+        "key": "PaintRed",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 486.1
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 905.18
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintRed"
+          }
+        ]
+      },
+      {
+        "key": "PaintOrange",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 790.1
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 905.18
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintOrange"
+          }
+        ]
+      },
+      {
+        "key": "PaintBrown",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 638.1
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 905.18
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintBrown"
+          }
+        ]
+      },
+      {
+        "key": "PaintYellow",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 942.1
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 905.18
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintYellow"
+          }
+        ]
+      },
+      {
+        "key": "PaintGreen",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1094.1
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 905.18
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintGreen"
+          }
+        ]
+      },
+      {
+        "key": "PaintBlue",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1246.09
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 905.18
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintBlue"
+          }
+        ]
+      },
+      {
+        "key": "PaintPupple",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1398.09
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 905.18
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintPupple"
+          }
+        ]
+      },
+      {
+        "key": "PaintWhite",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": -19
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": -15
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintWhite"
+          }
+        ]
+      },
+      {
+        "key": "PaintEraser",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1594.64
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 896.27
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintEraser"
+          }
+        ]
+      },
+      {
+        "key": "PaintEraseWhite",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": -18
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": -13
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "PaintEraseWhite"
+          }
+        ]
+      },
+      {
+        "key": "DrawingB",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DrawingB"
+          }
+        ]
+      },
+      {
+        "key": "DrawingS",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DrawingS"
+          }
+        ]
+      },
+      {
+        "key": "DrawingO",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DrawingO"
+          }
+        ]
+      },
+      {
+        "key": "DrawingK",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DrawingK"
+          }
+        ]
+      },
+      {
+        "key": "DrawingP",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DrawingP"
+          }
+        ]
+      },
+      {
+        "key": "TextB",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "TextB"
+          }
+        ]
+      },
+      {
+        "key": "TextS",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "TextS"
+          }
+        ]
+      },
+      {
+        "key": "TextO",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "TextO"
+          }
+        ]
+      },
+      {
+        "key": "TextK",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "TextK"
+          }
+        ]
+      },
+      {
+        "key": "TextP",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "TextP"
+          }
+        ]
+      },
+      {
+        "key": "BlankB",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "BlankB"
+          }
+        ]
+      },
+      {
+        "key": "BlankS",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "BlankS"
+          }
+        ]
+      },
+      {
+        "key": "BlankO",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "BlankO"
+          }
+        ]
+      },
+      {
+        "key": "BlankK",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "BlankK"
+          }
+        ]
+      },
+      {
+        "key": "BlankP",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "BlankP"
+          }
+        ]
+      },
+      {
+        "key": "FirstFrameB",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 129.84
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "FirstFrameB"
+          }
+        ]
+      },
+      {
+        "key": "FirstFrameS",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 129.84
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "FirstFrameS"
+          }
+        ]
+      },
+      {
+        "key": "FirstFrameO",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 129.84
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "FirstFrameO"
+          }
+        ]
+      },
+      {
+        "key": "FirstFrameK",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 129.84
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "FirstFrameK"
+          }
+        ]
+      },
+      {
+        "key": "FirstFrameP",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 129.84
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "FirstFrameP"
+          }
+        ]
+      },
+      {
+        "key": "SecondFrame",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 129.84
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "SecondFrame"
+          }
+        ]
+      },
+      {
+        "key": "ThirdFrame",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 129.84
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "ThirdFrame"
+          }
+        ]
+      },
+      {
+        "key": "DefaultFrame",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 129.84
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DefaultFrame"
+          }
+        ]
+      },
+      {
+        "key": "FrameEasel",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 143.02
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 103.3
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "aliasMayBeOff": "AssetTable 의 FrameEasel 줄을 주석으로 막아 이젤을 끄는 회차가 있습니다(KOL2M07W2S1 등 2개). Drawing.ts:422 가 빈 그림을 받습니다.",
+            "required": true,
+            "default": "FrameEasel"
+          }
+        ]
+      },
+      {
+        "key": "DragFirstB",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragFirstB"
+          }
+        ]
+      },
+      {
+        "key": "DragFirstS",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragFirstS"
+          }
+        ]
+      },
+      {
+        "key": "DragFirstO",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragFirstO"
+          }
+        ]
+      },
+      {
+        "key": "DragFirstK",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragFirstK"
+          }
+        ]
+      },
+      {
+        "key": "DragFirstP",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragFirstP"
+          }
+        ]
+      },
+      {
+        "key": "DragSecondB",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragSecondB"
+          }
+        ]
+      },
+      {
+        "key": "DragSecondS",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragSecondS"
+          }
+        ]
+      },
+      {
+        "key": "DragSecondO",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragSecondO"
+          }
+        ]
+      },
+      {
+        "key": "DragSecondK",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragSecondK"
+          }
+        ]
+      },
+      {
+        "key": "DragSecondP",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragSecondP"
+          }
+        ]
+      },
+      {
+        "key": "DragThirdB",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragThirdB"
+          }
+        ]
+      },
+      {
+        "key": "DragThirdS",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragThirdS"
+          }
+        ]
+      },
+      {
+        "key": "DragThirdO",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragThirdO"
+          }
+        ]
+      },
+      {
+        "key": "DragThirdK",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragThirdK"
+          }
+        ]
+      },
+      {
+        "key": "DragThirdP",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragThirdP"
+          }
+        ]
+      },
+      {
+        "key": "DragFrameIn",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1481.31
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 136.19
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragFrameIn"
+          }
+        ]
+      },
+      {
+        "key": "DragFrameOut1",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1472.75
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 145.94
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "DragFrameOut1"
+          }
+        ]
+      },
+      {
+        "key": "nextbtn",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1779.72
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 939.57
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "nextbtn"
+          }
+        ]
+      },
+      {
+        "key": "completebtn",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 1780
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 940
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "completebtn"
+          }
+        ]
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "intro",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "intro"
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 960
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 540
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "key": "click",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "alias",
+                "type": "asset:lottie",
+                "required": true,
+                "default": "click"
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "default": false
+              },
+              {
+                "key": "autoplay",
+                "type": "bool",
+                "required": true,
+                "default": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "affordance",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "nar1",
+            "type": "asset:sound",
+            "required": true,
+            "default": "affordanceNar1"
+          },
+          {
+            "key": "nar2",
+            "type": "asset:sound",
+            "required": true,
+            "default": "affordanceNar2"
+          },
+          {
+            "key": "nar3",
+            "type": "asset:sound",
+            "required": true,
+            "default": "affordanceNar3"
+          }
+        ]
+      }
+    ]
+  }
+}

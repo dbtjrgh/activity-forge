@@ -1,0 +1,195 @@
+{
+  "specVersion": 1,
+  "module": "ExploreStory",
+  "subject": "EN",
+  "title": "그림책 읽기 — 표지를 눌러 펼치고 쪽마다 읽어 줍니다",
+  "summary": "배경 위에 그림책 표지가 커지며 나타나고 살짝 커졌다 작아졌다를 되풀이합니다. 도우미가 나와 한마디 하고, 표지를 누르면 제목 소리가 난 뒤 책이 펼쳐집니다. 펼친 면마다 나레이션이 저절로 나오고 끝나면 다음 장으로 넘어갑니다. 좌우 화살표로 손수 넘길 수도 있고, 오른쪽 위 닫기를 누르면 표지로 돌아옵니다. 끝까지 넘기면 표지로 돌아오면서 끝납니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/ExploreStory",
+    "activities": [
+      "ENL1M01W2S1",
+      "ENL1M02W2S1",
+      "ENL1M03W2S1",
+      "ENL1M04W2S1",
+      "ENL1M05W2S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ExploreStory.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(ExploreStory.handle);",
+        "await ExploreStory.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await ExploreStory.handle.start();",
+        "await ExploreStory.handle.play();",
+        "await ExploreStory.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "ExploreStory",
+        "from": "@_common/module/EN"
+      }
+    ]
+  },
+  "assets": {
+    "providedByModule": {
+      "note": "ExploreStory.addAsset() 은 Assets.ts 를 도는데 그 목록이 통째로 주석이라 아무것도 등록하지 않습니다. 다만 책장 넘기는 소리(pageflip)와 단추 누르는 소리(clickBTN)는 **라이브러리가 직접 넣습니다** — Book.ts:9-10 이 /sparklab/common/ 밑의 공용 파일을 등록합니다. 그 둘은 회차 AssetTable 에 넣지 마세요. 그 밖은 전부 액티비티가 넣어야 합니다.",
+      "sound": [
+        "pageflip",
+        "clickBTN"
+      ]
+    },
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "boundTo": "quizData.bgAlias",
+        "note": "책 뒤에 깔리는 배경. EbookActivity.ts:17 이 quizData.bgAlias 로 찾습니다. 이름은 GameData 에서 바꿀 수 있지만 기존 5개가 다 bg 입니다."
+      },
+      {
+        "alias": "cover",
+        "kind": "image",
+        "boundTo": "quizData.coverAlias",
+        "note": "그림책 표지. EbookActivity.ts:23 이 quizData.coverAlias 로 찾습니다."
+      },
+      {
+        "alias": "bg-front",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 아래를 가리는 앞장식. EbookActivity.ts:27 하드코딩. anchor (0.5, 1) 로 화면 밑변에 붙습니다 — 밑에서 올라오는 그림입니다."
+      },
+      {
+        "alias": "close",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "책을 덮는 X 단추. Book.ts:533 하드코딩. 자리도 (890, -470) 으로 박혀 있습니다."
+      },
+      {
+        "alias": "leftBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "앞장으로 가는 화살표. Book.ts:546. x = -870 고정. 첫 장에서는 숨습니다."
+      },
+      {
+        "alias": "rightBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다음 장으로 가는 화살표. Book.ts:552. x = 870 고정."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. ExploreStory.ts:59 getSound(\"bgm\") 이 이름으로 찾습니다. 책을 펼치면 0.1 로 줄고 덮으면 되돌아옵니다."
+      },
+      {
+        "alias": "title",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "표지를 **처음** 누를 때 나는 제목 읽기. ExploreStory.ts 의 play() 가 playAsync(\"title\") 로 부르고, 끝날 때까지 기다린 뒤 책을 폅니다. 두 번째부터는 안 납니다."
+      },
+      {
+        "alias": "nar1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "도우미가 하는 시작 안내. mainCharacter.guide(\"nar1\") 로 넘어갑니다. 기존 5개가 다 넣고 있습니다."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "bgAlias",
+        "type": "asset:image",
+        "required": true,
+        "default": "bg",
+        "desc": "배경 그림의 alias. 기존 5개가 다 \"bg\" 입니다."
+      },
+      {
+        "key": "coverAlias",
+        "type": "asset:image",
+        "required": true,
+        "default": "cover",
+        "desc": "표지 그림의 alias. 기존 5개가 다 \"cover\" 입니다."
+      },
+      {
+        "key": "pageInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 14,
+        "minLengthWhy": "Book.ts:502 가 두 칸씩 묶어 한 면을 만듭니다. 맨 앞과 맨 뒤의 null 은 **속표지(빈 면)** 라 실제 쪽수는 (칸 수 - 2) / 2 입니다. 6면짜리(1·3·4호)가 14칸, 12면짜리(5호)가 26칸입니다.",
+        "desc": "펼친 면을 왼쪽·오른쪽 차례로 늘어놓은 그림 alias 목록. **맨 앞과 맨 뒤는 null** 로 두어 빈 면을 만듭니다 — 그래야 표지를 열었을 때 첫 면이 오른쪽에 옵니다. 칸 수는 반드시 짝수입니다.",
+        "of": {
+          "key": "",
+          "type": "asset:image",
+          "desc": "그 면에 들어갈 그림. null 이면 빈 면입니다."
+        }
+      },
+      {
+        "key": "soundInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "minLengthWhy": "면 하나에 나레이션 하나입니다. pageInfo 가 14칸이면 6개, 26칸이면 12개입니다.",
+        "desc": "면마다 저절로 나오는 나레이션 alias. **차례가 곧 면 번호**입니다. Book.ts:493 이 이 목록으로 소리를 미리 잡아 두고, 다 나오면 다음 장으로 넘깁니다.",
+        "of": {
+          "key": "",
+          "type": "asset:sound",
+          "desc": "그 면을 읽어 주는 소리."
+        }
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg-front · close · leftBTN · rightBTN · bgm · title · nar1 이 AssetTable 에 있어야 한다.",
+      "why": "addAsset() 이 아무것도 등록하지 않습니다. 라이브러리가 넣는 pageflip · clickBTN 만 빼고 전부 액티비티 몫입니다."
+    },
+    {
+      "id": "pageinfo-even-with-blank-ends",
+      "level": "error",
+      "check": "pageInfo 칸 수가 짝수이고, 첫 칸과 끝 칸이 null 이어야 한다.",
+      "why": "Book.ts:502 가 i, i+1 을 한 쌍으로 묶습니다. 홀수면 마지막 면의 오른쪽이 undefined 가 되어 AssetManager.get(undefined) 로 갑니다. 양 끝의 null 은 빈 속표지라, 빼면 첫 면이 왼쪽에 붙어 표지를 연 느낌이 안 납니다."
+    },
+    {
+      "id": "soundinfo-matches-pages",
+      "level": "error",
+      "check": "soundInfo 개수 = (pageInfo 칸 수 - 2) / 2 여야 한다.",
+      "why": "면 하나에 나레이션 하나입니다. 모자라면 그 면에서 소리가 안 나고 자동 넘김이 멈추며, 남으면 끝까지 안 들립니다. 기존 5개가 다 정확히 이 수입니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

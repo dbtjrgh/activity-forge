@@ -1,0 +1,286 @@
+{
+  "specVersion": 1,
+  "module": "M30_3",
+  "subject": "MA",
+  "title": "썸네일 골라서 꾸미기",
+  "summary": "썸네일 3~10개 중 하나를 골라 사진을 찍고, 그 사진을 꾸미기 보드에 올려 색연필·롤러·스티커로 꾸민 뒤 포트폴리오에 저장하는 모듈. M30 에서 갈라 만들었습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M30_3",
+    "activities": [
+      "MAL1M07W4S1",
+      "MAL2M07W4S1",
+      "MAL3M07W2S1"
+    ],
+    "doc": "sparkon_common/_common/module/MA/M30_3/README.md — 양산 가이드는 §10. **2026-09-29 모듈 고침**: 완료 버튼이 보드 · 도구 패널 밑에 깔려 맨 위로 올렸습니다(Editor.ts `addChild` 차례, sparkon_common 7754577, 수정요청 #144). 모듈을 고친 것이라 세 활동에 다 먹고, 액티비티 · 스펙 쪽에서 할 것은 없습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M30_3.assetLoad();"
+      ],
+      "onInit": [
+        "await M30_3.handle.onInit(quizData);",
+        "this.addChild(M30_3.handle);"
+      ],
+      "onStart": [
+        "await M30_3.handle.start();",
+        "await M30_3.handle.play();",
+        "await M30_3.handle.finish();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M30_3",
+      "from": "@_common/module/MA/M30_3/M30_3"
+    }
+  },
+  "assets": {
+    "providedByModule": {
+      "note": "M30_3.assetLoad() 가 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 같은 alias 를 두 번 addAsset 하면 PixiJS 가 「[Resolver] already has key … overwriting」 경고를 내고 나중 것으로 덮습니다. 도우미 캐릭터 음원은 MainCharacter 가 과목별로 이미 물고 있으니 이것도 다시 등록하지 않습니다."
+    },
+    "required": [
+      {
+        "alias": "select-bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "썸네일 고르기 화면 배경. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다 — 가장자리 장식은 잘리는 것을 전제로 배치돼 있습니다. 활동별 교체(기획 변경표 ④)."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "꾸미기 화면 배경. 3840x2160. **보드 흰 영역이 바뀌면 BookCover.AREA 를 다시 재야 합니다** — 현재 값은 화면 좌표 중심 (-214,-37) / 1044x621 이고, 이 값이 꾸미기 가능 영역·그림 배치·포트폴리오 캡처 범위를 모두 결정합니다. 8호 세 활동은 배경이 다른데도 보드 위치가 같아 다시 재지 않았습니다."
+      },
+      {
+        "alias": "select_guide",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "썸네일 고르기 지시문. 레벨별 나레이션이 오면 교체합니다(기획 변경표 ③)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "array",
+    "minLength": 2,
+    "minLengthWhy": "칸 하나가 화면 하나입니다 — [0] 썸네일 고르기(cameraPanel) · [1] 꾸미기(editorPanel). 두 화면이 한 벌로 돌아가므로 늘거나 줄지 않습니다.",
+    "fields": [],
+    "of": {
+      "key": "",
+      "type": "object",
+      "mixed": false,
+      "fields": [
+        {
+          "key": "panel",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "cameraPanel",
+            "editorPanel"
+          ],
+          "desc": "이 칸이 어느 화면인지 — cameraPanel(썸네일 고르기) 또는 editorPanel(꾸미기). **M30_3.ts 가 quizData[0] · quizData[1] 을 자리로 읽으므로 순서도 이 차례여야 합니다.**"
+        },
+        {
+          "key": "frameData",
+          "type": "array",
+          "optional": true,
+          "minLength": 3,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "scene",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "base",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "썸네일 기본 그림."
+                  },
+                  {
+                    "key": "on",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "썸네일 -on(노란 테두리) 그림."
+                  }
+                ],
+                "desc": "썸네일 바에 놓이는 그림. 256x148. 기본(base)과 -on(노란 테두리) 두 벌이 짝으로 필요합니다 — 관례상 alias 는 thumbnail{n} · thumbnail{n}-on."
+              },
+              {
+                "key": "frame",
+                "type": "object",
+                "required": true,
+                "fields": [
+                  {
+                    "key": "texture",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "썸네일을 터치하면 송출되는 사진 그림."
+                  },
+                  {
+                    "key": "position",
+                    "type": "point",
+                    "required": true,
+                    "figma": true,
+                    "default": {
+                      "x": 0,
+                      "y": -70
+                    },
+                    "desc": "사진이 놓이는 자리. 활동마다 사진 여백이 달라 프레임별로 잡습니다(기획 변경표 ②)."
+                  }
+                ],
+                "desc": "썸네일을 터치하면 송출되는 사진. 1296x837. 관례상 alias 는 frame{n} 이고 **번호가 썸네일과 1:1 대응**합니다 — thumbnail3 을 고르면 frame3 이 뜹니다. 피그마 export 는 번호 순서가 어긋나 오므로 그림 내용으로 짝지어야 합니다."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "썸네일 목록. 칸 하나 = 썸네일 하나이고, 개수가 곧 썸네일 개수입니다(기획 변경표 ① 3~10개). **4개 이상이면 좌우 페이징 버튼(prev-btn·next-btn ±-click)이 모듈 공통에 있어야 합니다** — ThumbnailBox.init 이 3개 이하면 버튼을 아예 만들지 않습니다. 8호까지는 세 활동 모두 3개라 버튼 리소스가 반입되지 않았습니다."
+        },
+        {
+          "key": "boardScale",
+          "type": "number",
+          "optional": true,
+          "desc": "꾸미기 보드에 올릴 그림 배율. **보드에 꽉 채운 크기를 1 로 본 상대값**이라 그림 여백이 달라도 결과가 흔들리지 않습니다. 값을 안 쓰면 1(꽉 참)입니다."
+        },
+        {
+          "key": "toolData",
+          "type": "array",
+          "optional": true,
+          "minLength": 3,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "type",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "color",
+                  "roller",
+                  "sticker"
+                ],
+                "desc": "도구 갈래 — color · roller · sticker 세 개뿐입니다. **지우개는 넣지 않습니다**(Eraser 는 Tool 을 상속하지 않는 별도 클래스라 데이터가 필요 없습니다)."
+              },
+              {
+                "key": "gap",
+                "type": "number",
+                "required": true,
+                "desc": "리소스 목록의 세로 간격(px). 리소스 크기를 바꾸면 같이 조정합니다 — 현재 색연필 40 / 롤러 14 / 스티커 30."
+              },
+              {
+                "key": "info",
+                "type": "array",
+                "required": true,
+                "minLength": 5,
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "depth",
+                      "type": "string",
+                      "required": true,
+                      "desc": "리소스 alias. 기본과 -on 두 벌이 짝으로 필요합니다."
+                    },
+                    {
+                      "key": "color",
+                      "type": "array",
+                      "optional": true,
+                      "minLength": 1,
+                      "of": {
+                        "key": "",
+                        "type": "string",
+                        "desc": "이름 하나."
+                      },
+                      "desc": "색연필의 선 색 목록. color 갈래에서만 씁니다."
+                    }
+                  ],
+                  "desc": "칸 하나."
+                },
+                "desc": "그 도구의 리소스 목록."
+              }
+            ],
+            "desc": "칸 하나."
+          },
+          "desc": "꾸미기 도구 목록. type 은 color · roller · sticker 세 개뿐이고 지우개는 넣지 않습니다(Eraser 는 Tool 을 상속하지 않는 별도 클래스라 데이터가 필요 없습니다). 도구 리소스도 기본과 -on 두 벌이 짝으로 필요합니다 — 롤러는 roller{1..5} 5종 고정(146x146), 스티커는 sticker{n} 5~15개(170x130 전후, 기획 변경표 ⑦). **리소스가 6개 이상이면 DepthBox 가 상하 스크롤을 켭니다.**"
+        }
+      ],
+      "desc": "칸 하나."
+    }
+  },
+  "rules": [
+    {
+      "id": "two-panels-in-order",
+      "level": "error",
+      "check": "quizData 는 칸 2개이고 [0].panel === \"cameraPanel\" · [1].panel === \"editorPanel\" 이어야 한다.",
+      "why": "M30_3.ts 가 quizData[0] · quizData[1] 을 자리로 읽습니다. 순서가 바뀌면 꾸미기 화면 데이터를 고르기 화면에 넣습니다."
+    },
+    {
+      "id": "thumbnail-count-paging",
+      "level": "warn",
+      "check": "frameData 가 4개 이상이면 좌우 페이징 버튼(prev-btn · next-btn ±-click)이 모듈 공통에 있어야 한다.",
+      "why": "ThumbnailBox.init 이 3개 이하면 버튼을 아예 만들지 않습니다. 8호까지는 세 활동 모두 3개라 버튼 리소스가 반입되지 않았습니다."
+    },
+    {
+      "id": "boardScale-relative",
+      "level": "warn",
+      "check": "editorPanel.boardScale 은 보드에 꽉 채운 크기를 1 로 본 상대값이다. 안 쓰면 1.",
+      "why": "실제 배율 = min(보드너비/그림너비, 보드높이/그림높이) x boardScale 이라 그림 여백이 달라도 흔들리지 않습니다. MAL1M07W4S1·MAL3M07W2S1 은 0.9, MAL2M07W4S1 은 값이 없습니다."
+    },
+    {
+      "id": "gap-follows-size",
+      "level": "warn",
+      "check": "toolData[].gap 은 리소스 목록의 세로 간격이다. 리소스 크기를 바꾸면 같이 조정한다.",
+      "why": "현재 색연필 40 / 롤러 14 / 스티커 30 입니다."
+    },
+    {
+      "id": "roller-count-fixed",
+      "level": "warn",
+      "check": "roller 는 5종이다.",
+      "why": "기획 변경표 ⑥ 은 활동별 디자인 변경 가능이라고 하지만, 8호 세 활동은 롤러 5장이 픽셀 단위로 같습니다 — 모듈 공통으로 올릴 후보입니다(변경표 ⑥ 을 지워야 하므로 기획 확인이 먼저)."
+    }
+  ],
+  "relations": [
+    {
+      "id": "toolData-types",
+      "kind": "oneOf",
+      "pick": "[].toolData[].type",
+      "values": [
+        "color",
+        "roller",
+        "sticker"
+      ],
+      "note": "toolData[].type 은 \"color\" · \"roller\" · \"sticker\" 세 개뿐이다. 지우개는 넣지 않는다.",
+      "why": "Eraser 는 Tool 을 상속하지 않는 별도 클래스라 데이터가 필요 없습니다. 넣으면 도구 목록에 빈 칸이 생깁니다."
+    },
+    {
+      "id": "thumbnail-frame-pair",
+      "kind": "isAlias",
+      "pick": "[].frameData[].scene.base",
+      "note": "frameData[].scene.base · scene.on · frame.texture 세 alias 가 다 AssetTable 에 있어야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 console.error 만 찍고 지나가서, 썸네일이나 사진이 화면에서 사라진 것처럼 보입니다."
+    },
+    {
+      "id": "thumbnail-frame-pair#on",
+      "kind": "isAlias",
+      "pick": "[].frameData[].scene.on",
+      "note": "frameData[].scene.base · scene.on · frame.texture 세 alias 가 다 AssetTable 에 있어야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 console.error 만 찍고 지나가서, 썸네일이나 사진이 화면에서 사라진 것처럼 보입니다."
+    },
+    {
+      "id": "thumbnail-frame-pair#texture",
+      "kind": "isAlias",
+      "pick": "[].frameData[].frame.texture",
+      "note": "frameData[].scene.base · scene.on · frame.texture 세 alias 가 다 AssetTable 에 있어야 한다.",
+      "why": "없는 alias 는 AssetManager.get 이 console.error 만 찍고 지나가서, 썸네일이나 사진이 화면에서 사라진 것처럼 보입니다."
+    }
+  ]
+}

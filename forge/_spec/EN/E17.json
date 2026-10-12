@@ -1,0 +1,385 @@
+{
+  "specVersion": 1,
+  "module": "E17",
+  "subject": "EN",
+  "title": "물병에 담긴 낱말 찾기 — 소리를 듣고 맞는 병을 항아리에 붓습니다",
+  "summary": "화면 양옆에 색이 다른 물병이 놓여 있고 가운데에 큰 항아리가 있습니다. 이닝이 시작되면 낱말 소리가 나면서 항아리가 들썩입니다. 병을 하나 눌러 항아리에 부으면, 물이 차오르면서 그 병에 든 그림과 낱말이 드러납니다. 맞으면 거품과 반짝임이 터지고 종이에 낱말이 적혀 붙습니다. 틀리면 항아리가 흔들리고 다시 고릅니다. 낱말 수만큼 되풀이합니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E17",
+    "activities": [
+      "ENL1M01W3S2",
+      "ENL1M03W3S2",
+      "ENL1M05W3S2",
+      "ENL1M11W1S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E17.addAsset();"
+      ],
+      "onInit": [
+        "super.onInit();",
+        "await E17.handle.onInit();",
+        "this.addChild(E17.handle!);"
+      ],
+      "onStart": [
+        "await E17.handle.onStart(quizData);",
+        "SparkApp.eop.show( E17.handle.completePercent );"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "E17",
+        "from": "@_common/module/EN/E17/E17"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경. E17.ts 의 onInit 이 AssetManager.get(\"bg\") 로 찾습니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. E17.ts 의 onStart 가 getSound(\"bgm\") 으로 찾습니다. 소리 크기 0.2 로 되풀이합니다."
+      },
+      {
+        "alias": "main-nar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작할 때 도우미가 하는 안내. E17.ts 의 onStart 가 guide(\"main-nar\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.**"
+      },
+      {
+        "alias": "bubble-idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "항아리 위에 떠 있는 거품. Jar 가 이 이름으로 찾습니다."
+      },
+      {
+        "alias": "bubble-rainbow",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "무지개 거품."
+      },
+      {
+        "alias": "bubble-red",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "빨강 거품. **bottleData[].color 가 이 이름의 뒷말이 됩니다** — color 를 red 로 적으면 bubble-red 를 찾습니다."
+      },
+      {
+        "alias": "bubble-orange",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "주황 거품."
+      },
+      {
+        "alias": "bubble-yellow",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "노랑 거품."
+      },
+      {
+        "alias": "bubble-green",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "초록 거품."
+      },
+      {
+        "alias": "bubble-blue",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "파랑 거품."
+      },
+      {
+        "alias": "bubble-pink",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "분홍 거품."
+      },
+      {
+        "alias": "correct-bubble",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 터지는 거품."
+      },
+      {
+        "alias": "correct-light",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 퍼지는 빛."
+      },
+      {
+        "alias": "correct-paper",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 종이가 붙는 움직임."
+      },
+      {
+        "alias": "correct-star",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 튀는 별."
+      },
+      {
+        "alias": "particle-lottie",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "물이 튀는 알갱이."
+      }
+    ],
+    "providedByModule": {
+      "note": "**항아리와 빈 병, 그림자는 모듈 것입니다.** Asset.ts 가 /sparklab/common/module/EN/E17 밑의 스물넷을 등록합니다 — 항아리(jar), 빈 병 여섯(empty-water-bottle1~6), 물 찬 병 여섯(water-bottle1~6), 그림자 넷, 단추, 오답 표시, 효과음 넷. **액티비티는 그 회차의 낱말에 딸린 것과, 병을 왼쪽·오른쪽으로 기울인 그림을 넣습니다.** 거품 색과 정답 효과 로티도 액티비티 몫입니다.",
+      "image": [
+        "jar (항아리)",
+        "empty-water-bottle1~6 (빈 병)",
+        "water-bottle1~6 (물 찬 병)",
+        "shadow1~4",
+        "button",
+        "incorrect"
+      ],
+      "sound": [
+        "particle-sound",
+        "pouring-sound",
+        "bubble-sound",
+        "paper-sound",
+        "correct"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "quizInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "word",
+              "type": "string",
+              "required": true,
+              "desc": "낱말 글자. **그림이 아니라 글자 그대로**입니다 — 병 안에 폰트로 그려집니다."
+            },
+            {
+              "key": "fontSize",
+              "type": "number",
+              "required": true,
+              "desc": "그 글자 크기. 기존 4개가 다 90 입니다. 낱말이 길면 줄여야 병 밖으로 안 넘칩니다."
+            },
+            {
+              "key": "paper",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "쪽지 그림."
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "쪽지가 붙을 때 나는 낱말 소리. 대개 아래 sound 와 같습니다."
+                }
+              ],
+              "desc": "맞혔을 때 붙는 쪽지."
+            },
+            {
+              "key": "imgInBottle",
+              "type": "asset:image",
+              "required": true,
+              "desc": "병 안에서 드러나는 그림."
+            },
+            {
+              "key": "textInBottle",
+              "type": "asset:image",
+              "required": true,
+              "desc": "병 안에서 드러나는 낱말 그림. word 와 달리 **그림**입니다 — 둘 다 넣습니다."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "이닝이 시작될 때 나는 낱말 소리. 이 소리가 끝나야 병을 누를 수 있습니다."
+            },
+            {
+              "key": "correct",
+              "type": "asset:image",
+              "required": true,
+              "desc": "맞혔을 때 나오는 그림."
+            },
+            {
+              "key": "incorrect",
+              "type": "asset:image",
+              "required": true,
+              "desc": "틀렸을 때 나오는 그림. 모듈에도 incorrect 라는 공용 그림이 있지만 이건 그 낱말 것입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "낱말 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — E17.ts 의 onStart 가 shuffleArray 를 부릅니다. 그러니 앞뒤가 이어지는 낱말은 넣지 마세요.",
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 4개는 5~6개입니다."
+      },
+      {
+        "key": "bottlePos",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "가로 자리."
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "세로 자리."
+            },
+            {
+              "key": "zone",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "left",
+                "right"
+              ],
+              "desc": "항아리 어느 쪽에 있는지. **기울이는 그림이 여기서 갈립니다** — WaterBottle 이 `병이름-zone` 으로 찾습니다(water-bottle1-left 처럼). 자리가 왼쪽인데 right 로 적으면 병이 바깥쪽으로 기울어 붓습니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "병을 놓을 자리. **칸 수가 곧 한 번에 보이는 병 수**입니다 — 기존 4개가 다 넷입니다. 화면 한가운데가 (0,0) 입니다.",
+        "minLengthWhy": "고를 것이 하나뿐이면 문제가 안 됩니다. 기존 4개는 왼쪽 둘·오른쪽 둘입니다."
+      },
+      {
+        "key": "bottleData",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "bottle",
+              "type": "string",
+              "required": true,
+              "desc": "병 그림 이름. **모듈이 들고 있는 water-bottle1~6 중 하나**입니다. 빈 병은 empty- 를 붙여 스스로 찾고, 기울인 그림은 -left / -right 를 붙여 찾습니다 — **그 두 벌은 액티비티가 넣어야 합니다.**"
+            },
+            {
+              "key": "color",
+              "type": "string",
+              "required": true,
+              "desc": "그 병의 거품 색. **거품 로티 이름의 뒷말이 됩니다** — red 면 bubble-red 를 찾습니다. red · orange · yellow · green · blue · pink · rainbow 만 됩니다."
+            },
+            {
+              "key": "shadow",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "shadow1",
+                "shadow2"
+              ],
+              "desc": "병 밑에 깔 그림자. 모듈이 shadow1~4 를 들고 있는데 기존 4개는 1·2 만 씁니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "쓸 수 있는 병의 생김새 목록. quizInfo 와 따로입니다 — 이닝마다 여기서 골라 놓습니다.",
+        "minLengthWhy": "bottlePos 칸 수만큼은 있어야 자리가 다 찹니다. 기존 4개는 여섯입니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · bgm · main-nar 과 거품·정답 효과 로티 열셋이 AssetTable 에 있어야 한다.",
+      "why": "항아리·병·그림자는 모듈이 들고 있지만 배경·배경음·안내와 거품 색은 액티비티 몫입니다."
+    },
+    {
+      "id": "quizinfo-shuffled",
+      "level": "warn",
+      "check": "quizInfo 의 차례에 뜻이 있으면 안 된다.",
+      "why": "E17.ts 의 onStart 가 shuffleArray(quizInfo) 를 그대로 부릅니다. **끄는 값이 없습니다** — 차례를 짜 놓아도 열 때마다 바뀝니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ],
+  "relations": [
+    {
+      "id": "bubble-color-known",
+      "kind": "oneOf",
+      "pick": "bottleData[].color",
+      "values": [
+        "red",
+        "orange",
+        "yellow",
+        "green",
+        "blue",
+        "pink",
+        "rainbow"
+      ],
+      "note": "bottleData[].color 가 red · orange · yellow · green · blue · pink · rainbow 중 하나여야 한다.",
+      "why": "Jar 가 bubble-색 으로 로티를 찾습니다. 다른 이름이면 거품이 안 뜹니다."
+    },
+    {
+      "id": "bottle-count-covers-pos",
+      "kind": "sameCount",
+      "picks": [
+        "bottleData",
+        "bottlePos"
+      ],
+      "atLeast": true,
+      "note": "bottleData 개수가 bottlePos 칸 수 이상이어야 한다.",
+      "why": "자리를 다 채우려면 병이 그만큼 있어야 합니다. 모자라면 빈 자리가 남습니다."
+    },
+    {
+      "id": "bottle-zone-image-pair",
+      "kind": "isAlias",
+      "pick": "bottleData[].bottle",
+      "template": [
+        "{}-left",
+        "{}-right"
+      ],
+      "note": "bottleData[].bottle 마다 -left 와 -right 를 붙인 그림이 AssetTable 에 있어야 한다.",
+      "why": "WaterBottle 이 붓는 순간 `병이름-zone` 으로 찾습니다. 없으면 **부으려는 그 순간 병이 사라집니다** — 놓여 있을 때는 멀쩡해서 눌러 보기 전에는 안 드러납니다."
+    }
+  ]
+}

@@ -1,0 +1,1775 @@
+{
+  "specVersion": 1,
+  "module": "K16",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K16",
+    "activities": [
+      "KOL2M01W3S2",
+      "KOL2M02W3S2",
+      "KOL2M03W3S2",
+      "KOL2M04W3S2",
+      "KOL2M05W3S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "await this.K16.onInit()"
+      ],
+      "onStart": [
+        "await this.K16.StartActivity()"
+      ],
+      "onAffordanceOn": [
+        "await this.K16.onAffordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "await this.K16.onAffordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "K16",
+      "from": "@_common/module/KR/K16/K16"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningCount",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "number"
+        }
+      },
+      {
+        "key": "maxInning",
+        "type": "number",
+        "required": true
+      },
+      {
+        "key": "isRandom",
+        "type": "bool",
+        "required": true,
+        "default": true
+      },
+      {
+        "key": "visiblityValue",
+        "type": "number",
+        "required": true,
+        "default": 0.4
+      },
+      {
+        "key": "positionData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 4,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "inningBubbleData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "text",
+                "type": "string",
+                "required": true
+              },
+              {
+                "key": "color",
+                "type": "string",
+                "required": true
+              },
+              {
+                "key": "size",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 3
+              },
+              {
+                "key": "offsetY",
+                "type": "number",
+                "optional": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "bubblePositionData",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 37,
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true
+              },
+              {
+                "key": "bubbleType",
+                "type": "asset:image",
+                "required": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "background",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 960
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 540
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 3840
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 2160
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0.5
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "background"
+          }
+        ]
+      },
+      {
+        "key": "whiteBlur",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "default": 510
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 90
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 900
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 900
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0.5
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "whiteBlur"
+          }
+        ]
+      },
+      {
+        "key": "inningBar",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "default": 40
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 50
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 5
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "default": 0
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "default": 1
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "default": "inningBar"
+          }
+        ]
+      },
+      {
+        "key": "inningOn",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 50
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 30
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 30
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 6
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "inningOn_0",
+                "inningOn_1",
+                "inningOn_2",
+                "inningOn_3",
+                "inningOn_4"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningOff",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 50
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 30
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 30
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 6
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "inningOff_0",
+                "inningOff_1",
+                "inningOff_2",
+                "inningOff_3",
+                "inningOff_4"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningImage0",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 360
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 330
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true
+            },
+            {
+              "key": "label",
+              "type": "asset:sound",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningImage1",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 360
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 330
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true
+            },
+            {
+              "key": "label",
+              "type": "asset:sound",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningImage2",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 360
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 330
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true
+            },
+            {
+              "key": "label",
+              "type": "asset:sound",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningImage3",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 360
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 330
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true
+            },
+            {
+              "key": "label",
+              "type": "asset:sound",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "inningImage4",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true,
+              "default": 360
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true,
+              "default": 330
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true
+            },
+            {
+              "key": "label",
+              "type": "asset:sound",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "nameTag0",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "nameTag1",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "nameTag2",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "nameTag3",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "nameTag4",
+        "type": "array",
+        "optional": true,
+        "minLength": 4,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 0
+            },
+            {
+              "key": "width",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "height",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "zIndex",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "anchor",
+              "type": "number",
+              "required": true,
+              "default": 0.5
+            },
+            {
+              "key": "alpha",
+              "type": "number",
+              "required": true,
+              "default": 1
+            },
+            {
+              "key": "label",
+              "type": "asset:image",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "bubble",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "redSmall",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "redSmall"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 0
+              }
+            ]
+          },
+          {
+            "key": "redBig",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "redBig"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 0
+              }
+            ]
+          },
+          {
+            "key": "yellowSmall",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "yellowSmall"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 1
+              }
+            ]
+          },
+          {
+            "key": "yellowBig",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "yellowBig"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 1
+              }
+            ]
+          },
+          {
+            "key": "skySmall",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "skySmall"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 2
+              }
+            ]
+          },
+          {
+            "key": "skyBig",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "skyBig"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 2
+              }
+            ]
+          },
+          {
+            "key": "blueSmall",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "blueSmall"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 3
+              }
+            ]
+          },
+          {
+            "key": "blueBig",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "blueBig"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 3
+              }
+            ]
+          },
+          {
+            "key": "greenSmall",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 232.89
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "greenSmall"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 4
+              }
+            ]
+          },
+          {
+            "key": "greenBig",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "default": 0
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "default": 310.48
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "default": 0.5
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "default": 1
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "default": "greenBig"
+              },
+              {
+                "key": "index",
+                "type": "number",
+                "required": true,
+                "default": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "animation",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "bubblePop",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:lottie",
+                  "required": true
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "default": 0
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 0
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "zIndex",
+                  "type": "number",
+                  "required": true,
+                  "default": 5
+                },
+                {
+                  "key": "anchor",
+                  "type": "number",
+                  "required": true,
+                  "default": 0.5
+                },
+                {
+                  "key": "alpha",
+                  "type": "number",
+                  "required": true,
+                  "default": 1
+                },
+                {
+                  "key": "loop",
+                  "type": "bool",
+                  "required": true,
+                  "default": false
+                },
+                {
+                  "key": "autoPlay",
+                  "type": "bool",
+                  "required": true,
+                  "default": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "key": "soundCount",
+        "type": "number",
+        "optional": true
+      }
+    ]
+  }
+}

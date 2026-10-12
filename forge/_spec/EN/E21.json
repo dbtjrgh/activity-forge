@@ -1,0 +1,359 @@
+{
+  "specVersion": 1,
+  "module": "E21",
+  "subject": "EN",
+  "title": "꽃밭에 문장 짓기 — 벌이 낱말 꽃을 차례대로 찾아갑니다",
+  "summary": "꽃밭에 낱말이 적힌 꽃이 피어 있고 벌 한 마리가 날아다닙니다. 위 그림판에 장면이 뜨고 스피커를 누르면 문장을 읽어 줍니다. 문장 차례대로 꽃을 누르면 벌이 그 꽃으로 날아가 앉고 낱말이 위에 이어 붙습니다. 다 이으면 문장이 완성되고 벌이 좋아합니다. 틀리면 벌이 고개를 젓고 다시 고릅니다. 이닝 차례는 열 때마다 섞입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E21",
+    "activities": [
+      "ENL2M01W3S3",
+      "ENL2M03W3S3",
+      "ENL2M05W3S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "E21.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(E21.handle);",
+        "await E21.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await E21.handle.start();",
+        "await E21.handle.play();",
+        "await E21.handle.finish();",
+        "SparkApp.eop.show( E21.handle.completePercent );"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "E21",
+        "from": "@_common/module/EN"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "꽃밭 배경."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 모듈에도 bgm 이 있지만 기존 3개가 다 자기 것으로 덮어씁니다."
+      },
+      {
+        "alias": "nar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작할 때 도우미가 하는 안내. E21.ts:90 이 guide(\"nar\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.**"
+      },
+      {
+        "alias": "correct_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞는 꽃을 눌렀을 때."
+      },
+      {
+        "alias": "incorrect_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀린 꽃을 눌렀을 때."
+      },
+      {
+        "alias": "flying_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "벌이 날아가는 소리."
+      },
+      {
+        "alias": "inning_end",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "이닝이 끝날 때."
+      },
+      {
+        "alias": "particle_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "알갱이가 튈 때."
+      },
+      {
+        "alias": "particle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 튀는 알갱이."
+      },
+      {
+        "alias": "speaker-ani",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "스피커가 울리는 움직임."
+      },
+      {
+        "alias": "bee_idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "벌이 가만히 떠 있을 때."
+      },
+      {
+        "alias": "bee_move",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "벌이 날아갈 때."
+      },
+      {
+        "alias": "bee_correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞는 꽃에 앉았을 때."
+      },
+      {
+        "alias": "bee_incorrect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "틀린 꽃을 눌렀을 때."
+      },
+      {
+        "alias": "bee_complete",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "문장을 다 이었을 때."
+      }
+    ],
+    "providedByModule": {
+      "note": "**꽃과 꽃밭, 스피커는 모듈 것입니다.** Assets.ts 가 그림판 틀·풀·스피커·꽃 다섯 갈래(flower·big_petal·carnation·tulip·morning_glory·hydrangea 각 여섯 색)를 등록합니다. **액티비티는 장면 그림·문장 소리·낱말 소리와 벌 로티를 넣습니다.** 벌은 회차마다 다시 넣고 있습니다.",
+      "image": [
+        "imgBoard",
+        "grass1",
+        "grass2",
+        "speaker",
+        "sound-circle",
+        "flower1~6",
+        "big_petal1~6",
+        "carnation1~6",
+        "tulip1~6",
+        "morning_glory1~6",
+        "hydrangea1~6"
+      ],
+      "sound": [
+        "bgm (모듈에도 있으나 기존 회차가 다 덮어씁니다)"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "quizInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "sentence",
+              "type": "array",
+              "required": true,
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "string",
+                "desc": "낱말 글자."
+              },
+              "desc": "**맞는 차례**의 낱말들. 이 차례대로 꽃을 눌러야 합니다. 칸 수가 꽃 수를 정하고, flowerPos 가 그 수에 맞는 자리를 내줍니다.",
+              "minLengthWhy": "flowerPos 가 4·5·6 개에 대한 자리만 들고 있습니다. 그 밖의 수는 놓을 자리가 없습니다."
+            },
+            {
+              "key": "sentenceDelay",
+              "type": "array",
+              "required": true,
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "string",
+                "desc": "그 낱말 뒤에 쉬는 시간. 숫자가 아니라 글자입니다."
+              },
+              "desc": "낱말 사이 뜸(밀리초). ⚠️ **글자로 적습니다** — 기존 3개가 '600' 처럼 따옴표를 붙여 두었습니다. 칸 수가 sentence 와 같아야 합니다."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "문장 전체를 읽어 주는 소리. 스피커를 누르면 납니다."
+            },
+            {
+              "key": "board",
+              "type": "asset:image",
+              "required": true,
+              "desc": "위 그림판에 뜨는 장면 그림."
+            },
+            {
+              "key": "words",
+              "type": "array",
+              "required": true,
+              "minLength": 4,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "word",
+                    "type": "string",
+                    "required": true,
+                    "desc": "꽃에 적힐 낱말 글자."
+                  },
+                  {
+                    "key": "sound",
+                    "type": "asset:sound",
+                    "optional": true,
+                    "desc": "그 낱말 하나를 읽는 소리. 꽃을 누르면 납니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "꽃에 적힐 낱말들. **sentence 와 같은 낱말·같은 칸 수**여야 합니다 — 화면에 놓일 때 섞입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "문장 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — E21.ts:96.",
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 3개는 5개씩입니다."
+      },
+      {
+        "key": "flowerPos",
+        "type": "posTable",
+        "required": true,
+        "default": {
+          "4": [
+            {
+              "x": -310,
+              "y": 40
+            },
+            {
+              "x": 4,
+              "y": 160
+            },
+            {
+              "x": 318,
+              "y": 0
+            },
+            {
+              "x": 632,
+              "y": 160
+            }
+          ],
+          "5": [
+            {
+              "x": -200,
+              "y": -30
+            },
+            {
+              "x": 180,
+              "y": -30
+            },
+            {
+              "x": 560,
+              "y": -30
+            },
+            {
+              "x": 0,
+              "y": 180
+            },
+            {
+              "x": 380,
+              "y": 180
+            }
+          ],
+          "6": [
+            {
+              "x": -130,
+              "y": -30
+            },
+            {
+              "x": 250,
+              "y": -30
+            },
+            {
+              "x": 630,
+              "y": -30
+            },
+            {
+              "x": -280,
+              "y": 180
+            },
+            {
+              "x": 100,
+              "y": 180
+            },
+            {
+              "x": 480,
+              "y": 180
+            }
+          ]
+        },
+        "desc": "꽃 개수마다 정해 둔 자리표. **4·5·6 개까지만 있습니다** — 낱말이 그보다 많거나 적으면 놓을 자리가 없습니다. 기존 3개가 이 값을 그대로 씁니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · bgm · nar · correct_sound · incorrect_sound · flying_sound · inning_end · particle_sound 와 벌 로티 다섯, particle · speaker-ani 가 AssetTable 에 있어야 한다.",
+      "why": "꽃과 꽃밭은 모듈이 들고 있지만 벌과 소리는 회차 몫입니다."
+    },
+    {
+      "id": "sentence-words-match",
+      "level": "error",
+      "check": "sentence 와 words 가 같은 낱말·같은 칸 수여야 하고, sentenceDelay 도 같은 칸 수여야 한다.",
+      "why": "sentence 는 맞는 차례를 재고 words 는 꽃에 적힙니다. 한쪽에만 있는 낱말은 눌러도 맞을 수가 없고, sentenceDelay 가 모자라면 그 낱말에서 뜸이 undefined 가 됩니다."
+    },
+    {
+      "id": "word-count-in-flowerpos",
+      "level": "error",
+      "check": "sentence 칸 수가 flowerPos 에 있는 수(4·5·6)여야 한다.",
+      "why": "flowerPos 는 그 세 수에 대한 자리만 들고 있습니다. 셋이나 일곱이면 자리표가 undefined 라 꽃이 (0,0) 에 겹쳐 쌓입니다."
+    },
+    {
+      "id": "sentencedelay-is-string",
+      "level": "warn",
+      "check": "sentenceDelay 의 값이 글자여야 한다.",
+      "why": "기존 3개가 '600' 처럼 따옴표를 붙여 두었습니다. 숫자로 적어도 대개 돌지만 기존과 달라지므로 재현 검사에서 걸립니다."
+    },
+    {
+      "id": "quizinfo-shuffled",
+      "level": "warn",
+      "check": "quizInfo 의 차례에 뜻이 있으면 안 된다.",
+      "why": "E21.ts:96 이 shuffleArray(quizInfo) 를 그대로 부릅니다. **끄는 값이 없습니다.**"
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

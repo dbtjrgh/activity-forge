@@ -1,0 +1,413 @@
+{
+  "specVersion": 1,
+  "module": "ShowcaseQuiz",
+  "subject": "EN",
+  "title": "마무리 퀴즈 — 문제 꼴을 바꿔 가며 배운 낱말을 확인합니다",
+  "summary": "한 화면에 문제 하나와 고를 카드 여럿이 나옵니다. 문제가 글자일 때도, 그림일 때도, 소리일 때도 있고 카드도 그림·글자·소리로 갈립니다. **type 하나로 그 짝이 정해집니다.** 맞히면 색종이가 터지고 다음 문제로 넘어갑니다. 틀리면 그 카드에 표시가 붙고 다시 고릅니다. 다 풀면 몇 개를 맞혔는지 결과 판이 나옵니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/ShowcaseQuiz",
+    "activities": [
+      "ENL1M01W4S3",
+      "ENL1M02W4S3",
+      "ENL1M03W4S3",
+      "ENL1M04W4S3",
+      "ENL1M05W4S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ShowcaseQuiz.addAsset();"
+      ],
+      "onInit": [
+        "// SparkApp.cms.updateCompleteProgress(0);",
+        "ShowcaseQuiz.handle.init(quizData);",
+        "this.addChild( ShowcaseQuiz.handle );"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.5);",
+        "bgm.play();",
+        "//await SparkApp.mainMenu.mainCharacter.guide(\"nar02\");",
+        "// 성취율",
+        "SparkApp.cms.updateCompleteProgress(0);",
+        "for( let inningIDX=0; inningIDX<quizData.inning.length; inningIDX++){",
+        "  console.log(\"이닝시작\",inningIDX)",
+        "  await ShowcaseQuiz.handle.ready(inningIDX);",
+        "  while( !ShowcaseQuiz.handle.isEndInning() ){",
+        "    await delay(1);",
+        "  }",
+        "}",
+        "bgm.fade(0.5,0,500);",
+        "await ShowcaseQuiz.handle.showResult();",
+        "SparkApp.eop.show(ShowcaseQuiz.handle.achievementRate * 0.01);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "ShowcaseQuiz",
+        "from": "@_common/module/EN/ShowcaseQuiz/ShowCaseQuiz"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "delay",
+        "from": "@_common/util"
+      }
+    ]
+  },
+  "assets": {
+    "required": [],
+    "providedByModule": {
+      "note": "**퀴즈 판은 통째로 모듈 것입니다.** 이닝 표시·체크 표시·스피커 단추·색종이 로티·효과음·문제 꼴마다 다른 안내 나레이션(SL_en_quiz_nar01~24)을 다 들고 있습니다. **액티비티는 문제에 쓰이는 낱말 그림·카드 그림·낱말 소리만 넣습니다.** 배경은 그림이 아니라 색으로 칠합니다 — 그래서 배경 그림이 없습니다.",
+      "image": [
+        "inning_bg·_cursor·_border·_divide·_gauge",
+        "check_on",
+        "check_off",
+        "sndBtn_* (스피커 단추 색깔별)",
+        "bg_type1",
+        "end_nicetry"
+      ],
+      "lottie": [
+        "En_L3_M01_W4_S3_particle1~3",
+        "En_L3_M01_W4_S3_firework"
+      ],
+      "sound": [
+        "SL_en_quiz_nar01~24 (문제 꼴마다 다른 안내)",
+        "SL_en_com_sfx01·04·05·17"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "resultPanel",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "bg",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "color",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "#D5CAFF",
+                  "#D8FF94",
+                  "#FFD294"
+                ],
+                "desc": "판 바탕색. 회차마다 하나를 골라 씁니다."
+              }
+            ],
+            "desc": "결과 판 색."
+          }
+        ],
+        "desc": "다 풀고 나오는 결과 판."
+      },
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "type",
+              "type": "string",
+              "required": true,
+              "desc": "문제 꼴. **T1~T12 중 하나**이고, 이것 하나로 문제 판과 카드 판이 같이 정해집니다(ShowCaseQuiz.ts:245-304). 안내 나레이션도 여기서 갈립니다.\nT1·T8 = 글자 문제 + 그림 카드 · T3·T10 = 글자 문제(다른 배치) + 그림 카드 · T4 = 글자 문제 + 카드 두 벌 · T6 = 그림 문제 + 카드 두 벌 · T2·T11 = 그림 문제 + 소리 글자 카드 · T12 = 소리 문제 + 체크 카드 · T7 = 물음 글 문제 + 그림 카드 · T5·T9 = 소리 문제 + 소리 카드."
+            },
+            {
+              "key": "lottie",
+              "type": "string",
+              "required": true,
+              "mixed": true,
+              "desc": "맞혔을 때 터지는 색종이. **글자만 적어도 되고 {alias, scale, x, y} 로 적어도 됩니다**(AnswerTypeBase.ts:24-30) — 글자만 적으면 크기 1, 자리 (0,0) 입니다."
+            },
+            {
+              "key": "bg",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "color",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "#D5CAFF",
+                    "#D8FF94",
+                    "#FFD294"
+                  ],
+                  "desc": "칠할 색. 안 적으면 #CCCCCC 입니다."
+                },
+                {
+                  "key": "depth",
+                  "type": "number",
+                  "required": true,
+                  "desc": "칠하는 자리를 얼마나 밀지. direction 이 vertical 이면 위에서 아래로 그만큼, horizontal 이면 왼쪽에서 오른쪽으로 그만큼입니다."
+                },
+                {
+                  "key": "direction",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "horizontal",
+                    "vertical"
+                  ],
+                  "desc": "칠하는 방향. vertical 은 위쪽을 가로로 덮고, horizontal 은 왼쪽을 세로로 덮습니다. 문제와 카드가 위아래로 놓이면 vertical, 좌우로 놓이면 horizontal 입니다."
+                }
+              ],
+              "desc": "배경 색칠. **그림이 아니라 칠하는 네모**입니다(BG.ts)."
+            },
+            {
+              "key": "quiz",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "text",
+                  "type": "string",
+                  "optional": true,
+                  "desc": "글자로 낼 때의 낱말. 글자 그대로입니다."
+                },
+                {
+                  "key": "sound",
+                  "type": "asset:sound",
+                  "optional": true,
+                  "desc": "문제를 읽어 주는 소리. 소리로 내는 꼴(T5·T9·T12)에서는 이것이 곧 문제입니다."
+                },
+                {
+                  "key": "fontSize",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "글자 크기. 낱말이 길면 줄입니다."
+                },
+                {
+                  "key": "img",
+                  "type": "asset:image",
+                  "optional": true,
+                  "desc": "그림으로 낼 때의 그림."
+                },
+                {
+                  "key": "ask",
+                  "type": "string",
+                  "optional": true,
+                  "desc": "위에 붙는 물음 글. T7 에서 씁니다."
+                },
+                {
+                  "key": "color",
+                  "type": "enum",
+                  "optional": true,
+                  "values": [
+                    "#98D430",
+                    "#A389FF"
+                  ],
+                  "desc": "문제 글자 색."
+                },
+                {
+                  "key": "offsetX",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "문제를 가로로 미는 값."
+                },
+                {
+                  "key": "gap",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "문제 안 요소 사이 간격."
+                }
+              ],
+              "desc": "문제 쪽. **type 에 따라 쓰는 칸이 다릅니다** — 안 쓰는 칸은 비워 둡니다."
+            },
+            {
+              "key": "answer",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "rootPos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "카드 무리의 한가운데 자리. 화면 한가운데가 (0,0) 입니다."
+                },
+                {
+                  "key": "gap",
+                  "type": "number",
+                  "required": true,
+                  "desc": "카드 사이 간격."
+                },
+                {
+                  "key": "card",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 2,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "img",
+                        "type": "string",
+                        "optional": true,
+                        "desc": "그림 카드일 때의 그림."
+                      },
+                      {
+                        "key": "correct",
+                        "type": "bool",
+                        "required": true,
+                        "desc": "이것이 맞는 카드인지. **정확히 하나만 true** 여야 합니다."
+                      },
+                      {
+                        "key": "text",
+                        "type": "string",
+                        "optional": true,
+                        "desc": "글자 카드일 때의 낱말."
+                      },
+                      {
+                        "key": "color",
+                        "type": "enum",
+                        "optional": true,
+                        "values": [
+                          "b",
+                          "g",
+                          "o",
+                          "p"
+                        ],
+                        "desc": "카드 색. b(파랑) · g(초록) · o(주황) · p(보라). 스피커 단추 그림도 이 색을 따라갑니다(sndBtn_b_up 처럼)."
+                      },
+                      {
+                        "key": "sound",
+                        "type": "asset:sound",
+                        "optional": true,
+                        "desc": "소리 카드일 때 들려 줄 소리."
+                      },
+                      {
+                        "key": "test",
+                        "type": "string",
+                        "optional": true,
+                        "desc": "**쓰이지 않습니다.** 기존 회차에 오타로 남은 칸입니다 — text 를 잘못 적은 것으로 보입니다."
+                      }
+                    ],
+                    "desc": "칸 하나."
+                  },
+                  "desc": "고를 카드들. 기존 5개가 다 **셋**입니다.",
+                  "minLengthWhy": "고를 것이 하나뿐이면 문제가 안 됩니다. 기존 5개는 셋씩입니다."
+                },
+                {
+                  "key": "cardSize",
+                  "type": "object",
+                  "optional": true,
+                  "fields": [
+                    {
+                      "key": "w",
+                      "type": "number",
+                      "required": true,
+                      "desc": "너비."
+                    },
+                    {
+                      "key": "h",
+                      "type": "number",
+                      "required": true,
+                      "desc": "높이."
+                    }
+                  ],
+                  "desc": "카드 하나의 크기. 안 적으면 카드 꼴마다 정해진 크기를 씁니다."
+                },
+                {
+                  "key": "fontScale",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "카드 글자 크기 비율."
+                },
+                {
+                  "key": "fontSize",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "카드 글자 크기."
+                }
+              ],
+              "desc": "고를 카드 쪽."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "문제 하나가 이닝 하나입니다. ⚠️ **6개나 8개로 맞추세요** — ShowCaseQuiz.ts:208-213 이 그 두 수에서만 점수를 잡습니다. 다른 수면 점수가 0 인 채로 남아 **다 맞혀도 성취율이 0** 이 됩니다.",
+        "minLengthWhy": "ShowCaseQuiz.ts:208-213 이 6개면 한 번에 맞힘 15.667점·두 번째 12.5점, 8개면 12.5·9.375 로 잡습니다. **그 밖의 수는 아무 값도 안 잡혀 0점입니다.**"
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "inning-count-six-or-eight",
+      "level": "error",
+      "check": "inning 개수가 6 또는 8 이어야 한다.",
+      "why": "⚠️ ShowCaseQuiz.ts:208-213 이 그 두 수에서만 점수를 잡습니다. 다른 수면 mScore 가 {once:0, twice:0} 인 채로 남아 **다 맞혀도 성취율이 0 으로 올라갑니다.** 화면에서는 멀쩡히 다 맞힌 것으로 보여서 눈으로는 못 잡습니다."
+    },
+    {
+      "id": "exactly-one-correct",
+      "level": "error",
+      "check": "inning[].answer.card 중 correct 가 정확히 하나여야 한다.",
+      "why": "둘이면 어느 쪽을 골라도 맞고, 하나도 없으면 **그 이닝을 끝낼 수가 없습니다.**"
+    },
+    {
+      "id": "quiz-fields-match-type",
+      "level": "warn",
+      "check": "type 이 쓰는 칸만 quiz 에 있어야 한다.",
+      "why": "글자 문제에 img 를 적거나 그림 문제에 text 를 적어도 조용히 무시됩니다. 「값을 넣었는데 안 나온다」로 헤매는 자리입니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ],
+  "relations": [
+    {
+      "id": "type-known",
+      "kind": "oneOf",
+      "pick": "inning[].type",
+      "values": [
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "T5",
+        "T6",
+        "T7",
+        "T8",
+        "T9",
+        "T10",
+        "T11",
+        "T12"
+      ],
+      "note": "inning[].type 이 T1~T12 중 하나여야 한다.",
+      "why": "ShowCaseQuiz.ts:245-304 의 switch 에 없는 이름이면 문제 판도 카드 판도 안 만들어집니다. mQuizPanel 이 undefined 인 채로 addChild 로 가서 **그 이닝에서 터집니다.**"
+    }
+  ]
+}

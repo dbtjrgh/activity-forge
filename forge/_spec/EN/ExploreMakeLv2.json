@@ -1,0 +1,312 @@
+{
+  "specVersion": 1,
+  "module": "ExploreMakeLv2",
+  "subject": "EN",
+  "title": "장난감 사진기로 이야기책 만들기 — 고른 것들이 필름이 되어 책이 됩니다",
+  "summary": "장난감 사진기가 놓여 있고 판이 열리면서 고를 것들이 뜹니다. 문제 판(quiz)에서는 맞는 것을 골라야 넘어가고, 고르기 판(choice)에서는 마음에 드는 것을 골라 넘어갑니다. 고른 것은 사진기 필름에 하나씩 담기고, 다 담으면 렌즈가 열리며 사진이 찍힙니다. 마지막에 책이 펼쳐지고 그동안 고른 것들이 한 장씩 담긴 앨범이 됩니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/ExploreMakeLv2",
+    "activities": [
+      "ENL2M01W2S3",
+      "ENL2M02W2S3",
+      "ENL2M03W2S3",
+      "ENL2M04W2S3",
+      "ENL2M05W2S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ExploreMakeLv2.addAsset();"
+      ],
+      "onInit": [
+        "await ExploreMakeLv2.handle.init( quizData )",
+        "this.addChild( ExploreMakeLv2.handle )"
+      ],
+      "onStart": [
+        "await ExploreMakeLv2.handle.start();",
+        "await ExploreMakeLv2.handle.play();",
+        "await ExploreMakeLv2.handle.finish();",
+        "await SparkApp.eop.show( ExploreMakeLv2.handle.achievementRate );"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onResize": [
+        "ExploreMakeLv2.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "ExploreMakeLv2",
+        "from": "@_common/module/EN/ExploreMakeLv2/ExploreMakeLv2"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 compo/BG.ts 가 AssetManager.get(\"bg1\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 compo/BG.ts 가 AssetManager.get(\"bg2\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg3",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 compo/BG.ts 가 AssetManager.get(\"bg3\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 8개 다 가짐(litgate, 2026-09-29)."
+      }
+    ],
+    "providedByModule": {
+      "note": "**사진기와 책, 안내까지 모듈 것입니다.** Assets.ts 가 배경 셋·사진기 몸통·렌즈·필름 통·판·불꽃·효과음·시작 안내를 등록합니다(87개). **액티비티는 고를 것들의 그림과 소리, 판 제목·결과·앨범 그림만 넣습니다** — 회차가 넣어야 할 이름이 GameData 에만 있고 고정 자원은 없습니다.",
+      "image": [
+        "bg1",
+        "bg2",
+        "bg3",
+        "camera_body",
+        "lens",
+        "lens_base",
+        "lens_light",
+        "lens_wheel",
+        "film_bg",
+        "film_case",
+        "panel_bg",
+        "button",
+        "shutter_arrow",
+        "open_book"
+      ],
+      "lottie": [
+        "En_L2_M01_W2_S3_LensOpen",
+        "En_L2_M01_W2_S3_correct_ef",
+        "En_L2_M01_W2_S3_light_ef",
+        "fireworks",
+        "fireworksL",
+        "fireworksR"
+      ],
+      "sound": [
+        "bgm",
+        "SL_en_202_s3_nar02 (시작 안내)",
+        "SL_en_com_sfx04·05·17·20"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "type",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "choice",
+                "quiz"
+              ],
+              "desc": "이 판의 성격. **quiz 는 맞는 것을 골라야 넘어가고, choice 는 무엇을 골라도 넘어갑니다.** choice 판에서는 sticker 의 correct 를 다 true 로 둡니다."
+            },
+            {
+              "key": "narr",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "SL_en_202_s3_nar03",
+                "SL_en_202_s3_nar07",
+                "SL_en_202_s3_nar14",
+                "SL_en_202_s3_nar19"
+              ],
+              "desc": "이 판에서 도우미가 하는 안내. 판마다 다릅니다."
+            },
+            {
+              "key": "film",
+              "type": "object",
+              "optional": true,
+              "fields": [
+                {
+                  "key": "filmIcon",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "필름 칸에 놓일 그림."
+                }
+              ],
+              "desc": "이 판에서 필름에 미리 놓일 것. quiz 판에서만 씁니다."
+            },
+            {
+              "key": "panel",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "panelBGAlias",
+                  "type": "enum",
+                  "required": true,
+                  "values": [
+                    "panel1_title",
+                    "panel2_title",
+                    "panel3_title",
+                    "panel4_title"
+                  ],
+                  "desc": "판 제목 그림. panel1_title ~ panel4_title 중 하나이고 판 번호와 맞춥니다."
+                },
+                {
+                  "key": "sticker",
+                  "type": "array",
+                  "required": true,
+                  "minLength": 2,
+                  "of": {
+                    "key": "",
+                    "type": "object",
+                    "fields": [
+                      {
+                        "key": "sound",
+                        "type": "string",
+                        "required": true,
+                        "desc": "판에서 그것을 눌렀을 때 나는 소리."
+                      },
+                      {
+                        "key": "panelIcon",
+                        "type": "string",
+                        "required": true,
+                        "desc": "판에 뜨는 그림."
+                      },
+                      {
+                        "key": "filmIcon",
+                        "type": "string",
+                        "optional": true,
+                        "desc": "골랐을 때 필름에 담기는 그림. **correct 가 false 인 것은 필름에 안 담기므로 비워 둡니다** — 기존 회차의 오답들이 다 비어 있습니다."
+                      },
+                      {
+                        "key": "resultIcon",
+                        "type": "string",
+                        "optional": true,
+                        "desc": "결과 화면에 놓이는 그림."
+                      },
+                      {
+                        "key": "albumIcon",
+                        "type": "string",
+                        "optional": true,
+                        "desc": "마지막 앨범에 놓이는 그림."
+                      },
+                      {
+                        "key": "albumSound",
+                        "type": "string",
+                        "optional": true,
+                        "desc": "앨범에서 그것을 눌렀을 때 나는 소리."
+                      },
+                      {
+                        "key": "correct",
+                        "type": "bool",
+                        "required": true,
+                        "desc": "맞는 것인지. **quiz 판은 정확히 하나만 true**, choice 판은 다 true 로 둡니다."
+                      },
+                      {
+                        "key": "filmLottie",
+                        "type": "object",
+                        "optional": true,
+                        "fields": [
+                          {
+                            "key": "alias",
+                            "type": "string",
+                            "required": true,
+                            "desc": "로티 alias."
+                          },
+                          {
+                            "key": "pos",
+                            "type": "point",
+                            "required": true,
+                            "figma": true,
+                            "default": {
+                              "x": 0,
+                              "y": -40
+                            },
+                            "desc": "필름 칸 안에서의 자리. 기존 5개가 다 (0, -40) 입니다."
+                          },
+                          {
+                            "key": "scale",
+                            "type": "number",
+                            "optional": true,
+                            "desc": "크기 비율."
+                          }
+                        ],
+                        "desc": "필름 칸 위에 얹을 움직임. 표정처럼 그림만으로 안 되는 것에 씁니다."
+                      }
+                    ],
+                    "desc": "칸 하나."
+                  },
+                  "desc": "그 판에서 고를 것들. 기존 5개가 3~5개입니다.",
+                  "minLengthWhy": "고를 것이 하나뿐이면 고르는 뜻이 없습니다."
+                }
+              ],
+              "desc": "고를 것들이 뜨는 판."
+            },
+            {
+              "key": "sound",
+              "type": "string",
+              "optional": true,
+              "desc": "판이 열릴 때 나는 소리. 기존 회차가 빈 글자로 둔 자리가 많습니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "판 하나가 이닝 하나입니다. 기존 5개가 4~5판입니다.",
+        "minLengthWhy": "필름에 담길 것이 하나뿐이면 책이 안 됩니다. 기존 5개는 4~5개입니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "quiz-panel-one-correct",
+      "level": "error",
+      "check": "type 이 quiz 인 판은 sticker 중 correct 가 정확히 하나여야 한다.",
+      "why": "맞혀야 넘어가는 판입니다. 둘이면 어느 쪽이든 맞고, 없으면 **그 판을 넘어갈 수가 없습니다.**"
+    },
+    {
+      "id": "choice-panel-all-correct",
+      "level": "warn",
+      "check": "type 이 choice 인 판은 sticker 의 correct 가 다 true 여야 한다.",
+      "why": "무엇을 골라도 넘어가는 판입니다. false 가 섞이면 그것을 고른 아이만 막힙니다."
+    },
+    {
+      "id": "correct-sticker-needs-film",
+      "level": "error",
+      "check": "correct 가 true 인 sticker 에는 filmIcon · resultIcon · albumIcon 이 있어야 한다.",
+      "why": "고른 것이 필름 → 결과 → 앨범으로 이어집니다. 하나라도 비면 그 자리가 빈 채로 책이 만들어집니다."
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

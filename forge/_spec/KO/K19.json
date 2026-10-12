@@ -1,0 +1,507 @@
+{
+  "specVersion": 1,
+  "module": "K19",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K19",
+    "activities": [
+      "KOL1M01W3S3",
+      "KOL1M02W3S3",
+      "KOL1M03W3S3",
+      "KOL1M04W3S3",
+      "KOL1M05W3S3"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "this.inningManager.load()"
+      ],
+      "onInit": [
+        "await this.inningManager.init()"
+      ],
+      "onStart": [
+        "await this.inningManager.start()"
+      ],
+      "onAffordanceOn": [
+        "await this.inningManager.affordanceOn()"
+      ],
+      "onAffordanceCanceled": [
+        "await this.inningManager.affordanceCanceled()"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "InningManager",
+      "from": "@_common/module/KR/K19/InningManager"
+    }
+  },
+  "assets": {
+    "required": []
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "Com_Content",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "data",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "default",
+                "type": "number",
+                "required": true,
+                "default": 30
+              },
+              {
+                "key": "condition_0",
+                "type": "number",
+                "required": true,
+                "default": 2
+              },
+              {
+                "key": "condition_1",
+                "type": "number",
+                "required": true,
+                "default": 6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "type",
+        "type": "enum",
+        "required": true,
+        "values": [
+          "cookie",
+          "people",
+          "seed"
+        ]
+      },
+      {
+        "key": "inningCount",
+        "type": "number",
+        "required": true,
+        "default": 5
+      },
+      {
+        "key": "isInningOrderRandom",
+        "type": "bool",
+        "required": true
+      },
+      {
+        "key": "backgroundAlias",
+        "type": "asset:image",
+        "required": true,
+        "default": "background"
+      },
+      {
+        "key": "answerAreaInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:image",
+            "required": true,
+            "default": "garden"
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 1
+          }
+        ]
+      },
+      {
+        "key": "questionInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 1
+          }
+        ]
+      },
+      {
+        "key": "dragObjectCount",
+        "type": "number",
+        "required": true,
+        "default": 3
+      },
+      {
+        "key": "dragObjectPos",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "dragObjectAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "asset:image"
+        }
+      },
+      {
+        "key": "wrongList",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "asset:image"
+          }
+        }
+      },
+      {
+        "key": "dragObjectZIndex",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "default",
+            "type": "number",
+            "required": true,
+            "default": 3
+          },
+          {
+            "key": "dragging",
+            "type": "number",
+            "required": true,
+            "default": 6
+          }
+        ]
+      },
+      {
+        "key": "resultAnimInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "default": 550
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "default": 470
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "default": 2
+          }
+        ]
+      },
+      {
+        "key": "particleInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "alias",
+            "type": "asset:lottie",
+            "required": true,
+            "default": "particle"
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "bgmAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "bgm"
+      },
+      {
+        "key": "correctSfxAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "correctSfx"
+      },
+      {
+        "key": "particleSfxAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "particleSfx"
+      },
+      {
+        "key": "wrongSfxAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "wrongSfx"
+      },
+      {
+        "key": "guideNarAlias",
+        "type": "asset:sound",
+        "required": true,
+        "default": "guideNar"
+      },
+      {
+        "key": "correctNarAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      },
+      {
+        "key": "wrongNarAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      },
+      {
+        "key": "nextNarAlias",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      },
+      {
+        "key": "inning",
+        "type": "array",
+        "required": true,
+        "minLength": 5,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "questionAlias",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "before",
+                  "type": "asset:image",
+                  "required": true
+                },
+                {
+                  "key": "after",
+                  "type": "asset:image",
+                  "required": true
+                }
+              ]
+            },
+            {
+              "key": "resultAnimInfo",
+              "type": "object",
+              "required": true,
+              "fields": [
+                {
+                  "key": "alias",
+                  "type": "asset:lottie",
+                  "required": true
+                },
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "zIndex",
+                  "type": "number",
+                  "optional": true
+                }
+              ]
+            },
+            {
+              "key": "wordNarAlias",
+              "type": "asset:sound",
+              "required": true
+            },
+            {
+              "key": "characterSfxAlias",
+              "type": "asset:sound",
+              "optional": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "prop",
+        "type": "array",
+        "optional": true,
+        "minLength": 3,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "alias",
+              "type": "asset:image",
+              "required": true,
+              "default": "prop"
+            },
+            {
+              "key": "x",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "default": 824.13
+            }
+          ]
+        }
+      },
+      {
+        "key": "backgroundOffset",
+        "type": "point",
+        "optional": true,
+        "figma": true
+      },
+      {
+        "key": "narrationAlias",
+        "type": "object",
+        "optional": true,
+        "fields": [
+          {
+            "key": "eggplantNamePlate",
+            "type": "asset:sound",
+            "required": true
+          },
+          {
+            "key": "carrotNamePlate",
+            "type": "asset:sound",
+            "required": true
+          },
+          {
+            "key": "potatoNamePlate",
+            "type": "asset:sound",
+            "required": true
+          },
+          {
+            "key": "spinachNamePlate",
+            "type": "asset:sound",
+            "required": true
+          },
+          {
+            "key": "pumpkinNamePlate",
+            "type": "asset:sound",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "isCharacterSfx",
+        "type": "bool",
+        "optional": true
+      }
+    ]
+  }
+}

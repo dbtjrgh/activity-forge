@@ -3,8 +3,8 @@
 학습코드 하나를 넣으면 **호 저장소(`<제품>_mNN`)에 액티비티 폴더 한 벌**을 찍어 냅니다.
 `Activity.ts` · `AssetTable.ts` · `GameData.ts` · `App.vue` · `main.ts` · `index.html` · `style.css`.
 
-> 이 공개본에는 회사 자료(모듈 스펙 `_spec/`, 호별 배치표 `_layout/`, 측정 도구 `src/tool/`, 설계 문서 `_document/`)가 빠져 있습니다.
-> 코드는 그대로이고, 자료가 없으므로 명령을 돌리면 빈 결과가 나옵니다. 스펙 꼴은 저장소 맨 위 README 의 「스펙」 절에 있습니다.
+> 이 공개본에는 회사 자료(호별 배치표 `_layout/`, 측정 도구 `src/tool/`, 설계 문서 `_document/`)가 빠져 있습니다. 모듈 스펙 `_spec/` 은 들어 있습니다.
+> 코드는 그대로이고, 배치표와 호 저장소가 없으므로 명령을 돌리면 빈 결과가 나옵니다. 스펙 꼴은 저장소 맨 위 README 의 「스펙」 절에 있습니다.
 
 ## 어디서 도나
 
@@ -42,7 +42,7 @@ forge-ui.bat          # 더블클릭하면 브라우저로 양산 화면이 뜹�
 src/main.ts        명령 진입점
 src/gen/           양산기 본체 (스펙 검사 · 생성 · figma 화면 그림 찾기 · 화면 ui)
 src/util/          activityModules.ts — Activity.ts 의 import 에서 모듈을 읽는 파서
-_spec/             모듈 스펙 (공개본에는 없음)
+_spec/             모듈 스펙 (과목 · 모듈마다 JSON 한 장)
 _layout/           과목 · 호별 모듈 배치표 (공개본에는 없음)
 _recipe/           화면에서 채운 값. 커밋하지 않습니다
 ```

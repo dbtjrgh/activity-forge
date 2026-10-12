@@ -1,0 +1,443 @@
+{
+  "specVersion": 1,
+  "module": "M38_2",
+  "subject": "MA",
+  "title": "같은 종류끼리 세어 그래프 만들기",
+  "summary": "몬스터가 말풍선으로 보여 준 종류를 밭에서 모두 찾아 누르면 누를 때마다 오른쪽 그래프 그 열에 칸이 하나씩 쌓이는 활동(그림그래프 · 막대그래프는 이닝마다 고름). 이닝마다 2~3종류, 그래프가 완성되면 몬스터가 설명하고, 그 이닝에 pick 이 있으면 「더 많은 꽃 / 가장 적은 꽃」을 그래프 아래 선택 칸에서 고른다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M38_2",
+    "activities": [
+      "MAL3M08W3S3"
+    ],
+    "doc": "sparkon_common/_common/module/MA/M38_2/README.md — 좌표와 근거는 §5, 리소스 배치는 §6, GameData 규칙과 양산 체크리스트는 §7, 미확정은 §9.",
+    "note": "첫 적용 학습코드는 MAL3M08W3S3(9호 L3W3S3, 2026-10-08, 네 이닝 모두 정답 고르기 있음)입니다. 정답 고르기가 없는 판(W2S3 30차시 활동)은 같은 모듈에서 모든 이닝의 pick 을 빼서 만듭니다. 스펙은 모듈 코드(M38_2.ts · component/*.ts)와 README 를 읽어 적고 그 학습코드로 대조했습니다. M38_1(표 만들기)은 다른 모듈이라 서로 바꿔 쓸 수 없습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M38_2.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(M38_2.handle);",
+        "await M38_2.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await M38_2.handle.start();",
+        "await M38_2.handle.play();",
+        "await M38_2.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ],
+      "onEnd": [],
+      "onUpdate": [],
+      "onAffordanceOn": [
+        "M38_2.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "M38_2.handle.onAffordanceCanceled();"
+      ],
+      "onResize": [
+        "M38_2.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "M38_2",
+        "from": "@_common/module/MA/M38_2/M38_2"
+      }
+    ]
+  },
+  "assets": {
+    "providedByModule": {
+      "note": "M38_2.addAsset() 이 resource_common/common/module/MA/M38_2/sound 에서 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것([Resolver] already has key 경고와 함께 덮입니다). 숫자 세기(nbc)는 이 모듈에 없습니다.\n\n가이드 대사 guide_nar01 · 02 는 가이드 영상 안 소리라 모듈이 부르지 않고 등록만 합니다. 도우미 대사(newInning1~3 · inningClear1~3 · incorrect1~3 · affordance)는 공통 MainCharacter 가 등록합니다. 메뉴 · EOP 소리는 공통 UI 몫입니다.",
+      "sound": [
+        "bgm",
+        "SL_ma_cor_sfx01",
+        "SL_ma_cor_sfx02",
+        "SL_ma_inc_sfx02",
+        "SL_ma_m38_2_guide_nar01",
+        "SL_ma_m38_2_guide_nar02"
+      ]
+    },
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "활동 배경(하늘 + 풀밭). 3840x2160 bleed — 스케일 1, 화면 가운데 정렬이라 16:9 에서는 가운데 1920x1080 만 보입니다. 활동별 교체(기획 「배경 디자인 활동별 변경 가능」)."
+      },
+      {
+        "alias": "graph_picture_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "그림그래프 판(오른쪽 분홍 판 + 크림 칸, 눈금 없음). 3840x2160 투명 오버레이로 bg 위에 깔고, graph.type 이 picture 인 이닝에 보입니다."
+      },
+      {
+        "alias": "graph_bar_bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "막대그래프 판(오른쪽 분홍 판 + 눈금 1~10 과 가로선). 3840x2160 투명 오버레이, graph.type 이 bar 인 이닝에 보입니다. 가로선이 85px 간격이라 막대 칸 step 85 와 맞아야 합니다."
+      },
+      {
+        "alias": "mon_que01",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "몬스터 찾기 문제 모션(475x430) — 오브젝트 구역을 가리키며 말함. 문제 내레이션과 같이 처음부터 재생합니다. alias 는 mon_{상태} 고정 — 코드가 이 이름으로 부릅니다."
+      },
+      {
+        "alias": "mon_que02",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "몬스터 정답 고르기 모션 — 그래프와 아래 선택 칸을 번갈아 보며 말함. 정답 고르기가 없는 활동도 몬스터 로티 한 벌로 등록합니다(없으면 그 상태를 건너뛰지만 이름은 고정)."
+      },
+      {
+        "alias": "mon_idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "몬스터 대기 모션. 루프."
+      },
+      {
+        "alias": "mon_end",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "몬스터 그래프 설명 모션 — endNarration 과 같이. 4종이 같은 크기 · 같은 발밑이어야 상태를 바꿀 때 튀지 않습니다."
+      },
+      {
+        "alias": "correct_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 파티클(281x248, 1.4초) — 밭 정답마다 그래프 새 칸 자리, 정답 고르기 정답 칸 자리에서 1회."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "object",
+    "fields": [
+      {
+        "key": "startNarration",
+        "type": "asset:sound",
+        "required": true,
+        "desc": "학습 시작 지문. 도우미 캐릭터가 읽습니다. 예 SL_ma_331_s3_nar01 「친구가 찾는 그림을 눌러 그래프를 만들고, 알맞은 것을 골라보자.」 — 정답 고르기가 없는 활동은 문장이 달라야 합니다."
+      },
+      {
+        "key": "layout",
+        "type": "object",
+        "optional": true,
+        "desc": "배치 값. 전부 생략할 수 있고, 생략하면 모듈 기본값(MAL3M08W3S3 figma 1x 에서 잰 값)을 씁니다(README §5).",
+        "fields": [
+          {
+            "key": "monster",
+            "type": "object",
+            "optional": true,
+            "desc": "몬스터 배치.",
+            "fields": [
+              {
+                "key": "pos",
+                "type": "point",
+                "optional": true,
+                "figma": true,
+                "default": {
+                  "x": 131,
+                  "y": 610
+                },
+                "desc": "몬스터 **발밑 가운데**(anchor 0.5, 1). 로티라 figma 화면에서 그림으로 못 찾습니다 — 몸통 색 상자를 figma 와 미리보기에서 재어 맞춥니다(README §5)."
+              }
+            ]
+          },
+          {
+            "key": "bubble",
+            "type": "object",
+            "optional": true,
+            "desc": "말풍선 배치.",
+            "fields": [
+              {
+                "key": "pos",
+                "type": "point",
+                "optional": true,
+                "figma": true,
+                "default": {
+                  "x": -232,
+                  "y": 380.5
+                },
+                "desc": "말풍선 중심. 찾기 말풍선(324x213)과 고르기 말풍선(356x234)이 같은 중심입니다. 꼬리가 오른쪽이라 몬스터 왼쪽에 둡니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "minLengthWhy": "기획 확정 범위가 3~5개입니다(「이닝 3~5개로 변경 가능 · 이닝 순서 고정」).",
+        "desc": "적은 차례대로 진행합니다 — 섞지 않습니다. 이닝 차례 = 기획 차례.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "graph",
+              "type": "object",
+              "required": true,
+              "desc": "그 이닝 그래프. 좌표는 스테이지(화면 가운데 원점). type 말고는 생략하면 그래프 종류별 기본값(README §5)을 씁니다.",
+              "fields": [
+                {
+                  "key": "type",
+                  "type": "enum",
+                  "values": [
+                    "picture",
+                    "bar"
+                  ],
+                  "required": true,
+                  "desc": "picture = 그림그래프(그 종류 꽃 그림을 쌓음, 판 graph_picture_bg), bar = 막대그래프(barColor 칸을 쌓음, 판 graph_bar_bg). 기획 「이닝별 그래프 종류 변경 가능」."
+                },
+                {
+                  "key": "columns",
+                  "type": "array",
+                  "required": true,
+                  "desc": "열 가운데 x(= 선택 칸 가운데), kinds 차례. 칸 수 = kinds 칸 수. MAL3M08W3S3 : 그림 2열 [546, 813] · 3열 [504, 681, 857], 막대 2열 [572, 821] · 3열 [550, 708, 866].",
+                  "of": {
+                    "key": "",
+                    "type": "number"
+                  }
+                },
+                {
+                  "key": "firstY",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "맨 아래 칸 중심 y. 기본 그림 298 · 막대 308.5(바닥선 +351 에서 반 칸 위)."
+                },
+                {
+                  "key": "step",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "칸 간격(위로). 기본 그림 95 · 막대 85(판 가로선 간격과 같아야 눈금이 맞습니다)."
+                },
+                {
+                  "key": "cellSize",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "그림그래프는 칸 그림 긴 변, 막대그래프는 막대 폭. 기본 그림 90 · 막대 85."
+                },
+                {
+                  "key": "gap",
+                  "type": "number",
+                  "optional": true,
+                  "desc": "막대 칸 위 틈(판 가로선이 보이는 자리). 기본 그림 0 · 막대 4."
+                },
+                {
+                  "key": "choice",
+                  "type": "object",
+                  "optional": true,
+                  "desc": "그래프 아래 선택 칸(가로축 이름이자 정답 고르기 단추). 바탕 그림을 받지 않아 코드가 그립니다.",
+                  "fields": [
+                    {
+                      "key": "y",
+                      "type": "number",
+                      "optional": true,
+                      "desc": "칸 가운데 y. 기본 437.5."
+                    },
+                    {
+                      "key": "w",
+                      "type": "number",
+                      "optional": true,
+                      "desc": "칸 바깥 폭(테두리 포함). figma : 그림 2열 250 · 막대 2열 234 · 그림 3열 165 · 막대 3열 148. 기본 2열 250 · 3열 165."
+                    },
+                    {
+                      "key": "h",
+                      "type": "number",
+                      "optional": true,
+                      "desc": "칸 바깥 높이. 기본 128."
+                    },
+                    {
+                      "key": "imageSize",
+                      "type": "number",
+                      "optional": true,
+                      "desc": "칸 안 꽃 그림 긴 변. 기본 100."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "kinds",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "minLengthWhy": "그래프는 견줄 것이 있어야 합니다 — 기획 「찾아야 하는 그림의 종류 수 최대 3개」, 이닝마다 2~3종류.",
+              "desc": "**차례가 곧 문제 차례이자 그래프 열 차례**입니다. 몬스터가 첫 열 종류부터 묻습니다.",
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "image",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "밭 위 오브젝트(142x142). 그림그래프 칸 · 선택 칸 그림도 이것을 줄여 씁니다(graphImage 가 없으면)."
+                  },
+                  {
+                    "key": "selected",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "정답으로 누른 뒤 그림(노란 테두리, image 와 같은 크기). 그림그래프 완성 네온도 이것입니다(graphImageOn 이 없으면)."
+                  },
+                  {
+                    "key": "bubble",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "몬스터 말풍선(324x213) — 그 종류 하나가 그려진 것."
+                  },
+                  {
+                    "key": "question",
+                    "type": "asset:sound",
+                    "required": true,
+                    "desc": "몬스터 찾기 문제 내레이션(que01). 예 「노란색 꽃을 모두 찾아 줘~!」. 말풍선을 누르면 다시 나옵니다."
+                  },
+                  {
+                    "key": "barColor",
+                    "type": "string",
+                    "optional": true,
+                    "desc": "막대그래프 이닝의 막대 색(\"#ff64c8\" 꼴). 꽃 색과 비슷하게, 한 그래프 안에서 서로 다르게. 생략하면 #ff9700. 그림그래프 이닝은 안 읽습니다."
+                  },
+                  {
+                    "key": "graphImage",
+                    "type": "asset:image",
+                    "optional": true,
+                    "desc": "그림그래프 칸 그림을 따로 받았을 때(figma 는 줄기 없는 꽃 머리). 없으면 image 를 줄여 씁니다."
+                  },
+                  {
+                    "key": "graphImageOn",
+                    "type": "asset:image",
+                    "optional": true,
+                    "desc": "graphImage 의 네온 그림. 없으면 selected 를 씁니다."
+                  },
+                  {
+                    "key": "positions",
+                    "type": "array",
+                    "required": true,
+                    "minLength": 1,
+                    "minLengthWhy": "찾을 것이 하나도 없으면 문제가 끝나지 않습니다.",
+                    "desc": "**그 종류 오브젝트 중심 — 칸 수가 곧 개수(그래프 칸 수)**입니다. 개수를 따로 적지 않습니다. 데이터 차례로 그립니다(뒤에 적은 것이 위).",
+                    "of": {
+                      "key": "",
+                      "type": "point",
+                      "figma": true
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "key": "endNarration",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그래프 완성 몬스터 설명 내레이션(end). 예 「그림그래프 완성! 그림그래프는 그림이 많을수록 수가 많다는 뜻이야.」"
+            },
+            {
+              "key": "pick",
+              "type": "object",
+              "optional": true,
+              "desc": "정답 고르기(기획 「2종 개발 — 정답 맞추기 활동이 있는 / 없는 버전」). 없으면 설명 0.5초 뒤 바로 다음 이닝(마지막이면 EOP)으로 갑니다.",
+              "fields": [
+                {
+                  "key": "bubble",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "글자 말풍선(356x234, 파랑). 예 pick_more 「더 많은 꽃」 · pick_least 「가장 적은 꽃」."
+                },
+                {
+                  "key": "question",
+                  "type": "asset:sound",
+                  "required": true,
+                  "desc": "몬스터 고르기 내레이션(que02). 예 「그래프를 보고 더 많은 꽃을 골라 줘!」. 말풍선을 누르면 다시 나옵니다."
+                },
+                {
+                  "key": "answer",
+                  "type": "number",
+                  "required": true,
+                  "desc": "정답 종류의 kinds 차례(0부터). 「더 많은」이면 positions 가 가장 긴 종류, 「가장 적은」이면 가장 짧은 종류 — 코드는 말풍선 글자를 모르고 이 번호만 봅니다."
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "pick-answer-matches-count",
+      "level": "error",
+      "check": "pick.answer 가 가리키는 종류가 pick.bubble 글자대로(더 많은 / 가장 적은) positions 개수가 가장 많은 / 적은 종류여야 하고, 같은 개수가 둘이면 안 된다.",
+      "why": "모듈은 말풍선 글자를 모르고 answer 번호만 봅니다. 어긋나도 에러 없이 진행돼 아이가 맞게 골라도 오답이 됩니다."
+    }
+  ],
+  "relations": [
+    {
+      "id": "inning-count",
+      "kind": "count",
+      "pick": "inningData",
+      "min": 3,
+      "max": 5,
+      "note": "inningData 는 3~5개.",
+      "why": "기획 확정 범위입니다."
+    },
+    {
+      "id": "kinds-two-or-three",
+      "kind": "count",
+      "pick": "inningData[].kinds",
+      "min": 2,
+      "max": 3,
+      "note": "이닝마다 2~3종류.",
+      "why": "기획 「찾아야 하는 그림의 종류 수 최대 3개」, 그래프 판에 열이 셋까지 들어갑니다."
+    },
+    {
+      "id": "count-max",
+      "kind": "count",
+      "pick": "inningData[].kinds[].positions",
+      "max": 10,
+      "note": "한 종류 개수는 10 이하.",
+      "why": "그래프 칸이 10까지입니다(막대 눈금 1~10). 넘으면 막대가 판 위로 넘칩니다."
+    },
+    {
+      "id": "columns-match-kinds",
+      "kind": "sameCount",
+      "each": "inningData",
+      "picks": [
+        "kinds",
+        "graph.columns"
+      ],
+      "note": "이닝마다 graph.columns 칸 수 = kinds 칸 수.",
+      "why": "열 x 가 모자란 종류는 x 0(밭 한가운데)에 그래프 칸과 선택 칸이 그려집니다. 에러는 없습니다."
+    },
+    {
+      "id": "pick-answer-in-kinds",
+      "kind": "indexes",
+      "each": "inningData[]",
+      "list": "kinds",
+      "pick": "pick.answer",
+      "beside": true,
+      "note": "pick.answer 가 같은 이닝 kinds 안의 번호여야 한다.",
+      "why": "없는 번호면 어느 칸을 눌러도 오답이라 정답 고르기가 끝나지 않습니다."
+    },
+    {
+      "id": "kinds-image-distinct",
+      "kind": "distinct",
+      "each": "inningData",
+      "pick": "kinds[].image",
+      "note": "한 이닝 종류들의 image 가 서로 달라야 한다.",
+      "why": "판정을 종류 차례로 하므로 같은 그림이면 아이가 구별할 수 없습니다."
+    }
+  ]
+}

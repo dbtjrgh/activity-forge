@@ -1,0 +1,170 @@
+{
+  "specVersion": 1,
+  "module": "ShowcaseWriteLv1",
+  "subject": "EN",
+  "title": "낱말 따라 쓰고 꾸미기 — 글씨를 덧쓰고 스티커를 붙입니다",
+  "summary": "판 위에 낱말이 흐리게 적혀 있고 마커로 획을 따라 덧씁니다. 다 쓰면 스티커 판이 열려 그 낱말에 어울리는 스티커를 골라 붙입니다. 꾸민 그림은 사진으로 찍혀 앨범에 쌓이고, 끝나면 앨범을 넘겨 보며 낱말 소리를 다시 들을 수 있습니다. 이닝 차례는 열 때마다 섞입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/ShowcaseWriteLv1",
+    "activities": [
+      "ENL1M01W4S2",
+      "ENL1M02W4S2",
+      "ENL1M03W4S2",
+      "ENL1M04W4S2",
+      "ENL1M05W4S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ShowcaseWriteLv1.addAsset();",
+        "// DrawWord.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.5);",
+        "this.addChild( ShowcaseWriteLv1.handle );",
+        "ShowcaseWriteLv1.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await ShowcaseWriteLv1.handle.start();",
+        "await ShowcaseWriteLv1.handle.play();",
+        "await ShowcaseWriteLv1.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onResize": [
+        "ShowcaseWriteLv1.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "ShowcaseWriteLv1",
+        "from": "@_common/module/EN/ShowcaseWriteLv1/ShowcaseWriteLv1"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [],
+    "providedByModule": {
+      "note": "**판·마커·앨범은 모듈 것입니다.** Assets.ts 가 배경·판·스티커 판·앨범 판·마커·배경음·안내(SL_en_com_nar83)·효과음·알갱이 로티를 등록합니다. **액티비티는 그 회차의 스티커 그림과 낱말 소리만 넣습니다.** 회차 AssetTable 에 남아 있는 //{alias:'correct'…} 주석은 **틀에서 딸려 온 것**입니다 — 기존 회차가 모두 주석인 채로 두었고 모듈이 안 찾습니다.",
+      "image": [
+        "bg",
+        "panel",
+        "sticker_panel",
+        "album_panel",
+        "marker",
+        "marker_start",
+        "marker_end",
+        "incorrect"
+      ],
+      "lottie": [
+        "En_L1_M01_W4_S2_word_particle",
+        "En_L1_M01_W4_S2_stiker_particle"
+      ],
+      "sound": [
+        "bgm",
+        "SL_en_com_nar83 (시작 안내)",
+        "click-sound",
+        "SL_en_com_sfx02",
+        "SL_en_com_sfx04"
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "words",
+              "type": "string",
+              "required": true,
+              "desc": "따라 쓸 낱말. **그림이 아니라 글자 그대로**입니다 — 모듈이 폰트로 획을 그려 냅니다. 그래서 글자만 바꾸면 되고 그림을 따로 안 만듭니다."
+            },
+            {
+              "key": "sounds",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 낱말을 읽는 소리. 앨범에서 다시 들을 때도 이것입니다."
+            },
+            {
+              "key": "sticker",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "icon",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "스티커 판에 뜨는 작은 그림."
+                  },
+                  {
+                    "key": "image",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "골라서 붙였을 때 실제로 붙는 큰 그림. icon 과 **다른 그림**입니다 — 기존 5개가 sticker0101 / st0101 처럼 짝을 두고 있습니다."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "그 낱말에서 고를 수 있는 스티커. 기존 5개가 다 **넷**입니다.",
+              "minLengthWhy": "고를 것이 하나뿐이면 고르는 뜻이 없습니다. 기존 5개는 넷씩입니다."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "낱말 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — ShowcaseWriteLv1.ts:89 가 shuffleArray 를 그대로 부릅니다.",
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 5개는 5~6개입니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "sticker-icon-image-pair",
+      "level": "error",
+      "check": "sticker[].icon 과 image 가 서로 다른 alias 여야 한다.",
+      "why": "판에 뜨는 작은 그림과 붙는 큰 그림이 같으면 붙였을 때 크기가 안 맞습니다. 터지지 않고 눈으로만 어색합니다."
+    },
+    {
+      "id": "inningdata-shuffled",
+      "level": "warn",
+      "check": "inningData 의 차례에 뜻이 있으면 안 된다.",
+      "why": "ShowcaseWriteLv1.ts:89 가 shuffleArray(inningData) 를 그대로 부릅니다. **끄는 값이 없습니다.**"
+    },
+    {
+      "id": "alias-exists-in-assettable",
+      "level": "error",
+      "check": "GameData 가 가리키는 모든 asset alias 가 AssetTable 에 있어야 한다."
+    },
+    {
+      "id": "unknown-field",
+      "level": "warn",
+      "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ]
+}

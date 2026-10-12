@@ -1,0 +1,210 @@
+{
+  "specVersion": 1,
+  "module": "InterBook",
+  "subject": "MA",
+  "title": "인터북 (옛 모듈 · Adobe Animate 번들)",
+  "summary": "표지를 눌러 펼치고 넘겨 보는 그림책. 내용이 PixiJS 가 아니라 **Adobe Animate(CreateJS) 로 뽑은 js 번들**이고, 모듈은 그것을 오프스크린 캔버스에 돌려 화면에 붙입니다. 1~5호가 이 모듈이고 6호부터는 MIB 로 바뀌었습니다.",
+  "reference": {
+    "module": "sparkon_common/_common/sparkLib/module/InterBook/InterBookActivity",
+    "doc": "README 없음. 근거는 InterBookActivity.ts · InterBookPlayer.ts 와 1~5호 차시들입니다.",
+    "note": "초안이 module 경로를 과목 폴더로 적어 두었는데, 이 모듈은 과목 폴더가 아니라 sparkLib 에 있습니다.",
+    "activities": [
+      "MAL2M01W1S1",
+      "MAL2M01W3S1",
+      "MAL2M02W1S1",
+      "MAL2M02W3S1",
+      "MAL2M03W1S1"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "await super.onLoad();"
+      ],
+      "onInit": [
+        "   // 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "await super.onInit();",
+        "this.initInterBook('bgFrame', 'thumb');"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "const bgm = AudioManager.getSound('bgm');",
+        "bgm.loop(true);",
+        "bgm.volume(1);",
+        "bgm.play();",
+        "await SparkApp.mainMenu.mainCharacter.show()",
+        "await this.ready();",
+        "this.playLock(true);",
+        "await SparkApp.mainMenu.mainCharacter.guide('play')",
+        "SparkApp.activeAffordanceWaiter(true)",
+        "this.playLock(false);",
+        "this.playButtonFocusAni();",
+        "this.on( InterBookActivity.event.startPlay, async () => {",
+        "  if (bgm.playing()) {",
+        "    bgm.fade(1, 0, 1000);",
+        "    // bgm.once('fade', () => {",
+        "    //   bgm.stop();",
+        "    // });",
+        "  }",
+        "})",
+        "this.on( InterBookActivity.event.pausePlay, async () => {",
+        "  bgm.fade(1, 1, 1000);",
+        "})",
+        "this.on( InterBookActivity.event.endPlay, async () => {",
+        "  // const nar = ['end_nar01', 'end_nar02', 'end_nar03']",
+        "  // await SparkApp.mainMenu.mainCharacter.guide( choiceOne(nar))",
+        "  await SparkApp.eop.show();",
+        "})"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "InterBookActivity",
+      "from": "@_common/sparkLib/module/InterBook/InterBookActivity"
+    },
+    "import": {
+      "symbol": "SparkApp",
+      "from": "@_common/sparkLib/Application"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "playBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "재생 버튼. InterBookActivity.ts:39 가 AssetManager.get(\"playBTN\") 으로 직접 찾습니다."
+      },
+      {
+        "alias": "closeBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "닫기 버튼. InterBookPlayer.ts:221 이 이름으로 찾습니다."
+      },
+      {
+        "alias": "bgFrame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "책 테두리. initInterBook(\"bgFrame\", \"thumb\") 의 첫 인자입니다."
+      },
+      {
+        "alias": "thumb",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "펼치기 전 표지 썸네일. initInterBook 의 두 번째 인자입니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. **액티비티 onStart 가 AudioManager.getSound(\"bgm\") 으로 직접 켜고, 책이 시작되면 1초에 걸쳐 페이드아웃합니다.**"
+      },
+      {
+        "alias": "play",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "「눌러 보자」 지문. mainCharacter.guide(\"play\") 로 이름이 박혀 있습니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "모듈 onLoad 가 `playBTNclick`(/sparklab/common/SL_en_com_sfx01.mp3) 하나를 스스로 등록합니다. 나머지는 액티비티가 넣습니다.\n\n**GameData 가 아니라 Activity.ts 에 적는 값이 하나 있습니다** — `protected mScriptJS = \"Ma_L2_M01_W3_S1.js\"` 처럼 Animate 번들 파일 이름을 클래스 필드로 적습니다. InterBookActivity.onLoad 가 `/sparklab/{학습코드}/animatecc/{mScriptJS}` 를 스크립트로 붙이므로, **이 값이 비면 책이 통째로 안 열립니다.** 파일 이름이 차시마다 달라서(Math_Lv2.js · Ma_L3_M01_W3_S1.js 등) 클론할 때 제일 자주 놓치는 자리입니다.",
+      "sound": [
+        "playBTNclick"
+      ]
+    },
+    "defaults": {
+      "image": [
+        {
+          "alias": "playBTN",
+          "file": "video_play_btn_n.png"
+        },
+        {
+          "alias": "closeBTN",
+          "file": "popup_guide_close_btn_n.png"
+        },
+        {
+          "alias": "bgFrame",
+          "file": "bg.png"
+        },
+        {
+          "alias": "thumb",
+          "file": "thumb.png"
+        }
+      ],
+      "sound": [
+        {
+          "alias": "bgm",
+          "file": "bgm.mp3"
+        },
+        {
+          "alias": "play",
+          "file": "SL_ma_com_ani_nar01.mp3"
+        },
+        {
+          "alias": "end_nar01",
+          "file": "SL_ma_com_nar02.mp3"
+        },
+        {
+          "alias": "end_nar02",
+          "file": "SL_ma_com_nar03.mp3"
+        },
+        {
+          "alias": "end_nar03",
+          "file": "SL_ma_com_nar04.mp3"
+        }
+      ]
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "unused",
+    "fields": []
+  },
+  "aliases": [
+    "인터북"
+  ],
+  "aliasNote": "**새로 만들 때는 MIB 를 쓰세요.** 이 모듈은 1~5호가 쓴 옛 것입니다 — 배치표 기계 판정이 앞선 다섯 호를 세어 이 이름을 고르는데, 6호부터 MIB 로 갈아탔습니다. 이 스펙은 옛 차시를 고칠 때 보는 것입니다.",
+  "rules": [
+    {
+      "id": "script-js-set",
+      "level": "error",
+      "check": "Activity.ts 에 `protected mScriptJS = \"<번들파일>.js\"` 가 있고, public/sparklab/{학습코드}/animatecc/ 아래에 그 파일이 있어야 한다.",
+      "why": "**책 내용 전체가 이 번들입니다.** 비어 있으면 스크립트 경로가 /animatecc/ 로 끝나 로드가 실패하고, 표지만 보이다 아무 일도 일어나지 않습니다. GameData 에는 적을 자리가 없어 놓치기 쉽습니다."
+    },
+    {
+      "id": "animatecc-folder-complete",
+      "level": "error",
+      "check": "animatecc 폴더에 번들 js 와 그것이 참조하는 images · sounds 가 함께 있어야 한다.",
+      "why": "InterBookPlayer 가 번들의 manifest 경로를 `/sparklab/{학습코드}/animatecc/` 로 다시 씁니다(InterBookPlayer.ts:159). 폴더째 옮기지 않으면 그림만 빠진 책이 됩니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "playBTN · closeBTN · bgFrame · thumb · bgm · play 여섯 alias 가 등록돼야 한다.",
+      "why": "여섯 다 코드가 문자열로 직접 찾습니다. 빠지면 빌드는 통과하고 런타임에 그 버튼이나 소리만 사라집니다."
+    },
+    {
+      "id": "eop-on-endplay",
+      "level": "error",
+      "check": "onStart 의 endPlay 핸들러가 SparkApp.eop.show() 를 불러야 한다.",
+      "why": "안 부르면 책을 다 봐도 학습이 끝나지 않습니다."
+    },
+    {
+      "id": "prefer-mib",
+      "level": "warn",
+      "check": "새 차시는 이 모듈이 아니라 MIB 를 쓴다.",
+      "why": "6호부터 MIB 로 바뀌었습니다. 이 모듈은 Animate 번들을 따로 받아야 해서 양산 부담이 큽니다."
+    }
+  ],
+  "notes": [
+    "GameData 가 없습니다. 레시피에 적을 것은 리소스뿐이고, 진짜 작업은 animatecc 폴더와 Activity.ts 의 mScriptJS 입니다.",
+    "compID 는 기본값(DD87C6511EDBFE4AA50D8425DDA1DAB3)을 그대로 씁니다. Animate 에서 다시 뽑아 compID 가 바뀌면 InterBookPlayer.load 의 세 번째 인자를 넘겨야 합니다.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다 — 인터북 네 자리는 모두 MIB 입니다."
+  ]
+}

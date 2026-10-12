@@ -1,0 +1,2212 @@
+{
+  "specVersion": 1,
+  "module": "M16",
+  "subject": "MA",
+  "title": "도르래로 상자 옮기기",
+  "summary": "도르래와 줄로 상자를 끌어 올려 정해진 자리에 놓는 활동. 이닝마다 상자 구성과 놓을 자리가 다릅니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/MA/M16",
+    "activities": [
+      "MAL3M01W1S2"
+    ],
+    "doc": "README 없음. 근거는 M16.ts · M16_Box.ts · M16_Monster.ts · M16_EffectManager.ts · M16_AudioHelper.ts · M16_BlockScreen.ts · M16_GameDataTypes.ts 와 표본 MAL3M01W1S2 입니다. **M16_GameDataTypes.ts 에 타입이 적혀 있으니 값 모양을 확인할 때 그 파일을 보세요.**"
+  },
+  "codegen": {
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "M16",
+      "from": "@_common/module/MA/M16/M16"
+    },
+    "members": [
+      "private mM16 = new M16();"
+    ],
+    "hooks": {
+      "onLoad": [
+        "await this.mM16.onLoad(font, image, sound);"
+      ],
+      "onInit": [
+        "await this.mM16.onInit(this, quizData);"
+      ],
+      "onStart": [
+        "await this.mM16.onStart();"
+      ],
+      "onEnd": [
+        "await this.mM16.onEnd();"
+      ],
+      "onUpdate": [
+        "await this.mM16.onUpdate(_ticker);"
+      ],
+      "onAffordanceOn": [
+        "await this.mM16.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "await this.mM16.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData"
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "background",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "화면 배경. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 모듈이 AudioManager.getSound(\"bgm\") 으로 찾습니다."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — 액티비티 onLoad 가 `mM16.onLoad(font, image, sound)` 로 세 배열만 넘깁니다(**로티는 안 넘깁니다** — 애니를 쓰려면 image 로 등록해야 합니다).\n\n**이름이 코드에 박힌 것** — 그림 `background` · 음원 `bgm`(getSound).\n\n나머지 그림은 각 배치표의 `path` 값이 가리킵니다 — 열쇠가 아니라 **값에 alias 를 적는 꼴**입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "totalInningCount",
+        "type": "number",
+        "required": true,
+        "desc": "이닝 수. **아래 숫자 열쇠 표가 1 부터 이 수까지 있어야 합니다.**"
+      },
+      {
+        "key": "boxDatas",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "string",
+            "required": true,
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "string",
+            "required": true,
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "string",
+            "required": true,
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다의 상자 구성. **열쇠가 이닝 번호(1 부터)입니다.**"
+      },
+      {
+        "key": "monsterConfigs1",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "대기 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "talk",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "말하기 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "drop",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "놓을 때 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "end",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "마무리 상태의 배치. path 에 alias 를 적습니다."
+          }
+        ],
+        "desc": "1번 이닝의 캐릭터 애니 배치 네 벌."
+      },
+      {
+        "key": "monsterConfigs2",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "대기 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "talk",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "말하기 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "drop",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "놓을 때 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "end",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "마무리 상태의 배치. path 에 alias 를 적습니다."
+          }
+        ],
+        "desc": "2번 이닝의 캐릭터 애니 배치 네 벌."
+      },
+      {
+        "key": "monsterConfigs3",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "idle",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "대기 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "talk",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "말하기 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "drop",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "놓을 때 상태의 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "end",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "마무리 상태의 배치. path 에 alias 를 적습니다."
+          }
+        ],
+        "desc": "3번 이닝의 캐릭터 애니 배치 네 벌."
+      },
+      {
+        "key": "effectConfigs",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "miniDustEffect1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "`miniDustEffect1` 이펙트 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "miniDustEffect2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "`miniDustEffect2` 이펙트 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "drop",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "`drop` 이펙트 배치. path 에 alias 를 적습니다."
+          },
+          {
+            "key": "complete",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "string",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "loop",
+                "type": "bool",
+                "required": true,
+                "desc": "반복 재생할지."
+              },
+              {
+                "key": "autoPlay",
+                "type": "bool",
+                "required": true,
+                "desc": "올라오는 순간 재생할지."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "`complete` 이펙트 배치. path 에 alias 를 적습니다."
+          }
+        ],
+        "desc": "이펙트 배치."
+      },
+      {
+        "key": "cartSpriteConfigs",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다의 수레 배치. **열쇠가 이닝 번호(1 부터)입니다.**"
+      },
+      {
+        "key": "ringSpriteConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "desc": "겹치는 순서. 클수록 앞에 옵니다."
+          },
+          {
+            "key": "path",
+            "type": "asset:image",
+            "required": true,
+            "desc": "그림 alias."
+          },
+          {
+            "key": "anchor",
+            "type": "number",
+            "required": true,
+            "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          },
+          {
+            "key": "label",
+            "type": "asset:image",
+            "required": true,
+            "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+          }
+        ],
+        "desc": "고리 배치. path 에 alias 를 적습니다."
+      },
+      {
+        "key": "lineSpriteConfigs",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "2번 이닝의 값."
+          }
+        ],
+        "desc": "줄 배치. **열쇠가 이닝 번호(1 부터)입니다.**"
+      },
+      {
+        "key": "planeSpriteConfigs",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "label",
+                "type": "asset:image",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "x",
+                "type": "number",
+                "required": true,
+                "desc": "자리 x (화면 가운데가 0)."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "required": true,
+                "desc": "자리 y (화면 가운데가 0)."
+              },
+              {
+                "key": "width",
+                "type": "number",
+                "required": true,
+                "desc": "너비(px)."
+              },
+              {
+                "key": "height",
+                "type": "number",
+                "required": true,
+                "desc": "높이(px)."
+              },
+              {
+                "key": "zIndex",
+                "type": "number",
+                "required": true,
+                "desc": "겹치는 순서. 클수록 앞에 옵니다."
+              },
+              {
+                "key": "path",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림 alias."
+              },
+              {
+                "key": "anchor",
+                "type": "number",
+                "required": true,
+                "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+              },
+              {
+                "key": "alpha",
+                "type": "number",
+                "required": true,
+                "desc": "투명도(0~1)."
+              },
+              {
+                "key": "label",
+                "type": "string",
+                "required": true,
+                "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+              }
+            ],
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다의 판 배치. **열쇠가 이닝 번호(1 부터)입니다.**"
+      },
+      {
+        "key": "dropZoneConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "alpha",
+            "type": "number",
+            "required": true,
+            "desc": "투명도(0~1)."
+          }
+        ],
+        "desc": "놓는 자리 판정 영역."
+      },
+      {
+        "key": "pullyConfig",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "width",
+            "type": "number",
+            "required": true,
+            "desc": "너비(px)."
+          },
+          {
+            "key": "height",
+            "type": "number",
+            "required": true,
+            "desc": "높이(px)."
+          },
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "자리 x (화면 가운데가 0)."
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "자리 y (화면 가운데가 0)."
+          },
+          {
+            "key": "zIndex",
+            "type": "number",
+            "required": true,
+            "desc": "겹치는 순서. 클수록 앞에 옵니다."
+          }
+        ],
+        "desc": "도르래 배치. (열쇠 철자가 pully 입니다 — pulley 가 아닙니다.)"
+      },
+      {
+        "key": "inningConfigs",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "startScore",
+                "type": "number",
+                "required": true,
+                "desc": "그 이닝을 시작할 때의 점수(무게·개수)."
+              },
+              {
+                "key": "targetScore",
+                "type": "number",
+                "required": true,
+                "desc": "그 이닝의 목표 점수. **이 값에 닿으면 이닝이 끝납니다** — startScore 에서 increment 를 더해 닿을 수 있는 수여야 합니다."
+              },
+              {
+                "key": "increment",
+                "type": "number",
+                "required": true,
+                "desc": "상자 하나를 옮길 때 더해지는 값."
+              }
+            ],
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "startScore",
+                "type": "number",
+                "required": true,
+                "desc": "그 이닝을 시작할 때의 점수(무게·개수)."
+              },
+              {
+                "key": "targetScore",
+                "type": "number",
+                "required": true,
+                "desc": "그 이닝의 목표 점수. **이 값에 닿으면 이닝이 끝납니다** — startScore 에서 increment 를 더해 닿을 수 있는 수여야 합니다."
+              },
+              {
+                "key": "increment",
+                "type": "number",
+                "required": true,
+                "desc": "상자 하나를 옮길 때 더해지는 값."
+              }
+            ],
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "startScore",
+                "type": "number",
+                "required": true,
+                "desc": "그 이닝을 시작할 때의 점수(무게·개수)."
+              },
+              {
+                "key": "targetScore",
+                "type": "number",
+                "required": true,
+                "desc": "그 이닝의 목표 점수. **이 값에 닿으면 이닝이 끝납니다** — startScore 에서 increment 를 더해 닿을 수 있는 수여야 합니다."
+              },
+              {
+                "key": "increment",
+                "type": "number",
+                "required": true,
+                "desc": "상자 하나를 옮길 때 더해지는 값."
+              }
+            ],
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다의 진행 설정. **열쇠가 이닝 번호(1 부터)입니다.** startScore 에서 increment 를 더해 targetScore 에 **정확히 닿을 수 있어야** 합니다."
+      },
+      {
+        "key": "boxSpriteConfigs",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "1",
+            "type": "array",
+            "required": true,
+            "minLength": 5,
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "x",
+                  "type": "number",
+                  "required": true,
+                  "desc": "자리 x (화면 가운데가 0)."
+                },
+                {
+                  "key": "y",
+                  "type": "number",
+                  "required": true,
+                  "default": 507.2,
+                  "desc": "자리 y (화면 가운데가 0)."
+                },
+                {
+                  "key": "width",
+                  "type": "number",
+                  "required": true,
+                  "default": 178,
+                  "desc": "너비(px)."
+                },
+                {
+                  "key": "height",
+                  "type": "number",
+                  "required": true,
+                  "default": 203,
+                  "desc": "높이(px)."
+                },
+                {
+                  "key": "zIndex",
+                  "type": "number",
+                  "required": true,
+                  "default": 5,
+                  "desc": "겹치는 순서. 클수록 앞에 옵니다."
+                },
+                {
+                  "key": "path",
+                  "type": "asset:image",
+                  "required": true,
+                  "default": "bigBox",
+                  "desc": "그림 alias."
+                },
+                {
+                  "key": "anchor",
+                  "type": "number",
+                  "required": true,
+                  "default": 0.5,
+                  "desc": "기준점(0~1 비율). 0.5 가 가운데입니다."
+                },
+                {
+                  "key": "alpha",
+                  "type": "number",
+                  "required": true,
+                  "default": 1,
+                  "desc": "투명도(0~1)."
+                },
+                {
+                  "key": "label",
+                  "type": "string",
+                  "required": true,
+                  "default": "Big Box",
+                  "desc": "요소 이름표. 어포던스·감추기 목록이 이 이름으로 요소를 찾습니다."
+                }
+              ],
+              "desc": "칸 하나."
+            },
+            "desc": "1번 이닝의 값."
+          },
+          {
+            "key": "2",
+            "type": "string",
+            "required": true,
+            "desc": "2번 이닝의 값."
+          },
+          {
+            "key": "3",
+            "type": "string",
+            "required": true,
+            "desc": "3번 이닝의 값."
+          }
+        ],
+        "desc": "이닝마다의 상자 배치. **열쇠가 이닝 번호(1 부터)입니다.**"
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "inning-keys-one-based",
+      "level": "error",
+      "check": "boxDatas · cartSpriteConfigs · planeSpriteConfigs · inningConfigs · boxSpriteConfigs · monsterConfigs{n} 이 1 부터 totalInningCount 까지 있어야 한다.",
+      "why": "이닝 번호를 열쇠로 바로 찾습니다. 0 부터 적거나 한 이닝이 빠지면 그 이닝에서 undefined 를 읽어 빈 화면이 됩니다."
+    },
+    {
+      "id": "path-holds-alias",
+      "level": "error",
+      "check": "배치표의 `path` 값이 AssetTable 의 alias 여야 한다.",
+      "why": "**이 모듈은 열쇠가 아니라 값에 alias 를 적습니다**(다른 배치표 모듈과 반대입니다). 파일 경로를 적으면 못 찾습니다."
+    },
+    {
+      "id": "no-lottie-passed",
+      "level": "error",
+      "check": "애니를 쓰려면 AssetTable.image 에 등록한다 — onLoad 가 lottie 배열을 넘기지 않는다.",
+      "why": "`mM16.onLoad(font, image, sound)` 로 세 배열만 넘깁니다. lottie 에 넣으면 모듈이 받지 못해 애니가 통째로 안 보입니다."
+    },
+    {
+      "id": "onupdate-required",
+      "level": "error",
+      "check": "onUpdate 에서 M16.onUpdate(ticker) 를 불러야 한다.",
+      "why": "도르래와 줄이 매 프레임 갱신됩니다. 훅을 빠뜨리면 움직이지 않습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "background 와 bgm 을 등록해야 한다.",
+      "why": "이름이 코드에 박혀 있고 모듈은 아무것도 등록하지 않습니다."
+    },
+    {
+      "id": "typo-keys-kept",
+      "level": "warn",
+      "check": "pullyConfig 는 철자 그대로 적는다.",
+      "why": "코드가 그 이름으로 읽습니다."
+    },
+    {
+      "id": "score-reachable",
+      "level": "error",
+      "check": "inningConfigs[이닝] 은 startScore 에서 increment 를 더해 targetScore 에 정확히 닿을 수 있어야 한다.",
+      "why": "목표에 닿으면 이닝이 끝납니다. (targetScore - startScore) 가 increment 로 나누어지지 않으면 **넘겨 버리거나 못 닿아 이닝이 끝나지 않습니다.**"
+    }
+  ],
+  "notes": [
+    "표본이 MAL3M01W1S2 한 차시뿐이고 이닝이 셋입니다.",
+    "**M16_GameDataTypes.ts 에 GameData 타입이 적혀 있습니다** — MA 모듈 중 드문 경우이니 값 모양이 헷갈리면 그 파일을 먼저 보세요.",
+    "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ]
+}

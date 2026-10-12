@@ -1,0 +1,239 @@
+{
+  "specVersion": 1,
+  "module": "K36",
+  "subject": "KO",
+  "title": "",
+  "summary": "",
+  "reference": {
+    "module": "sparkon_common/_common/module/KR/K36",
+    "activities": [
+      "KOL1M01W4S2",
+      "KOL1M02W4S2",
+      "KOL1M05W4S2",
+      "KOL1M06W2S2",
+      "KOL1M07W4S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "K36.addAsset();",
+        "STTButton.addAsset();"
+      ],
+      "onInit": [
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "K36.handle.onInit(quizData);",
+        "this.addChild(K36.handle);"
+      ],
+      "onStart": [
+        "// if (import.meta.env.PROD) {",
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.2);",
+        "bgm.play();",
+        "// }",
+        "await K36.handle.onStart(quizData);",
+        "await SparkApp.eop.show((K36.handle.totalPercent / quizData.length) * 0.01);"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ],
+      "onAffordanceOn": [
+        "K36.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "K36.handle.onAffordanceCanceled();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "STTButton",
+        "from": "@_common/sparkLib/component/STTButton"
+      },
+      {
+        "symbol": "K36",
+        "from": "@_common/module/KR/K36/K36"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "person",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/Person.ts 가 AssetManager.get(\"person\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "idle-person",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Person.ts 가 AssetManager.get(\"idle-person\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "correct-person",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Person.ts 가 AssetManager.get(\"correct-person\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "incorrect-person",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Person.ts 가 AssetManager.get(\"incorrect-person\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "listening-person",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Person.ts 가 AssetManager.get(\"listening-person\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "notice-person",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Person.ts 가 AssetManager.get(\"notice-person\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "talking-person",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "모듈 component/Person.ts 가 AssetManager.get(\"talking-person\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/PlayStage.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "bg-obj",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/PlayStage.ts 가 AssetManager.get(\"bg-obj\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "mask",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/QuizImage.ts 가 AssetManager.get(\"mask\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "line",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "모듈 component/QuizImage.ts 가 AssetManager.get(\"line\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 6개 다 가짐(litgate, 2026-09-29)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "array",
+    "minLength": 1,
+    "minLengthWhy": "칸 하나 = 이닝 하나. 완성본 다섯은 모두 5칸이다 — 모듈은 quizData.length 만큼 돈다(K36.ts onStart).",
+    "fields": [],
+    "of": {
+      "key": "",
+      "type": "object",
+      "fields": [
+        {
+          "key": "texture",
+          "type": "object",
+          "required": true,
+          "fields": [
+            {
+              "key": "quiz",
+              "type": "asset:image",
+              "required": true,
+              "desc": "이닝 사진 한 장 — 시작은 배율 1(실제 픽셀)로 startAnchor 를 창(mask) 가운데에 두어 확대된 모습, 끝은 endScale 로 줄인 전체. **투명 여백이 없어야 한다** — 모듈은 사진 뒤에 아무것도 안 깔아서 빈 곳이 쌍안경 안에 검게 보인다. 9호는 1040×640 캔버스 가운데 약 830px 사진 둘레가 투명이라 시작 · 정답 공개 내내 검은 테두리가 보였다(2026-10-06). 받은 사진은 여백을 잘라 창(mask)과 같은 비율로, 창보다 1.5배쯤 크게 다시 만든다(9호 mask 862×531 → 1293×797)"
+            },
+            {
+              "key": "answer",
+              "type": "asset:image",
+              "required": true,
+              "desc": "정답 낱말 글자 그림(글자 수만큼 폭이 다르다)"
+            }
+          ]
+        },
+        {
+          "key": "answer",
+          "type": "string",
+          "required": true,
+          "desc": "정답 낱말 — 말하기 인식이 견준다"
+        },
+        {
+          "key": "answerPosition",
+          "type": "point",
+          "required": true,
+          "figma": true,
+          "desc": "정답 글자 그림 자리(사진 가운데 기준)"
+        },
+        {
+          "key": "endScale",
+          "type": "number",
+          "required": true,
+          "desc": "끝 배율 — 사진을 끝에 얼마나 줄여 보이나. 완성본 7개에서 값 × 사진 너비가 830~1250 이다(7호는 사진이 936px 이라 1, 2호는 6240px 이라 0.2). **값 × 사진 너비 ≥ mask 너비, 값 × 사진 높이 ≥ mask 높이여야 한다** — 모자라면 정답 공개 화면 가장자리가 검게 빈다. 9호 0.83 × 1040×640(실제 사진 830px) 이 그랬고, 여백을 자른 1293×797 에 0.67 로 고쳤다(0.66 이면 다시 빈다, 2026-10-06)",
+          "scalesWith": {
+            "image": "texture.quiz",
+            "why": "사진 크기를 따라 정한 값이다 — 완성본 7개에서 값은 0.17~1 로 갈리는데 값 × 사진 너비는 830~1250(tool/scalegate.ts, 2026-10-02). 9호가 2호의 0.2 를 그대로 받으면 1040px 사진이 엽서만 해진다"
+          }
+        },
+        {
+          "key": "startAnchor",
+          "type": "point",
+          "required": true,
+          "desc": "시작 화면 가운데가 사진의 어디인가 — 0~1 비율(픽셀 아님). 그림 시트의 「활동 시작 이미지」가 완료 사진의 어디인지로 정한다. 시작은 배율 1 이라 **x 는 mask너비/2/사진너비 ~ 1 − 그 값, y 도 높이로 같은 범위 안**이어야 창이 사진 밖으로 안 나간다(9호 1293×797 이면 0.34~0.66). 원본 값은 원본 사진 몫이라 그대로 받으면 안 된다 — 9호가 2호 값을 그대로 받았다(2026-10-06)"
+        },
+        {
+          "key": "sound",
+          "type": "asset:sound",
+          "required": true,
+          "desc": "정답 낱말 소리(이닝 낱말) — 대사가 아니다"
+        }
+      ],
+      "desc": "칸 하나 = 이닝 하나 — 사진 한 장을 확대해서 시작해 줄여 가며 정답을 말한다. **칸 차례는 기획서 이닝 표 차례다** — 낱말 소리(nar01~)가 그 차례로 번호가 붙어 있어서, 사진 · 글자를 다른 차례로 넣으면 사진과 소리가 어긋난다. 9호는 AI 가 산 · 숲 · 빙하 · 바다 · 강으로 넣어 3이닝 빙하 사진에 강 소리가 났다(기획서는 산 · 숲 · 강 · 바다 · 빙하, 2026-10-06). 기획서가 없으면 차례를 짐작하지 말고 묻는다."
+    }
+  },
+  "voices": {
+    "KOL1M01W4S2": {
+      "gender": "남",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-02 seokho.yu(유석호) · KOL1M08W4S2 에서 정했습니다)"
+    },
+    "KOL1M02W4S2": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-02 seokho.yu(유석호) · KOL1M08W4S2 에서 정했습니다)"
+    },
+    "KOL1M05W4S2": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-02 seokho.yu(유석호) · KOL1M08W4S2 에서 정했습니다)"
+    },
+    "KOL1M06W2S2": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-02 seokho.yu(유석호) · KOL1M08W4S2 에서 정했습니다)"
+    },
+    "KOL1M07W4S2": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-02 seokho.yu(유석호) · KOL1M08W4S2 에서 정했습니다)"
+    },
+    "KOL1M08W4S2": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-02 seokho.yu(유석호) · KOL1M08W4S2 에서 정했습니다)"
+    },
+    "KOL1M11W4S3": {
+      "gender": "여",
+      "why": "받을 리소스 창에서 대사 성우를 정했습니다 (2026-10-02 seokho.yu(유석호) · KOL1M08W4S2 에서 정했습니다)"
+    }
+  }
+}

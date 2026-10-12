@@ -1,0 +1,321 @@
+{
+  "specVersion": 1,
+  "module": "E30",
+  "subject": "EN",
+  "title": "기차 블라인드 (그림자 보고 낱말 찾기)",
+  "summary": "기차 칸마다 블라인드가 내려와 있고, 그 안 그림자를 보고 낱말 카드를 골라 맞히는 활동. 정답 칸은 그림자가 정답 낱말이고 나머지는 오답 그림자입니다.",
+  "reference": {
+    "module": "sparkon_common/_common/module/EN/E30",
+    "activities": [
+      "ENL2M02W1S1",
+      "ENL2M03W1S1",
+      "ENL2M05W1S1",
+      "ENL2M11W2S1"
+    ],
+    "doc": "README 없음. 근거는 E30.ts · Train.ts · AnswerCard.ts 와 표본 5차시(2·3·5·7·11호)입니다. **자리가 호마다 옮겨 다닙니다** — ENL2M__W1S1 과 ENL2M__W2S1 두 자리에서 쓰였습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "E30.handle.init(quizData);",
+        "this.addChild(E30.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await E30.handle.start();",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"nar02\");",
+        "await E30.handle.play();",
+        "await E30.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "E30",
+        "from": "@_common/module/EN"
+      },
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "배경."
+      },
+      {
+        "alias": "blind",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "기차 칸을 가리는 블라인드."
+      },
+      {
+        "alias": "train_head",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "기차 머리. 자리는 posInfo.headImgPos."
+      },
+      {
+        "alias": "wheel_big",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "큰 바퀴."
+      },
+      {
+        "alias": "wheel_small",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "작은 바퀴."
+      },
+      {
+        "alias": "correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "정답 이펙트."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음."
+      },
+      {
+        "alias": "nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "학습 시작 지문. **액티비티 onStart 가 이름을 박아 부릅니다.**"
+      },
+      {
+        "alias": "sfx02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx04",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      },
+      {
+        "alias": "sfx05",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "효과음."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다.** 표본 다섯 차시를 견주면 **모두 공통으로 등록한 alias 18개**가 사실상 모듈 몫입니다:\n`bg` · `blind` · `blind_open` · `correct` · `train_head` · `train01`~`train05` · `wheel_big` · `wheel_small` · `bgm` · `sfx02` · `sfx04` · `sfx05` · `nar02` · 폰트 `NanumSquareRoundR`.\n\n그중 코드가 이름을 박아 찾는 것은 `bg` · `blind` · `correct` · `train_head` · `wheel_big` · `wheel_small` · `bgm` · `sfx02` · `sfx04` · `sfx05` 이고, **`nar02` 는 액티비티 onStart 가 부릅니다**(`mainCharacter.guide(\"nar02\")`).\n\n나머지(`answer_*` · `card_*` · 낱말 음원)는 차시 고유입니다. 낱말 리소스는 차시마다 다릅니다 — 표본을 견줘 보면 공통 alias 는 모듈 몫이고, `answer_*` · `card_*` 처럼 낱말 이름이 붙은 것은 그 차시 몫입니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "answerArray",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "string",
+          "desc": "낱말 카드 alias 하나. **타입이 string 이지만 그림 alias 입니다.**"
+        },
+        "desc": "고를 수 있는 낱말 카드 alias 들. **E30.ts:115 가 이 배열을 섞어 씁니다** — 적은 차례는 뜻이 없습니다.",
+        "minLengthWhy": "고를 것이 둘은 있어야 문제가 됩니다."
+      },
+      {
+        "key": "trainArray",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "asset:image",
+          "desc": "기차 칸 그림 alias 하나."
+        },
+        "desc": "기차 칸 그림들. **칸 차례대로 하나씩 씁니다**(Train.ts:46 — `trainArray[i]`) — 표본은 train01~train05 다섯 장입니다.",
+        "minLengthWhy": "iningInfo[].map 의 칸 수만큼 필요합니다."
+      },
+      {
+        "key": "grayCharArray",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "of": {
+          "key": "",
+          "type": "asset:image",
+          "desc": "그림자 그림 alias 하나. 정답 칸용은 `gray_character_{낱말}` 규칙을 따릅니다."
+        },
+        "desc": "블라인드 안에 보일 **그림자 목록**. 모듈이 이 목록에서 정답 그림자 한 장만 빼고 나머지를 오답 칸에 씁니다(Train.ts:256).",
+        "minLengthWhy": "오답 칸 수보다 많아야 골라 쓸 수 있습니다."
+      },
+      {
+        "key": "flipByAsset",
+        "type": "bool",
+        "required": false,
+        "desc": "오답 칸 그림자를 스프라이트로 좌우반전하지 **않을지**. 기본(false)은 칸마다 50% 확률로 반전합니다(Train.ts:115·123). **반전 그림자를 파일로 받은 호에서 켭니다** — 반전본을 다시 뒤집으면 정답 그림자와 똑같아지고, 축이 상하인 그림(로켓 등)은 스프라이트 반전으로 맞지 않습니다."
+      },
+      {
+        "key": "grayUmbrellaArray",
+        "type": "array",
+        "optional": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "asset:image",
+          "desc": "우산 그림자 alias 하나."
+        },
+        "desc": "우산 그림자 목록. **`uniqueIning` 과 같은 이닝에서만 이 목록을 씁니다**(Train.ts:248~249) — 그 이닝만 그림자 무리를 갈아 끼우는 장치입니다.",
+        "minLengthWhy": "그 이닝의 오답 칸 수보다 많아야 합니다."
+      },
+      {
+        "key": "uniqueIning",
+        "type": "asset:image",
+        "optional": true,
+        "desc": "**그림자 무리를 갈아 끼울 이닝을 가리키는 값.** `iningInfo[].answerImg` 와 이 값이 같은 이닝에서 grayCharArray 대신 grayUmbrellaArray 를 씁니다(Train.ts:248). 쓰지 않을 거면 어느 이닝의 answerImg 와도 겹치지 않는 값을 두세요."
+      },
+      {
+        "key": "posInfo",
+        "type": "object",
+        "required": true,
+        "fields": [
+          {
+            "key": "headImgPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 48,
+              "y": -224
+            },
+            "desc": "기차 머리 자리."
+          },
+          {
+            "key": "bodyTrainPos",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "default": {
+              "x": 0,
+              "y": -155
+            },
+            "desc": "기차 칸 무리의 기준 자리."
+          }
+        ],
+        "desc": "기차 배치."
+      },
+      {
+        "key": "iningInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 1,
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "map",
+              "type": "array",
+              "required": true,
+              "minLength": 1,
+              "of": {
+                "key": "",
+                "type": "bool",
+                "desc": "그 칸이 정답인지."
+              },
+              "desc": "**칸마다 정답인지 아닌지.** 칸 수가 곧 기차 칸 수이고, `true` 가 정답 칸입니다. **Train.ts:278 이 이 배열을 섞으므로 적은 순서는 뜻이 없습니다** — 정답이 몇 개인지만 정하는 값입니다.",
+              "minLengthWhy": "기차 칸 수만큼 필요합니다."
+            },
+            {
+              "key": "answerCard",
+              "type": "string",
+              "optional": true,
+              "desc": "그 이닝의 정답 낱말 카드 alias. **타입이 string 이지만 그림 alias 입니다.**"
+            },
+            {
+              "key": "answerImg",
+              "type": "string",
+              "optional": true,
+              "desc": "정답 칸에 보일 그림 alias. **`uniqueIning` 과 이 값을 견주어 그림자 무리를 갈아 끼웁니다.**"
+            },
+            {
+              "key": "grayImg",
+              "type": "string",
+              "optional": true,
+              "desc": "정답 칸의 그림자 alias. 관례는 `gray_character_{낱말}` 입니다."
+            },
+            {
+              "key": "sound",
+              "type": "string",
+              "optional": true,
+              "desc": "그 이닝의 낱말 음원 alias."
+            }
+          ],
+          "desc": "칸 하나."
+        },
+        "desc": "이닝 목록. (열쇠 철자가 `iningInfo` 입니다 — inning 이 아닙니다.)",
+        "minLengthWhy": "이닝이 하나는 있어야 합니다."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "map-order-meaningless",
+      "level": "warn",
+      "check": "map 의 순서로 정답 자리를 정하려 하지 말 것 — 섞입니다.",
+      "why": "Train.ts:278 이 `shuffleArray(info.map)` 를 부릅니다. 정답 자리는 매번 달라지고, 정하는 것은 **정답 개수**뿐입니다."
+    },
+    {
+      "id": "gray-array-enough",
+      "level": "error",
+      "check": "grayCharArray 가 오답 칸 수보다 많아야 한다.",
+      "why": "정답 그림자 한 장을 뺀 나머지에서 오답 칸을 채웁니다(Train.ts:256). 모자라면 빈 칸이 생깁니다."
+    },
+    {
+      "id": "unique-ining-pairs-answerimg",
+      "level": "error",
+      "check": "uniqueIning 은 그 이닝의 answerImg 와 정확히 같은 값이어야 하고, 그 이닝 몫으로 grayUmbrellaArray 를 채워야 한다.",
+      "why": "Train.ts:248 이 문자열로 견줍니다. 값이 어긋나면 우산 이닝이 일반 그림자를 쓰고, 반대로 실수로 겹치면 엉뚱한 이닝이 우산으로 바뀝니다."
+    },
+    {
+      "id": "flip-by-asset-when-files-given",
+      "level": "error",
+      "check": "반전 그림자를 파일로 받았으면 flipByAsset 을 true 로 둔다.",
+      "why": "기본은 코드가 50% 확률로 좌우반전합니다. 반전본을 또 뒤집으면 **정답 그림자와 똑같아져 답이 둘이 됩니다.** 상하 대칭이 필요한 그림(로켓)은 스프라이트 반전으로 아예 맞지 않습니다."
+    },
+    {
+      "id": "fixed-alias-registered",
+      "level": "error",
+      "check": "bg · blind · train_head · wheel_big · wheel_small · correct · bgm · nar02 · sfx02 · sfx04 · sfx05 이 등록돼야 한다.",
+      "why": "모듈이 아무것도 등록하지 않습니다. 없는 그림은 console.error 만 찍고 사라지고, 없는 음원은 무음으로 통과합니다."
+    },
+    {
+      "id": "typo-key-kept",
+      "level": "warn",
+      "check": "열쇠는 `iningInfo` · `uniqueIning` 철자 그대로 적는다.",
+      "why": "코드가 그 이름으로 읽습니다. inning 으로 고쳐 적으면 이닝이 통째로 안 돌아갑니다."
+    }
+  ],
+  "notes": [
+    "표본이 2·3·5·7·11호 다섯 차시이고 **자리가 W1S1 과 W2S1 로 옮겨 다녔습니다.** 배치표를 볼 때 주의하세요.",
+    "8호는 ENL2M07W1S1 하나이고 이미 만들었음입니다(리소스 50개).",
+    "`flipByAsset` 은 8호 작업에서 새로 생긴 값입니다. 그 전 호 GameData 에는 없습니다 — 없으면 기본 false 로 동작합니다."
+  ]
+}
