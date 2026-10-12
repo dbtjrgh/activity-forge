@@ -1,0 +1,152 @@
+/* 업데이트 막대 · 만든 사람 · 새 모듈 · 옆줄 과목 칸 · 끄는 손잡이 — main.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+/* 업데이트 막대 — 옆줄 맨 위. 새 판이 있을 때만 단추가 켜지고 테두리가 밝아진다 */
+.update-bar {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.update-bar.has-new {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.update-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.update-head .sub {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.update-bar p {
+  margin: 6px 0 0;
+  font-size: 12px;
+}
+
+/* 만든 사람 · 팀 — 서랍 안 두 칸 */
+.me-fields {
+  display: flex;
+  gap: 6px;
+}
+.me-fields input {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 12px;
+}
+
+/* 새 모듈 알림 — 스펙 주인의 옆줄에만. 모듈 한 줄에 칸 수 · 완성본 · 「스펙 만들기」 */
+.new-modules {
+  margin: 8px 0;
+  padding: 6px 8px;
+  border: 1px dashed var(--tone-nomod); /* 진행판의 모듈 없음 칸과 같은 색 */
+  border-radius: 6px;
+}
+.new-modules summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.new-modules ul {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.new-modules li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 6px;
+  padding: 4px 0;
+  border-top: 1px solid var(--border);
+}
+.new-modules li .sub {
+  grid-column: 1;
+  font-size: 11px;
+}
+/* 옆줄 글 크기(12~13px)에 맞춘다 — 단추는 `ghost`, 이름은 한 줄 */
+.new-modules .nm-name {
+  grid-column: 1;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.new-modules li button {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  white-space: nowrap;
+}
+.new-modules summary:focus {
+  outline: none;
+}
+.new-modules summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.new-modules > .sub,
+.new-modules summary .sub {
+  font-size: 12px;
+}
+
+/* 옆줄 과목 칸 — 끝난 만큼 아래 띠가 차고(--p = 0~1), 다 끝나면 초록 */
+.board-pick {
+  background-image: linear-gradient(var(--ok), var(--ok));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: calc(var(--p, 0) * 100%) 3px;
+}
+.board-pick.all-done {
+  border-color: var(--ok);
+  background-color: rgba(76, 195, 107, 0.16);
+  color: var(--ok);
+  font-weight: 600;
+}
+.board-pick.all-done.selected {
+  background-color: rgba(76, 195, 107, 0.28);
+}
+
+/* 끌어서 칸 너비를 바꾸는 손잡이 (`Splitter.tsx`) — 가만히 있으면 안 보이고, 올리면 파란 줄 */
+.splitter {
+  position: relative;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+.splitter::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: transparent;
+  transition: background 0.15s;
+}
+.splitter:hover::after,
+.splitter.dragging::after {
+  background: var(--accent);
+}
+/* 옆줄 손잡이 — 옆줄 오른쪽 가장자리에 겹쳐 둔다(격자 칸을 더하지 않는다). 접기 화살표가 그 위에 있다 */
+.sidebar-splitter {
+  position: absolute;
+  z-index: 15;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--sidebar-w) - 4px);
+  width: 8px;
+}

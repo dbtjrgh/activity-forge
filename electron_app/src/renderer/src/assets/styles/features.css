@@ -1,0 +1,24 @@
+/* 스크롤 막대 숨기기 · 「기능」 화면 · 옆줄 머리 단추 — main.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+/* **스크롤 막대는 숨긴다 — 휠로는 그대로 구른다** (사용자 말 — 「스크롤 막대는 없어도 돼, 휠로 휘적이면 되게」) */
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* 「기능」 화면 (Features.tsx) */
+.features-find { width: 100%; max-width: 420px; margin: 4px 0 12px; }
+.features-group { margin-bottom: 18px; }
+.features-group h3 { margin: 10px 0 4px; font-size: var(--font-lg); }
+/* 기능 화면도 진행판 · 관리와 같은 크기 — 본문 · 표 13px */
+.features-group, .features-find { font-size: var(--font-md); }
+.run-table.features-table { font-size: var(--font-md); }
+.features-table { width: 100%; table-layout: fixed; }
+.features-table td:first-child { width: 190px; }
+.features-table td:last-child { width: 38%; }
+.features-table td { white-space: normal; text-align: left; vertical-align: top; }
+.features-name { font-weight: 600; }
+.sidebar-views { display: flex; gap: 6px; }
+.alert-dot { display: inline-block; min-width: 16px; margin-left: 6px; padding: 0 4px; border-radius: 8px; background: var(--warn); color: #1c1c1e; font-size: 11px; font-weight: 700; line-height: 16px; text-align: center; }

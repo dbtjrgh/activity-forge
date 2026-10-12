@@ -1,0 +1,139 @@
+/* 진행판 표 · 꼬리표 · 설정 서랍 — main.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+.stage-tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+}
+
+.stage-tally li {
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.stage-tally li.done {
+  border-color: #3f9a52;
+  color: #6fcf83;
+}
+
+.stage-tally li.ready {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.board-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.board-table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.board-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.board-table tr:hover td {
+  background: var(--surface);
+}
+
+.rsc {
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+}
+
+.tag.done {
+  border-color: #3f9a52;
+  color: #6fcf83;
+}
+
+.tag.ready {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.tag.waiting {
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.tag.warn {
+  border-color: #d9a23b;
+  color: #e6b455;
+  margin-left: 6px;
+}
+
+.skipped {
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.skipped ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+/* 리소스 칸은 한 줄로. 줄바꿈되면 표가 두 배로 길어져 훑기 어렵다. */
+.rsc .sub {
+  white-space: nowrap;
+}
+
+.board-table {
+  display: block;
+  overflow-x: auto;
+}
+
+/* 설정 서랍 (M4) — 한 번 정하면 잘 안 바꾸는 것. 접어 두고 한 줄로 보인다 */
+.settings-drawer {
+  margin-bottom: var(--gap-3);
+}
+
+.settings-drawer > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  font-size: var(--font-sm);
+}
+
+.settings-drawer > summary .sub {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-drawer[open] > summary {
+  margin-bottom: var(--gap-2);
+}
+
+/* 옛 양산 화면 — 7단계에 걷어낼 되돌릴 길. 이제 눈에 띄게 둘 까닭이 없다 */
+.open-forge-old {
+  width: 100%;
+  font-size: var(--font-sm);
+}
+
+.open-forge-old + .open-forge-old {
+  margin-top: var(--gap-1);
+}

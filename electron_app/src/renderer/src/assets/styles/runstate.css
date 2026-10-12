@@ -1,0 +1,20 @@
+/* 「양산 시작」 단추 · 완료 글 색 · 미리보기 칸 — main.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음).
+   이전 방식의 걸음 목록 · 생성기 경고 · 좌표 맞추기 줄은 2026-10-08 에 그 화면과 함께 걷었다 */
+
+/* ─ 「양산 시작」 ─ */
+
+.state.done {
+  color: #6fcf83;
+}
+
+button.go {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* 미리보기 칸(`ViewPanel.tsx`)의 접는 목록 사이 */
+.run details {
+  margin-top: 10px;
+}

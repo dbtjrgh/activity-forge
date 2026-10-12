@@ -1,0 +1,435 @@
+  /* 바탕 #fff6d6, 흰 카드, 보라 강조(violet), 경고는 amber, 에러는 red.
+     사내 관리 화면과 같은 값을 골랐습니다 — 나중에 웹으로 옮겨도 낯설지 않게. */
+
+  /* Pretendard 를 CDN 에서 끌어오던 @import 를 지웠습니다 (2026-09-11).
+     데스크톱 앱의 CSP 가 외부 스타일시트를 막습니다 — 막는 것이 맞고,
+     이 도구는 바깥 의존을 두지 않는다는 원칙도 있습니다.
+     아래 font 스택에 Pretendard 가 남아 있어 PC 에 설치돼 있으면 그대로 쓰고,
+     없으면 맑은 고딕으로 떨어집니다. 폰트를 꼭 맞추려면 파일을 이 repo 에 넣습니다. */
+
+  :root{
+    --bg:#fff6d6;          /* 사이트 바탕 */
+    --panel:#ffffff;
+    --panel-soft:#fcfcfd;
+    --line:#e5e7eb;        /* gray-200 */
+    --line-2:#d1d5db;      /* gray-300 */
+    --ink:#1f2937;         /* gray-800 */
+    --dim:#6b7280;         /* gray-500 */
+    --dim-2:#9ca3af;       /* gray-400 */
+    --accent:#7c3aed;      /* violet-600 */
+    --accent-soft:#ede9fe; /* violet-100 */
+    --accent-ink:#5b21b6;  /* violet-800 */
+    --accent-bg:#f5f3ff;   /* violet-50 */
+    --ok:#15803d;          /* green-700 */
+    --ok-bg:#dcfce7;
+    --warn:#b45309;        /* amber-700 */
+    --warn-bg:#fffbeb;
+    --warn-line:#fde68a;
+    --err:#dc2626;         /* red-600 */
+    --err-bg:#fef2f2;
+    --err-line:#fca5a5;
+    --code:#f9fafb;
+    --headerH:112px;
+    --mono:"D2Coding",Consolas,"Cascadia Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.6 "Pretendard Variable",Pretendard,-apple-system,system-ui,
+            "Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif;
+       -webkit-font-smoothing:antialiased}
+
+  /* ─── 머리 ─────────────────────────────────────────────────────────── */
+  header{background:var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.08);
+         position:sticky;top:0;z-index:20}
+  .brand{display:flex;align-items:baseline;gap:10px;padding:12px 24px 0}
+  .brand .logo{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .brand .sub{font-size:15px;color:var(--dim)}
+  .brand .who{margin-left:auto;display:flex;align-items:center;gap:10px}
+
+  /* **오와 열을 맞춥니다.** 칸마다 속이 달라서(입력만 · 입력+버튼 ·
+     입력+버튼+알림) 눈금이 제각각이었습니다. 이제 칸을 전부 세 줄로 짜고
+     줄 높이를 고정합니다 — 라벨 / 입력 / 알림. 옆으로 늘어놓아도 세 줄이
+     각각 한 선에 섭니다. */
+  .toolbar{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;
+           padding:10px 24px 14px}
+  /* 남는 폭을 받는 칸. **`min-width:0` 이 핵심입니다** — 없으면 flex 항목이
+     글 길이만큼 벌어져서 오른쪽 칸을 밀어냅니다. */
+  .toolbar .grow{flex:1 1 260px;min-width:0;padding-left:14px;
+                 border-left:1px solid var(--line)}
+  /* 모듈 설명. 라벨·입력 줄 없이 **칸 전체를 글로 씁니다.** 글이라 고정폭
+     글꼴이 어울리지 않고, 줄 높이도 읽기 좋게 벌립니다. */
+  /* 모듈 설명. **넉 줄에서 자릅니다** — 스펙을 제대로 쓰고 나니 설명이
+     240자쯤 되어, 그대로 두면 툴바가 두꺼워지고 그만큼 작업할 자리가
+     줄어듭니다. 전문은 마우스를 올리면 뜹니다. */
+  .specnote{font-size:12px;color:var(--dim);line-height:1.65;
+            display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;
+            overflow:hidden;cursor:help}
+  /* 모듈을 안 골랐으면 칸도 선도 없습니다 — 빈 칸에 세로선만 서 있으면
+     「여기 뭐가 빠졌나」로 읽힙니다. */
+  .toolbar .grow:empty{display:none}
+  .toolbar .fld{display:flex;flex-direction:column;gap:4px}
+  .toolbar .fld > .lab{height:16px;line-height:16px;white-space:nowrap}
+  .toolbar .fld > .ctl{display:flex;gap:8px;align-items:stretch;min-height:33px}
+  /* 알림 줄. **곁다리 단추(폴더 열기)는 여기로 내립니다** — 입력 줄에 입력만
+     남아야 칸마다 폭이 같아지고 열이 맞습니다. 그 칸의 본 동작(불러오기)만
+     입력 옆에 둡니다.
+     **flex 는 단추가 든 줄에만 겁니다**(.act) — 모듈 설명처럼 `<b>`·`<span>` 이
+     섞인 줄에 걸면 글이 안 이어지고 조각조각 한 줄로 늘어섭니다. */
+  .toolbar .fld > .msg{min-height:24px}
+  .toolbar .fld > .msg.act{display:flex;gap:8px;align-items:center}
+  .toolbar .fld input{width:152px}
+  /* **모듈 칸 폭을 묶습니다.** 스펙 제목을 채우고 나니 목록 글자가 길어져
+     (`EN · PlaySparkLv2M2 — 찾아서 눌러 보기 — …`) 이 칸만 확 늘어났습니다.
+     펼치면 전체가 보이므로 접힌 상태는 잘라도 됩니다 (2026-09-03). */
+  .toolbar .fld select{width:250px}
+  /* 버튼을 옆 입력칸 높이에 맞춥니다 — 위아래 선이 같이 서야 열이 맞습니다. */
+  .toolbar .fld > .ctl > button{padding-top:0;padding-bottom:0;
+                                display:flex;align-items:center}
+  label{font-size:12px;color:var(--dim)}
+  .dim2{color:var(--dim-2)}
+  /* 「없다·못 했다」와 「조심하라」. 여태 자리마다 따로 칠하고 있었습니다. */
+  .none{color:var(--err)}
+  .warn{color:var(--warn)}
+
+  /* 참고 칸. 만드는 값이 아니라 「보러 가는」 자리라 옅게 두고 오른쪽에 둡니다. */
+  /* 처음 여는 사람에게 차례를 알려 주는 띠. 한 번 닫으면 이 브라우저에서는
+     다시 안 뜹니다 - 매번 뜨면 아는 사람에게는 방해입니다. */
+  .guide{position:relative;margin:10px 14px 0;padding:10px 34px 10px 14px;
+         border:1px solid #ddd6fe;border-radius:10px;background:var(--accent-soft);
+         font-size:12px;color:var(--ink);line-height:1.7}
+  .guide b{font-weight:700}
+  .guide ol{margin:5px 0 0;padding-left:20px}
+  .guide li{margin:1px 0}
+  .guidex{position:absolute;top:6px;right:8px;padding:1px 8px;font-size:12px;
+          border-radius:999px;color:var(--dim);border-color:transparent;background:none}
+  .guidex:hover{background:#fff}
+  /* 진행판 — **떠 있는 창**입니다. 메모장처럼 끌어서 옮기고 크기를 바꿉니다.
+     화면을 덮는 막(dim)을 두지 않았습니다 — 진행판을 보면서 **밑의 양산 화면을
+     그대로 쓰는 것**이 이 창의 쓸모라, 덮으면 안 됩니다.
+     안은 `/board` 를 iframe 으로 띄웁니다. 진행판을 한 벌만 만들어 두고
+     여기서도 쓰고 주소로 따로 열어도 쓰게 하려는 것입니다. */
+  .win{position:fixed;z-index:50;display:flex;flex-direction:column;
+       background:var(--panel);border:1px solid var(--line2);border-radius:10px;
+       box-shadow:0 18px 50px rgba(0,0,0,.25);overflow:hidden;
+       resize:both;min-width:520px;min-height:260px;
+       /* 오른쪽 아래 크기 손잡이가 설 자리. iframe 이 끝까지 차면 손잡이를
+          눌러도 iframe 이 먹습니다. */
+       padding-bottom:14px}
+  /* 제목 줄이 곧 손잡이입니다. 글자를 끌 때 선택되면 창이 안 따라옵니다. */
+  .win .head{display:flex;align-items:center;gap:10px;padding:7px 10px;
+             border-bottom:1px solid var(--line);background:var(--panel-soft);
+             cursor:move;user-select:none}
+  .win .head b{font-size:13px}
+  .win .head .sp{margin-left:auto}
+  .win .head button{cursor:pointer}
+  .win iframe{flex:1;border:0;width:100%}
+  /* 끄는 동안에는 iframe 이 마우스를 먹지 않게 합니다. 안 그러면 창 위를
+     지나는 순간 끌기가 끊깁니다. */
+  .win.moving iframe{pointer-events:none}
+  /* 「이 스펙을 믿어도 되나」에 먼저 답하는 자리. 스펙 만들기 화면 맨 위. */
+  .specintro{margin:0 0 12px;padding:12px 16px;border-radius:10px;
+             border:1px solid #ddd6fe;background:var(--accent-soft);
+             font-size:13px;line-height:1.7;color:var(--ink)}
+  .specintro p{margin:6px 0 0;color:var(--dim)}
+  .specintro b{color:var(--ink);font-weight:700}
+  /* 작업 폴더 줄. 사람마다 다른 자리라 **늘 보이게** 둡니다 — 안 보이면
+     「왜 내 액티비티가 안 보이지」의 답을 찾을 데가 없습니다. */
+  .rootbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+           margin:8px 14px 0;padding:6px 12px;border-radius:8px;
+           background:var(--panel-soft);border:1px solid var(--line);
+           font-size:12px;color:var(--dim)}
+  .rootbar .p{font-family:var(--mono);color:var(--ink)}
+  .rootbar.bad{background:var(--err-bg);border-color:var(--err-line);color:var(--err)}
+  .rootbar.bad .p{color:var(--err)}
+  .rootbar input{font-family:var(--mono);font-size:12px;padding:3px 7px;min-width:320px}
+  /* 탭마다 한 줄. 무엇을 보는 칸인지 여기서 끝나야 합니다. */
+  .tabnote{margin:-4px 0 10px;font-size:12px;color:var(--dim)}
+  .clonebox{border-left:1px solid var(--line);padding-left:14px}
+  .clonebox input{vertical-align:middle}
+  /* 원본 값 그대로인 칸. **지우지 않고 흐리게만** 둡니다 — 값은 맞을 수도
+     있으니 지울 것이 아니라 「아직 안 본 자리」 표시입니다. */
+  .fromorigin{color:var(--dim) !important;background:var(--panel-soft)}
+  .item .sameb{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-line);
+               border-radius:999px;padding:0 7px;font-size:11px;font-weight:700}
+  .item .sameb:empty{display:none}
+  .originbar{font-size:12px;color:var(--dim);margin:2px 0 8px}
+  .originbar b{color:var(--warn)}
+  /* **오른쪽으로 밀지 않습니다.** margin-left:auto 로 끝에 붙여 뒀더니, 폭이
+     모자랄 때 이 칸만 혼자 아랫줄로 떨어져 짜임이 무너졌습니다 (2026-09-03).
+     왼쪽부터 차례로 놓고, 남는 폭은 맨 뒤 설명 칸이 받습니다. */
+  .toolbar .ref{border-left:1px solid var(--line);padding-left:14px}
+  .refmsg{font-size:11px;color:var(--dim);font-family:var(--mono);
+          max-width:420px;line-height:1.5}
+  /* 여러 줄짜리 알림 — 「갈림」은 후보와 호별 내력을 줄 나눠 보여 줍니다. */
+  .refmsg .pre{white-space:pre-line}
+  .refmsg .none{color:var(--warn)}
+  .refmsg .yes{color:var(--ok)}
+
+  input,select,textarea{font:inherit;padding:6px 10px;border:1px solid var(--line-2);
+    border-radius:6px;background:#fff;color:var(--ink);transition:border-color .12s}
+  input:hover,select:hover{border-color:var(--dim-2)}
+  input:focus,select:focus{outline:none;border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft)}
+  input[readonly]{background:#f3f4f6;color:var(--dim);border-style:dashed}
+  select{cursor:pointer}
+
+  /* 켜고 끄는 것은 알약 모양이 눈에 잘 들어옵니다. 켜지면 보라로 물듭니다. */
+  .chip{display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+        padding:5px 12px;border:1px solid var(--line-2);border-radius:999px;
+        font-size:13px;color:var(--dim);background:#fff;user-select:none}
+  .chip:hover{background:#f9fafb}
+  .chip:has(input:checked){background:var(--accent-soft);border-color:#c4b5fd;
+        color:var(--accent-ink);font-weight:700}
+  .chip input{accent-color:var(--accent);margin:0}
+
+  /* ─── 본문 ─────────────────────────────────────────────────────────── */
+  main{display:grid;grid-template-columns:minmax(0,1fr) minmax(400px,38%);
+       gap:18px;padding:18px 24px;align-items:start;
+       max-width:1760px;margin:0 auto;
+       /* 양쪽이 각자 스크롤합니다. 한쪽을 내려도 다른 쪽은 그대로 보입니다. */
+       height:calc(100vh - var(--headerH));overflow:hidden}
+  main > .col{height:100%;overflow-y:auto;overscroll-behavior:contain;
+              padding-right:8px;padding-bottom:24px}
+  /* 좁은 화면에서는 한 줄로 세우고 그냥 페이지째 스크롤합니다. */
+  @media (max-width:1180px){
+    main{grid-template-columns:1fr;height:auto;overflow:visible;padding-bottom:40px}
+    main > .col{height:auto;overflow:visible;padding-right:0}
+  }
+
+  /* ─── 탭 ───────────────────────────────────────────────────────────── */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tabs button{padding:8px 16px;border-radius:10px;font-weight:700;font-size:13px;
+               color:var(--dim);background:transparent;border:1px solid transparent;
+               display:inline-flex;align-items:center;gap:7px}
+  .tabs button:hover{background:var(--panel)}
+  .tabs button.on{background:var(--panel);border-color:var(--line);color:var(--ink);
+                  box-shadow:0 1px 2px rgba(16,24,40,.05)}
+  .tabs button .step{background:var(--line-2)}
+  .tabs button.on .step{background:var(--accent)}
+  /* **탭이 따라다닙니다.** GameData 를 한참 내려가서 고치다가 리소스 이름이
+     필요할 때, 맨 위까지 올라갔다 다시 내려오면 보던 자리를 잃습니다.
+     왼쪽 칸이 제 스크롤을 갖고 있어서 그 칸 위에 붙습니다. */
+  #mainTabs{position:sticky;top:0;z-index:6;background:var(--bg);
+            margin-bottom:0;padding:8px 0 10px}
+  /* GameData 안의 탭. 위 탭보다 한 단 작고 옅게 둡니다. */
+  .tabs.sub{gap:4px;margin:-2px 0 12px;border-bottom:1px solid var(--line);
+            padding-bottom:8px;
+            position:sticky;top:var(--tabsH,52px);z-index:5;background:var(--panel)}
+  .tabs.sub button{padding:5px 11px;border-radius:999px;font-size:12px;
+                   font-weight:600;background:#f9fafb;border-color:var(--line)}
+  .tabs.sub button.on{background:var(--accent-soft);border-color:#c4b5fd;
+                      color:var(--accent-ink)}
+  .tabs.sub button .n{opacity:.7;font-weight:600}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+         padding:16px 18px 18px;margin-bottom:16px;
+         box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .panel > h2{margin:-2px 0 12px;font-size:14px;font-weight:700;
+              display:flex;align-items:center;gap:8px}
+  /* 순서가 붙어 있으면 어디부터 손대야 하는지 헤매지 않습니다. */
+  .step{display:inline-flex;align-items:center;justify-content:center;
+        width:20px;height:20px;border-radius:6px;background:var(--accent);
+        color:#fff;font-size:12px;font-weight:700;flex:none}
+  .panel > h2 .hint{font-size:12px;font-weight:400;color:var(--dim-2)}
+  .panel > h2 .count{margin-left:auto;font-size:12px;font-weight:600}
+  .side{position:sticky;top:calc(var(--headerH) + 16px)}
+
+  /* ─── 표 ───────────────────────────────────────────────────────────── */
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:5px 6px;border-bottom:1px solid #f3f4f6;
+        vertical-align:middle}
+  th{font-size:11px;color:var(--dim-2);font-weight:700;letter-spacing:.04em}
+  tr:last-child td{border-bottom:none}
+  table tr:hover td{background:var(--accent-bg)}
+  td input{width:100%}
+  td.shrink{width:1%;white-space:nowrap}
+  .fixed{font-size:11px;color:var(--warn);white-space:nowrap;
+         background:var(--warn-bg);border:1px solid var(--warn-line);
+         border-radius:4px;padding:1px 5px}
+
+  /* ─── 묶음 ─────────────────────────────────────────────────────────── */
+  fieldset{border:1px solid var(--line);border-radius:10px;margin:12px 0;
+           padding:6px 14px 12px;background:var(--panel)}
+  legend{font-size:12px;color:var(--accent-ink);font-weight:700;padding:1px 10px;
+         background:var(--accent-soft);border-radius:999px}
+  legend .n{color:var(--accent);font-weight:600;opacity:.75}
+  .desc{font-size:12px;color:var(--dim);margin:4px 0 8px;line-height:1.5}
+  .draftbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+            background:var(--ok-bg);color:var(--ok);border:1px solid #bbf7d0;
+            border-radius:10px;padding:7px 12px;margin-bottom:10px;font-size:12px}
+  /* 서버가 옛 코드로 도는 상태. 멀쩡한 값에 엉뚱한 에러가 나는 꼴이라 크게 알립니다. */
+  .stalebar{background:var(--err-bg);color:var(--err);border:1px solid var(--err-line);
+            border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:13px;
+            font-weight:700}
+  .rscbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 10px}
+  .rscbar .muted{font-size:12px}
+  .rscbar .path{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+                color:var(--dim-2)}
+  /* 폴더에 없는 파일명. 빌드는 통과하고 브라우저에서만 404 로 사라지는 것들이라
+     적어 넣는 그 자리에서 보여 줘야 합니다. */
+  input.ghost{border-color:#fca5a5;background:#fef2f2}
+  /* 써도 되고 안 써도 되는 칸. 꺼져 있으면 한 줄로 접혀 있습니다. */
+  .opt{margin:10px 0}
+  .opt > .offnote{font-size:12px;color:var(--dim-2);margin-left:8px}
+  .opt > fieldset,.opt > .field{margin-top:6px}
+  .target{margin:10px 0 2px;font-size:11px;color:var(--dim);line-height:1.6}
+  .target b{color:var(--ink);font-weight:700;font-size:12px}
+  .target .p{font-family:var(--mono);color:var(--dim-2);word-break:break-all}
+  /* 아직 안 쓴 파일 목록. **남은 일**이라 그 칸과 살짝 갈라 둡니다 —
+     다 눌러 비우면 상자째 사라지므로, 비어 있는 것이 곧 다 했다는 뜻입니다. */
+  .spare{margin-top:10px;padding:8px 10px;font-size:12px;color:var(--dim);
+         background:var(--accent-bg);border:1px solid var(--line);border-radius:8px}
+  .spare:empty{display:none}
+  .spare b{color:var(--accent-ink);font-weight:700}
+  .spare button{margin:2px 4px 0 0}
+
+  /* 후보 목록. `<datalist>` 대신 우리가 그립니다 — 까닭은 attachPick 위에.
+     `position:fixed` 라 표가 넘쳐도 안 잘립니다. z-index 는 머리(20)보다
+     위여야 위쪽 칸에서 편 목록이 머리 밑으로 기어들지 않습니다. */
+  .pickbox{position:fixed;z-index:60;overflow-y:auto;padding:4px;
+           background:var(--panel);border:1px solid var(--line-2);border-radius:8px;
+           box-shadow:0 8px 24px rgba(0,0,0,.14)}
+  .pickrow{padding:5px 9px;border-radius:5px;cursor:pointer;
+           font-family:var(--mono);font-size:12.5px;
+           white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pickrow:hover{background:var(--accent-bg)}
+  .pickrow.on{background:var(--accent-soft);color:var(--accent-ink);font-weight:700}
+  .picknone{padding:6px 9px;font-size:12px;color:var(--dim)}
+  /* ─── 모듈 스펙 만들기 ─────────────────────────────────────────────── */
+  .tabs.modes{margin:0 0 0 18px;gap:4px}
+  .tabs.modes button{padding:5px 12px;font-size:12px;border-radius:999px}
+  main.one{grid-template-columns:minmax(0,1fr)}
+
+  /* 자리 한 줄. 깊이는 왼쪽 여백으로만 보입니다 — 선까지 그으면 시끄럽습니다. */
+  .specfields{border-top:1px solid var(--line);margin-top:12px}
+  .frow{display:grid;grid-template-columns:minmax(180px,1fr) 96px 74px minmax(220px,1.4fr);
+        gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+  .frow .p{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere}
+  .frow .p .own{color:var(--ink);font-weight:600}
+  .frow .p .up{color:var(--dim-2)}
+  .frow .t{font-size:11px;color:var(--accent-ink);background:var(--accent-bg);
+           border:1px solid #ddd6fe;border-radius:999px;padding:2px 8px;text-align:center;
+           font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .frow input[type=text]{width:100%;padding:4px 8px;font-size:12px}
+  /* 표본이 다 갖고 있지 않은 자리. 기계는 여기서 「선택」이라고밖에 못 답합니다. */
+  .frow .req{font-size:12px;padding:3px 6px;justify-self:start}
+  .fhead{display:grid;grid-template-columns:minmax(180px,1fr) 96px 74px minmax(220px,1.4fr);
+         gap:10px;padding:6px 0;font-size:11px;font-weight:700;color:var(--dim-2)}
+  .fgroup{padding:12px 0 4px;font-weight:700;font-size:12px;color:var(--dim);
+          border-bottom:1px solid var(--line)}
+
+  .field{margin:10px 0}
+  .field > label{display:block;margin-bottom:4px;font-weight:600;color:var(--ink);
+                 font-size:12px}
+  .field input[type=text],.field select{width:100%}
+  .req{color:var(--err);font-weight:700}
+  [hidden]{display:none !important}   /* .inline 같은 display 규칙이 hidden 을 이깁니다 */
+  .inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .inline input[type=number]{width:88px}
+  .calc{font-size:12px;color:var(--ok);white-space:nowrap;background:var(--ok-bg);
+        border-radius:4px;padding:1px 7px;font-weight:600}
+  .item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;
+        background:var(--panel-soft)}
+  .item > .head{display:flex;justify-content:space-between;align-items:center;
+                font-size:12px;color:var(--dim);font-weight:700;margin-bottom:6px}
+  /* 접고 펴기. 이닝이 열 칸 넘어가면 펼친 채로는 훑을 수가 없습니다. */
+  .item > .head .fold{display:flex;align-items:center;gap:7px;cursor:pointer;
+                      flex:1;min-width:0}
+  .item > .head .fold:hover .caret{color:var(--accent)}
+  .caret{display:inline-block;width:10px;text-align:center;color:var(--dim);
+         transition:transform .12s}
+  .item.folded{padding:5px 12px;background:#fff}
+  .item.folded > .head{margin-bottom:0}
+  .item .sum{font-weight:400;color:var(--dim);font-family:var(--mono);
+             font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .item .errb{background:var(--err-bg);color:var(--err);border:1px solid var(--err-line);
+              border-radius:999px;padding:0 7px;font-size:11px;font-weight:700}
+  .item .errb:empty{display:none}
+
+  /* **검증에서 눌러 온 자리.** 1.3초 반짝이고 마는 표시로는 무엇을 가리켰는지
+     못 봅니다 — 눈이 따라가기 전에 사라지고, 무리(object) 통째로 테두리가
+     쳐지면 그 안 어느 칸인지도 모릅니다. 그래서 두 가지를 바꿨습니다.
+       · 표시를 남깁니다. 다른 줄을 누르거나 Esc 를 누를 때까지 그대로입니다
+       · 잎 칸까지 정확히 짚습니다. 그 칸 위에 경로를 한 줄로 달아 둡니다 */
+  .aim{box-shadow:0 0 0 2px var(--err),0 0 0 6px var(--err-bg);border-radius:8px}
+  .aim.aim-warn{box-shadow:0 0 0 2px var(--warn),0 0 0 6px var(--warn-bg)}
+  tr.aim{box-shadow:none;outline:2px solid var(--err);outline-offset:-2px}
+  tr.aim.aim-warn{outline-color:var(--warn)}
+  .crumb{display:flex;align-items:center;gap:8px;margin:0 0 7px;
+         font-family:var(--mono);font-size:11px;font-weight:700;
+         color:var(--err);background:var(--err-bg);
+         border:1px solid var(--err-line);border-radius:6px;padding:3px 5px 3px 9px}
+  .crumb.warn{color:var(--warn);background:var(--warn-bg);border-color:var(--warn-line)}
+  .crumb .where{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .crumb button{padding:1px 8px;font-size:11px;border-radius:999px;color:var(--dim)}
+  td .crumb{margin:0}
+  /* 지금 보고 있는 검증 줄. 여럿일 때 어느 것을 눌렀는지 남겨 둡니다. */
+  .issue.on{box-shadow:0 0 0 2px var(--accent);}
+  legend .foldall{margin-left:9px;font-weight:400}
+
+  /* ─── 단추 ─────────────────────────────────────────────────────────── */
+  button{font:inherit;padding:7px 14px;border:1px solid var(--line-2);border-radius:6px;
+    background:#fff;color:var(--ink);cursor:pointer;transition:background .12s}
+  button:hover{background:#f3f4f6}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff;
+    font-weight:700;box-shadow:0 1px 2px rgba(124,58,237,.3)}
+  button.primary:hover{background:#6d28d9}
+  button.primary:disabled{background:#d8d3e8;border-color:#d8d3e8;color:#fff;
+    cursor:not-allowed;box-shadow:none}
+  button.wide{width:100%;padding:10px}
+  button.tiny{padding:2px 9px;font-size:12px;color:var(--dim);border-radius:999px}
+  button.tiny:hover{background:var(--accent-soft);border-color:#c4b5fd;
+    color:var(--accent-ink)}
+
+  /* **그 칸의 본 동작.**
+     「폴더 읽기」·「불러오기」·「전부 넣기」는 한 번 누르면 그 칸의 일이 한
+     걸음 끝나는 단추입니다. 옆에 잔단추(삭제·파일 이름·줄 추가)가 여럿 붙어
+     있어서, 같은 꼴로 두면 **눈이 못 찾습니다** — 실제로 「폴더 읽기」를 못
+     보고 손으로 파일명을 적던 일이 있었습니다.
+     테두리와 글자에 색을 주되 **속은 비웁니다.** 꽉 찬 것은 「액티비티 생성」
+     하나뿐이어야 합니다 — 그것만 되돌릴 수 없는 일이니까요.
+     **세로 여백은 tiny 와 같게 둡니다.** 툴바의 알림 줄에 이 단추가 하나
+     들어가는데, 키가 커지면 그 칸만 아래로 자라 오와 열이 어긋납니다.
+     눈에 띄는 몫은 굵기와 색이 맡습니다. */
+  button.go{padding:2px 13px;font-size:12px;font-weight:700;border-radius:999px;
+    background:#fff;border-color:#c4b5fd;color:var(--accent-ink)}
+  button.go:hover{background:var(--accent-soft);border-color:var(--accent)}
+  button.go:disabled{background:var(--code);border-color:var(--line);
+    color:var(--dim-2);cursor:not-allowed}
+  /* 누를 차례가 온 것. 아직 폴더를 안 읽었으면 여기서부터 시작합니다. */
+  button.go.now{background:var(--accent-soft);border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-bg)}
+  button.go.now:hover{background:#ddd6fe}
+
+  /* ─── 검증 ─────────────────────────────────────────────────────────── */
+  .issue{padding:8px 11px;border-radius:8px;margin-bottom:7px;font-size:13px}
+  .issue.jump{cursor:pointer}
+  .issue.jump:hover{filter:brightness(.97)}
+  .issue.error{background:var(--err-bg);border:1px solid var(--err-line);
+               border-left:3px solid var(--err)}
+  .issue.warn{background:var(--warn-bg);border:1px solid var(--warn-line);
+              border-left:3px solid var(--warn)}
+  .issue .path{font-family:var(--mono);font-size:11px;color:var(--dim);
+               margin-bottom:2px}
+  .issue .why{font-size:12px;color:var(--dim);margin-top:3px}
+  .ok{color:var(--ok);font-weight:700;background:var(--ok-bg);border-radius:8px;
+      padding:8px 11px;display:block}
+  .badge{border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
+  .badge.error{background:#fee2e2;color:#b91c1c}
+  .badge.warn{background:#fef3c7;color:var(--warn)}
+  .badge.ok{background:var(--ok-bg);color:var(--ok)}
+
+  /* ─── 미리보기 ─────────────────────────────────────────────────────── */
+  pre{background:var(--code);border:1px solid var(--line);border-radius:8px;
+      padding:12px;overflow:auto;max-height:460px;
+      font:12px/1.65 var(--mono);margin:0;color:#111827}
+  .tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+  .tabs button{padding:3px 11px;font-size:12px;border-radius:999px;
+               font-family:var(--mono)}
+  .tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);
+               color:#fff;font-weight:700}
+  .muted{color:var(--dim);font-size:13px}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#d6d3e0;border-radius:999px;
+    border:2px solid transparent;background-clip:content-box}
+  ::-webkit-scrollbar-thumb:hover{background:#b9b3cc;background-clip:content-box}

@@ -1,0 +1,4 @@
+/* 진행판 CSS — 조각을 줄 차례 그대로 들여온다 (2026-09-30, 275줄이라 나눔). 차례를 바꾸면 화면이 바뀐다 */
+
+@import './boardtiles.css';
+@import './boardtodo.css';

@@ -1,0 +1,37 @@
+/* 받을 리소스 창 「대사 성우」 — GuideVoice.tsx */
+.voice-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 0;
+}
+
+.voice-mine {
+  border-bottom: 1px solid var(--border, rgba(127, 127, 127, 0.25));
+  margin-bottom: 4px;
+}
+
+.voice-sets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.voice-sets .voice-row.other {
+  opacity: 0.55;
+}
+
+.voice-pick button {
+  min-width: 32px;
+}
+
+/* `guide-mark` 는 그림 칸 구석에 붙는 딱지라 absolute — 줄 안에서는 제자리에 둔다(창 위로 튀어 나갔다) */
+.voice-row .guide-mark {
+  position: static;
+}
+
+/* 같은 성별 대사가 어디에도 없을 때의 안내 — 아래에 「그대로 쓰기」 단추 */
+.voice-none {
+  margin: 0 0 6px;
+}

@@ -1,0 +1,104 @@
+/* 작업대 세 칸 · 작은 썸네일 — bench.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+/* 작업대 (2026-09-29, M4). 토큰은 main.css `:root` 한 벌 — 여기서 새 색을 만들지 않는다 */
+
+/* 본문 칸 높이를 꽉 채우고, 칸마다 따로 스크롤한다 — 바깥은 안 굴러야 머리줄과 작업 순서 막대가 늘 보인다 */
+.bench {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-3);
+  height: 100%;
+  min-height: 0;
+}
+
+.bench-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gap-3);
+}
+
+.bench-head h2 {
+  margin: 0;
+  font-size: var(--font-xl);
+}
+
+.bench-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.bench-cols {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  /* 옆 칸은 사람이 끌어 정한 너비(`Splitter`, 이 PC 에 기억), 가운데가 나머지. 손잡이 칸이 사이 틈을 겸한다 */
+  grid-template-columns: var(--bench-left, 280px) 10px minmax(0, 1fr) 10px var(--bench-right, 400px);
+}
+
+.bench-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-3);
+  min-height: 0;
+  min-width: 0;
+  /* 가로는 안 굴린다 — 칸 안의 것은 꺾이게 해 두었다(아래). 남는 몇 px 로 가로 막대가 뜨지 않게 */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* 칸 안의 그림은 칸 폭을 안 넘는다 — 미리보기가 200px 로 와서 좁은 칸에 가로 스크롤이 생겼다 */
+.bench-col img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 긴 파일 이름 · 경로는 칸 안에서 꺾는다 */
+.bench-col .mono,
+.bench-col .path {
+  overflow-wrap: anywhere;
+}
+
+/* 왼쪽 — 주는 것 셋을 위아래로 */
+.bays.bays-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-2);
+}
+
+/* 오른쪽 — 대화 칸(`ChatSide`)이 제 안에서 굴린다. 바깥까지 구르면 글 답 칸이 첫 화면 밖으로 밀린다 */
+.bench-right {
+  overflow: hidden;
+}
+
+/* 리소스 목록의 작은 썸네일 (M4) — 칸 높이를 안 늘리게 작게, 투명 그림이 보이게 바탕을 깐다 */
+.pick-thumb {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  flex: 0 0 auto;
+  border-radius: var(--radius-1);
+  background: var(--surface-hover);
+  vertical-align: middle;
+}
+
+/* 좁으면 세 칸을 위아래로 — 1100px 밑에서는 세 칸이 다 못 선다.
+   benchsteps.css 끝에 있던 것을 옮겼다 (2026-10-08) — 위 규칙들보다 뒤에 와야 이긴다 */
+@media (max-width: 1100px) {
+  .bench {
+    height: auto;
+  }
+  .bench-cols {
+    grid-template-columns: 1fr;
+  }
+  .bench-cols > .splitter {
+    display: none;
+  }
+  .bench-col,
+  .bench-right {
+    overflow: visible;
+  }
+}

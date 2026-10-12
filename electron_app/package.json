@@ -1,0 +1,44 @@
+{
+  "name": "sparkon-manager",
+  "version": "1.4.0",
+  "description": "SparkOn 프로젝트 관리·액티비티 양산 데스크톱 앱",
+  "main": "./out/main/boot.js",
+  "author": "seokho.yu",
+  "private": true,
+  "packageManager": "yarn@1.22.22",
+  "scripts": {
+    "dev": "electron-vite dev -w",
+    "start": "electron-vite preview",
+    "build": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit && electron-vite build",
+    "typecheck:node": "tsc -p tsconfig.node.json --noEmit",
+    "typecheck:web": "tsc -p tsconfig.web.json --noEmit",
+    "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check:build": "node scripts/check-build.mjs",
+    "package": "node scripts/vendor-poppler.mjs && electron-vite build && electron-builder --dir",
+    "dist:zip": "node scripts/vendor-poppler.mjs && electron-vite build && electron-builder --win zip",
+    "dist:win": "node scripts/vendor-poppler.mjs && electron-vite build && electron-builder --win",
+    "release:app": "node scripts/release-app.mjs",
+    "dist:portable": "node scripts/vendor-poppler.mjs && electron-vite build && node scripts/check-build.mjs && electron-builder --win portable && node -e \"require('fs').copyFileSync('docs/실행이-막히면.md', 'dist/실행이 막히면.txt')\"",
+    "dist:mac": "electron-vite build && electron-builder --mac",
+    "dist:linux": "electron-vite build && electron-builder --linux"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@types/node": "^24.13.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^44.3.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "typescript": "^7.0.2",
+    "vite": "^7.3.6"
+  }
+}

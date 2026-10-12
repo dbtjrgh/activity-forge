@@ -1,0 +1,44 @@
+/* 받을 리소스 창을 여는 큰 단추 — 작업대 「부족한 리소스」 카드 맨 위. 생성(button.go)과 겨루지 않게 채우지 않고 파란 테두리로 */
+
+button.guide-open {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: 100%;
+  margin: 0 0 var(--gap-3);
+  padding: 10px 14px;
+  text-align: left;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-2);
+}
+
+button.guide-open:hover:not(:disabled) {
+  background: rgba(79, 140, 255, 0.28);
+}
+
+.guide-open-label {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.guide-open-label::after {
+  content: '↗';
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.guide-open-count {
+  padding: 1px 8px;
+  border: 1px solid var(--warn);
+  border-radius: 999px;
+  font-size: var(--font-xs);
+  font-weight: 400;
+  color: var(--warn);
+}
+

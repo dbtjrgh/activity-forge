@@ -1,0 +1,17 @@
+node_modules
+dist
+out
+out-release
+# 실행 파일에 넣을 poppler — scripts/vendor-poppler.mjs 가 이 PC 의 poppler 에서 모은다
+vendor
+*.tsbuildinfo
+.DS_Store
+*.log*
+.vite
+
+# 인증서와 키는 절대 커밋하지 않는다
+build/*.pfx
+build/*.p12
+build/*.key
+*.pfx
+*.p12

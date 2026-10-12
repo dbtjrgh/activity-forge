@@ -1,0 +1,62 @@
+appId: dev.sparkon.manager
+productName: SparkOn Manager
+directories:
+  buildResources: build
+  output: dist
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintrc.cjs,.prettierrc,.prettierignore,tsconfig.json,tsconfig.*.json}'
+  - '!{.env,.env.*,.npmrc}'
+  - '!scripts/*'
+  - '!vendor/*'
+# 기획서를 읽는 poppler — 따로 설치하지 않게 넣는다. 모으는 것은 scripts/vendor-poppler.mjs (dist 명령이 먼저 부른다)
+extraResources:
+  - from: vendor/poppler
+    to: poppler
+win:
+  target:
+    - nsis
+  # ⛔ 서명하지 않습니다 — 사내에서만 쓰기로 정했습니다 (2026-09-11).
+  #
+  # 아래 설정이 켜져 있으면 인증서가 없어도 electron-builder 가 signtool.exe 를
+  # 부릅니다. 이 PC 에서는 그 호출이 uninstaller 서명 단계에서 `spawn UNKNOWN` 으로
+  # 죽어 **설치 파일이 222KB 껍데기로 남았습니다** (7z 가 안에 안 들어감).
+  # 실패가 exe 만들기 맨 마지막에 나서 성공한 것처럼 보이기 쉽습니다.
+  #
+  # 나중에 서명하게 되면 아래 주석을 풀고 인증서는 환경변수로 전달한다 —
+  #   CSC_LINK          = .pfx 파일 경로 또는 base64 문자열
+  #   CSC_KEY_PASSWORD  = .pfx 비밀번호
+  # USB 토큰 / HSM 처럼 Windows 인증서 저장소에 있는 인증서를 쓸 때는
+  # certificateSubjectName 에 인증서의 "issued to" 값을 넣는다. 자세한 것은
+  # docs/code-signing.md.
+  #
+  # signExts:          # 번들된 DLL·네이티브 모듈까지 서명할 때
+  #   - .dll
+  #   - .node
+  # signtoolOptions:
+  #   signingHashAlgorithms:
+  #     - sha256       # sha1 은 폐기됨. sha256 단독으로 서명한다.
+  #   rfc3161TimeStampServer: http://timestamp.digicert.com
+  #   certificateSubjectName: 'Your Company Co., Ltd.'
+  #
+  # Azure Trusted Signing 을 쓸 경우 위 signtoolOptions 대신 아래를 쓴다.
+  # (AZURE_TENANT_ID / AZURE_CLIENT_ID / AZURE_CLIENT_SECRET 환경변수 필요)
+  #  azureSignOptions:
+  #    publisherName: 'Your Company Co., Ltd.'
+  #    endpoint: https://eus.codesigning.azure.net
+  #    certificateProfileName: your-profile
+  #    codeSigningAccountName: your-account
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: 스파크온 매니지먼트
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  target:
+    - dmg
+linux:
+  target:
+    - AppImage
+  category: Utility

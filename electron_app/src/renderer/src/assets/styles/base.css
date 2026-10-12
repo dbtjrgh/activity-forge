@@ -1,0 +1,156 @@
+/* 색 · 글꼴 크기 · 작은 단추 — main.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+:root {
+  --bg: #1c1c1e;
+  --sidebar-bg: #202024;
+  --surface: #26262a;
+  --surface-hover: #303036;
+  --border: #38383d;
+  --fg: #f5f5f7;
+  --muted: #a1a1a6;
+  --accent: #4f8cff;
+  --accent-soft: rgba(79, 140, 255, 0.18);
+  --danger: #ff6b6b;
+  color-scheme: dark;
+
+  /* ── 생김새 토큰 한 벌 (2026-09-29, M4) ── 새 화면은 이것만 쓴다. 진행판 색(board.css)도 여기를 가리킨다 */
+  --fg-faint: #6e6e73;
+  --ok: #4cc36b;
+  --warn: #e0a43a;
+  --fail: #ff6b6b;
+  --info: #4f8cff;
+  --gap-1: 4px;
+  --gap-2: 8px;
+  --gap-3: 12px;
+  --gap-4: 20px;
+  --radius-1: 6px;
+  --radius-2: 10px;
+  --font-xs: 11px;
+  --font-sm: 12px;
+  --font-md: 13px;
+  --font-lg: 15px;
+  --font-xl: 20px;
+
+  /* ── 상태 색 (2026-10-01, boardtiles.css 에서 옮김) ── `shared/forge/status.ts` 의 tone 이름과 1:1. 진행판 밖에서도 같은 상태는 같은 색.
+     답변 필요는 분홍 — 주황이면 입력 필요(노랑)와 못 가렸다. 모듈 없음은 회색 — 만드는 사람이 할 수 있는 일이 없다 */
+  --tone-nomod: #858c99;
+  --tone-need: var(--warn);
+  --tone-ask: #e5609b;
+  --tone-ready: var(--info);
+  --tone-busy: #a37bf5;
+  --tone-view: #35b8a6;
+  --tone-done: var(--ok);
+
+  /* ── 리소스 종류 색 ── 관리 · 작업대 · 받을 리소스 창이 같이 쓴다(`lib/format.ts` `kindClass`). 상태 색과 겹치지 않게 옅은 색으로 */
+  --kind-image: #6aa7ff;
+  --kind-sound: #c58af9;
+  --kind-video: #f28b82;
+  --kind-lottie: #5fd4c4;
+  --kind-font: #d4b26a;
+  --kind-other: var(--muted);
+}
+
+.tone-nomod { --tone: var(--tone-nomod); }
+.tone-need { --tone: var(--tone-need); }
+.tone-ask { --tone: var(--tone-ask); }
+.tone-ready { --tone: var(--tone-ready); }
+.tone-busy { --tone: var(--tone-busy); }
+.tone-view { --tone: var(--tone-view); }
+.tone-done { --tone: var(--tone-done); }
+
+.kind-image { --kind: var(--kind-image); }
+.kind-sound { --kind: var(--kind-sound); }
+.kind-video { --kind: var(--kind-video); }
+.kind-lottie { --kind: var(--kind-lottie); }
+.kind-font { --kind: var(--kind-font); }
+.kind-other { --kind: var(--kind-other); }
+
+/* 종류 이름표 — 글자는 밝게 두고 테두리와 바탕만 종류 색 */
+.kind-chip {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid color-mix(in srgb, var(--kind, var(--muted)) 60%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--kind, var(--muted)) 16%, transparent);
+  color: var(--fg);
+  font-size: var(--font-xs);
+  white-space: nowrap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+button:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+/* 작은 단추 — **단추로 보이게** 테두리와 바탕을 둔다 (사용자 말 — 「모든 버튼들은 버튼처럼 보이게」). 전에는 글자만 있어 링크처럼 보였다 */
+button.ghost {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--fg);
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+button.ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+/* 안내 · 경고 글 — 크기를 안 정하면 body 16px 를 받아 카드 안에서 제목보다 커졌다(2026-10-06, 기획서 칸 오류) */
+.state {
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: var(--font-md);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.state.error {
+  color: var(--danger);
+  white-space: pre-wrap;
+}
+
+.path {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  word-break: break-all;
+}
+
+/* 접는 줄을 누른 뒤 남는 흰 기본 테두리 — 키보드로 왔을 때만 앱 색으로 (2026-10-01) */
+summary {
+  outline: none;
+}
+summary:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

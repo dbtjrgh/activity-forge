@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    // ts-node 로 바로 실행합니다(빌드 산출물이 없습니다).
+    // 그래서 module 은 commonjs 이고, tsc 는 타입 검사만 합니다.
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": true,
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  // `gen/template` 은 **액티비티에 복사해 넣을 원본**입니다. 이 도구의 코드가
+  // 아니라 남의 프로젝트에서 컴파일될 파일이라(Vue·`@_common` 별칭), 여기서
+  // 타입을 보면 없는 모듈을 찾다 깨집니다. 검사에서 뺍니다.
+  "exclude": ["node_modules", "src/gen/template"]
+}

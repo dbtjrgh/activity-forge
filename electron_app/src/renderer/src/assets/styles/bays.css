@@ -1,0 +1,178 @@
+/* 놓는 자리 셋 · 화면 전체가 받는 자리 · figma 칸 — main.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+/* ── 놓는 자리 셋 (Bay.tsx) ───────────────────────────────────────────
+   리소스 · figma 화면 · 기획서. 여태 생김새가 다 달라 어디에 놓으면 되는지가
+   눈에 안 들어왔다. 한 꼴로 맞추고, **주는 길(끌기·Ctrl+V)을 제목 옆에 박는다.** */
+
+.bays {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 720px) {
+  .bays {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 칸은 **받는 자리가 아니라 들어온 것을 보이는 자리**다 (2026-09-23) — 파일은 화면 어디에
+   놓아도 된다(`DropAll.tsx`). 그래서 「여기 놓으라」는 점선을 걷었다. */
+.bay {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--border) 6%, transparent);
+}
+
+/* ─ 화면 전체가 받는 자리 ─ 파일을 끌고 들어오는 동안만 뜬다 (`DropAll.tsx`) */
+.drop-all {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  backdrop-filter: blur(2px);
+  pointer-events: none; /* 놓는 것은 창이 받는다 — 이 막은 보이기만 한다 */
+}
+.drop-all-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 2px dashed var(--accent);
+  border-radius: 16px;
+  background: var(--accent-soft);
+}
+.drop-all-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+}
+.drop-all-route {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+.drop-all-route .chip {
+  display: inline-block;
+  padding: 2px 10px;
+  margin-right: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+/* ─ figma 칸이 비었을 때 ─ 캡처 → 붙이기, 두 걸음을 키 모양으로 (`ShotPaste.tsx`) */
+.shot-empty {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--bg);
+  text-align: center;
+}
+.shot-keys {
+  margin: 0 0 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+}
+.shot-arrow {
+  color: var(--muted);
+}
+.bay kbd {
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 5px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--bg);
+}
+
+.bay.busy {
+  opacity: 0.65;
+}
+
+/* **좁아지면 줄을 바꾼다.** 칸이 셋이라 한 칸이 좁아지는데, 안 바꾸면
+   제목이 「기획 서」처럼 글자 사이에서 잘린다 (실제로 그랬다). */
+.bay-head {
+  display: flex;
+  align-items: center;
+  gap: 6px 8px;
+  flex-wrap: wrap;
+}
+
+.bay-title,
+.bay-how,
+.bay-count {
+  white-space: nowrap;
+}
+
+.bay-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bay-title {
+  font-weight: 600;
+}
+
+/* 어떻게 주나 — 키 모양이면 Ctrl+V, 글자면 끌어다 놓기 */
+.bay-how {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+  flex: none;
+}
+
+
+/* 개수는 오른쪽 끝으로 밀어 둔다 — 들어 있나 없나가 한눈에 */
+.bay-count {
+  margin-left: auto;
+  flex: none;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* 들어 있으면 초록, 비었으면 회색 — 셋 가운데 무엇이 들어왔는지 칸 테두리로 먼저 보인다 (2026-10-01) */
+.bay.has {
+  border-left: 3px solid var(--ok);
+}
+
+.bay.empty {
+  border-left: 3px solid var(--fg-faint);
+}
+
+.bay-count.on {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ok) 18%, transparent);
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.bay-hint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}

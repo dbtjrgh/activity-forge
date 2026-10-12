@@ -1,0 +1,99 @@
+/* 옆줄 + 본문 격자 · 옆줄 접기 — main.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+/* ── 레이아웃: 왼쪽 사이드바 + 오른쪽 본문 ─────────────────── */
+
+.app {
+  --sidebar-w: 280px;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  height: 100vh;
+}
+
+/* 옆줄 접기 — 접으면 그 폭이 본문으로 간다. 화살표는 옆줄 오른쪽 가장자리 가운데에 늘 있다 */
+/* 한 칸으로 — 옆줄을 숨기면 본문이 폭 0 인 첫 칸으로 밀려 통째로 좁아진다 */
+.app.folded {
+  --sidebar-w: 0px;
+  grid-template-columns: minmax(0, 1fr);
+}
+.app.folded > .sidebar {
+  display: none;
+}
+.sidebar-fold {
+  position: absolute;
+  z-index: 20;
+  top: 50%;
+  left: calc(var(--sidebar-w) - 1px);
+  transform: translateY(-50%);
+  width: 16px;
+  height: 56px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0 var(--radius-1) var(--radius-1) 0;
+  background: var(--sidebar-bg);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sidebar-fold:hover {
+  color: var(--fg);
+  background: var(--surface-hover);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+}
+
+.sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 12px 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.sidebar-version {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: normal;
+  opacity: 0.6;
+}
+
+.sidebar-body {
+  flex: 1;
+  overflow: auto;
+  padding: 8px 8px 16px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  /* 격자 칸의 기본 최소 높이(auto) 때문에 본문이 창보다 길게 자라 창 전체가 굴렀다 — 본문 칸 안에서만 구르게 (M4) */
+  min-height: 0;
+}
+
+.content-body {
+  flex: 1;
+  overflow: auto;
+  padding: 24px 28px;
+}
+
+.app-footer {
+  padding: 10px 28px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}

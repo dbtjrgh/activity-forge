@@ -1,0 +1,160 @@
+/* 리소스 화면 — 학습코드 칸 · 자리마다 한 칸 — main.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+/* ─── 리소스 화면 (진행판에서 「양산」을 누르면 열린다) ─────────────────── */
+
+/* 학습코드를 직접 넣는 칸. 진행판에 없는 것을 만들 때 쓴다. */
+.code-go {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.code-input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 9px;
+  font-size: 12px;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.code-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.code-input::placeholder {
+  color: var(--muted);
+}
+
+/* 차시 줄 끝의 「양산」. 줄마다 있으므로 작고 조용하게 둔다. */
+.forge-go {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.resource {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.resource-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.resource-head h2 {
+  flex: 1;
+  margin: 0;
+  font-size: 18px;
+}
+
+/* 자리마다 한 칸. 한 칸이 넘어져도 다른 칸은 그대로 보인다 — 서비스가
+   실패를 자리마다 담아 주는 것과 짝이다. */
+.card {
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.card .path {
+  margin: 0 0 8px;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.pairs {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 6px 12px;
+  margin: 0 0 8px;
+}
+
+.pairs dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pairs dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  font-size: 13px;
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+}
+
+.need-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.need-table th,
+.need-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.need-table th {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.need-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.files summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.files ul {
+  max-height: 260px;
+  margin: 8px 0 0;
+  padding: 0 0 0 4px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.files li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 3px 0;
+  font-size: 12px;
+}
+
+.state.warn {
+  color: #ffcc66;
+}
+
+.tag.error {
+  color: var(--danger);
+  border-color: var(--danger);
+}

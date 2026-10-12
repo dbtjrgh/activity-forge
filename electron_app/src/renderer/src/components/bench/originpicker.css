@@ -1,0 +1,121 @@
+/* 원본 바꾸기 — 작업대 「모듈과 원본」 카드 · 받을 리소스 창 머리. 후보가 수십 개라 목록만 굴린다(막대는 안 보임) */
+
+.origin-pick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-2);
+  margin-top: var(--gap-2);
+  padding: var(--gap-3);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-2);
+  background: var(--bg);
+}
+
+.origin-pick-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.origin-pick-head .sub,
+.origin-pick > .sub,
+.origin-pick > .state {
+  margin: 0;
+  font-size: var(--font-sm);
+}
+
+.origin-pick-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+}
+
+.origin-pick-list::-webkit-scrollbar {
+  display: none;
+}
+
+.origin-pick-list li + li {
+  border-top: 1px solid var(--border);
+}
+
+button.origin-pick-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface);
+  text-align: left;
+  font-size: var(--font-sm);
+}
+
+button.origin-pick-row .sub {
+  margin: 0;
+}
+
+/* 칸이 좁으면 학습코드가 세로로 접혔다(태그가 「위치 다름」 · 「장면 n/m」 둘일 때) — 학습코드는 한 줄, 태그가 다음 줄로 */
+button.origin-pick-row {
+  flex-wrap: wrap;
+}
+
+button.origin-pick-row .mono {
+  white-space: nowrap;
+}
+
+button.origin-pick-row.on {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.origin-pick-tags {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.origin-pick-tags .tag.warn {
+  margin-left: 0;
+}
+
+/* 장면 그림이 더 많이 맞은 후보 — 초록 딱지. 옛 물음 카드의 「확인함」 딱지(askrows.css)에서 옮겼다 (2026-10-08, 그 카드를 걷어서) */
+.tag.settled {
+  border-color: var(--ok, #6abf69);
+  color: var(--ok, #6abf69);
+}
+
+.origin-pick-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-2);
+}
+
+/* 폴더에 남은 다른 호 원본 파일 — 목록은 접어 두고 단추 하나 */
+.origin-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--font-sm);
+}
+
+.origin-left p,
+.origin-left ul {
+  margin: 0;
+}
+
+.origin-left ul {
+  max-height: 140px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding-left: 16px;
+}
+
+.origin-left button {
+  align-self: flex-start;
+}

@@ -1,0 +1,270 @@
+<!doctype html>
+<!--
+  진행판 — **따로 띄워 두는 창**입니다.
+
+  양산 화면(`/`)은 한 차시를 만드는 자리이고, 여기는 **호 하나를 통째로 보는**
+  자리입니다. 두 창을 나란히 놓고 씁니다. 리소스를 폴더로 옮기는 동안 여기
+  숫자가 저절로 바뀌는 것이 이 창의 쓸모라, 10초마다 다시 읽습니다.
+
+  값은 `/api/board` 하나에서 옵니다 — 명령(`gen layout`)이 뿌리는 것과 **같은
+  함수**(`boardOf`·`moduleOrder`)입니다. 두 벌을 만들면 「명령에서는 되는데
+  화면에서는 다르다」가 생깁니다.
+-->
+<meta charset="utf-8" />
+<title>진행판</title>
+<style>
+  :root {
+    --line: #e5e7eb; --line2: #d1d5db; --panel: #fff; --soft: #f9fafb;
+    --ink: #111827; --dim: #6b7280; --dim2: #9ca3af;
+    --ok: #059669; --wait: #0891b2; --warn: #b45309; --accent: #7c3aed;
+    --accent-soft: #f5f3ff; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 13px/1.55 -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+         color: var(--ink); background: var(--soft); }
+  header { position: sticky; top: 0; z-index: 5; background: var(--panel);
+           border-bottom: 1px solid var(--line); padding: 10px 16px;
+           display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  h1 { font-size: 15px; margin: 0; font-weight: 800; letter-spacing: -.02em; }
+  .sub { font-size: 12px; color: var(--dim); }
+  .refresh { margin-left: auto; font-size: 11px; color: var(--dim2); }
+  /* 과목 탭. 셋뿐이라 드롭다운보다 탭이 낫습니다 — 한 번에 다 보입니다. */
+  .tabs { display: flex; gap: 4px; }
+  .tabs button { font: inherit; font-size: 12px; padding: 3px 12px; border-radius: 999px;
+                 border: 1px solid var(--line2); background: var(--panel); color: var(--dim);
+                 cursor: pointer; }
+  .tabs button:hover { background: var(--soft); }
+  .tabs button.on { background: var(--accent); border-color: var(--accent); color: #fff;
+                    font-weight: 700; }
+  /* 진행판에서 뺀 차시. **조용히 사라지면 안 됩니다** — 「36개인데 왜 30개지」가 됩니다. */
+  .skipbar { padding: 6px 16px; font-size: 12px; color: var(--warn);
+             background: #fffbeb; border-bottom: 1px solid #fde68a; }
+  .skipbar b { font-weight: 700; }
+  main { padding: 12px 16px 40px; display: flex; gap: 16px; align-items: flex-start;
+         flex-wrap: wrap; }
+  .col { flex: 1 1 380px; min-width: 340px; }
+  h2 { font-size: 12px; margin: 0 0 6px; color: var(--dim); font-weight: 700; }
+
+  .tally { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .chip { border: 1px solid var(--line); background: var(--panel); border-radius: 999px;
+          padding: 3px 10px; font-size: 12px; color: var(--dim); }
+  .chip b { color: var(--ink); font-weight: 700; }
+  .chip.z { opacity: .45; }
+
+  /* 만드는 차례 — 모듈 한 덩이가 한 칸. */
+  .grp { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+         padding: 8px 10px; margin-bottom: 6px; }
+  .grp.now { border-color: #c4b5fd; background: var(--accent-soft); }
+  .grp.done { opacity: .5; }
+  .grp .top { display: flex; align-items: baseline; gap: 8px; }
+  .grp .n { font-family: var(--mono); font-size: 11px; color: var(--dim2); width: 20px; }
+  .grp .m { font-weight: 700; }
+  .grp .tag { margin-left: auto; font-size: 11px; color: var(--dim); }
+  .grp .codes { margin-top: 4px; padding-left: 28px; display: flex; gap: 6px; flex-wrap: wrap; }
+  /* 누르면 양산 화면에 꽂힙니다. 눌러도 되는 것으로 보여야 합니다. */
+  .code { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line);
+          border-radius: 4px; padding: 1px 5px; color: var(--dim); background: var(--panel);
+          cursor: pointer; }
+  .code:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .code.can { border-color: #a7f3d0; color: var(--ok); }
+  .code.made { border-color: var(--line); color: var(--dim2); text-decoration: line-through; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--panel);
+          border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  th { font-size: 11px; color: var(--dim); text-align: left; font-weight: 600;
+       padding: 6px 8px; border-bottom: 1px solid var(--line); background: var(--soft); }
+  td { padding: 5px 8px; border-bottom: 1px solid #f3f4f6; font-size: 12px; }
+  tr:last-child td { border-bottom: 0; }
+  td.s { font-family: var(--mono); color: var(--dim); }
+  td.f { text-align: right; font-family: var(--mono); }
+  .st { font-size: 11px; }
+  .st.made { color: var(--dim2); }
+  .st.can { color: var(--ok); font-weight: 700; }
+  .st.wait { color: var(--wait); }
+  .st.todo { color: var(--warn); }
+  .q { color: var(--warn); }
+  .none { color: var(--warn); }
+</style>
+
+<header>
+  <h1 id="ttl">진행판</h1>
+  <!-- 과목을 여기서 바꿉니다. 호는 주소에서 받은 것을 그대로 씁니다 —
+       과목이 달라도 만드는 호는 같은 달이라서입니다. -->
+  <div class="tabs" id="tabs"></div>
+  <span class="sub" id="sub">읽는 중…</span>
+  <span class="refresh" id="ref"></span>
+</header>
+<div class="skipbar" id="skip" hidden></div>
+
+<main>
+  <div class="col">
+    <h2>만드는 차례 — 한 모듈을 잡으면 그 모듈의 차시를 다 끝내고 다음으로
+      <span style="font-weight:400">· 학습코드를 누르면 양산 화면에 꽂힙니다</span></h2>
+    <div id="groups"></div>
+  </div>
+  <div class="col">
+    <h2>차시별 상태</h2>
+    <div class="tally" id="tally"></div>
+    <table>
+      <thead><tr><th>차시</th><th>모듈</th><th>스펙</th><th style="text-align:right">리소스</th><th>상태</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // 주소에서 과목·호를 받습니다 — /board?subject=EN&issue=07
+  // 과목은 탭으로 바뀌므로 let 입니다. 호는 그대로 둡니다.
+  const q = new URLSearchParams(location.search);
+  let subject = (q.get("subject") || "EN").toUpperCase();
+  const issue = (q.get("issue") || "07").padStart(2, "0");
+
+  // 학습코드의 과목 글자가 그대로 열쇠입니다. 국어는 폴더가 KR 이지만
+  // 학습코드는 KO 라, 여기서는 **학습코드 쪽(KO)** 을 씁니다.
+  const SUBJECTS = [["EN", "영어"], ["KO", "국어"], ["MA", "수학"]];
+
+  function drawTabs() {
+    $("tabs").innerHTML = SUBJECTS.map(([k, name]) =>
+      `<button data-s="${k}" class="${k === subject ? "on" : ""}">${name}</button>`).join("");
+    for (const b of $("tabs").querySelectorAll("button")) {
+      b.onclick = () => {
+        if (b.dataset.s === subject) return;
+        subject = b.dataset.s;
+        // 주소도 같이 바꿔 둡니다 — 새로고침해도 보던 과목이 남습니다.
+        history.replaceState(null, "", `?subject=${subject}&issue=${issue}`);
+        drawTabs();
+        void load();
+      };
+    }
+  }
+
+  const CLS = {
+    "만들었음": "made", "만들 수 있음": "can", "리소스 대기": "wait",
+    "스펙 먼저": "todo", "모듈 못 정함": "todo",
+  };
+  const ORDER = ["만들었음", "만들 수 있음", "리소스 대기", "스펙 먼저", "모듈 못 정함"];
+
+  async function load() {
+    let r;
+    try {
+      r = await (await fetch(`/api/board?subject=${subject}&issue=${issue}`)).json();
+    } catch {
+      $("sub").innerHTML = '<span class="none">서버에 못 닿습니다 — gen ui 가 떠 있는지 보세요.</span>';
+      return;
+    }
+    if (!r || !r.ok || !r.rows.length) {
+      $("sub").innerHTML = '<span class="none">액티비티를 못 찾았습니다.</span>';
+      return;
+    }
+
+    $("ttl").textContent = `${Number(r.issue) + 1}호(M${r.issue}) 진행판`;
+    $("sub").textContent = `차시 ${r.rows.length}개 · 모듈 ${r.groups.length}종`;
+
+    // 뺀 차시. 우리가 안 만드는 것이라는 걸 **늘 보이게** 둡니다.
+    const sk = (r.skipped && r.skipped.slots) || [];
+    $("skip").hidden = sk.length === 0;
+    if (sk.length) {
+      $("skip").innerHTML =
+        `이 호에서 <b>${sk.length}차시</b>를 뺐습니다` +
+        (r.skipped.note ? ` — ${esc(r.skipped.note)}` : "") +
+        `<br><span style="color:var(--dim)">${sk.map((x) => esc(x.slot)).join(" · ")}</span>`;
+    }
+
+    // 상태 셈
+    const cnt = {};
+    for (const x of r.rows) cnt[x.stage] = (cnt[x.stage] ?? 0) + 1;
+    $("tally").innerHTML = ORDER.map((k) =>
+      `<span class="chip ${cnt[k] ? "" : "z"}">${esc(k)} <b>${cnt[k] ?? 0}</b></span>`).join("");
+
+    // 차시별 상태
+    const byCode = new Map(r.rows.map((x) => [x.code, x]));
+    $("rows").innerHTML = r.rows.map((x) => {
+      const q = x.stage === "모듈 못 정함";
+      return `<tr>
+        <td class="s">${esc(x.slot)}</td>
+        <td>${q ? '<span class="q">? </span>' : ""}${esc(x.module || "-")}</td>
+        <td>${x.hasSpec ? "✔" : '<span class="q">·</span>'}</td>
+        <td class="f">${x.files}</td>
+        <td class="st ${CLS[x.stage] ?? ""}">${esc(x.stage)}</td>
+      </tr>`;
+    }).join("");
+
+    // 만드는 차례. **지금 손댈 첫 덩이를 짚어 줍니다** — 다 만든 것은 흐리게.
+    let markedNow = false;
+    $("groups").innerHTML = r.groups.map((g, i) => {
+      const rows = g.codes.map((c) => byCode.get(c)).filter(Boolean);
+      const allMade = rows.length > 0 && rows.every((x) => x.stage === "만들었음");
+      const canAny = rows.some((x) => x.stage === "만들 수 있음");
+      const now = !allMade && canAny && !markedNow;
+      if (now) markedNow = true;
+      const tag =
+        allMade ? "다 만들었습니다"
+        : !g.decided ? '<span class="q">모듈 못 정함</span>'
+        : !g.hasSpec ? '<span class="q">스펙 먼저</span>'
+        : canAny ? `${rows.filter((x) => x.stage === "만들 수 있음").length}차시 만들 수 있음`
+        : `${g.codes.length}차시 · 리소스 대기`;
+      const codes = g.codes.map((c) => {
+        const x = byCode.get(c);
+        const k = x && x.stage === "만들었음" ? "made" : x && x.stage === "만들 수 있음" ? "can" : "";
+        return `<span class="code ${k}">${esc(c)}</span>`;
+      }).join("");
+      return `<div class="grp ${allMade ? "done" : ""} ${now ? "now" : ""}">
+        <div class="top"><span class="n">${i + 1}</span><span class="m">${g.decided ? "" : '<span class="q">? </span>'}${esc(g.module)}</span><span class="tag">${tag}</span></div>
+        <div class="codes">${codes}</div>
+      </div>`;
+    }).join("");
+
+    const t = new Date();
+    $("ref").textContent = `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}:${String(t.getSeconds()).padStart(2, "0")} 에 읽었습니다 · 10초마다 다시 읽습니다`;
+  }
+
+  // 학습코드를 누르면 **양산 화면의 학습코드 칸에 그대로 꽂습니다.**
+  //
+  // 진행판은 두 가지로 뜹니다 — 양산 화면 위에 겹쳐(iframe) 뜨거나, 따로 창으로
+  // 뜨거나. **어느 쪽인지에 따라 양산 화면을 잡는 길이 다릅니다.**
+  //
+  //   겹쳐 뜬 것   window.parent    (자기 자신이 아니면 부모가 양산 화면입니다)
+  //   따로 창      window.opener    (연 쪽이 양산 화면입니다)
+  //   주소를 직접  둘 다 없음        → 클립보드에 넣습니다
+  //
+  // 값을 넣고 input·change 를 흘려 주면 그쪽이 늘 하던 일을 그대로 합니다 —
+  // 모듈 배치표가 모듈과 원본을 채우고 리소스 폴더를 읽습니다.
+  function host() {
+    if (window.parent && window.parent !== window) return window.parent;
+    if (window.opener && !window.opener.closed) return window.opener;
+    return null;
+  }
+
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest(".code");
+    if (!el) return;
+    const code = el.textContent.trim();
+    const w = host();
+    const inp = w ? w.document.getElementById("code") : null;
+    if (inp) {
+      inp.value = code;
+      const E = w.Event || Event;
+      inp.dispatchEvent(new E("input", { bubbles: true }));
+      inp.dispatchEvent(new E("change", { bubbles: true }));
+      w.focus();
+      say(`${code} — 양산 화면에 넣었습니다`);
+    } else if (navigator.clipboard) {
+      void navigator.clipboard.writeText(code);
+      say(`${code} — 복사했습니다 (양산 화면이 안 열려 있습니다)`);
+    }
+  });
+
+  let sayTimer = 0;
+  function say(msg) {
+    $("ref").textContent = msg;
+    clearTimeout(sayTimer);
+    sayTimer = setTimeout(load, 2500);
+  }
+
+  drawTabs();
+  void load();
+  setInterval(load, 10000);
+</script>

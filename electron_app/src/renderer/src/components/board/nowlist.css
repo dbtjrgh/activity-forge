@@ -1,0 +1,81 @@
+/* 지금 바로 할 수 있는 학습코드 — 그룹마다 진행판 상태 색(`base.css` `--tone-*`) */
+
+.now-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 var(--gap-4);
+  padding: var(--gap-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--surface);
+}
+
+.now-list h3 {
+  margin: 0 0 4px;
+  font-size: var(--font-md);
+  font-weight: 600;
+}
+
+.now-list h3 strong {
+  color: var(--accent);
+}
+
+.now-group {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-3);
+  padding: 6px 8px;
+  border-left: 3px solid var(--tone);
+  border-radius: var(--radius-1);
+  background: color-mix(in srgb, var(--tone) 9%, transparent);
+}
+
+.now-title {
+  flex: none;
+  min-width: 120px;
+  padding-top: 3px;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: color-mix(in srgb, var(--tone) 50%, var(--fg));
+}
+
+.now-title b {
+  margin-left: 4px;
+}
+
+.now-codes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+button.now-code {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2px 8px;
+  border: 1px solid color-mix(in srgb, var(--tone) 45%, transparent);
+  border-radius: 999px;
+  background: var(--bg);
+  font-size: 11px;
+}
+
+button.now-code:hover {
+  background: color-mix(in srgb, var(--tone) 22%, var(--bg));
+}
+
+.now-module {
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.now-module:empty {
+  display: none;
+}
+
+.now-none {
+  margin: 0 0 var(--gap-4);
+  font-size: var(--font-sm);
+  color: var(--muted);
+}

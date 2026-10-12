@@ -1,0 +1,15 @@
+/* 앱 전체 CSS — 조각을 **줄 차례 그대로** 들여온다 (2026-09-30, 1,893줄이라 나눔).
+   같은 것을 두 조각이 정하면 뒤가 이긴다 — 차례를 바꾸면 화면이 바뀐다. 화면 하나에만 쓰는 것은 그 화면 곁에 둔다(bench.css · board.css · manage.css). */
+
+@import './styles/base.css';
+@import './styles/layout.css';
+@import './styles/foldertree.css';
+@import './styles/folderprops.css';
+@import './styles/boardlist.css';
+@import './styles/boardtable.css';
+@import './styles/resource.css';
+@import './styles/runstate.css';
+@import './styles/write.css';
+@import './styles/bays.css';
+@import './styles/sidebar.css';
+@import './styles/features.css';

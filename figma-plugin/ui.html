@@ -1,0 +1,69 @@
+<!--
+  뽑은 것을 보여 주고 클립보드로 보냅니다.
+
+  **자동 복사를 믿지 않습니다.** figma 의 iframe 에서 `navigator.clipboard` 가
+  막히는 일이 있어, 글을 늘 칸에 그대로 띄워 둡니다 — 자동 복사가 실패해도
+  사람이 골라서 복사할 수 있습니다. 조용히 아무 일도 안 일어나는 것이 제일
+  나쁜 실패입니다.
+-->
+<style>
+  body { font: 12px -apple-system, "Segoe UI", sans-serif; margin: 0; padding: 12px; color: #222; }
+  h1 { font-size: 13px; margin: 0 0 8px; }
+  .sum { margin: 0 0 8px; line-height: 1.6; }
+  .warn { color: #b25000; }
+  .err { color: #c00; white-space: pre-wrap; }
+  textarea { width: 100%; height: 250px; box-sizing: border-box; font: 11px ui-monospace, Consolas, monospace; }
+  button { margin-top: 8px; padding: 6px 12px; font-size: 12px; }
+  .said { margin-left: 8px; color: #0a7; }
+</style>
+
+<h1>스파크온 차례 뽑기</h1>
+<div class="sum" id="sum">읽는 중…</div>
+<textarea id="out" readonly></textarea>
+<div>
+  <button id="copy">복사</button>
+  <span class="said" id="said"></span>
+</div>
+
+<script>
+  var box = document.getElementById('out')
+  var sum = document.getElementById('sum')
+  var said = document.getElementById('said')
+
+  function copy() {
+    box.focus()
+    box.select()
+    var ok = false
+    try { ok = document.execCommand('copy') } catch (e) { ok = false }
+    said.textContent = ok ? '복사했습니다 — 앱에서 Ctrl+V' : '복사가 막혔습니다 — 위 글을 직접 골라 복사해 주세요'
+    said.className = ok ? 'said' : 'said warn'
+  }
+
+  document.getElementById('copy').onclick = copy
+
+  onmessage = function (e) {
+    var got = e.data.pluginMessage
+    if (!got) return
+    if (got.error) {
+      sum.innerHTML = '<span class="err">' + got.error + '</span>'
+      box.value = ''
+      return
+    }
+    box.value = JSON.stringify(got)
+
+    var full = 0
+    for (var i = 0; i < got.lessons.length; i += 1) {
+      var w = got.lessons[i].words
+      var have = w.filter(function (x) { return x !== null }).length
+      if (have === w.length && w.length) full += 1
+    }
+    var kb = (box.value.length / 1024).toFixed(1)
+    sum.innerHTML =
+      '<b>' + got.file + '</b><br>' +
+      '차시 ' + got.lessons.length + '개 · 낱말을 다 읽은 차시 ' + full + '개 · ' + kb + 'KB' +
+      (got.unread.length
+        ? '<br><span class="warn">학습코드를 못 읽은 섹션 ' + got.unread.length + '개</span>'
+        : '')
+    copy()
+  }
+</script>

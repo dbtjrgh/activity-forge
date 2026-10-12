@@ -1,0 +1,151 @@
+/* 진행판 타일 · 쌓은 막대 · 화면 모으기 — board.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+/* 진행판 타일과 쌓은 막대 (2026-09-28, M2). 상태 색 한 벌(`--tone-*` · `.tone-*`)은 2026-10-01 에 `assets/styles/base.css` 로 옮겼다 — 다른 화면도 쓴다 */
+
+/* 옆줄 「새 모듈 n」 — 진행판의 모듈 없음 칸과 같은 색 */
+.tag.nomod {
+  border-color: var(--tone-nomod);
+  color: var(--fg);
+  background: color-mix(in srgb, var(--tone-nomod) 18%, transparent);
+}
+
+.status-bar {
+  margin: 12px 0 20px;
+}
+
+.status-track {
+  display: flex;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.status-track .seg {
+  background: var(--tone);
+}
+
+.status-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.status-legend strong {
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--tone);
+  vertical-align: 1px;
+}
+
+.tile-level {
+  margin-bottom: 18px;
+}
+
+.tile-level h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 6px;
+}
+
+/* 세 칸마다 한 주 — 주 사이를 조금 더 띄운다 */
+.tile-grid .tile:nth-child(3n) {
+  margin-right: 6px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 72px;
+  padding: 8px 4px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--tone);
+  border-radius: 8px;
+  /* 칸 전체를 상태 색으로 옅게 — 테두리 한 줄로는 멀리서 안 가려졌다 */
+  background: color-mix(in srgb, var(--tone) 11%, var(--surface));
+  text-align: center;
+  transition: background 0.12s, transform 0.12s;
+}
+
+.tile:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--tone) 20%, var(--surface));
+  transform: translateY(-1px);
+}
+
+.tile-status {
+  color: color-mix(in srgb, var(--tone) 45%, var(--fg));
+}
+
+/* 모듈 없음 — 할 수 있는 일이 없는 칸이라 점선으로 비워 보인다 */
+.tile.tone-nomod {
+  border-style: dashed;
+  border-left-style: solid;
+  background: transparent;
+}
+
+.tile-place {
+  font-size: 10.5px;
+  white-space: nowrap;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tile-status {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tile-next {
+  font-size: 11px;
+  color: var(--tone);
+  white-space: nowrap;
+}
+
+/* 모듈 이름 — 모든 칸의 맨 아래 같은 자리. 상태 색은 안 입힌다(모듈은 상태가 아니다) */
+.tile-module {
+  max-width: calc(100% - 8px);
+  margin-top: 2px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 10.5px;
+  color: color-mix(in srgb, var(--fg) 80%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile.tone-done {
+  opacity: 0.72;
+}
+
+/* 화면 모으기 (M5) — 고른 칸은 굵은 테두리로, 붙이면 다음 칸으로 넘어간다 */
+.tile.picked {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  opacity: 1;
+}

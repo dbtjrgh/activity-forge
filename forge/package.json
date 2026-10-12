@@ -1,0 +1,20 @@
+{
+  "name": "sparkon_forge",
+  "version": "0.0.1",
+  "private": true,
+  "description": "액티비티 양산기. 사람 PC 의 호 repo(sparkon_mNN)에 직접 씁니다.",
+  "scripts": {
+    "forge": "ts-node -r tsconfig-paths/register src/main.ts",
+    "forge:ui": "ts-node -r tsconfig-paths/register src/main.ts ui",
+    "check:spec": "ts-node -r tsconfig-paths/register src/tool/checkSpec.ts",
+    "typecheck": "tsc --noEmit",
+    "check:repro": "ts-node -r tsconfig-paths/register src/tool/checkRepro.ts",
+    "check:odd": "ts-node -r tsconfig-paths/register src/tool/checkOdd.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,93 @@
+/* 할 일 줄 · 배치표가 갈린 칸 · 학습코드별 기록 표 — board.css 에서 떼어 냄 (2026-09-30, 동작 변화 없음) */
+
+/* 진행판 할 일 줄 — 화면 모으기 (M5). 생성 대기열은 2026-10-08 에 이전 방식과 함께 걷었다 */
+.board-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-2);
+  margin: var(--gap-2) 0 var(--gap-3);
+}
+
+.shot-round {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-2) var(--gap-3);
+  font-size: var(--font-sm);
+}
+
+.shot-round.on {
+  padding: var(--gap-2) var(--gap-3);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-2);
+}
+
+.shot-round-note {
+  flex-basis: 100%;
+}
+
+@media (max-width: 1100px) {
+  .tile-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .tile-grid .tile:nth-child(3n) {
+    margin-right: 0;
+  }
+}
+
+/* 배치표가 갈린 칸 한 장 (M7) — 칸마다 왼쪽 고르기 · 오른쪽 기획서 쪽 */
+.layout-picks {
+  margin: var(--gap-3) 0;
+}
+.layout-picks > summary {
+  cursor: pointer;
+}
+.pick-row {
+  border-top: 1px solid var(--border);
+  padding: var(--gap-2) 0;
+}
+.pick-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--gap-2);
+}
+.pick-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gap-3);
+  margin-top: var(--gap-1);
+}
+.pick-choose label {
+  display: flex;
+  gap: var(--gap-2);
+  align-items: baseline;
+  padding: 2px var(--gap-1);
+  border-radius: var(--radius-1);
+  cursor: pointer;
+}
+.pick-choose label.on {
+  background: var(--accent-soft);
+}
+.pick-why {
+  width: 100%;
+  margin-top: var(--gap-1);
+}
+.pick-plan {
+  margin: 0;
+}
+.pick-plan img {
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+}
+@media (max-width: 900px) {
+  .pick-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 학습코드별 기록 표 (RunTable) — 숫자 칸은 가운데 */
+.run-table { border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+.run-table th, .run-table td { padding: 4px 10px; border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap; }
+.run-table td:first-child, .run-table td:last-child { text-align: left; }

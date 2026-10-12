@@ -1,0 +1,219 @@
+
+<header id="hdr">
+  <!-- 진행판. **이 화면 위에 겹쳐 뜹니다.** 차시 하나를 만드는 자리(이 화면)와
+       호 하나를 통째로 보는 자리(진행판)는 다른 일이라 칸을 섞지 않습니다. -->
+  <div class="win" id="boardSheet" hidden>
+    <div class="head" id="boardHead">
+      <b id="boardTtl">진행판</b>
+      <span class="muted" style="font-size:12px">학습코드를 누르면 위 학습코드 칸에 들어갑니다</span>
+      <span class="sp"></span>
+      <button id="boardOpen" class="tiny" title="브라우저 창으로 따로 띄웁니다. 다른 모니터에 놓고 보려면 이쪽입니다.">새 창으로</button>
+      <button id="boardX" class="tiny">닫기</button>
+    </div>
+    <iframe id="boardFrame" title="진행판"></iframe>
+  </div>
+
+  <div class="brand">
+    <span class="logo">SparkOn</span>
+    <!-- 하는 일이 둘입니다. 액티비티를 만드는 것과, 그 바탕이 되는 모듈 스펙을
+         만드는 것. 서로 다른 일이라 칸을 섞지 않고 모드로 가릅니다. -->
+    <div class="tabs modes" id="modeTabs">
+      <button data-mode="activity" class="on">액티비티 만들기</button>
+      <button data-mode="spec">모듈 스펙 만들기</button>
+    </div>
+    <!-- 진행판은 **따로 뜨는 창**입니다. 이 화면은 차시 하나를 만드는 자리이고
+         진행판은 호 하나를 통째로 보는 자리라, 같이 놓고 봐야 쓸모가 있습니다.
+         한 창에 밀어 넣으면 둘 다 못 봅니다. -->
+    <button id="boardBtn" class="tiny" title="이 호의 차시가 어디까지 왔는지 따로 창으로 봅니다. 10초마다 저절로 새로 읽습니다.">진행판</button>
+    <div class="who">
+      <label for="developer">개발자</label>
+      <input id="developer" placeholder="seokho.yu(유석호)" size="18" autocomplete="off"
+             title="한 번만 적으면 이 PC 에서 계속 씁니다. activityInfo.json 의 developer 칸에 들어갑니다.">
+      <label class="chip" title="activityInfo.json 의 devFinished. 검수·목록에서 「개발 완료」로 잡히는 칸입니다. 기본이 켬입니다 — 여기서 만든 것은 만들자마자 완성이라서요.">
+        <input type="checkbox" id="devFinished" checked> <span>개발 완료</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- 호 저장소가 어디 있는지는 **사람마다 다릅니다.** 여태 「sparkon_forge 의 형제」로
+       못박아 두었는데 그건 만든 사람 PC 의 생김새였습니다 (2026-09-02). -->
+  <div class="rootbar" id="rootBar" hidden>
+    <span>작업 폴더</span>
+    <span class="p" id="rootDir">…</span>
+    <span id="rootCount"></span>
+    <button id="rootEdit" class="tiny">바꾸기</button>
+    <span id="rootForm" hidden>
+      <input id="rootInput" placeholder="C:\Users\나\sparkon_New" autocomplete="off">
+      <button id="rootSave" class="tiny">저장</button>
+      <button id="rootCancel" class="tiny">취소</button>
+    </span>
+  </div>
+
+  <!-- **기능을 만들면 안내를 함께 답니다** (.claude/decisions.md). 계획서는
+       찾아 읽는 사람의 것이고, 이 띠는 지금 이 화면을 연 사람의 것입니다. -->
+  <div class="guide" id="guide" hidden>
+    <button class="guidex" id="guideX" title="다시 안 보기">✕</button>
+    <b>액티비티 한 편을 제작하는 순서입니다.</b>
+    <ol>
+      <li><b>학습코드</b>를 입력합니다 <span class="muted">ex) MAL1M07W1S3</span></li>
+      <li><b>원본 회차에서 불러오기</b> — 동일한 모듈로 제작된 회차의 값과 리소스를
+          그대로 가져옵니다. 처음 사용하는 모듈이면 <b>모듈</b>만 선택합니다</li>
+      <li><b>폴더 열기</b> → 이미지·사운드 파일을 폴더로 옮긴 뒤 → <b>폴더 읽기</b></li>
+      <li><b>리소스</b> 탭에서 파일에 별칭을 지정하고, <b>GameData</b> 탭에서 값을 입력합니다</li>
+      <li>우측 <b>검증</b>의 오류가 0 이 되면 <b>액티비티 생성</b>이 활성화됩니다</li>
+    </ol>
+  </div>
+
+  <!-- 칸마다 세 줄입니다 — 라벨(.lab) / 입력(.ctl) / 알림(.msg).
+       **줄 이름을 지키세요.** 옆 칸과 오와 열이 맞는 것이 이 짜임 덕입니다. -->
+  <div class="toolbar" id="actToolbar">
+    <div class="fld">
+      <label class="lab" for="code">학습코드</label>
+      <!-- **리소스 폴더를 여는 자리는 여기 하나입니다.** 학습코드 하나만 있으면
+           되는 일이라 모듈을 고르기 전에도, 탭을 옮기기 전에도 눌러야 합니다.
+           참고할 액티비티 칸의 「폴더 열기」와 같은 꼴로 둡니다 — 같은 일이니
+           같아 보여야 합니다. -->
+      <div class="ctl"><input id="code" autocomplete="off" placeholder="학습코드명"></div>
+      <div class="msg refmsg act">
+        <button id="rscOpen" class="tiny">폴더 열기</button>
+        <span id="codeMsg"></span>
+      </div>
+    </div>
+    <div class="fld">
+      <label class="lab" for="module">모듈</label>
+      <div class="ctl"><select id="module"><option value="">불러오는 중…</option></select></div>
+      <div id="moduleMsg" class="msg refmsg"></div>
+    </div>
+    <!-- 자리가 800개쯤 되는 모듈에서 빈 폼을 처음부터 채우는 것은 못 할 짓입니다.
+         이미 만든 회차를 떠 와서 달라진 데만 고칩니다 — CLI 의 gen clone 과
+         같은 함수를 부릅니다. -->
+    <div class="fld clonebox">
+      <label class="lab" for="cloneFrom">원본 회차에서 불러오기</label>
+      <div class="ctl"><input id="cloneFrom" autocomplete="off" placeholder="학습코드명"></div>
+      <div class="msg refmsg act">
+        <button id="cloneGo" class="go">불러오기</button>
+        <span id="cloneMsg">값과 리소스를 그대로 가져옵니다</span>
+      </div>
+    </div>
+
+
+    <!-- 전에 만든 것을 보고 따라 만드는 일이라, 참고할 폴더를 여기서 엽니다. -->
+    <div class="fld ref">
+      <label class="lab" for="refCode">참고할 액티비티 <span class="dim2">— 폴더만 열어 봅니다</span></label>
+      <div class="ctl"><input id="refCode" autocomplete="off" placeholder="학습코드명"></div>
+      <div class="msg refmsg act">
+        <button id="refOpen" class="tiny">폴더 열기</button>
+        <span id="refMsg"></span>
+      </div>
+    </div>
+
+    <!-- 고른 모듈이 무엇을 하는 것인지. **맨 뒤에서 남는 폭을 다 받습니다.**
+         라벨·입력 줄 없이 칸 전체를 글로 씁니다 — 비워 두면 그만큼이 그냥
+         빈자리로 남습니다. `min-width:0` 이 있어야 글이 길어도 늘어나지 않고
+         줄을 바꿉니다 — 없으면 앞 칸들을 밀어냅니다 (2026-09-03). -->
+    <div id="specNote" class="grow specnote"></div>
+  </div>
+</header>
+
+<!-- ─── 모듈 스펙 만들기 ────────────────────────────────────────────────
+     스펙이 119종 중 3개뿐이라 여기가 병목입니다. 기계가 표본을 견줘 초안을
+     내고, 사람은 기계가 못 아는 것만 채웁니다 — 제목·설명·필수 여부. -->
+<main id="modeSpec" class="one" hidden>
+  <div class="col">
+    <!-- **스펙이 어디서 나온 것인지 여기서 밝힙니다.** 화면에 뜨는 항목 이름과
+         기본값이 사람이 정한 규격처럼 보이는데, 실은 기존 액티비티를 기계가
+         견줘 뽑아 놓은 짐작입니다. 그걸 모르면 「스펙에 없으니 안 되는 것」
+         으로 읽게 됩니다 — 사실은 표본에 없었을 뿐입니다. -->
+    <div class="specintro">
+      <b>스펙은 기존 액티비티에서 자동으로 뽑은 초안입니다.</b>
+      <p>
+        모듈을 고르면 <b>그 모듈을 쓰는 액티비티를 전부 읽어</b> GameData 의 항목·타입·
+        기본값을 추려 냅니다. 여러 회차에서 같은 값이면 기본값으로, 회차마다 다르면
+        입력 항목으로 잡습니다. 사람이 손으로 정리한 규격서가 아니라
+        <b>실제 제작물에서 역으로 추출한 결과</b>입니다.
+      </p>
+      <p>
+        그래서 <b>표본에 없던 항목은 스펙에도 없습니다.</b> 기계가 알 수 없는
+        <b>제목·항목 설명·필수 여부</b>는 비어 있으니 사람이 채워야 합니다 —
+        2단계에서 하는 일이 그것입니다. 채운 내용은 초안을 다시 만들어도 유지됩니다.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="step">1</span>모듈 고르기<span class="hint">액티비티가 많은 것부터</span></h2>
+      <div class="inline">
+        <select id="mdList" style="min-width:340px"><option value="">불러오는 중…</option></select>
+        <button id="mdDraft" class="primary" disabled>초안 만들기</button>
+      </div>
+      <div id="mdMsg" class="muted" style="margin-top:8px">
+        모듈을 고르면 그것을 쓰는 액티비티를 다 읽어 초안을 만듭니다.
+      </div>
+    </div>
+
+    <div class="panel" id="specEdit" hidden>
+      <h2><span class="step">2</span>훑어보기<span class="hint">필수 여부만 봐 주세요</span>
+          <span class="count" id="specTodo"></span></h2>
+      <div id="specHead"></div>
+      <div id="specFields" class="specfields"></div>
+      <div class="bar" style="margin-top:14px">
+        <button id="specSave" class="primary wide">스펙 저장</button>
+      </div>
+      <div id="specSaveMsg" style="margin-top:10px"></div>
+    </div>
+  </div>
+</main>
+
+<main id="modeActivity">
+  <div class="col">
+    <div id="staleBar" class="stalebar" hidden></div>
+    <div id="draftBar" class="draftbar" hidden></div>
+    <!-- 한 화면에 다 쌓아 두면 스크롤만 내리게 됩니다. 크게 둘로 가르고,
+         GameData 안은 스펙의 큰 덩어리마다 다시 가릅니다. -->
+    <div class="tabs" id="mainTabs">
+      <button data-tab="assets" class="on"><span class="step">1</span>리소스</button>
+      <button data-tab="gamedata"><span class="step">2</span>GameData</button>
+    </div>
+    <div class="tabnote" id="tabNote"></div>
+
+    <div class="panel" id="tab-assets">
+      <div id="rscBar" class="rscbar">
+        <!-- 「폴더 열기」는 위 학습코드 칸에 있습니다. 같은 단추를 두 군데 두면
+             어느 쪽을 눌러야 하는지 매번 생각하게 됩니다. -->
+        <button id="rscScan" class="go">폴더 읽기</button>
+        <span id="rscMsg" class="muted">학습코드를 적으면 그 폴더를 읽습니다.</span>
+      </div>
+      <!-- 후보 목록은 `<datalist>` 가 아니라 우리가 그립니다(attachPick).
+           까닭은 그 함수 위에 적어 두었습니다. -->
+      <div id="assets"></div>
+    </div>
+
+    <div class="panel" id="tab-gamedata" hidden>
+      <div class="tabs sub" id="gdTabs"></div>
+      <div id="gamedata"></div>
+    </div>
+  </div>
+
+  <div class="side col">
+    <div class="panel">
+      <h2><span class="step">3</span>검증<span class="hint">적을 때마다 바로 봅니다</span>
+          <span class="count" id="issueCount"></span></h2>
+      <div id="issues" class="muted">학습코드와 모듈을 고르면 검사합니다.</div>
+      <!-- 누르기 전에 어디에 만들어지는지 보이게. 만드는 자리와 참고용 폴더는
+           서로 다른 곳이라, 안 적어 두면 헷갈립니다. -->
+      <div id="target" class="target" hidden></div>
+      <div class="bar">
+        <button id="gen" class="primary wide" disabled>액티비티 생성</button>
+      </div>
+      <div class="bar">
+        <label class="chip"><input type="checkbox" id="force"> <span>이미 있으면 덮어쓰기</span></label>
+      </div>
+      <div id="genResult" style="margin-top:10px"></div>
+    </div>
+    <div class="panel">
+      <h2>미리보기<span class="hint">쓰기 전에 그대로 보여 줍니다</span></h2>
+      <div class="tabs" id="tabs"></div>
+      <pre id="preview">아직 없습니다.</pre>
+    </div>
+  </div>
+</main>
+

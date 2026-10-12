@@ -1,0 +1,175 @@
+/* 대화로 만들기 (2026-10-08) — 가운데 진행(`ChatFlow`) · 오른쪽 대화(`ChatSide`). 클래스는 chat- 로 시작한다(짧은 이름이 온 앱을 덮은 함정) */
+
+.chat-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-3);
+  font-size: var(--font-md);
+}
+
+.chat-flow-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-2);
+}
+
+.chat-state {
+  font-weight: 600;
+}
+.chat-state-done {
+  color: var(--ok);
+}
+.chat-state-asking {
+  color: var(--tone-ask);
+}
+.chat-state-error,
+.chat-state-stopped {
+  color: var(--fail);
+}
+
+.chat-progress {
+  margin: 0;
+  padding: var(--gap-2) var(--gap-3) var(--gap-2) 32px;
+  max-height: 360px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--surface);
+  font-size: var(--font-sm);
+  color: var(--muted);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.chat-checks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-1);
+}
+
+.chat-pre {
+  margin: 0;
+  padding: var(--gap-2);
+  max-height: 240px;
+  overflow: auto;
+  border-radius: var(--radius-1);
+  background: var(--surface);
+  font-size: var(--font-sm);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-2);
+  /* 오른쪽 칸(.bench-right, overflow: hidden)의 남은 높이를 다 갖고, 안에서 대화 · 질문이 각자 구른다 */
+  flex: 1 1 0;
+  min-height: 0;
+  font-size: var(--font-md);
+}
+.chat-side h3 {
+  margin: 0;
+  font-size: var(--font-lg);
+}
+
+.chat-turns {
+  flex: 1 1 0;
+  min-height: 80px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-2);
+}
+
+.chat-turn {
+  padding: var(--gap-2) var(--gap-3);
+  border-radius: var(--radius-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.chat-turn.chat-by-person {
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+.chat-turn.chat-by-app {
+  background: transparent;
+}
+
+.chat-who {
+  display: block;
+  margin-bottom: 2px;
+  font-size: var(--font-xs);
+  color: var(--muted);
+}
+
+.chat-text {
+  margin: 0;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat-questions {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 55%;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--gap-2) var(--gap-3) var(--gap-2) 28px;
+  border: 1px solid var(--tone-ask);
+  border-radius: var(--radius-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-2);
+}
+
+.chat-input {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-2);
+}
+.chat-input textarea {
+  min-height: 84px;
+  resize: vertical;
+  padding: var(--gap-2);
+  border-radius: var(--radius-1);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: var(--font-md);
+}
+.chat-send {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-2);
+}
+
+/* 고른 답 — 질문마다 하나. 고른 단추는 테두리와 글자를 강조색으로 */
+.chat-pick.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.chat-pics {
+  display: flex;
+  gap: var(--gap-1);
+  flex-wrap: wrap;
+}
+/* `.bench-col img`(height: auto)보다 우선해야 48px 로 선다 — 지면 칸 너비만큼 커져 답 단추가 밀렸다 */
+.chat-input .chat-pics img {
+  display: block;
+  height: 48px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-1);
+}
