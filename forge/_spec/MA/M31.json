@@ -122,6 +122,12 @@
         "desc": "bg_front 조각이 놓이는 자리. 아이템보다 앞에 겹쳐서 접시 안에 담긴 느낌을 냅니다 — 어긋나면 아이템이 접시 위에 떠 보입니다."
       },
       {
+        "key": "correctEffOnItem",
+        "type": "bool",
+        "optional": true,
+        "desc": "true 면 정답 파티클을 판정판 한가운데가 아니라 대상이 붙은 칸에서 터뜨립니다(QuizPanel.ts:104). 판정판이 줄 전체를 덮는 그림그래프 판(MAL1M08W4S2)에서 씁니다."
+      },
+      {
         "key": "inningData",
         "type": "array",
         "required": true,
@@ -173,37 +179,38 @@
                             "type": "enum",
                             "required": true,
                             "values": [
-                              "lottie"
+                              "lottie",
+                              "image"
                             ],
                             "default": "lottie",
-                            "desc": "지금은 lottie 하나뿐입니다."
+                            "desc": "lottie 면 애니 넷으로 움직이고, image 면 움직이지 않습니다(CharacterPanel.ts showAni 가 lottie 일 때만 돕니다). 애니가 없는 판은 image 입니다."
                           },
                           {
                             "key": "alias_normal",
                             "type": "asset:lottie",
-                            "required": true,
-                            "desc": "기본(대기) 애니. 표본은 {색}mon_idle."
+                            "desc": "기본(대기) 애니. 표본은 {색}mon_idle. type 이 image 면 몸통 그림이고, 없으면 몸통을 안 그립니다.",
+                            "optional": true
                           },
                           {
                             "key": "alias_correct",
                             "type": "asset:lottie",
-                            "required": true,
-                            "desc": "정답 애니. 표본은 {색}mon_correct."
+                            "desc": "정답 애니. 표본은 {색}mon_correct. type 이 lottie 일 때만 씁니다.",
+                            "optional": true
                           },
                           {
                             "key": "alias_talk",
                             "type": "asset:lottie",
-                            "required": true,
-                            "desc": "말풍선을 띄우고 말할 때의 애니. 표본은 {색}mon_talk."
+                            "desc": "말풍선을 띄우고 말할 때의 애니. 표본은 {색}mon_talk. type 이 lottie 일 때만 씁니다.",
+                            "optional": true
                           },
                           {
                             "key": "alias_end",
                             "type": "asset:lottie",
-                            "required": true,
-                            "desc": "이닝을 마칠 때의 애니. 표본은 {색}mon_end."
+                            "desc": "이닝을 마칠 때의 애니. 표본은 {색}mon_end. type 이 lottie 일 때만 씁니다.",
+                            "optional": true
                           }
                         ],
-                        "desc": "캐릭터 애니 네 벌. 상태마다 하나씩이고 넷 다 필요합니다."
+                        "desc": "캐릭터 몸통. type 이 lottie 면 상태마다 애니 넷이 다 필요하고(관계 lottie-character-four-ani), image 면 몸통 그림 하나(alias_normal)거나 아예 없어도 됩니다 — 몸통 없이 말풍선 그림만 띄우는 판(MAL1M08W4S2 범주 버튼)이 그렇습니다."
                       },
                       {
                         "key": "pos",
@@ -245,8 +252,8 @@
                           {
                             "key": "sound_end",
                             "type": "asset:sound",
-                            "required": true,
-                            "desc": "다 받은 뒤 읽는 음원."
+                            "optional": true,
+                            "desc": "대상이 붙을 때마다 읽는 음원(QuizPanel.ts:106 → correctCharAni). 정답음(sound_correct)은 모듈이 따로 틉니다. 붙을 때 할 말이 없는 판은 비웁니다 — 비우면 아무것도 안 틉니다(MAL1M08W4S2, 2026-10-13)."
                           }
                         ],
                         "desc": "그 캐릭터의 말풍선. 무엇을 달라고 하는지를 그림과 음원으로 보여 줍니다."
@@ -305,12 +312,24 @@
                         "optional": true,
                         "figma": true,
                         "desc": "아이템 자리. useAlign 이 true 면 무시됩니다."
+                      },
+                      {
+                        "key": "sound",
+                        "type": "asset:sound",
+                        "optional": true,
+                        "desc": "이 대상이 붙었을 때 캐릭터가 할 말. 안 적으면 그 캐릭터의 talkBubble.sound_end 를 씁니다(QuizPanel.ts:106 → correctCharAni). 물건마다 다른 말이 필요할 때 적습니다."
                       }
                     ],
                     "desc": "칸 하나."
                   },
                   "desc": "아이템 하나씩. **target 이 있는 것만 놓아야 하는 것으로 셉니다**(QuizPanel.ts:224) — target 이 없는 아이템은 끌 수는 있어도 이닝 종료 조건에 들어가지 않는 장식입니다.",
                   "minLengthWhy": "6호 세 차시가 9개씩입니다. 초안의 6 은 표본 값일 뿐이라, 분류가 성립하는 2 로 낮췄습니다."
+                },
+                {
+                  "key": "isRandom",
+                  "type": "bool",
+                  "optional": true,
+                  "desc": "true 면 자리(items[].pos)는 그대로 두고 어느 대상이 어느 자리에 앉을지만 섞습니다(QuizPanel.ts:229). 안 적으면 자리째 그대로입니다. 기획서의 「랜덤 배치」가 이것입니다."
                 }
               ],
               "desc": "끌어다 놓을 아이템 목록과 그 배치."
@@ -474,6 +493,24 @@
       ],
       "note": "items 안에 target 이 있는 아이템이 하나 이상 있어야 한다.",
       "why": "이닝 종료 조건이 정답 아이템이 다 안착했는가입니다. 하나도 없으면 문제를 풀기 전에 이닝이 끝납니다."
+    },
+    {
+      "id": "lottie-character-four-ani",
+      "kind": "present",
+      "each": "inningData[].character.child",
+      "when": {
+        "pick": "data.type",
+        "is": "lottie"
+      },
+      "picks": [
+        "data.alias_normal",
+        "data.alias_talk",
+        "data.alias_correct",
+        "data.alias_end"
+      ],
+      "note": "캐릭터 type 이 lottie 면 애니 넷(alias_normal · alias_talk · alias_correct · alias_end)이 다 있어야 한다.",
+      "why": "readyAni 가 넷을 다 만들고 showAni 가 넷을 다 멈추고 켭니다(CharacterPanel.ts). 하나라도 없으면 그 상태에서 멈춥니다. type 이 image 면 애니를 안 만들고 showAni 도 바로 돌아가므로 없어도 됩니다(MAL1M08W4S2, 2026-10-13).",
+      "level": "error"
     }
   ]
 }
