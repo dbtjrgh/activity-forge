@@ -197,3 +197,7 @@ yarn build
 ```
 
 Claude Code 안에서 Electron 을 띄울 때는 상속된 `ELECTRON_RUN_AS_NODE` 를 먼저 지워야 합니다.
+
+## 관련 프로젝트
+
+- [device-qa-board](https://github.com/dbtjrgh/device-qa-board) — 같은 학습 액티비티들을 태블릿 · 전자칠판 실기기에서 검수할 때 만든 기록 · 현황 보고 도구. 기기별 문제 기록, 같은 모듈로 검수 범위 줄이기, A4 PDF 보고서
