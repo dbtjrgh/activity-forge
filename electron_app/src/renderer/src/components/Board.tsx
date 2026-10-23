@@ -1,10 +1,11 @@
 import { statusOf, type BoardResult } from '../../../shared/forge'
+import { TOUR_ANCHOR } from '../lib/anchors'
 import LayoutPicks from './board/LayoutPicks'
 import NowList from './board/NowList'
 import RunTable from './board/RunTable'
-import { ShotRoundBar, useShotRound } from './board/ShotRound'
 import StatusBar from './board/StatusBar'
 import Tiles from './board/Tiles'
+import VacationList from './board/VacationList'
 import './board/board.css'
 
 /**
@@ -21,11 +22,10 @@ function Board({
 }: {
   result: BoardResult
   onForge: (code: string) => void
-  /** 칸의 형편이 바뀌었다(화면을 붙였다) — 진행판을 다시 읽는다 */
+  /** 칸의 형편이 바뀌었다(배치표를 골랐다) — 진행판을 다시 읽는다 */
   onChanged: () => void
 }) {
   const done = result.rows.filter((r) => statusOf(r).status === '개발 완료').length
-  const round = useShotRound(result.rows, onChanged)
 
   return (
     <div className="board">
@@ -47,13 +47,13 @@ function Board({
       {result.rows.length > 0 && (
         <>
           <StatusBar rows={result.rows} />
-          {/* 화면 모으기 중에는 칸 고르기가 우선이라 숨긴다 */}
-          {!round.on && done < result.rows.length && <NowList rows={result.rows} onOpen={onForge} />}
-          <div className="board-actions">
-            <ShotRoundBar round={round} />
-          </div>
+          {done < result.rows.length && <NowList rows={result.rows} onOpen={onForge} />}
           <LayoutPicks subject={result.subject} issue={result.issue} rows={result.rows} onChanged={onChanged} />
-          <Tiles rows={result.rows} onOpen={round.on ? round.pick : onForge} picked={round.picked} />
+          {/* 방학호와 리소스가 거의 다 같은 짝 — 1~5호 · 6호(방학)에만 있다 */}
+          <VacationList rows={result.rows} onOpen={onForge} />
+          <div id={TOUR_ANCHOR.boardTiles}>
+            <Tiles rows={result.rows} onOpen={onForge} />
+          </div>
           <RunTable subject={result.subject} issue={result.issue} refresh={result.rows} />
 
           {result.skipped.slots.length > 0 && (

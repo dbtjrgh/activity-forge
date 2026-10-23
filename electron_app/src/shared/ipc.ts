@@ -8,6 +8,8 @@ export * from './folders'
  */
 export const IPC = {
   getVersion: 'app:getVersion',
+  /** dev 앱 — 켤 때 빌드한 뒤 고친 메인 · preload · 공용 소스(`components/DevCodeBar.tsx`). 실행 파일은 null */
+  appCodeChanged: 'app:codeChanged',
   listFolders: 'fs:listFolders',
   folderInfo: 'fs:folderInfo',
   folderSize: 'fs:folderSize',
@@ -21,6 +23,8 @@ export const IPC = {
   /** 배치표가 갈린 칸 한 장 · 그 칸 고르기 (M7) */
   forgeLayoutAsks: 'forge:layoutAsks',
   forgeLayoutPick: 'forge:layoutPick',
+  /** 과목의 공용 모듈 폴더 — 앞선 호가 없는 학습코드의 모듈을 고를 목록 (`modulefolders.ts`) */
+  forgeModuleFolders: 'forge:moduleFolders',
   forgeBoard: 'forge:board',
   /** 학습코드별 기록 표 (`runtable.ts`) */
   forgeRunTable: 'forge:runTable',
@@ -30,12 +34,24 @@ export const IPC = {
   forgePickRscRoot: 'forge:pickRscRoot',
   /** 그 자리를 글로 정한다. **빈 글이면 원래대로**(호 저장소 안) */
   forgeSetRscRoot: 'forge:setRscRoot',
+  /** 사내 공유 폴더를 글로 정한다. **빈 글이면 기본 주소** */
+  forgeSetShareRoot: 'forge:setShareRoot',
+  /** 공용 폴더(sparkon_common) — 대화상자로 고르기 · 기본 자리로 되돌리기. 렌더러는 경로를 안 보낸다 (2026-10-21) */
+  forgePickCommonRoot: 'forge:pickCommonRoot',
+  forgeClearCommonRoot: 'forge:clearCommonRoot',
   /** 만든 사람 · 팀 — 「끝」이 activityInfo.json 에 적는 이름 */
   forgeSetMe: 'forge:setMe',
-  /** 스펙이 없는 모듈 — 스펙 주인의 옆줄 알림 */
+  /** 스펙이 없는 모듈 — 옆줄 알림(2026-10-21 부터 모두에게) */
   forgeNewModules: 'forge:newModules',
   /** 팀 일정표 갱신 — 완료 목록을 내 컴퓨터에 잠깐 띄우고 일정표를 연다(칠하는 것은 엑셀 스크립트) */
   forgeTeamSheet: 'forge:teamSheet',
+  /** 진행판 맨 위 「main 에 모두 올리기」 — 계획 · 실행 · 도는 동안 진행 줄 (`hallsyncall.ts`) */
+  forgeSyncPlan: 'forge:syncPlan',
+  forgeSyncRun: 'forge:syncRun',
+  forgeSyncEvent: 'forge:sync:event',
+  /** 진행판 맨 위 「리소스 폴더 정리」 — 학습코드 전부를 재기 · 옮기기 (`rsccleanall.ts`) */
+  forgeRscCleanAll: 'forge:rscCleanAll',
+  forgeRscCleanAllRun: 'forge:rscCleanAllRun',
   /**
    * **스펙을 읽을 양산기 폴더를 고른다** (2026-09-18).
    *
@@ -52,6 +68,8 @@ export const IPC = {
   // 양산기 — 리소스 화면 (앱이 만든 화면)
   /** 그 학습코드의 리소스 폴더를 만들고 탐색기로 연다 — 누를 때만 만든다 */
   forgeResourceDir: 'forge:resourceDir',
+  /** 그 학습코드의 호 저장소 폴더(액티비티 · 리소스)를 탐색기로 연다 — 만들지 않는다 */
+  forgeHallFolder: 'forge:hallFolder',
   /** 학습코드 하나로 「묻지 않고 알 수 있는 것」을 한 번에 받는다 */
   forgePrepare: 'forge:prepare',
   /**
@@ -69,6 +87,9 @@ export const IPC = {
   /** 원본 바꾸기 — 그 모듈을 쓴 앞 학습코드 전부 · 하나 골라 배치표에(null 이면 처음 추천으로) */
   forgeOriginChoices: 'forge:originChoices',
   forgeOriginPick: 'forge:originPick',
+  /** 기획서 1쪽 모듈넘버와 배치표 모듈 · 기획서대로 바꾸기 (`planmodule.ts`) — 바꿀 때도 학습코드만 받는다 */
+  forgePlanModule: 'forge:planModule',
+  forgePlanModuleUse: 'forge:planModuleUse',
   /** 폴더에 남은 다른 호 원본 파일을 휴지통으로 — 학습코드만 받고 목록은 메인이 다시 센다 */
   forgeLeftoverTrash: 'forge:leftoverTrash',
   /** 그 화면 **한 장**을 지운다 */
@@ -96,6 +117,8 @@ export const IPC = {
   forgeChatStop: 'forge:chat:stop',
   forgeChatClear: 'forge:chat:clear',
   forgeChatEvent: 'forge:chat:event',
+  /** 「미리보기에서 확인할 것」을 봤다 — 검수 완료 단추를 켠다 (2026-10-14, `chatgate.ts`) */
+  forgeChatLookSeen: 'forge:chat:lookSeen',
   /** 띄우기 전 점검 — 정션이 걸렸나, 어느 호가 걸려 있나 */
   forgeViewCheck: 'forge:viewCheck',
   forgeLink: 'forge:link',
@@ -105,15 +128,17 @@ export const IPC = {
   forgeViewStop: 'forge:viewStop',
   /** 「끝」 — 호 저장소의 activityInfo.json 을 개발 끝으로 (M7) */
   forgeDone: 'forge:done',
-  /** 「양산 완료 커밋」 — 호 저장소에 그 학습코드만 커밋 · 푸시 · main (`hallcommit.ts`) */
+  /** 「양산 완료 커밋」 — 호 저장소에 그 학습코드만 커밋 · 푸시 (`hallcommit.ts`). main 은 진행판의 「main 에 모두 올리기」 */
   forgeCommit: 'forge:commit',
-  forgePushMain: 'forge:pushMain',
   /** 호 저장소에 있는데 안 쓰는 리소스 — 목록 · 휴지통으로 (`pubextra.ts`) */
   forgePubExtra: 'forge:pubExtra',
   forgePubExtraTrash: 'forge:pubExtraTrash',
-  /** 완료 뒤 리소스 폴더 정리 — 무엇을 옮기나 · 옮기기 (`rscclean.ts`) */
-  forgeRscCleanPlan: 'forge:rscCleanPlan',
-  forgeRscClean: 'forge:rscClean',
+  forgePageNeeds: 'forge:pageNeeds',
+  /** 사내 공유 폴더에서 기획서 소리 · 애니메이션 · 영상 찾기 · 가져오기 (`sharefetch.ts`) */
+  forgeShareLook: 'forge:shareLook',
+  forgeShareTake: 'forge:shareTake',
+  forgeResetPlan: 'forge:resetPlan',
+  forgeReset: 'forge:reset',
   /** 서버가 뱉는 줄을 그때그때 화면으로 */
   forgeViewLog: 'forge:view:log',
   /** 바깥 브라우저로 주소 열기 */
@@ -130,6 +155,11 @@ export const IPC = {
   manageGate: 'manage:gate',
   manageGateRun: 'manage:gateRun',
   manageTeams: 'manage:teams',
+  // 빠른 모듈 회귀 검사 (2026-10-15) — 고친 모듈 · 지난 결과와 진행 · 돌려 보기 · 도는 동안 진행 줄. 돌려 보기만 `_recipe/_regress.json` 을 쓴다
+  manageRegressChanged: 'manage:regressChanged',
+  manageRegress: 'manage:regress',
+  manageRegressRun: 'manage:regressRun',
+  manageRegressEvent: 'manage:regress:event',
   // 받을 리소스 창 (2026-09-30) — 읽기만. 앞 학습코드 리소스를 figma 옆에 그림으로
   guideGet: 'guide:get',
   guideThumbs: 'guide:thumbs',
@@ -140,9 +170,14 @@ export const IPC = {
   guideVoiceUse: 'guide:voiceUse',
   guideVoiceHear: 'guide:voiceHear',
   guideVoiceKeep: 'guide:voiceKeep',
-  // 처음 설정 (2026-10-01) — 양산기 폴더를 못 찾으면 뜨는 창. 작업 폴더를 고르면 저장소를 내려받고 다시 켠다
+  // 처음 설정 (2026-10-01) — 양산기 폴더를 못 찾으면 뜨는 창. 작업 폴더를 고르면 점검표 · 「설정 완료」(양산기 받기 · 저장소 준비, 진행 줄) · 「마치기」
   setupState: 'setup:state',
   setupPickWork: 'setup:pickWork',
+  setupRecheck: 'setup:recheck',
+  setupBranchPlan: 'setup:branchPlan',
   setupRun: 'setup:run',
-  setupOpenInstall: 'setup:openInstall'
+  setupEvent: 'setup:event',
+  setupFinish: 'setup:finish',
+  setupOpenInstall: 'setup:openInstall',
+  setupGitIdentity: 'setup:gitIdentity'
 } as const

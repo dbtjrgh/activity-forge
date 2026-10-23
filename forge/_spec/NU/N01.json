@@ -1,0 +1,215 @@
+{
+  "specVersion": 1,
+  "module": "N01",
+  "subject": "NU",
+  "title": "장면 속 친구 눌러 이야기 듣기",
+  "summary": "도입 화면에서 선생님 그림을 누르면 안내 내레이션(nar01, nar02)이 나오고 다음 단추가 뜹니다. 그 뒤 이닝마다 배경이 바뀌고 누를 친구(touchChar)가 크게 두 번 들썩입니다. 친구를 누르면 답 카드가 열리며 그 이닝 내레이션이 나오고, 다음 단추로 넘어갑니다. 마지막 이닝은 completeBtnImg 를 주면 완료(V) 단추로 바뀝니다. 같은 장면 꼴을 카드 여섯 장으로 바꾼 것이 N01_2 입니다.",
+  "reference": {
+    "moduleCommit": "665a2e852b84ee432e805066f708deaede0c79d9",
+    "moduleCommitWhy": "2026-10-21 누리 스펙을 처음 쓰며 모듈 코드와 1호 표본을 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/NU/N01",
+    "activities": [
+      "NUL1M01W1S2",
+      "NUL1M01W4S2"
+    ],
+    "note": "개발 완료 완성본은 1호 NUL1M01W1S2 · NUL1M01W4S2 둘입니다(2026-10-21). 필수 여부와 칸 수는 그 둘로 정했고, 모듈 코드가 없어도 된다고 밝힌 자리(completeBtnImg)만 넓혔습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "// 첫 진입에 나던 '철컥' 효과음을 뺀다 (수정 요청).",
+        "// 공통 InningDisplay.show() 가 이닝표시를 내릴 때 늘 같이 트는 inning_show 라",
+        "// N01 쪽에서는 끌 방법이 없다 — 이 활동에서만 음원을 음소거해 막는다.",
+        "// 이닝 완료 표시음(inningmark_on)과 도우미 등장음(charac_in)은 그대로 둔다.",
+        "AudioManager.getSound(\"inning_show\")?.mute(true);",
+        "N01.handle.init(quizData);",
+        "this.addChild(N01.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await N01.handle.start();",
+        "await N01.handle.play();",
+        "await N01.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "N01",
+      "from": "@_common/module/NU/N01/N01"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "처음 깔리는 배경. BgManager.ts 가 AssetManager.get(\"bg1\") 로 이름을 박아 부릅니다 — 없으면 화면이 빕니다. 완성본 2개 다 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "close_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "답 카드를 닫는 단추. AnswerCard.ts 가 이름을 박아 부릅니다. 완성본 2개 다 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "next_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다음 단추. NextButton.ts 가 이름을 박아 부릅니다. 완성본 2개 다 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "N01.ts start() 가 AudioManager.getSound(\"bgm\") 으로 찾아 바로 loop 를 겁니다 — 없으면 시작하자마자 멈춥니다. 도입이 끝나면 끕니다. 완성본 2개 다 가짐(2026-10-21)."
+      },
+      {
+        "alias": "touchSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "누르는 소리. Preview.ts · CharacterManager.ts · AnswerCard.ts · NextButton.ts 가 이름을 박아 틉니다. 완성본 2개 다 가짐(2026-10-21)."
+      },
+      {
+        "alias": "nar01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "도입 화면에서 선생님을 누르면 nar01 · nar02 를 차례로 틉니다(Preview.ts affordance). GameData 로 못 바꾸는 이름입니다. 완성본 2개 다 가짐(2026-10-21)."
+      },
+      {
+        "alias": "nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "nar01 다음에 이어지는 도입 내레이션(Preview.ts). 이것이 끝나야 다음 단추가 뜹니다. 완성본 2개 다 가짐(2026-10-21)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "completeBtnImg",
+        "type": "asset:image",
+        "optional": true,
+        "desc": "마지막 이닝의 다음 단추를 바꿀 완료(V) 그림. 안 주면 끝까지 다음 단추입니다(N01.ts init, 수정 요청). 완성본 둘은 complete_btn 을 줍니다."
+      },
+      {
+        "key": "inningdata",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "desc": "이닝 목록. 한 칸이 이닝 하나이고, 칸 안은 type 을 붙인 조각들입니다. 이닝 수만큼 이닝 표시가 생깁니다. 완성본은 6이닝 · 4이닝입니다.",
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 3,
+          "desc": "이닝 하나의 조각들. 보통 bg · touchChar · answerCard 이고, 첫 이닝에는 mainCharSound 를 더합니다.",
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "type",
+                "type": "enum",
+                "required": true,
+                "values": [
+                  "answerCard",
+                  "bg",
+                  "mainCharSound",
+                  "nonTouchChar",
+                  "touchChar",
+                  "sound"
+                ],
+                "desc": "bg 는 배경, touchChar 는 누를 친구, nonTouchChar 는 장식으로만 서 있는 친구, answerCard 는 친구를 누르면 열리는 카드, mainCharSound 는 도우미가 하는 지시문, sound 는 그냥 트는 소리입니다(N01.ts play). sound 는 모듈이 받지만 완성본은 안 씁니다."
+              },
+              {
+                "key": "img",
+                "type": "asset:image",
+                "optional": true,
+                "desc": "bg · touchChar · nonTouchChar · answerCard 의 그림"
+              },
+              {
+                "key": "pos",
+                "type": "point",
+                "optional": true,
+                "figma": true,
+                "desc": "그림 자리(화면 가운데 기준, 그림 가운데). bg 와 answerCard 는 완성본이 (0, 0) 입니다."
+              },
+              {
+                "key": "sound",
+                "type": "asset:sound",
+                "optional": true,
+                "desc": "answerCard 는 카드가 열릴 때 트는 그 이닝 내레이션, mainCharSound 는 도우미 지시문입니다. 도우미를 누르면 마지막 지시문을 다시 들려줍니다."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "previewData",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "desc": "도입 화면 조각들. 차례대로 깔고 틉니다. 완성본은 bg, 선생님(touch:false), 누를 그림(touch:true), mainCharSound 넷입니다.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "type",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "bg",
+                "mainCharSound",
+                "preview",
+                "sound"
+              ],
+              "desc": "bg 는 배경, preview 는 도입 그림, mainCharSound 는 도우미 지시문, sound 는 그냥 트는 소리입니다(N01.ts play). sound 는 모듈이 받지만 완성본은 안 씁니다."
+            },
+            {
+              "key": "img",
+              "type": "asset:image",
+              "optional": true,
+              "desc": "bg · preview 의 그림"
+            },
+            {
+              "key": "pos",
+              "type": "point",
+              "optional": true,
+              "figma": true,
+              "desc": "그림 자리(화면 가운데 기준, 그림 가운데)"
+            },
+            {
+              "key": "touch",
+              "type": "bool",
+              "optional": true,
+              "desc": "preview 가운데 누를 그림이면 true. 지시문이 끝난 뒤 이 그림이 두 번 들썩이고, 누르면 nar01 · nar02 가 나옵니다."
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "optional": true,
+              "desc": "mainCharSound · sound 의 소리. preview 에 적은 sound 는 모듈이 읽지 않습니다(완성본은 빈 글자)."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "notes": [
+    "bgm · touchSound 는 완성본 둘 다 같은 이름의 누리 공용 파일(NU_com_bgm_01.mp3 · NU_com_sfx01.mp3)을 씁니다.",
+    "도우미를 누르면 지금 단계의 지시문(mainCharSound)을 다시 들려줍니다. 2이닝부터는 지시문을 따로 안 주면 첫 이닝 것이 그대로 남습니다."
+  ]
+}

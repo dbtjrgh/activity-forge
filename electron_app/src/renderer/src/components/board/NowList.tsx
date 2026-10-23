@@ -1,4 +1,6 @@
-import { statusOf, toneOf, wantsShot, type BoardRow, type Status } from '../../../../shared/forge'
+import { shownModule, statusOf, TITLE, toneOf, wantsShot, type BoardRow, type Status } from '../../../../shared/forge'
+import { TOUR_ANCHOR } from '../../lib/anchors'
+import './markcard.css'
 import './nowlist.css'
 
 /**
@@ -9,7 +11,7 @@ import './nowlist.css'
  * **완료에 가까운 것부터** — 답변 · 검수를 먼저 끝내야 개발 완료 수가 는다.
  */
 
-/** `has` 가 있으면 상태 대신 그것으로 고른다 — 화면 붙이기는 「화면 연속 붙여넣기」와 같은 셈(`wantsShot`) */
+/** `has` 가 있으면 상태 대신 그것으로 고른다 — 화면 붙이기는 `wantsShot` */
 const GROUPS: { key: string; title: string; status: Status; has?: (row: BoardRow) => boolean }[] = [
   { key: 'ask', title: '질문 답변', status: '답변 필요' },
   { key: 'view', title: '미리보기와 검수', status: '검수 대기' },
@@ -27,23 +29,23 @@ function NowList({ rows, onOpen }: { rows: BoardRow[]; onOpen: (code: string) =>
   const total = groups.reduce((n, g) => n + g.rows.length, 0)
 
   if (total === 0) {
-    return <p className="now-none">지금 바로 할 수 있는 학습코드가 없습니다. 리소스나 스펙이 들어오면 여기에 나옵니다.</p>
+    return <p className="now-none">지금 바로 할 수 있는 학습코드가 없습니다.</p>
   }
   return (
-    <section className="now-list">
+    <section className="mark-list now-list" id={TOUR_ANCHOR.boardNow}>
       <h3>
-        지금 바로 할 수 있는 학습코드 <strong>{total}</strong>개
+        {TITLE.now} <strong>{total}</strong>개
       </h3>
       {groups.map((g) => (
-        <div key={g.key} className={`now-group tone-${toneOf(g.status)}`}>
-          <span className="now-title">
+        <div key={g.key} className={`mark-group tone-${toneOf(g.status)}`}>
+          <span className="mark-title now-title">
             {g.title} <b>{g.rows.length}</b>
           </span>
-          <span className="now-codes">
+          <span className="mark-items">
             {g.rows.map((r) => (
-              <button key={r.code} className="now-code" onClick={() => onOpen(r.code)} title={statusOf(r).next}>
+              <button key={r.code} className="mark-code mine" onClick={() => onOpen(r.code)} title={statusOf(r).next}>
                 <span className="mono">{r.code}</span>
-                <span className="now-module mono">{r.module || r.usedModule || ''}</span>
+                <span className="now-module mono">{shownModule(r)}</span>
               </button>
             ))}
           </span>

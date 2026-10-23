@@ -5,6 +5,8 @@
   "title": "끌어다 담기 — 조건에 맞는 선지 고르기",
   "summary": "몬스터가 이닝마다 조건을 말하고, 학생이 선지 그림을 끌어다 담는 자리(장바구니)에 넣습니다. 맞으면 팝업이 뜨고, 그 이닝의 정답을 다 담으면 다음 이닝으로 갑니다. 이닝을 다 마치면 엔딩 화면이 뜹니다.",
   "reference": {
+    "moduleCommit": "efa827ff2005678a94e409b83de34826ac24e6a4",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M28",
     "activities": [
       "MAL1M02W4S2",
@@ -342,7 +344,7 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "선지가 놓이는 자리표. 이닝마다 items 의 순번대로 그대로 씁니다 — 자리 수가 어느 이닝의 선지 수보다 적으면 터집니다(QuizItemManager.ts:78)."
+        "desc": "선지가 놓이는 자리표. 이닝마다 items 의 순번대로 그대로 씁니다 — 자리 수가 어느 이닝의 선지 수보다 적으면 터집니다(QuizItemManager.ts:78). 그 이닝에 inningData[].itemPos 가 있으면 그것을 씁니다."
       },
       {
         "key": "popup",
@@ -390,6 +392,38 @@
               "type": "bool",
               "required": true,
               "desc": "이닝을 시작할 때 items 순서를 섞습니다. 자리는 quizItemPos 순번이라 섞여도 자리 자체는 그대로입니다."
+            },
+            {
+              "key": "itemPos",
+              "type": "array",
+              "optional": true,
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "x",
+                    "type": "number",
+                    "required": true,
+                    "desc": "화면 기준 좌표라 figma 값으로 적을 수 있습니다. 선지 그림은 가운데가 기준입니다."
+                  },
+                  {
+                    "key": "y",
+                    "type": "number",
+                    "required": true,
+                    "desc": "자리 y (화면 가운데가 0)."
+                  },
+                  {
+                    "key": "scale",
+                    "type": "number",
+                    "required": true,
+                    "default": 1,
+                    "desc": "그 자리에 놓이는 문제 항목의 배율."
+                  }
+                ],
+                "desc": "칸 하나."
+              },
+              "desc": "이 이닝만 선지 자리를 따로 줄 때 — 없으면 quizItemPos 를 씁니다(M28.ts play). 이닝마다 선지 수가 다르고 figma 배치가 다를 때 씁니다. 9호 MAL2M08W2S2 는 선지 4개 이닝은 2×2, 3개 이닝은 위 두 칸 그대로 셋째를 아래 줄 가운데(두 칸 x 의 가운데)에 둡니다. 자리 수가 그 이닝 선지 수보다 적으면 터집니다."
             },
             {
               "key": "quizBalloon",

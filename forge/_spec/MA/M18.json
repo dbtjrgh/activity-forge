@@ -5,6 +5,8 @@
   "title": "다리 건너기 (수만큼 다리 놓기)",
   "summary": "캐릭터가 다리를 건너가는 활동. 다리 조각을 골라 놓아 길을 이으면 캐릭터가 뛰어 건너고, 이닝마다 다리 구성과 정답이 다릅니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M18",
     "activities": [
       "MAL1M01W4S2"

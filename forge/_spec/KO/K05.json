@@ -5,6 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
+    "moduleCommit": "478422f413a503226707a621cfcf3f32e08cfb58",
+    "moduleCommitWhy": "2026-10-14 모듈 코드와 맞춰 봤습니다 — 4이닝(공용 478422f)을 관계로 받습니다.",
     "module": "sparkon_common/_common/module/KR/K05",
     "activities": [
       "KOL2M01W2S1",
@@ -201,7 +203,8 @@
         "key": "tempText",
         "type": "array",
         "required": true,
-        "minLength": 5,
+        "minLength": 4,
+        "minLengthWhy": "패널 B · S · O · K 넷은 모듈이 늘 만들고 P 는 wordCount 가 5 일 때만 만듭니다(K05.ts). 길이는 관계 word-count-matches-text 가 wordCount 와 맞춰 봅니다. 공용 478422f(2026-10-06)부터 4이닝이 됩니다.",
         "of": {
           "key": "",
           "type": "enum",
@@ -614,7 +617,7 @@
       {
         "key": "PanelP",
         "type": "object",
-        "required": true,
+        "requiredIf": "wordCount 가 5 일 때",
         "fields": [
           {
             "key": "x",
@@ -1484,7 +1487,7 @@
       {
         "key": "DrawingP",
         "type": "object",
-        "required": true,
+        "requiredIf": "wordCount 가 5 일 때",
         "fields": [
           {
             "key": "x",
@@ -1689,7 +1692,7 @@
       {
         "key": "TextP",
         "type": "object",
-        "required": true,
+        "requiredIf": "wordCount 가 5 일 때",
         "fields": [
           {
             "key": "x",
@@ -1894,7 +1897,7 @@
       {
         "key": "BlankP",
         "type": "object",
-        "required": true,
+        "requiredIf": "wordCount 가 5 일 때",
         "fields": [
           {
             "key": "x",
@@ -2138,9 +2141,11 @@
             "key": "label",
             "type": "asset:image",
             "required": true,
-            "default": "FirstFrameP"
+            "default": "FirstFrameP",
+            "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — 그림은 FirstFrame + tempText 글자로 부릅니다(Drawing.ts). 4이닝(tempText 에 P 가 없음)이면 FirstFrameP 그림은 AssetTable 에 없습니다(10호 KOL2M10W2S1)."
           }
-        ]
+        ],
+        "desc": "첫 스티커 틀의 자리. 모듈은 이 칸의 x · y 를 모든 판에 쓰고, 그림은 FirstFrame + tempText 글자로 부릅니다(Drawing.ts)."
       },
       {
         "key": "SecondFrame",
@@ -2479,7 +2484,7 @@
       {
         "key": "DragFirstP",
         "type": "object",
-        "required": true,
+        "requiredIf": "wordCount 가 5 일 때",
         "fields": [
           {
             "key": "x",
@@ -2684,7 +2689,7 @@
       {
         "key": "DragSecondP",
         "type": "object",
-        "required": true,
+        "requiredIf": "wordCount 가 5 일 때",
         "fields": [
           {
             "key": "x",
@@ -2889,7 +2894,7 @@
       {
         "key": "DragThirdP",
         "type": "object",
-        "required": true,
+        "requiredIf": "wordCount 가 5 일 때",
         "fields": [
           {
             "key": "x",
@@ -3228,5 +3233,45 @@
         ]
       }
     ]
-  }
+  },
+  "relations": [
+    {
+      "id": "word-count-range",
+      "kind": "range",
+      "pick": "wordCount",
+      "min": 4,
+      "max": 5,
+      "note": "wordCount 는 4 나 5 다.",
+      "why": "K05.ts 가 패널 B · S · O · K 넷은 늘 만들고 P 는 wordCount 가 5 일 때만 만듭니다. 4 보다 적으면 그림 판이 없는 패널이 남고, 5 보다 많으면 패널이 없는 그림 판이 생겨 끝낼 수 없습니다."
+    },
+    {
+      "id": "word-count-matches-text",
+      "kind": "sameCount",
+      "picks": [
+        "wordCount",
+        "tempText"
+      ],
+      "note": "tempText 칸 수가 wordCount 와 같아야 한다.",
+      "why": "모듈은 wordCount 만큼 그림 판을 만들고 판마다 tempText[i] 글자로 그림 이름을 부릅니다(Drawing.ts). 수가 다르면 글자가 없는 판이 생기거나 남는 글자가 조용히 안 쓰입니다."
+    },
+    {
+      "id": "fifth-panel-fields",
+      "kind": "present",
+      "when": {
+        "pick": "wordCount",
+        "is": 5
+      },
+      "picks": [
+        "PanelP",
+        "DrawingP",
+        "TextP",
+        "BlankP",
+        "DragFirstP",
+        "DragSecondP",
+        "DragThirdP"
+      ],
+      "note": "wordCount 가 5 면 P 항목 일곱이 있어야 한다.",
+      "why": "K05.ts 가 wordCount 가 5 일 때만 다섯째 패널(PanelP)을 만들고, Drawing.ts 가 그 판에서 Drawing · Text · Blank · DragFirst · DragSecond · DragThird 에 글자 P 를 붙여 자리를 읽습니다. 4이닝(10호 KOL2M10W2S1)은 P 항목이 없습니다."
+    }
+  ]
 }

@@ -9,7 +9,7 @@
  * 빈 칸이 `undefined` 면 화면이 넘어진다 — 까닭 한 줄만 담고 나머지는 비운다.
  */
 
-import type { InboxResult, Prepare, SortedInbox } from '../../shared/forge'
+import type { InboxResult, Prepare, ShareLook, ShareTake, SortedInbox } from '../../shared/forge'
 
 /** 학습코드가 아닌 것은 서비스까지 보내지 않는다. 검증은 이 층에서 한 번만. */
 export function badCode(raw: unknown): Prepare {
@@ -22,6 +22,7 @@ export function badCode(raw: unknown): Prepare {
     layout: { ok: false, module: '', origin: '', slot: '', verdict: '', why, sameSlot: false, alt: [] },
     rsc: { dir: '', exists: false, files: [], error: why },
     need: [],
+    planSound: { names: 0, note: '' },
     write: { dir: '', writable: null, why },
     hasSpec: false,
     planReader: '',
@@ -36,6 +37,12 @@ export function badCode(raw: unknown): Prepare {
 /** 통째로 놓은 것을 받지도 못했을 때. */
 export function badSort(why: string): SortedInbox {
   return { found: 0, truncated: false, lessons: [], papers: [], ask: [], failed: [], note: '', error: why }
+}
+
+/** 공유 폴더 가져오기를 받지도 못했을 때 — 학습코드가 아니거나 보인 자리 목록이 아닐 때 */
+export function badShare(raw: unknown, why = badCode(raw).error as string): ShareTake {
+  const look: ShareLook = { code: String(raw ?? ''), dir: '', root: '', items: [], have: 0, miss: [], planNames: 0, notes: [], truncated: '', ms: 0, error: why }
+  return { look, put: badInbox(why) }
 }
 
 /** 놓은 것을 받지도 못했을 때. 막힌 까닭만 담는다. */

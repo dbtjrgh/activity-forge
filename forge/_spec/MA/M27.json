@@ -5,6 +5,8 @@
   "title": "캐릭터 퀴즈 + 선지 고르기",
   "summary": "이닝마다 캐릭터(또는 이미지)가 문제를 내고, 학생이 선지 중 하나를 골라 맞히는 모듈. 이닝 수 = 문제 수.",
   "reference": {
+    "moduleCommit": "c85ccbfbbf3d9dcd8f0de1a5aa33af72d84117c2",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-28) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M27",
     "activities": [
       "MAL1M02W3S2",

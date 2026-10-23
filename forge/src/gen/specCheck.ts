@@ -16,10 +16,12 @@
 //   specCheckBase   공용 이름 꼴 · codegen · assets · rules · relations
 //   specCheckData   gameData 뿌리 · 자리 목록 · 이어진 칸
 //   specCheckField  자리 하나 · 배리언트
+//   (여기)          variantKey — 모듈 안 구현을 고르는 자리 (2026-10-13)
 
 import type { Spec } from "./types";
-import { IDENT, SUBJECTS, isObj, checkCodegen, checkAssets, checkRules, checkRelations } from "./specCheckBase";
+import { IDENT, isObj, checkCodegen, checkAssets, checkRules, checkRelations } from "./specCheckBase";
 import { checkGameData } from "./specCheckData";
+import { SUBJECT_CODES, isSubject } from "./subjects";
 
 export interface SpecCheck {
   ok: boolean;
@@ -38,8 +40,8 @@ export function validateSpec(input: unknown): SpecCheck {
   if (typeof s.module !== "string" || !IDENT.test(s.module)) {
     errors.push("module 이름이 식별자가 아닙니다.");
   }
-  if (typeof s.subject !== "string" || !SUBJECTS.includes(s.subject)) {
-    errors.push("subject 는 MA·KO·EN 중 하나여야 합니다.");
+  if (typeof s.subject !== "string" || !isSubject(s.subject)) {
+    errors.push(`subject 는 ${SUBJECT_CODES.join(", ")} 중 하나여야 합니다.`);
   }
   // **비어 있는 title 은 통과시킵니다.** 112장을 기계가 뽑아 놓았고 제목은
   // 그 모듈을 쓸 때 채우기로 했습니다. 없는 것과 빈 것은 다릅니다.
@@ -58,6 +60,26 @@ export function validateSpec(input: unknown): SpecCheck {
   checkGameData(s.gameData, errors);
   checkRules(s.rules, errors);
   checkRelations(s.relations, errors);
+  checkVariantKey(s.variantKey, errors);
 
   return { ok: errors.length === 0, errors };
+}
+
+// **모듈 안 구현을 고르는 자리** (2026-10-13, `typesspec.ts` `VariantKey`). 길이 꼴부터 틀리면 `select()` 가 빈 목록을 돌려주고
+// 대화가 받는 유형 표가 조용히 빈다 — 꼴은 여기서, 「완성본에서 값이 나오나」는 `tool/variantgate.ts` 가 본다.
+const PATH_SEG = /^[^[\].]*(\[[^\]]*\])?$/;
+
+function checkVariantKey(v: unknown, errors: string[]): void {
+  if (v === undefined) return;
+  if (!isObj(v)) {
+    errors.push("variantKey 가 객체가 아닙니다.");
+    return;
+  }
+  if (typeof v.path !== "string" || !v.path || !v.path.split(".").every((seg) => seg !== "" && PATH_SEG.test(seg))) {
+    errors.push(`variantKey.path 가 길 꼴이 아닙니다 — ${JSON.stringify(v.path)} (예: settings.typeList[]).`);
+  }
+  if (typeof v.note !== "string" || !v.note) errors.push("variantKey 에 note 가 없습니다.");
+  if (v.ignore !== undefined && (!Array.isArray(v.ignore) || v.ignore.some((x) => typeof x !== "string"))) {
+    errors.push("variantKey.ignore 는 문자열 배열이어야 합니다.");
+  }
 }

@@ -4,7 +4,7 @@
 
 | 무엇 | 무슨 일이 났나 |
 |---|---|
-| **exe 실행** | 「An Application Control policy has blocked this file」. 사내 보안 프로그램가 서명 없는 exe 를 막습니다. **빌드할 때마다 해시가 바뀌므로 해시 예외는 한 번 쓰고 버려집니다** |
+| **exe 실행** | 「An Application Control policy has blocked this file」. 사내 보안 프로그램이 서명 없는 exe 를 막습니다. **빌드할 때마다 해시가 바뀌므로 해시 예외는 한 번 쓰고 버려집니다** |
 | **`yarn dist:win`(NSIS)** | `spawn UNKNOWN`. electron-builder 가 uninstaller 를 뽑으려고 **방금 만든 `setup.exe` 를 직접 실행**합니다(`NsisTarget.computeScriptAndSignUninstaller` → `WineVmManager.exec`; Windows 에서는 wine 이 아니라 대상을 그대로 spawn). 그 실행이 차단됩니다 |
 
 **서명 설정을 지워도, `CSC_IDENTITY_AUTO_DISCOVERY=false` 로도 안 고쳐집니다.**
@@ -104,7 +104,7 @@ Get-AuthenticodeSignature .\dist\electron-app-1.0.0-setup.exe | Format-List Stat
 
 ## 2. 사내 보안 프로그램(EDR) 예외 등록 — 지금 당장 필요한 조치
 
-사내 보안 프로그램는 보안 업체의 안티랜섬웨어/EDR 제품으로, 행위 기반 차단이 핵심이다.
+사내 보안 프로그램은 보안 업체의 안티랜섬웨어/EDR 제품으로, 행위 기반 차단이 핵심이다.
 서명을 붙여도 **평판이 없는 신규 실행 파일**은 계속 차단될 수 있으므로 예외 등록이 필요하다.
 
 - **회사에서 배포한 제품인 경우**: 관리 콘솔에서 예외를 넣는 것이 가장 빠르다.

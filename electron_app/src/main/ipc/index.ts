@@ -1,6 +1,8 @@
+import { join } from 'node:path'
 import { app, ipcMain, shell } from 'electron'
 import { IPC } from '../../shared/ipc'
 import { localHttp } from '../lib/localurl'
+import { mtimeOr, newerThan } from '../lib/newer'
 import { RUNNING } from '../services/forge/appupdate'
 import { registerChatIpc } from './chat'
 import { registerFolderHandlers } from './folders'
@@ -12,6 +14,7 @@ import { registerPaperIpc } from './paper'
 import { registerPreviewIpc } from './preview'
 import { registerResourceIpc } from './resource'
 import { registerSetupIpc } from './setup'
+import { registerSyncIpc } from './sync'
 
 /**
  * IPC 채널과 서비스를 잇는 얇은 층. **로직을 두지 않는다.**
@@ -27,6 +30,7 @@ import { registerSetupIpc } from './setup'
  *   preview.ts  앱 안 창 (M6)
  *   chat.ts     대화로 만들기 (2026-10-08)
  *   guide.ts    받을 리소스 창 — figma 옆에 켜 두는 앞 학습코드 리소스
+ *   sync.ts     진행판 맨 위 — main 에 모두 올리기 · 리소스 폴더 정리 (2026-10-14)
  *   answers.ts  (채널 아님) 렌더러가 보낸 학습코드를 거르는 신뢰 경계
  *   respond.ts  (채널 아님) 못 간 결과의 모양
  *
@@ -37,6 +41,11 @@ import { registerSetupIpc } from './setup'
 export function registerIpcHandlers(): void {
   // 받은 앱 새 버전으로 떴으면 `app.getVersion()` 은 실행 파일의 판이다 — 지금 도는 코드에 박힌 판을 먼저 (`appupdate.ts`)
   ipcMain.handle(IPC.getVersion, () => RUNNING.version || app.getVersion())
+  // dev 앱 — 켤 때 빌드한 메인 번들보다 늦게 고친 소스. 메인 · preload 는 다시 켜야 먹는다(`components/DevCodeBar.tsx`).
+  // 공용(shared)도 본다 — 메인이 같이 묶는다. 번들 시각은 켤 때 한 번 재 둔다 — 켜 둔 사이에 누가 out/ 을 다시 빌드해도 도는 코드는 옛것이다
+  const src = app.getAppPath()
+  const built = app.isPackaged ? 0 : mtimeOr(join(src, 'out', 'main', 'index.js'), Date.now())
+  ipcMain.handle(IPC.appCodeChanged, () => (app.isPackaged ? null : newerThan(src, ['src/main', 'src/preload', 'src/shared'], built)))
   ipcMain.handle(IPC.openPath, (_event, target: string) => shell.openPath(target))
   ipcMain.handle(IPC.openUrl, async (_event, target: unknown) => {
     const ok = localHttp(String(target ?? ''))
@@ -55,4 +64,5 @@ export function registerIpcHandlers(): void {
   registerGuideIpc()
   registerSetupIpc()
   registerChatIpc()
+  registerSyncIpc()
 }

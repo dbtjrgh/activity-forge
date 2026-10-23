@@ -5,6 +5,8 @@
   "title": "UFO 로 낱말 빨아올려 문장 만들기",
   "summary": "문장을 듣고 아래 늘어선 낱말 중 맞는 것을 UFO 로 빨아올려 순서대로 문장을 완성하는 활동.",
   "reference": {
+    "moduleCommit": "91f04c1d0de057f1ba7e9a1dde9dfe716927892f",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E39",
     "activities": [
       "ENL2M02W3S3",

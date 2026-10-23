@@ -13,8 +13,7 @@ interface Props {
 }
 
 /**
- * 작업 폴더 표시. **무엇을 보고 그 자리를 골랐는지까지 보여 준다** —
- * 양산기 readme 의 「화면 위쪽 작업 폴더에 무엇을 보고 골랐나 나옵니다」와 같은 자리다.
+ * 작업 폴더 표시. 무엇을 보고 골랐는지(`from`)는 2026-10-16 에 화면에서 뺐다.
  *
  * **리소스 자리도 여기서 정한다.** 호 저장소는 이미 만든 회차가 들어 있는 남의
  * 자리라, 시험 삼아 넣고 빼는 일까지 거기서 하면 멀쩡한 것을 건드린다. 정해 두면
@@ -61,9 +60,7 @@ function WorkspaceBar({
       ) : (
         <>
           <p className="path">{workspace.dir || '알 수 없음'}</p>
-          <p className="sub">
-            {workspace.from ? `${workspace.from} 기준, ` : ''}호 {workspace.repos}개
-          </p>
+          <p className="sub">호 {workspace.repos}개</p>
           {workspace.warn && <p className="state error">{workspace.warn}</p>}
 
           <div className="workspace-head">
@@ -72,17 +69,12 @@ function WorkspaceBar({
               변경
             </button>
             {workspace.rscRoot && (
-              <button className="ghost" onClick={onClearRsc} disabled={busy} title="리소스를 호 저장소 안(public/sparklab)에서 읽습니다">
+              <button className="ghost" onClick={onClearRsc} disabled={busy}>
                 호 저장소 안으로
               </button>
             )}
           </div>
           <p className="path">{workspace.rscRoot || '호 저장소 안 (public/sparklab)'}</p>
-          <p className="sub">
-            {workspace.rscRoot
-              ? '학습코드별 리소스를 이 폴더에서 읽습니다.'
-              : '테스트할 때는 다른 폴더를 지정하세요.'}
-          </p>
 
           {/*
             **읽고 있는 자리를 보여 준다.** 스펙을 고쳤는데 안 바뀌면 제일 먼저
@@ -94,7 +86,6 @@ function WorkspaceBar({
             <span className="label">양산기 폴더</span>
           </div>
           <p className="path">{workspace.forgeRoot || '알 수 없음'}</p>
-          <p className="sub">스펙과 배치표를 읽는 폴더입니다. 초기 설정에서 작업 폴더 안에 만듭니다.</p>
         </>
       )}
     </div>

@@ -5,6 +5,8 @@
   "title": "보석 상자 (십·일의 자리 만들기)",
   "summary": "보석을 눌러 모으고, 열 개씩 묶은 것과 낱개를 끌어다 놓아 두 자리 수를 만드는 활동. 이닝마다 목표 수가 정해져 있습니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M21",
     "activities": [
       "MAL3M01W2S2"

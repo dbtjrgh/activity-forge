@@ -5,6 +5,7 @@
 import { chalk } from "./color";
 import { boardOf, moduleOrder, skippedOf, type Stage } from "./layoutboard";
 import { printWhy } from "./layoutwhy";
+import { hoLabel } from "./honame";
 
 // 한 호를 통째로 보는 표. **두 가지를 뿌립니다.**
 //
@@ -29,7 +30,7 @@ function printOrder(subject: string, target: string): boolean {
   const cells = groups.reduce((n, g) => n + g.codes.length, 0);
 
   console.log();
-  console.log(chalk.bold(`${subject} ${Number(target) + 1}호(M${target}) 만드는 차례`));
+  console.log(chalk.bold(`${subject} ${hoLabel(target)} 만드는 차례`));
   console.log(
     chalk.gray(
       `  모듈 ${groups.length}종 · 칸 ${cells}개 —` +
@@ -67,7 +68,7 @@ export function printStatus(subject: string, target: string): boolean {
   }
 
   console.log();
-  console.log(chalk.bold(`${subject} ${Number(target) + 1}호(M${target}) 진행판`));
+  console.log(chalk.bold(`${subject} ${hoLabel(target)} 진행판`));
   console.log(
     chalk.gray(
       `  칸 ${rows.length}개 · 모듈은 배치표가 고릅니다` +

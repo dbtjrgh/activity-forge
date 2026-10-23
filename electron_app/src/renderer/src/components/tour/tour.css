@@ -1,0 +1,76 @@
+/* 둘러보기의 막과 안내 상자 (`Tour.tsx`) — 클래스는 모두 tour- 로 시작한다. 짧은 이름이 온 앱을 덮은 적이 있다(함정 문서) */
+
+/* 어둡게 하는 색 — 막과 구멍 둘레가 같은 값을 써야 구멍이 생기고 없어질 때 어둡기가 같다 */
+.tour-catch,
+.tour-hole {
+  --tour-shade: rgba(0, 0, 0, 0.55);
+}
+
+/* 화면 전체를 덮어 누름을 받는다 — 앱 안의 다른 것(최대 50)보다 위 */
+.tour-catch {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+.tour-catch.tour-dim {
+  background: var(--tour-shade);
+}
+
+/* 짚는 칸 자리 — 바깥만 어둡게 하고 누름은 받지 않는다(아래 막이 받는다) */
+.tour-hole {
+  position: fixed;
+  z-index: 1000;
+  border-radius: var(--radius-2);
+  box-shadow: 0 0 0 9999px var(--tour-shade);
+  outline: 2px solid var(--accent);
+  pointer-events: none;
+}
+
+.tour-box {
+  position: fixed;
+  z-index: 1001;
+  /* 너비 · 최대 너비는 `Tour.tsx` 가 준다(BOX_W · GAP) — 자리 계산과 같은 값이어야 오른쪽 밖으로 안 나간다 */
+  box-sizing: border-box;
+  padding: var(--gap-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--surface);
+  color: var(--fg);
+  font-size: var(--font-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  outline: none;
+}
+.tour-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap-2);
+}
+.tour-title {
+  font-size: var(--font-md);
+}
+.tour-count {
+  color: var(--muted);
+  font-size: var(--font-sm);
+}
+.tour-box p {
+  margin: var(--gap-2) 0 0;
+  line-height: 1.5;
+}
+.tour-text {
+  font-size: var(--font-md);
+}
+.tour-note {
+  color: var(--warn);
+  font-size: var(--font-sm);
+}
+.tour-wait {
+  color: var(--muted);
+  font-size: var(--font-sm);
+}
+.tour-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--gap-2);
+  margin-top: var(--gap-3);
+}

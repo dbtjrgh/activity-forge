@@ -5,6 +5,8 @@
   "title": "도르래로 상자 옮기기",
   "summary": "도르래와 줄로 상자를 끌어 올려 정해진 자리에 놓는 활동. 이닝마다 상자 구성과 놓을 자리가 다릅니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M16",
     "activities": [
       "MAL3M01W1S2"

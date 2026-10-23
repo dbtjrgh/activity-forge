@@ -54,8 +54,8 @@ function Bay({
 }): React.JSX.Element {
   return (
     <div className={`bay ${count ? 'has' : 'empty'}${busy ? ' busy' : ''}`}>
-      {/* 설명은 **비었을 때만** — 들어 있으면 할 일을 이미 안다. 들어 있을 때는 제목 줄에 마우스를 올리면 나온다 (2026-10-01 「글씨가 너무 많아서」) */}
-      <div className="bay-head" title={count ? hint : undefined}>
+      {/* 설명은 **비었을 때만** — 들어 있으면 할 일을 이미 안다 (2026-10-01 「글씨가 너무 많아서」) */}
+      <div className="bay-head">
         <svg className="bay-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d={ICONS[icon]} />
         </svg>

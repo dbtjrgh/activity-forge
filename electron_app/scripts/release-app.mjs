@@ -64,5 +64,29 @@ if (!flag('--push')) {
   console.log('올리지 않았습니다(--push 를 붙이면 올립니다).')
   process.exit(0)
 }
-execFileSync('git', ['push', '--force', remote, `${commit}:refs/heads/app-dist`], { cwd: here, stdio: 'inherit' })
+// **한 번 더 올리고, 그래도 안 되면 칠 명령을 찍는다** (2026-10-14). 이 push 가 `remote: Failed to authenticate user`(보낸 자격 증명을
+// 서버가 거부)로 실패했는데 바로 셸에서 친 같은 push 는 됐다. 좁혀 본 것 — 이 스크립트(yarn → node → git)와 셸은 같은 git(mingw64),
+// 같은 HOME, 같은 자격 증명 도우미(전역 manager, git.example.com 는 generic)를 쓰고, yarn 은 GIT_* · GCM_* 을 더하지 않는다.
+// `lib/git.ts` 처럼 묻기를 막는 값(GIT_TERMINAL_PROMPT=0 · GCM_INTERACTIVE=never)도 여기서는 안 심는다. 남은 짐작은 둘 —
+// 저장해 둔 자격 증명이 낡아 거부되고 git 이 그것을 지운 뒤 다음 시도가 새로 받았다, 또는 서버 인증이 잠깐 흔들렸다. 둘 다 한 번 더 하면 된다.
+// 실패해도 커밋은 저장소에 만들어져 있어(commit-tree) 해시로 그대로 올릴 수 있다
+const pushArgs = ['push', '--force', remote, `${commit}:refs/heads/app-dist`]
+const pushed = () => {
+  try {
+    execFileSync('git', pushArgs, { cwd: here, stdio: 'inherit' })
+    return true
+  } catch {
+    return false
+  }
+}
+if (!pushed()) {
+  console.error('올리지 못했습니다. 3초 뒤에 한 번 더 올립니다.')
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 3000)
+  if (!pushed()) {
+    console.error('두 번 다 올리지 못했습니다. 커밋은 만들어 두었으니 셸에서 아래 명령을 실행하세요.')
+    console.error(`  cd "${here.replace(/\\/g, '/')}"`)
+    console.error(`  git ${pushArgs.join(' ')}`)
+    process.exit(1)
+  }
+}
 console.log(`${remote} 의 app-dist 에 올렸습니다.`)

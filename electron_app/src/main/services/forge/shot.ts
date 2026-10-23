@@ -34,7 +34,8 @@ import path from 'node:path'
 import type { ShotResult } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import { josa } from '../../lib/josa'
-import { poppler } from './poppler'
+import { pageText, poppler } from './poppler'
+import { planCode } from './section'
 import { loadForge } from './runtime'
 import { mark } from './measure'
 import { clearPaper, dropPaper, listPaper, pagesOf, paperNote, ruleOf, savePaper, type Paper } from './pasted'
@@ -139,6 +140,24 @@ export async function putShot(
  * 받은 것은 `ipc/` 가 검사한 절대 경로다. 갈래가 받는 확장자인지는 **여기서
  * 다시 본다** — 파일을 쓰는 자리라 한 겹 더 둔다.
  */
+/** 기획서 PDF 1쪽 제목의 학습코드(MA 만) — 못 읽거나 없으면 null */
+export function planOwner(file: string): string | null {
+  const read = pageText(file, 1)
+  return 'why' in read ? null : planCode(read.text)
+}
+
+/**
+ * 리소스 폴더 기획서 가운데 **다른 학습코드 것** — 「대화로 생성」이 AI 를 부르기 전에 본다(`chatprep.ts`). 없으면 ''.
+ * 작업대 칸을 거치지 않고 폴더에 바로 넣은 것도 여기서 걸린다
+ */
+export function wrongPlan(code: string, dir: string): string {
+  for (const rel of listPaper(dir, 'plan').filter((f) => /\.pdf$/i.test(f))) {
+    const owner = planOwner(path.join(dir, ruleOf('plan').dir, path.basename(rel)))
+    if (owner && owner !== code) return `기획서 ${path.basename(rel)} 는 ${owner} 학습코드의 기획서입니다. 이 학습코드 기획서로 바꾼 뒤 다시 누르세요.`
+  }
+  return ''
+}
+
 export async function addShotFile(code: string, from: string, kind: Paper): Promise<ShotResult> {
   try {
     const ext = path.extname(from).toLowerCase()
@@ -151,6 +170,9 @@ export async function addShotFile(code: string, from: string, kind: Paper): Prom
       }
     }
     if (!fs.existsSync(from)) return { file: '', note: '', error: '파일이 없습니다.' }
+    // 다른 학습코드 기획서는 안 받는다 — MAL2M08W1S1 기획서를 MAL1M08W1S1 작업대에 넣고 대화까지 돌렸다(2026-10-13)
+    const owner = kind === 'plan' && ext === '.pdf' ? planOwner(from) : null
+    if (owner && owner !== code) return { file: '', note: '', error: `이 기획서는 ${owner} 학습코드의 기획서입니다. ${owner} 작업대에 넣거나 진행판에 놓으세요.` }
     return await putShot(code, fs.readFileSync(from), kind, ext)
   } catch (error) {
     return { file: '', note: '', error: toMessage(error) }

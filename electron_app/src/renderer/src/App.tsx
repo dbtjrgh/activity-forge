@@ -5,8 +5,10 @@ import CodeGo from './components/CodeGo'
 import FolderProperties from './components/FolderProperties'
 import FolderTree from './components/FolderTree'
 import Bench from './components/bench/Bench'
+import DevCodeBar from './components/DevCodeBar'
+import ErrorGuard from './components/ErrorGuard'
 import RscSort from './components/RscSort'
-import TeamSheetBar from './components/board/TeamSheetBar'
+import BoardTop from './components/board/BoardTop'
 import Features from './components/Features'
 import Manage from './components/manage/Manage'
 import SettingsDrawer from './components/SettingsDrawer'
@@ -15,6 +17,8 @@ import Splitter, { useWidth } from './components/Splitter'
 import UpdateBar from './components/UpdateBar'
 import BoardList from './components/board/BoardList'
 import NewModules from './components/board/NewModules'
+import Tour from './components/tour/Tour'
+import { useTour } from './components/tour/useTour'
 import { useBoard } from './useBoard'
 import { useWorkspace } from './useWorkspace'
 
@@ -37,7 +41,7 @@ function App() {
   }, [folded])
   // 옆줄 너비 — 끌어서 바꾸고 이 PC 에 기억한다(사용자 말 — 「각자 세로바 조절할 수 있게」)
   const [sideW, setSideW, resetSide] = useWidth('sidebarW', 280, 220, 520)
-  const { boards, boardsError, next, openIssue, closeBoard, selected, setSelected, result, refresh, reload, sameKey } = useBoard()
+  const { boards, boardsError, opens, openIssue, closeBoard, selected, setSelected, result, refresh, reload, sameKey } = useBoard()
 
   // 폴더 화면(지금까지 만든 트리)은 그대로 둔다. 양산 전에 쓰기 권한을 보는 자리다.
   const [folder, setFolder] = useState(DEFAULT_DIR)
@@ -46,6 +50,8 @@ function App() {
   // 리소스 화면. 학습코드가 있으면 진행판 대신 그것을 보여 준다.
   // **진행판은 첫 화면 그대로 남는다** — 돌아오면 고른 호가 그대로다.
   const [forgeCode, setForgeCode] = useState<string | null>(null)
+  // 둘러보기 — 처음 설정 뒤 한 번, 옆줄 「둘러보기」로 다시(`components/tour/`)
+  const tour = useTour({ result, view, forgeCode, setView, setForgeCode, setFolded })
 
   const {
     workspace,
@@ -56,6 +62,9 @@ function App() {
     clearRscRoot,
     pickForgeRoot,
     setMe,
+    setShareRoot,
+    pickCommonRoot,
+    clearCommonRoot,
     refreshSpecs
   } = useWorkspace(reload)
 
@@ -71,7 +80,7 @@ function App() {
         {folded ? '›' : '‹'}
       </button>
       <aside className="sidebar">
-        <SidebarHead view={view} onView={setView} />
+        <SidebarHead view={view} onView={setView} onTour={tour.start} />
 
         <div className="sidebar-body">
           {view !== '폴더' ? (
@@ -87,9 +96,12 @@ function App() {
                 onPickForge={pickForgeRoot}
                 onFolders={() => setView('폴더')}
                 onSetMe={(d, t) => void setMe(d, t)}
+                onSetShare={(d) => void setShareRoot(d)}
+                onPickCommon={pickCommonRoot}
+                onClearCommon={clearCommonRoot}
               />
-              {/* 스펙 주인에게만 — 배치표가 정했는데 스펙이 없는 모듈 */}
-              {workspace?.specOwner && <NewModules stamp={boards.map((b) => b.subject + b.issue).join() + (refreshed?.after ?? '')} />}
+              {/* 배치표가 정했는데 스펙이 없는 모듈 — 2026-10-21 부터 모두에게(스펙은 푸시 권한이 있는 누구나 만든다) */}
+              <NewModules stamp={boards.map((b) => b.subject + b.issue).join() + (refreshed?.after ?? '')} />
               {/* 진행판에 없는 것을 만들 때 */}
               <CodeGo
                 onGo={(c) => {
@@ -109,7 +121,7 @@ function App() {
                   setView('진행판')
                 }}
                 onClose={(b) => void closeBoard(b)}
-                next={next}
+                opens={opens}
                 onOpen={(i, s) => void openIssue(i, s)}
               />
             </>
@@ -133,33 +145,26 @@ function App() {
       </aside>
 
       <div className="content">
+        <DevCodeBar />
         <main className="content-body">
           {view === '진행판' ? (
             forgeCode ? (
-              <Bench
-                key={forgeCode}
-                code={forgeCode}
-                onBack={() => {
-                  // 작업대에서 한 일(만들기 · 답)은 칸의 상태를 바꾼다 — 돌아오면 새로 읽는다
-                  setForgeCode(null)
-                  refresh()
-                }}
-              />
+              // 작업대가 그리다 던져도 옆줄 · 진행판은 남는다 — 학습코드가 바뀌면 오류도 버린다(`ErrorGuard.tsx`)
+              <ErrorGuard key={forgeCode} label="작업대">
+                <Bench
+                  key={forgeCode}
+                  code={forgeCode}
+                  onBack={() => {
+                    // 작업대에서 한 일(만들기 · 답)은 칸의 상태를 바꾼다 — 돌아오면 새로 읽는다
+                    setForgeCode(null)
+                    refresh()
+                  }}
+                />
+              </ErrorGuard>
             ) : (
               <>
-                {/*
-                  **리소스 놓는 자리는 한 곳이다** (2026-09-16 사용자 결정).
-                  학습코드 화면마다 있던 놓는 칸은 그대로 두되, 받은 것을 통째로
-                  놓는 자리를 진행판에 하나 둔다 — 학습코드를 고를 필요가 없다.
-                  넣고 나면 진행판을 다시 읽는다 (파일 수가 바뀐다).
-
-                  **진행판 결과 바깥에 둔다.** 안에 두면 다시 읽는 동안
-                  `result` 가 잠깐 null 이라 놓는 칸이 통째로 사라지고,
-                  **방금 넣은 결과와 「안 넣은 것」 목록이 같이 날아간다** —
-                  넣자마자 화면이 비었다 (2026-09-16 앱에서 드롭해 보고 찾음).
-                  놓는 칸은 고른 호와 아무 상관이 없으니 밖이 제자리다.
-                */}
-                <TeamSheetBar />
+                {/* 놓는 자리는 진행판 결과 바깥에 둔다 — 까닭은 `RscSort.tsx` 머리말 */}
+                <BoardTop />
                 <RscSort onDone={refresh} />
                 {result ? (
                   <Board result={result} onForge={setForgeCode} onChanged={refresh} />
@@ -182,6 +187,8 @@ function App() {
           {workspace?.forgeRoot ? `양산기 폴더 ${workspace.forgeRoot}` : ''}
         </footer>
       </div>
+      {/* 단계마다 새로 그린다 — 진행판 결과가 늦게 와 「글로만」이 풀리거나 작업대 후보를 바꿔도 칸을 다시 찾는다 */}
+      {tour.view && <Tour key={`${tour.view.index}|${tour.view.code ?? ''}|${tour.view.noBench}`} view={tour.view} />}
     </div>
   )
 }

@@ -5,6 +5,8 @@
   "title": "문제 보고 정답 고르기 (선지 영역 변경형)",
   "summary": "M27 에서 갈라져 나온 모듈. 이닝마다 캐릭터가 문제를 내고 선지 2~5개 중 하나를 고릅니다. M27 과 다른 점은 세 가지 — 연속 3회 이상 틀리면 선지 전체가 110% 로 두 번 커지고, 이닝 전환 나레이션을 MainCharacter 의 newInning1~3 으로 쓰며, 오답 횟수를 한 곳에서만 셉니다.",
   "reference": {
+    "moduleCommit": "4bf23d3fedc8a6660dbc6a9c7e21872a8db89c07",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M27_2",
     "activities": [
       "MAL1M07W1S2"

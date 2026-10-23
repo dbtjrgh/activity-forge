@@ -7,6 +7,10 @@ const EVERY_MS = 60_000
 const FOCUS_MS = 15_000
 
 const clock = (ms: number): string => new Date(ms).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+/** 공용 저장소 받기를 막은 파일 — 앞의 몇 개만 글로, 전부는 마우스를 올리면(`title`) */
+const SHOWN_FILES = 3
+const filesLine = (files: string[]): string =>
+  `(${files.slice(0, SHOWN_FILES).join(', ')}${files.length > SHOWN_FILES ? ` 외 ${files.length - SHOWN_FILES}개` : ''})`
 
 /**
  * **업데이트 막대** (2026-09-29 사용자 말 — 「내가 업데이트 할 때마다 업데이트 버튼이 활성화돼서 새로 갱신되도록」).
@@ -14,6 +18,7 @@ const clock = (ms: number): string => new Date(ms).toLocaleTimeString('ko-KR', {
  * (2026-10-01 — 10분마다는 늦었다). 묻다가 실패하면(로그인 · 연결) 창으로 돌아올 때까지 다시 묻지 않는다.
  * 누르면 양산기 자료(`refresh.ts`)와 앱 새 버전(`appupdate.ts`)을 같이 받는다 — 앱을 받았으면 앱이 다시 켜진다.
  * 소스로 띄운 앱(`start-app.bat`)은 감시 모드가 아니라 받은 코드는 앱을 다시 켜야 먹는다. 스펙 · 배치표는 바로 먹는다.
+ * 공용 저장소(sparkon_common)도 같이 묻고 받는다 (2026-10-21, `commonpull.ts`) — 결과는 자료 줄과 따로 한 줄. 못 물었으면 까닭만 보이고 단추는 안 켠다.
  */
 export default function UpdateBar({
   refreshed,
@@ -56,8 +61,17 @@ export default function UpdateBar({
 
   const behind = check?.behind ?? 0
   const appNew = Boolean(check?.app)
-  const has = behind > 0 || appNew
-  const what = [behind ? `새 커밋 ${behind}개` : '', appNew ? (check?.app?.version ? `앱 새 버전 v${check.app.version}` : '앱 새 버전') : ''].filter(Boolean).join(', ')
+  // 공용 저장소(2026-10-21) — 모르면(null) 단추를 켜지 않고 아래에 까닭만 보인다
+  const commonNew = check?.common?.newer === true
+  const has = behind > 0 || appNew || commonNew
+  const what = [
+    behind ? `새 커밋 ${behind}개` : '',
+    appNew ? (check?.app?.version ? `앱 새 버전 v${check.app.version}` : '앱 새 버전') : '',
+    commonNew ? '공용 저장소 새 커밋' : ''
+  ]
+    .filter(Boolean)
+    .join(', ')
+  const pulled = refreshed?.common
   const line = !check
     ? '업데이트 확인 중…'
     : check.error
@@ -76,8 +90,17 @@ export default function UpdateBar({
           {busy ? '받는 중…' : '업데이트'}
         </button>
       </div>
+      {check?.common?.why && <p className="sub">{check.common.why}</p>}
+      {/* 자료 확인이 실패하면 윗줄이 그 까닭이라 공용 소식이 안 보인다 — 단추는 공용 때문에 켜져 있다 */}
+      {check?.error && commonNew && <p className="sub">공용 저장소에 새 커밋이 있습니다.</p>}
       {refreshed && (
         <p className={refreshed.error || !refreshed.ok ? 'state error' : 'sub'}>{refreshed.error || refreshed.note}</p>
+      )}
+      {pulled && (
+        <p className={pulled.ok ? 'sub' : 'state error'} title={pulled.files?.join('\n')}>
+          {pulled.note}
+          {pulled.files?.length ? ` ${filesLine(pulled.files)}` : ''}
+        </p>
       )}
     </div>
   )

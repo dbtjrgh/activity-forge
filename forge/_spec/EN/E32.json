@@ -5,6 +5,8 @@
   "title": "슬롯머신 돌려 낱말 맞추기",
   "summary": "버튼을 눌러 슬롯머신 세 줄을 돌리고, 멈춘 그림이 정답과 맞는지 보는 활동. 이닝 순서는 코드가 섞습니다.",
   "reference": {
+    "moduleCommit": "b9819f21d171c2d7ceb0d2ade90245496fc55023",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E32",
     "activities": [
       "ENL1M02W1S3",

@@ -1,0 +1,246 @@
+{
+  "specVersion": 1,
+  "module": "N06",
+  "subject": "NU",
+  "title": "두 그림 가운데 맞는 것 고르기",
+  "summary": "이닝마다 그림 카드 둘(또는 여럿)이 놓이고 맞는 카드를 누릅니다. 카드 자리는 GameData 좌표 목록을 열 때마다 섞어 다시 나눕니다. 맞으면 효과와 함께 다음 이닝으로, 틀리면 카드가 흔들리고 도우미가 오답 반응을 합니다. 이닝을 다 끝내면 마무리 화면에서 선생님을 누르고 평가 항목 셋 가운데 하나를 고른 뒤 완료합니다. 첫 이닝 지시문(nar01)만 액티비티가 주고, 2이닝부터는 도우미가 부르는 소리만 냅니다.",
+  "reference": {
+    "moduleCommit": "7b2b881c2be5987a9eca7c9bc5665eeadfbfc3a5",
+    "moduleCommitWhy": "2026-10-21 누리 스펙을 처음 쓰며 모듈 코드와 1호 표본을 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/NU/N06",
+    "activities": [
+      "NUL1M01W4S3"
+    ],
+    "note": "개발 완료 완성본은 1호 NUL1M01W4S3 하나입니다(2026-10-21). 필수 여부와 칸 수는 그 하나로 정한 것입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "await N06.handle.init(quizData);",
+        "this.addChild(N06.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await N06.handle.start();",
+        "await N06.handle.play();",
+        "await N06.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "N06",
+      "from": "@_common/module/NU/N06/N06"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "이닝 배경. N06.ts init 이 AssetManager.get(\"bg\") 로 이름을 박아 부릅니다 — 없으면 화면이 빕니다. 완성본 1개가 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "particle_big_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞는 카드를 눌렀을 때의 효과. CardManager.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "endBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 화면 배경. EndPage.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "endpage_char",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 화면 선생님. 자리는 EndPage.ts 에 (-445, 103) 으로 박혀 있습니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "particle_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "평가 항목을 고를 때의 효과. EndPage.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "complete_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "평가 항목마다 붙는 완료 단추. EndPage.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "N06.ts start() 가 AudioManager.getSound(\"bgm\") 으로 찾아 바로 loop 를 겁니다 — 없으면 시작하자마자 멈춥니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "nar01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "첫 이닝 지시문. N06.ts play() 가 playGuide(\"nar01\") 로 이름을 박아 부르고, 도우미를 누르면 다시 들려줍니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "touchSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "누르는 소리. CardManager.ts · EndPage.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "cor_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞는 카드 소리. CardManager.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "incor_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀린 카드 소리. CardManager.ts 가 playAsync(\"incor_sound\") 로 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "particleSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "평가 항목을 고를 때의 소리. EndPage.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "com_nar15",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "마무리 화면 진입 지시문. EndPage.ts 가 playGuide(\"com_nar15\") 로 부릅니다. 모듈이 넣지 않아 액티비티가 넣습니다(2026-10-21)."
+      },
+      {
+        "alias": "com_nar16",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "선생님을 누르면 com_nar16, com_nar17, com_nar18 가운데 하나를 고르게 틉니다(EndPage.ts choiceOne). 셋 다 있어야 합니다(2026-10-21)."
+      },
+      {
+        "alias": "com_nar17",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "선생님 내레이션 셋 가운데 하나(EndPage.ts choiceOne, 2026-10-21)."
+      },
+      {
+        "alias": "com_nar18",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "선생님 내레이션 셋 가운데 하나(EndPage.ts choiceOne, 2026-10-21)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "inningdata",
+        "type": "array",
+        "required": true,
+        "minLength": 4,
+        "desc": "이닝 목록. 한 칸이 이닝 하나이고, 칸 안은 그 이닝의 카드들입니다. 이닝 수만큼 이닝 표시가 생깁니다.",
+        "of": {
+          "key": "",
+          "type": "array",
+          "minLength": 2,
+          "desc": "이닝 하나의 카드들. 카드 좌표만 떼어 섞은 뒤 다시 나누므로 화면 구성은 그대로이고 어느 카드가 어디 가는지만 바뀝니다(CardManager.ts ready).",
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "img",
+                "type": "asset:image",
+                "required": true,
+                "desc": "카드 그림"
+              },
+              {
+                "key": "pos",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "카드 자리(화면 가운데 기준). 같은 이닝의 자리끼리 섞입니다."
+              },
+              {
+                "key": "answer",
+                "type": "bool",
+                "required": true,
+                "desc": "맞는 카드면 true. 맞는 카드를 눌러야 다음 이닝으로 갑니다."
+              },
+              {
+                "key": "sound",
+                "type": "string",
+                "optional": true,
+                "default": "",
+                "desc": "모듈이 읽지 않습니다. 완성본은 모두 빈 글자입니다."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "endpageInfo",
+        "type": "object",
+        "required": true,
+        "desc": "마무리 화면 구성(EndPage.ts).",
+        "fields": [
+          {
+            "key": "evalInfo",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "desc": "평가 항목 판. 선생님을 누르면 나타나고, 하나를 고르면 효과와 완료 단추가 뜹니다.",
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "img",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "평가 항목 그림"
+                },
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "평가 항목 자리(화면 가운데 기준)"
+                },
+                {
+                  "key": "touchImg",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "고른 뒤의 그림"
+                },
+                {
+                  "key": "touchIdle",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "고르기 전 테두리 그림"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "notes": [
+    "N04 의 마무리 화면과 그림 이름(endBg, endpage_char, evalInfo)이 같지만 N06 안에 따로 짠 화면입니다. 한쪽을 고쳐도 다른 쪽은 안 바뀝니다.",
+    "도우미 등장음(charac_in)은 시작 단추를 누를 때까지 소리를 끕니다(수정 요청). charac_in 은 액티비티가 넣지 않습니다."
+  ]
+}

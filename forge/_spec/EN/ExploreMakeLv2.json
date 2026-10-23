@@ -5,6 +5,8 @@
   "title": "장난감 사진기로 이야기책 만들기 — 고른 것들이 필름이 되어 책이 됩니다",
   "summary": "장난감 사진기가 놓여 있고 판이 열리면서 고를 것들이 뜹니다. 문제 판(quiz)에서는 맞는 것을 골라야 넘어가고, 고르기 판(choice)에서는 마음에 드는 것을 골라 넘어갑니다. 고른 것은 사진기 필름에 하나씩 담기고, 다 담으면 렌즈가 열리며 사진이 찍힙니다. 마지막에 책이 펼쳐지고 그동안 고른 것들이 한 장씩 담긴 앨범이 됩니다.",
   "reference": {
+    "moduleCommit": "b9be3c8d5768fae9695e2c51bda9464bbcb04344",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/ExploreMakeLv2",
     "activities": [
       "ENL2M01W2S3",

@@ -96,6 +96,9 @@ button.ghost.on {
   padding: 6px 0;
   font-size: 13px;
   border-radius: 0;
+  /* 과목이 넷인 줄(1호 누리, 2026-10-21)은 옆줄을 가장 좁히면(220px) 칸이 글자보다 좁다 — 줄을 바꾸면 그 호 줄만 높아져 막대가 어긋난다 */
+  white-space: nowrap;
+  overflow: hidden;
 }
 /* 붙은 막대 — 이웃 칸과 테두리를 겹치고 양 끝만 둥글게 */
 .board-bar .board-item + .board-item .board-pick {

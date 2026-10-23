@@ -74,6 +74,13 @@ export function rememberForgeRoot(dir: string): { ok: boolean; error: string } {
   return { ok: true, error: '' }
 }
 
+/** 적어 둔 자리를 지운다 — 처음 설정 「마치기」가 `.user.json` 을 못 썼을 때 되돌린다(다음에 켜면 처음 설정이 다시 뜨게) */
+export function forgetForgeRoot(): void {
+  const all = read()
+  delete all['forgeRoot']
+  write(all)
+}
+
 function read(): Record<string, unknown> {
   if (!settingsFile || !existsSync(settingsFile)) return {}
   try {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { HO_OF, type RscWait, type RscWaitRow } from '../../../../shared/forge'
+import { HO_OF, type NeedRow, type RscWait, type RscWaitRow } from '../../../../shared/forge'
 import { kindClass, kindName } from '../../lib/format'
 import CopyButton from '../CopyButton'
 import GuideButton from '../guide/GuideButton'
@@ -7,36 +7,29 @@ import GuideButton from '../guide/GuideButton'
 /** 한 갈래의 이름표 — 영상은 서비스가 `video` 로 따로 모아 준다 */
 const label = (kind: string): string => (kind === 'video' ? '영상' : kindName(kind))
 const hoName = (m: string): string => HO_OF[m]?.name ?? `M${m}`
+const span = (n: NeedRow): string => (n.range ? (n.range.min === n.range.max ? `${n.range.min}` : `${n.range.min}~${n.range.max}`) : '')
 
-/** 더 받아야 할 파일 수 — 원본 수에서 지금 수를 뺀 것 */
-export const fileCount = (r: RscWaitRow): number => r.missing.reduce((a, m) => a + (m.origin - m.here), 0)
+/**
+ * 기획서에 적혔는데 없는 소리 수 — 확실한 것만 (2026-10-14, 메인 `rsccount.ts`).
+ * 원본 수에서 지금 수를 빼던 때는 다 넣은 완성본에도 절반이 「부족」이었다
+ */
+export const fileCount = (r: RscWaitRow): number => r.need.reduce((a, n) => a + n.missing.length, 0)
 
-const KIND_ORDER = ['video', 'image', 'sound', 'lottie', 'font']
+/** 한 종류 한 줄 — 소리는 없는 이름, 그림 · 로티는 같은 모듈 완성본보다 적다는 참고 */
+const lineOf = (n: NeedRow): string =>
+  n.missing.length ? `${label(n.kind)} ${n.missing.length}개: ${n.missing.join(', ')}` : `${label(n.kind)} 지금 ${n.here}개 (같은 모듈 완성본 ${span(n)}개)`
 
-/** 호 전체의 갈래별 합 — 디자인 쪽에 일감 크기를 먼저 알린다 */
-function totals(rows: RscWaitRow[]): { kind: string; n: number }[] {
-  const sum = new Map<string, number>()
-  for (const r of rows) for (const m of r.missing) sum.set(m.kind, (sum.get(m.kind) ?? 0) + m.origin - m.here)
-  const rank = (k: string): number => (KIND_ORDER.includes(k) ? KIND_ORDER.indexOf(k) : KIND_ORDER.length)
-  return [...sum].map(([kind, n]) => ({ kind, n })).sort((a, b) => rank(a.kind) - rank(b.kind))
-}
-const totalLine = (rows: RscWaitRow[]): string => totals(rows).map((t) => `${label(t.kind)} ${t.n}`).join(', ')
-
-/** 디자인 쪽에 보낼 글 — 학습코드마다 갈래별로. 이름은 원본이 쓰던 것(다르게 와도 된다). 여러 칸이면 맨 위에 합 한 줄 */
+/** 디자인 쪽에 보낼 글 — 학습코드마다. 여러 칸이면 맨 위에 없는 소리 합 한 줄 */
 function asText(rows: RscWaitRow[], head?: string): string {
   const body = rows
-    .filter((r) => r.missing.length)
-    .map((r) =>
-      [
-        `${r.code} (${r.module})`,
-        ...r.missing.map((m) => `- ${label(m.kind)} ${m.origin - m.here}개${m.files.length ? `: ${m.files.join(', ')}` : ''}`)
-      ].join('\n')
-    )
+    .filter((r) => r.need.length)
+    .map((r) => [`${r.code} (${r.module})`, ...r.need.map((n) => `- ${lineOf(n)}`)].join('\n'))
     .join('\n\n')
-  return head ? `${head} (${totalLine(rows)})\n\n${body}` : body
+  const sounds = rows.reduce((a, r) => a + fileCount(r), 0)
+  return head ? `${head}${sounds ? ` (기획서에 적혔는데 없는 소리 ${sounds}개)` : ''}\n\n${body}` : body
 }
 
-/** 덜 온 칸 한 장 — 갈래마다 「지금 / 원본」과 원본 이름으로 없는 것 */
+/** 덜 온 칸 한 장 — 없는 소리 이름, 같은 모듈 완성본보다 적은 종류 */
 function PartCard({ r }: { r: RscWaitRow }) {
   return (
     <div className="manage-card">
@@ -45,20 +38,26 @@ function PartCard({ r }: { r: RscWaitRow }) {
         <span className="sub">{r.module}</span>
         <span className="manage-grow" />
         {!r.error && <GuideButton code={r.code} />}
-        {r.missing.length > 0 && <CopyButton text={asText([r])}>복사</CopyButton>}
+        {r.need.length > 0 && <CopyButton text={asText([r])}>복사</CopyButton>}
       </div>
       {r.error ? (
         <p className="state error">{r.error}</p>
       ) : (
         <ul className="manage-files">
-          {r.missing.map((m) => (
-            <li key={m.kind}>
-              <span className={`manage-kind ${kindClass(m.kind)}`}>
-                {label(m.kind)} {m.here}/{m.origin}
+          {r.need.map((n) => (
+            <li key={n.kind}>
+              <span className={`manage-kind ${kindClass(n.kind)}`}>
+                {label(n.kind)} {n.missing.length ? `${n.missing.length}개 없음` : `${n.here}개`}
               </span>
-              <span className="mono sub">{m.files.length ? m.files.join(', ') : '이름이 다른 파일로 들어왔습니다. 개수만 부족합니다.'}</span>
+              <span className="mono sub">{n.missing.length ? n.missing.join(', ') : `같은 모듈 완성본은 ${span(n)}개입니다.`}</span>
             </li>
           ))}
+          {/* 영어는 늘 같은 까닭이라 칸마다 되풀이하지 않는다 — 맨 아래 한 줄이 말한다 */}
+          {r.plan.note && !r.code.startsWith('EN') && (
+            <li>
+              <span className="sub">{r.plan.note}</span>
+            </li>
+          )}
         </ul>
       )}
     </div>
@@ -102,13 +101,14 @@ function RscSection({ wait, onMonth }: { wait: RscWait | null; onMonth: (month: 
       {copy && copy.length > 0 && <CopyButton text={asText(copy, `${wait?.month ? hoName(wait.month) : ''} 받을 리소스 (학습코드 ${copy.length}개)`)}>전체 복사</CopyButton>}
     </div>
   )
-  if (!wait) return bar(<span className="state">진행판을 불러오는 중… (몇 초 걸립니다)</span>)
+  if (!wait) return bar(<span className="state">진행판을 불러오는 중…</span>)
   if (wait.error) return <p className="state error">{wait.error}</p>
   if (!wait.month) return <p className="manage-ok">진행 중인 호가 없습니다.</p>
   const ho = hoName(wait.month)
   if (!wait.rows.length) return bar(<span className="manage-ok">{ho}에 리소스를 기다리는 학습코드가 없습니다.</span>)
   const part = wait.rows.filter((r) => !r.empty)
   const empty = wait.rows.filter((r) => r.empty)
+  const sounds = part.reduce((a, r) => a + fileCount(r), 0)
   return (
     <>
       {bar(
@@ -117,15 +117,13 @@ function RscSection({ wait, onMonth }: { wait: RscWait | null; onMonth: (month: 
         </span>,
         wait.rows
       )}
-      {/* 호 전체의 갈래별 합 — 칸마다 보기 전에 일감 크기부터 */}
-      <div className="manage-totals">
-        <span className="sub">이 호 전체 합계</span>
-        {totals(wait.rows).map((t) => (
-          <span key={t.kind} className={`manage-kind ${kindClass(t.kind)}`}>
-            {label(t.kind)} {t.n}
-          </span>
-        ))}
-      </div>
+      {/* 확실한 것의 합 — 기획서에 적혔는데 없는 소리 */}
+      {sounds > 0 && (
+        <div className="manage-totals">
+          <span className="sub">없는 소리</span>
+          <span className={`manage-kind ${kindClass('sound')}`}>소리 {sounds}</span>
+        </div>
+      )}
       {part.length > 0 && (
         <div className="manage-cards">
           {part.map((r) => (
@@ -135,7 +133,7 @@ function RscSection({ wait, onMonth }: { wait: RscWait | null; onMonth: (month: 
       )}
       {empty.length > 0 && (
         <details className="manage-more" open={part.length === 0}>
-          <summary>미수신 학습코드 {empty.length}개 (원본 기준 개수)</summary>
+          <summary>미수신 학습코드 {empty.length}개</summary>
           <table className="run-table manage-table">
             <tbody>
               {empty.map((r) => (
@@ -143,7 +141,7 @@ function RscSection({ wait, onMonth }: { wait: RscWait | null; onMonth: (month: 
                   <td className="mono">{r.code}</td>
                   <td className="sub">{r.module}</td>
                   <td className="sub manage-wrap">
-                    {r.error ?? r.missing.map((m) => `${label(m.kind)} ${m.origin - m.here}`).join(', ')}
+                    {r.error ?? r.need.map((n) => `${label(n.kind)} ${n.missing.length || span(n)}`).join(', ')}
                   </td>
                   <td>{!r.error && <GuideButton code={r.code} />}</td>
                 </tr>
@@ -152,7 +150,7 @@ function RscSection({ wait, onMonth }: { wait: RscWait | null; onMonth: (month: 
           </table>
         </details>
       )}
-      <p className="sub">파일 이름은 원본 기준입니다. 이름이 달라도 작업대에서 자동으로 맞춥니다.</p>
+      {wait.rows.some((r) => r.code.startsWith('EN')) && <p className="sub">영어는 기획서로 소리 이름을 확인하지 않습니다.</p>}
     </>
   )
 }

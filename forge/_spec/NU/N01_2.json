@@ -1,0 +1,229 @@
+{
+  "specVersion": 1,
+  "module": "N01_2",
+  "subject": "NU",
+  "title": "카드 여섯 장 눌러 이야기 듣기",
+  "summary": "N01 에서 갈라져 나온 모듈입니다. 도입 화면 흐름(지시문, 선생님 누르기, 도입 내레이션, 다음 단추)은 N01 과 같습니다. 다른 점은 학습 화면입니다 — 이닝마다 장면을 바꾸지 않고 배경 하나(inningBg) 위에 카드 여러 장이 한꺼번에 깔리고, 아이가 고른 차례대로 카드를 눌러 답 카드와 내레이션을 봅니다. 한 장만 봐도 완료 단추가 뜹니다. GameData 꼴이 N01 과 달라 서로 바꿔 쓸 수 없습니다.",
+  "reference": {
+    "moduleCommit": "b8a8edeba3e01cb6845ae562fe6b6715e83fd6f3",
+    "moduleCommitWhy": "2026-10-21 누리 스펙을 처음 쓰며 모듈 코드와 1호 표본을 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/NU/N01_2",
+    "activities": [
+      "NUL1M01W2S2"
+    ],
+    "doc": "sparkon_common/_common/module/NU/N01_2/README.md — N01 과 다른 점 표, 화면별 동작, 좌표와 아직 안 정한 것.",
+    "note": "개발 완료 완성본은 1호 NUL1M01W2S2 하나입니다(2026-10-21). 필수 여부와 칸 수는 그 하나로 정했고, 모듈 코드가 없어도 된다고 밝힌 자리(completeBtnImg · inningStartSound · previewData.mainCharSound · shuffleSlots)만 넓혔습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "await N01_2.handle.init(quizData);",
+        "this.addChild(N01_2.handle);"
+      ],
+      "onStart": [
+        "await N01_2.handle.start();",
+        "await N01_2.handle.play();",
+        "await N01_2.handle.finish();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "N01_2",
+      "from": "@/_common/module/NU/N01_2/N01_2"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "close_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "답 카드를 닫는 단추. AnswerCard.ts 가 AssetManager.get(\"close_btn\") 으로 이름을 박아 부릅니다. 완성본 1개가 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "next_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다음 단추. NextButton.ts 가 이름을 박아 부릅니다. 완성본 1개가 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "N01_2.ts start() 가 AudioManager.getSound(\"bgm\") 으로 찾아 바로 loop 를 겁니다 — 없으면 시작하자마자 멈춥니다. 카드 화면으로 넘어가면 끕니다(수정 요청). 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "touchSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "누르는 소리. Preview.ts · CardManager.ts · AnswerCard.ts · NextButton.ts 가 이름을 박아 틉니다. 완성본 1개가 가짐(2026-10-21)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "completeBtnImg",
+        "type": "asset:image",
+        "optional": true,
+        "desc": "카드 화면의 다음 단추를 바꿀 완료(V) 그림. 안 주면 다음 단추 그대로입니다(N01_2.ts init, 수정 요청). 완성본은 complete_btn 을 줍니다."
+      },
+      {
+        "key": "previewData",
+        "type": "object",
+        "required": true,
+        "desc": "도입 화면 구성(Preview.ts).",
+        "fields": [
+          {
+            "key": "bg",
+            "type": "asset:image",
+            "required": true,
+            "desc": "도입 화면 배경"
+          },
+          {
+            "key": "guide",
+            "type": "object",
+            "required": true,
+            "desc": "누르지 않는 도입 그림(선생님)",
+            "fields": [
+              {
+                "key": "img",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림"
+              },
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "자리(화면 가운데 기준, 그림 가운데)"
+              }
+            ]
+          },
+          {
+            "key": "touch",
+            "type": "object",
+            "required": true,
+            "desc": "누를 도입 그림. 지시문이 끝나면 두 번 들썩이고, 누르면 sounds 를 차례로 틉니다.",
+            "fields": [
+              {
+                "key": "img",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림"
+              },
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "자리(화면 가운데 기준, 그림 가운데)"
+              }
+            ]
+          },
+          {
+            "key": "mainCharSound",
+            "type": "asset:sound",
+            "optional": true,
+            "desc": "도입 화면에 들어가면 도우미가 하는 지시문. 안 주면 지시문 없이 넘어갑니다(N01_2.ts mainCharSound)."
+          },
+          {
+            "key": "sounds",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "desc": "누를 그림을 누르면 차례로 트는 도입 내레이션. 다 끝나야 다음 단추가 뜹니다.",
+            "of": {
+              "key": "",
+              "type": "asset:sound"
+            }
+          }
+        ]
+      },
+      {
+        "key": "inningBg",
+        "type": "asset:image",
+        "required": true,
+        "desc": "카드 화면 배경. 카드가 모두 이 배경 하나를 같이 씁니다."
+      },
+      {
+        "key": "inningStartSound",
+        "type": "asset:sound",
+        "optional": true,
+        "desc": "카드가 다 깔린 뒤 도우미가 하는 지시문. 안 주면 지시문 없이 카드를 누를 수 있게 됩니다(N01_2.ts play)."
+      },
+      {
+        "key": "slots",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "desc": "카드가 놓일 자리. 카드 i 번이 자리 i 번에 놓이므로 **inningData 칸 수 이상**이어야 합니다(CardManager.ts init). 완성본은 3×2 격자입니다.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "x",
+              "type": "number",
+              "required": true,
+              "desc": "카드 가운데 x(화면 가운데 기준)"
+            },
+            {
+              "key": "y",
+              "type": "number",
+              "required": true,
+              "desc": "카드 가운데 y(화면 가운데 기준)"
+            }
+          ]
+        }
+      },
+      {
+        "key": "shuffleSlots",
+        "type": "bool",
+        "optional": true,
+        "desc": "true 면 열 때마다 자리를 섞습니다. 안 주면 false 로 봅니다(CardManager.ts init). 완성본은 false 입니다(수정 요청)."
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "desc": "카드 목록. 한 칸이 카드 하나입니다.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "card",
+              "type": "asset:image",
+              "required": true,
+              "desc": "화면에 깔리는 카드 그림"
+            },
+            {
+              "key": "answerCard",
+              "type": "asset:image",
+              "required": true,
+              "desc": "카드를 누르면 열리는 답 카드 그림"
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "답 카드가 열릴 때 트는 내레이션. 답 카드를 다시 누르면 한 번 더 틉니다."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "notes": [
+    "같은 카드를 다시 눌러도 답 카드만 다시 열립니다(Card.mDone).",
+    "README 는 inningstartNar 가 아직 안 왔다고 적었지만 완성본 AssetTable 에는 inningstartNar 가 있습니다. 납품 여부는 README 가 아니라 리소스 폴더로 확인합니다."
+  ]
+}

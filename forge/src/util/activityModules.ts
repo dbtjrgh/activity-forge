@@ -24,7 +24,7 @@
 // 양산은 내 PC 의 형제 repo 를 봅니다. 여기는 글자만 받습니다.
 
 // 학습코드 쪽 글자(MA·KO·EN)와 폴더 이름(MA·KR·EN)이 국어에서 어긋납니다.
-const DIR_SUBJECT: Record<string, string> = { MA: "MA", KR: "KO", EN: "EN" };
+const DIR_SUBJECT: Record<string, string> = { MA: "MA", KR: "KO", EN: "EN", NU: "NU" };
 
 export interface ModuleRef {
   // 학습코드 쪽 글자. MA · KO · EN. sparkLib 모듈은 빈 문자열입니다.
@@ -33,7 +33,7 @@ export interface ModuleRef {
   module: string;
   // activity  과목 모듈           @_common/module/MA/M29/…
   // sparkLib  프레임워크 모듈      @_common/sparkLib/module/InterBook/…
-  // common    과목을 안 가리는 것  @_common/module/dori_common/Com_Content
+  // common    과목을 안 가리는 것  @_common/module/partner_common/Com_Content
   // local     아직 액티비티 안에 있는 파생 모듈   ./M27_2/M27_2
   kind: "activity" | "sparkLib" | "common" | "local";
 }
@@ -44,12 +44,12 @@ const IMPORT_LINE = /import\s*\{([^}]*)\}\s*from\s*['"]([^'"]+)['"]/g;
 // 과목 모듈의 두 가지 꼴. 둘 다 실물에서 확인했습니다.
 //   @_common/module/MA/M29/M29   경로에 모듈 이름이 있음
 //   @_common/module/MA           묶음(배럴)에서 꺼내 씀
-const ACTIVITY_MODULE = /\/module\/(MA|KR|EN)(?:\/([A-Za-z0-9_]+))?/;
+const ACTIVITY_MODULE = /\/module\/(MA|KR|EN|NU)(?:\/([A-Za-z0-9_]+))?/;
 // @_common/sparkLib/module/InterBook/InterBookActivity → InterBook
 const SPARKLIB_MODULE = /\/sparkLib\/module\/([A-Za-z0-9_]+)/;
 // 과목을 안 가리는 공용 모듈. 협력사가 쓰는 자리라 이름이 그렇습니다.
-//   @_common/module/dori_common/Com_Content   ·   @dori_common/Com_Content
-const COMMON_MODULE = /(?:\/module\/dori_common|^@dori_common)\/([A-Za-z0-9_]+)/;
+//   @_common/module/partner_common/Com_Content   ·   @partner_common/Com_Content
+const COMMON_MODULE = /(?:\/module\/partner_common|^@partner_common)\/([A-Za-z0-9_]+)/;
 // **아직 액티비티 폴더 안에 있는 파생 모듈.**
 //   import { M27_2 } from "./M27_2/M27_2"
 // 파생 모듈은 액티비티 안에서 만들고, 검수가 끝나면 공통으로 옮깁니다. 그동안
@@ -101,7 +101,7 @@ export function modulesInSource(src: string): ModuleRef[] {
       continue;
     }
 
-    // 과목 글자(MA·KR·EN)가 아닌 공용 모듈. 이것도 자동 검증의 대상입니다 —
+    // 과목 글자(MA·KR·EN·NU)가 아닌 공용 모듈. 이것도 자동 검증의 대상입니다 —
     // 고치면 이것을 쓰는 액티비티가 다 바뀌니까요.
     const com = COMMON_MODULE.exec(from);
     if (com?.[1]) {

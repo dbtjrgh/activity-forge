@@ -111,6 +111,31 @@ const RULES: Record<string, RuleFn | "generic"> = {
       );
     });
   },
+  // ─ M35 ─ 자 그림이 없으면 잴 도구가 화면에 안 나와 진행이 막힌다 (2026-10-14).
+  // 막대그래프 판은 칸마다 rulerInfo[].ruler 를 적어 `ruler` 를 안 부르고 정답 안내선(line)도 안 적는다 — 그래서 스펙에서 둘을
+  // 풀었더니 길이 재기 판에서 빠져도 아무것도 안 걸렸다. 칸마다 판을 갈라 본다(적은 자 그림이 등록됐나는 alias-exists-in-assettable 이 본다)
+  "ruler-assets-registered": (ctx) => {
+    const rule = "ruler-assets-registered";
+    if (!ctx.aliases.has("rulerhand")) {
+      err(ctx, rule, "assets.image", "rulerhand 가 AssetTable 에 없습니다.", "자를 잡는 손잡이가 없어 진행이 막힙니다.");
+    }
+    const innings = ctx.root["inningData"];
+    if (!Array.isArray(innings)) return;
+    innings.forEach((inn, i) => {
+      const rulers = (inn as any)?.rulerInfo;
+      if (!Array.isArray(rulers)) return;
+      rulers.forEach((r: any, k: number) => {
+        if (r?.ruler) return;
+        const at = `quizData.inningData[${i}].rulerInfo[${k}]`;
+        if (!ctx.aliases.has("ruler")) {
+          err(ctx, rule, at, "칸에 자 그림(ruler)을 안 적었는데 AssetTable 에 ruler 도 없습니다.", "잴 도구가 화면에 안 나와 진행이 막힙니다.");
+        }
+        if (!r?.line) {
+          err(ctx, rule, `${at}.line`, "길이 재기 칸(자 그림을 안 적은 칸)인데 정답 안내선 line 이 없습니다.", "맞힌 뒤 높이를 나타내는 흰 점선이 안 나옵니다 — 막대그래프 칸만 line 을 뺍니다.");
+        }
+      });
+    });
+  },
   // 자리 · 표 · 부품 쪽 규칙은 resolveslotrules.ts (2026-09-30 에 갈랐다 — 한 표가 270줄이라)
   ...SLOT_RULES,
 };

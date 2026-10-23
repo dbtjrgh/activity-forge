@@ -5,6 +5,8 @@
   "title": "세 줄 슬롯 맞추기 (레버로 돌려 낱말 완성)",
   "summary": "가로 세 줄짜리 슬롯이 있고, 레버를 당겨 줄을 돌려 가운데에 정답 그림 세 장을 맞추는 활동. 줄마다 놓이는 그림이 정해져 있습니다.",
   "reference": {
+    "moduleCommit": "bab2df162047aa2649392ea6ea4f2ca95529095d",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-23) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E31",
     "activities": [
       "ENL3M02W1S1",

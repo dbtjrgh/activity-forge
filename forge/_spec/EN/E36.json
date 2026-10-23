@@ -5,6 +5,8 @@
   "title": "크레인으로 공 집기 (낱말 듣고 고르기)",
   "summary": "아래 늘어선 공 중에서 문제에 맞는 것을 크레인으로 집어 파이프에 넣는 활동. 좌우 버튼으로 크레인을 옮기고 집기 버튼으로 내립니다.",
   "reference": {
+    "moduleCommit": "af5bb32e960ec5093d382ab6ba228c6062b414cf",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E36",
     "activities": [
       "ENL2M02W3S2",

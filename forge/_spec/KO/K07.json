@@ -5,6 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
+    "moduleCommit": "84d2fcb462154d7f57fda14d0e99c01c858b60c3",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-28) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/KR/K07",
     "activities": [
       "KOL1M01W3S1",

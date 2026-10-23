@@ -13,6 +13,7 @@ import { toMessage } from '../../lib/errors'
 import { sessionTurn } from './aisession'
 import { fixBrief, readReply } from './chatbrief'
 import { blocked, finishChat } from './chatfinish'
+import { doneText } from './chatlook'
 import { readDirsOf, type ChatCtx } from './chatprep'
 import { addProgress, endLive, readChat, saveChat, stopWanted, turnOf, type ChatSaved } from './chatstore'
 import type { Forge } from './runtime'
@@ -78,18 +79,20 @@ export async function runTurns(forge: Forge, ctx: ChatCtx, first: string, resume
       }
       const spec = checks.spec?.length ? ` 스펙 검사에서 참고할 것이 ${checks.spec.length}개 있습니다.` : ''
       if (!blocked(checks)) {
-        // 한 줄에 「/」로 이으면 묻혔다(2026-10-08 — 기획서 오기를 여기 적었는데 사용자가 못 봤다). 굵은 제목 아래 한 줄씩
-        const look = r.check.length ? `\n\n**미리보기에서 확인할 것**\n${r.check.map((c) => `- ${c}`).join('\n')}` : ''
-        const said = `리소스 ${checks.files?.copied ?? 0}개를 호 저장소로 복사했고 타입 검사를 통과했습니다.${spec}${look}`
-        saveChat(root, { ...s, state: 'done', fixRounds: 0, turns: [...s.turns, turnOf('app', said)] })
+        // 한 줄에 「/」로 이으면 묻혔다(2026-10-08 — 기획서 오기를 여기 적었는데 사용자가 못 봤다). 굵은 제목 아래 한 줄씩.
+        // 목록은 따로도 남긴다(`look`) — 검수 단추 위에 보이고 「확인했습니다」를 누르기 전에는 검수 완료가 꺼진다. 새 완료면 확인을 다시 받는다
+        const said = doneText(checks.files?.copied ?? 0, spec, r.check)
+        saveChat(root, { ...s, state: 'done', fixRounds: 0, look: r.check, lookSeenAt: undefined, turns: [...s.turns, turnOf('app', said)] })
         return
       }
+      // 학습코드 다름은 작업대 검사 칸(ChatFlow)에도 그리지만 대화 글에도 붙인다 — 대화 칸만 보는 사람도 보게(`chatident.ts`)
+      const ident = checks.ident?.ok === false ? ` ${checks.ident.lines.join(' ')}` : ''
       if (s.fixRounds >= FIX_MAX) {
-        const said = `${FIX_MAX}번 고쳐도 검사를 통과하지 못했습니다. 남은 것을 보고 어떻게 할지 적어 주세요.`
+        const said = `${FIX_MAX}번 고쳐도 검사를 통과하지 못했습니다.${ident} 남은 것을 보고 어떻게 할지 적어 주세요.`
         saveChat(root, { ...s, state: 'asking', questions: [], turns: [...s.turns, turnOf('app', said)] })
         return
       }
-      saveChat(root, { ...s, fixRounds: s.fixRounds + 1, turns: [...s.turns, turnOf('app', `검사에서 고칠 것이 나와 다시 맡깁니다(${s.fixRounds + 1}번째).`)] })
+      saveChat(root, { ...s, fixRounds: s.fixRounds + 1, turns: [...s.turns, turnOf('app', `검사에서 고칠 것이 나와 다시 맡깁니다(${s.fixRounds + 1}번째).${ident}`)] })
       // 스펙 참고는 첫 고치기에만 — 매번 실으면 막는 것(타입 오류)보다 길어져 묻힌다
       prompt = fixBrief(checks, { spec: s.fixRounds === 0 })
     }

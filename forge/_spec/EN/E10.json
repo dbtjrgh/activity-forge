@@ -5,6 +5,8 @@
   "title": "카드 뒤집어 짝 찾기 — 소리를 듣고 맞는 카드를 뒤집습니다",
   "summary": "화면에 카드가 비스듬히 흩어져 놓입니다. 낱말 소리가 나면 그 낱말의 카드를 찾아 누릅니다. 맞으면 카드가 뒤집혀 그림이 드러나고 큰 카드로 떠오릅니다. 틀리면 도로 덮입니다. 한 이닝의 낱말을 다 찾으면 카드 배치가 새로 깔리고 다음 이닝으로 넘어갑니다.",
   "reference": {
+    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E10",
     "activities": [
       "ENL3M01W1S3",

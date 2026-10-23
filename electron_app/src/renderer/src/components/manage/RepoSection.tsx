@@ -42,7 +42,7 @@ function RepoSection({ status }: { status: HallStatus | null }) {
         <th>호</th>
         <th>브랜치</th>
         <th>커밋하지 않은 파일</th>
-        <th title="마지막 fetch 시점 기준입니다. 앱은 fetch하지 않습니다.">원격</th>
+        <th>원격</th>
         <th>마지막 커밋</th>
         <th>마지막 fetch</th>
       </tr>
@@ -51,7 +51,7 @@ function RepoSection({ status }: { status: HallStatus | null }) {
   return (
     <>
       {bad.length === 0 ? (
-        <p className="manage-ok">저장소 {status.repos.length}개 모두 정상입니다. 커밋하지 않은 파일이나 원격과 다른 커밋이 없습니다.</p>
+        <p className="manage-ok">저장소 {status.repos.length}개 모두 정상입니다.</p>
       ) : (
         <table className="run-table manage-table">
           {head}
@@ -67,7 +67,6 @@ function RepoSection({ status }: { status: HallStatus | null }) {
           </table>
         </details>
       )}
-      <p className="sub">앱은 fetch하지 않습니다. 「원격」은 마지막 fetch 시점 기준입니다.</p>
     </>
   )
 }

@@ -1,6 +1,10 @@
 import { useEffect, useState, type ComponentProps } from 'react'
+import CommonRootRow from './CommonRootRow'
 import MeRow from './MeRow'
+import ShareRootRow from './ShareRootRow'
 import WorkspaceBar from './WorkspaceBar'
+import { TOUR_ANCHOR } from '../lib/anchors'
+import { TITLE } from '../../../shared/forge'
 
 /** 경로의 끝 이름 — 접힌 줄에 한 마디로 */
 function leaf(p: string): string {
@@ -8,7 +12,7 @@ function leaf(p: string): string {
 }
 
 /**
- * **설정 서랍** (2026-09-29, M4) — 작업 폴더 · 리소스 자리 · 양산기 폴더 · 만든 사람 · 폴더 권한 화면.
+ * **설정 서랍** (2026-09-29, M4) — 작업 폴더 · 리소스 자리 · 양산기 폴더 · 공용 폴더(2026-10-21) · 만든 사람 · 공유 폴더 · 폴더 권한 화면.
  *
  * 한 번 정하면 잘 안 바꾸는 것이 옆줄 위쪽 절반을 늘 차지하고 있었다. 접어 두고 한 줄로 보인다.
  * **알릴 것(warn · error)이 있으면 펴서 연다** — 잘못된 설정을 접어 숨기면 왜 진행판이 비었는지 모른다.
@@ -16,12 +20,20 @@ function leaf(p: string): string {
 function SettingsDrawer({
   onFolders,
   onSetMe,
+  onSetShare,
+  onPickCommon,
+  onClearCommon,
   ...props
 }: ComponentProps<typeof WorkspaceBar> & {
   /** 폴더 · 권한(ACL) 화면으로 — 옛 첫 탭을 서랍 안으로 옮겼다 (M5) */
   onFolders: () => void
   /** 만든 사람 · 팀 저장 */
   onSetMe: (developer: string, devTeam: string) => void
+  /** 사내 공유 폴더 위치 저장 — 빈 글이면 기본 주소 */
+  onSetShare: (dir: string) => void
+  /** 공용 폴더(sparkon_common) 고르기 · 기본 자리로 */
+  onPickCommon: () => void
+  onClearCommon: () => void
 }) {
   const ws = props.workspace
   const trouble = Boolean(ws?.error || ws?.warn)
@@ -31,16 +43,18 @@ function SettingsDrawer({
     if (trouble) setOpen(true)
   }, [trouble])
   return (
-    <details className="settings-drawer" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+    <details className="settings-drawer" id={TOUR_ANCHOR.sideSettings} open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary>
-        <span>설정</span>
+        <span>{TITLE.settings}</span>
         <span className="sub mono">
           {ws ? `${leaf(ws.dir)}, 호 ${ws.repos}개${ws.rscRoot ? `, 리소스 ${leaf(ws.rscRoot)}` : ''}` : '읽는 중'}
         </span>
         {trouble && <span className="tag warn">알림</span>}
       </summary>
       <WorkspaceBar {...props} />
+      {ws && !ws.error && <CommonRootRow workspace={ws} busy={props.busy} onPick={onPickCommon} onClear={onClearCommon} />}
       {ws && !ws.error && <MeRow workspace={ws} busy={props.busy} onSave={onSetMe} />}
+      {ws && !ws.error && <ShareRootRow workspace={ws} busy={props.busy} onSave={onSetShare} />}
       <button className="ghost open-forge-old" onClick={onFolders}>
         폴더 권한 보기
       </button>

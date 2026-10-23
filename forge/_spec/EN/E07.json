@@ -5,6 +5,8 @@
   "title": "길 따라 자동차 — 타일 길을 달리며 만나는 낱말을 듣습니다",
   "summary": "6칸 × 4줄 판 위에 길 타일이 깔려 있고 자동차가 출발점에 서 있습니다. 정해진 길을 따라 자동차가 달리다가 낱말 타일을 만나면 멈춰서 그림이 뜨고 낱말을 읽어 줍니다. 길을 다 지나면 다음 판으로 넘어갑니다. 판마다 길 모양과 만나는 낱말이 다릅니다.",
   "reference": {
+    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E07",
     "activities": [
       "ENL3M01W1S1",

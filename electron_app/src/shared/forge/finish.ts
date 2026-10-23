@@ -1,5 +1,6 @@
 /** 만들려던 글 보기 · 실제로 쓰기 · 띄워 보기 · 재현 검사. 왜 모양을 여기 적는지는 `../forge.ts` 머리말. */
 
+import { hoLabel } from './boardlist'
 import type { InboxResult } from './inbox'
 import type { RunResult } from './run'
 
@@ -91,6 +92,8 @@ export interface DoneResult {
   changed: string[]
   note: string
   error?: string
+  /** 하기 직전 타입 검사(`halltsc.ts`)가 이 학습코드에서 찾은 오류 줄 — 있으면 하지 않았다 */
+  tscErrors?: string[]
 }
 
 /** 실제로 쓴 결과. */
@@ -138,6 +141,13 @@ export interface ViewCheck {
   blocked: string
 }
 
+/** 미리보기 서버가 도는 동안 다시 잰 `check` 로 — 공통 node_modules 정션이 다른 호로 바뀌었으면 알릴 한 줄, 아니면 빈 글 */
+export const junctionNote = (c: ViewCheck): string =>
+  c.linkedMonth && !c.sameMonth ? `정션이 ${hoLabel(c.linkedMonth)}로 바뀌어 미리보기가 그 호 코드를 띄웁니다.` : ''
+
+/** 떠 있던 dev 서버가 죽었을 때 메인이 보내는 로그 줄의 머리 — 화면은 이 줄을 보고 「실행 중」을 내린다 */
+export const VIEW_EXITED = '서버가 종료되었습니다'
+
 /** 호 저장소의 dev 서버 형편. 한 번에 하나만 띄운다. */
 export interface Server {
   running: boolean
@@ -179,13 +189,10 @@ export interface LinkResult {
 export interface CommitResult {
   ok: boolean
   done: string[]
-  /** 커밋 · 푸시한 브랜치 — main 이 아니면 화면이 「main에 올리기」를 켠다 (2026-10-02) */
+  /** 커밋 · 푸시한 브랜치. main 에는 진행판의 「main 에 모두 올리기」가 올린다(2026-10-14, `hallsync.ts`) */
   branch?: string
-  /**
-   * main 에 갈 것 (`hallcommit.ts` `mainPlan`). `none` 이미 다 있음 · `behind` main 이 앞섬 · `ready` 올릴 수 있음.
-   * `codes` 는 갈 「양산 완료」 커밋의 학습코드, `extra` 는 그 밖의 커밋과 까닭 — 사람이 보고 한 번 더 눌러야 같이 올라간다
-   */
-  toMain?: { state: 'none' | 'behind' | 'ready'; codes: string[]; extra: { sha: string; why: string }[] }
   note?: string
   error?: string
+  /** 커밋 직전 타입 검사가 이 학습코드에서 찾은 오류 줄 — 있으면 커밋하지 않았다 */
+  tscErrors?: string[]
 }

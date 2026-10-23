@@ -5,6 +5,8 @@
   "title": "낱말 따라 쓰고 꾸미기 — 글씨를 덧쓰고 스티커를 붙입니다",
   "summary": "판 위에 낱말이 흐리게 적혀 있고 마커로 획을 따라 덧씁니다. 다 쓰면 스티커 판이 열려 그 낱말에 어울리는 스티커를 골라 붙입니다. 꾸민 그림은 사진으로 찍혀 앨범에 쌓이고, 끝나면 앨범을 넘겨 보며 낱말 소리를 다시 들을 수 있습니다. 이닝 차례는 열 때마다 섞입니다.",
   "reference": {
+    "moduleCommit": "efc81805b347be90378ff4228f4304efc09e0fa0",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/ShowcaseWriteLv1",
     "activities": [
       "ENL1M01W4S2",

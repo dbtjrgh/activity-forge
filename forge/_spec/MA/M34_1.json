@@ -5,6 +5,8 @@
   "title": "시소로 무게 비교",
   "summary": "시소 양쪽에 물건을 끌어다 올려 무게를 견주는 활동. 물건마다 무게가 정해져 있고, 양쪽 무게 합에 따라 시소가 기울어집니다.",
   "reference": {
+    "moduleCommit": "6994ca4f86a0f73bdb819a67530ed7dec258cb61",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M34_1",
     "activities": [
       "MAL2M05W2S3",

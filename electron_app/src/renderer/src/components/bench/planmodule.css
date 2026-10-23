@@ -1,0 +1,63 @@
+/* 기획서 모듈넘버가 배치표와 다를 때 (2026-10-14, `PlanModuleNotice.tsx`). 클래스는 planmod- 로 시작한다(짧은 이름이 온 앱을 덮은 함정).
+   글 크기는 둘레와 같은 12~13px — 정하지 않으면 body 16px 를 받는다 */
+
+.planmod-warn {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--warn);
+  border-left-width: 3px;
+  border-radius: var(--radius-2);
+  background: color-mix(in srgb, var(--warn) 10%, transparent);
+  font-size: var(--font-md);
+}
+
+.planmod-say {
+  margin: 0;
+  font-size: var(--font-md);
+  line-height: 1.5;
+  color: var(--fg);
+}
+
+.planmod-say b {
+  color: var(--warn);
+}
+
+.planmod-sub {
+  margin: 4px 0 0;
+  font-size: var(--font-sm);
+  line-height: 1.5;
+  color: var(--muted);
+  word-break: keep-all;
+}
+
+.planmod-confirm {
+  color: var(--warn);
+}
+
+.planmod-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-2);
+  margin-top: 6px;
+}
+
+button.planmod-go {
+  padding: 5px 12px;
+  border-color: var(--warn);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--warn) 14%, transparent);
+  color: var(--fg);
+  font-size: var(--font-sm);
+  font-weight: 700;
+}
+
+button.planmod-go:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--warn) 26%, transparent);
+}
+
+.planmod-note {
+  margin: 0;
+  font-size: var(--font-sm);
+  line-height: 1.5;
+  color: var(--muted);
+}

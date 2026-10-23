@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { GuideItem, RscGuide } from '../../../../shared/forge'
-import { kindClass, kindName } from '../../lib/format'
 import CopyButton from '../CopyButton'
-import { GuideRows, GuideTiles } from './GuideTiles'
+import { Counts, GuideRows, GuideTiles, isDone } from './GuideTiles'
 import GuideMine from './GuideMine'
 import GuideOrigin from './GuideOrigin'
 import GuideVoice from './GuideVoice'
 import GuideZoom from './GuideZoom'
+import PageNeeds from '../bench/PageNeeds'
+import PlanModuleNotice from '../bench/PlanModuleNotice'
+import ShareFetch from '../ShareFetch'
 import './guide.css'
 
 /**
@@ -21,27 +23,6 @@ const POLL_MS = 4000
 
 /** figma 에서 내보내는 것 — 그림뿐. 영상 · 소리 · 로티는 따로 받는다(영상은 AssetTable 이 그림에 올려도 figma 에 없다) */
 const FIGMA = new Set(['image'])
-const isDone = (i: GuideItem): boolean => i.state === 'name' || i.state === 'set' || i.state === 'hint'
-
-/**
- * 종류마다 「받은 것 / 받을 것」 — **사람이 받을 것만** 센다 (2026-10-01). 앱이 가져올 것까지 세면
- * 그림 한 장만 보이는데 「그림 0/5」, 소리는 하나도 안 보이는데 「소리 0/5」가 떠서 무엇을 받으라는지 흐렸다
- */
-function Counts({ items }: { items: GuideItem[] }) {
-  const kinds = [...new Set(items.map((i) => i.kind))]
-  return (
-    <>
-      {kinds.map((k) => {
-        const of = items.filter((i) => i.kind === k)
-        return (
-          <span key={k} className={`guide-count ${kindClass(k)}`}>
-            {kindName(k)} {of.filter(isDone).length}/{of.length}
-          </span>
-        )
-      })}
-    </>
-  )
-}
 
 /** 디자인 쪽에 보낼 글 — 아직 안 온 것만 */
 const listText = (g: RscGuide, left: GuideItem[]): string =>
@@ -108,6 +89,8 @@ function GuideWindow({ code }: { code: string }) {
             {top ? '항상 위에 표시 중' : '항상 위에 표시'}
           </button>
         </header>
+        {/* 기획서 모듈넘버가 배치표와 다르면 한 줄 — 원본이 다른 모듈 것이라 아래 그림이 틀린다. 바꾸는 것은 작업대에서 */}
+        <PlanModuleNotice code={code} seen={data?.module} />
         {data?.module && <GuideOrigin code={code} origin={data.origin} note={data.originNote} onChanged={read} />}
         {data && !data.error && (
           <>
@@ -152,7 +135,13 @@ function GuideWindow({ code }: { code: string }) {
           <GuideMine code={code} files={data.mine} />
         ) : (
           <>
-            {want.length > 0 && got === want.length && <p className="guide-done">리소스가 모두 준비되었습니다. 작업대에서 생성을 누르세요.</p>}
+            {/* 인터북 — figma 옆에서 별을 숨긴 판 · 효과만 남긴 판을 내보내게. 넣으면 다시 읽어 줄어든다 */}
+            <PageNeeds code={code} poll={4000} />
+            {/* 사내 공유 폴더 — 소리 · 애니메이션 · 영상을 찾아 개수만 보이고 누르면 가져온다. 목록은 작업대 「리소스」 칸에 (2026-10-14) */}
+            <section className="guide-sec">
+              <h2>공유 폴더</h2>
+              <ShareFetch code={code} stamp={data.mine.map((f) => f.rel).join('|')} compact onDone={read} />
+            </section>
             {figma.length > 0 && (
               <section className="guide-sec">
                 {/* 원본 학습코드는 머리에 한 번만 — 목록마다 붙였더니 「이 학습코드 것을 넣으라는 건가」로 읽혔다 (2026-10-01) */}
@@ -160,7 +149,7 @@ function GuideWindow({ code }: { code: string }) {
                   figma에서 내보낼 그림 <span className="guide-ref">참고용</span>{' '}
                   <Counts items={want.filter((i) => FIGMA.has(i.kind))} />
                 </h2>
-                <GuideTiles code={code} items={figma} onZoom={setZoom} />
+                <GuideTiles code={code} origin={data.origin} items={figma} placed={data.mine} onZoom={setZoom} />
               </section>
             )}
             {other.length > 0 && (
@@ -168,7 +157,6 @@ function GuideWindow({ code }: { code: string }) {
                 <h2>
                   따로 받을 리소스 <Counts items={want.filter((i) => !FIGMA.has(i.kind))} />
                 </h2>
-                <p className="guide-sec-tip">소리, 영상, 애니메이션(로티)은 figma에 없습니다. 담당자에게 받아 작업대에 끌어다 놓으세요.</p>
                 <GuideRows items={other} />
               </section>
             )}
@@ -176,9 +164,7 @@ function GuideWindow({ code }: { code: string }) {
             {data.items.some((i) => i.talk) && <GuideVoice code={code} onChanged={read} />}
             {auto.length > 0 && (
               <details className="guide-sec guide-auto">
-                <summary>
-                  앱이 원본에서 가져오는 리소스 {auto.length}개 (넣지 않아도 됩니다)
-                </summary>
+                <summary>앱이 원본에서 가져오는 리소스 {auto.length}개</summary>
                 <GuideRows items={auto} />
               </details>
             )}

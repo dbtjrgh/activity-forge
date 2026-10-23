@@ -5,6 +5,7 @@
 import fs from "fs";
 import { chalk } from "./color";
 import { listSpecs } from "./spec";
+import { SUBJECT_CODES } from "./subjects";
 import { surveyAll, findUsers, moduleDir } from "./surveyfind";
 import { type FieldStat, compare } from "./surveycompare";
 
@@ -15,7 +16,8 @@ import { type FieldStat, compare } from "./surveycompare";
 export function printSurvey(): void {
   const table = surveyAll();
   const have = new Set<string>();
-  for (const subject of ["MA", "KO", "EN"]) {
+  // 「스펙이 있나」만 보는 표라 과목 차례는 출력에 안 드러납니다.
+  for (const subject of SUBJECT_CODES) {
     for (const m of listSpecs(subject)) have.add(subject + "/" + m);
   }
 

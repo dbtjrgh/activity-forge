@@ -1,0 +1,89 @@
+/* 진행판 맨 위 한 줄과 펼친 칸 (2026-10-14, `BoardTop.tsx`). 클래스는 board-top- 로 시작한다(짧은 이름이 온 앱을 덮은 함정) */
+
+.board-top {
+  margin-bottom: var(--gap-3);
+}
+
+.board-top-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 펼친 칸 — 크기를 안 정하면 body 16px 를 받는다 */
+.board-top-panel {
+  margin-top: var(--gap-2);
+  padding: 10px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--surface);
+  font-size: var(--font-md);
+  line-height: 1.5;
+}
+
+.board-top-title {
+  margin: 0 0 var(--gap-2);
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.board-top-repo {
+  padding: var(--gap-2) 0;
+  border-top: 1px dashed var(--border);
+}
+
+.board-top-repo-name {
+  margin: 0 0 4px;
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.board-top-group {
+  margin: var(--gap-2) 0 4px;
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.board-top-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: var(--font-md);
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.board-top-skip {
+  color: var(--muted);
+}
+
+.board-top-files {
+  margin: 2px 0 4px;
+  padding-left: 14px;
+  list-style: none;
+  font-size: var(--font-xs);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.board-top-more {
+  margin-top: var(--gap-2);
+  font-size: var(--font-sm);
+  color: var(--muted);
+}
+
+.board-top-hint {
+  margin: var(--gap-2) 0 0;
+  font-size: var(--font-sm);
+  color: var(--muted);
+}
+
+.board-top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-2);
+  margin-top: var(--gap-2);
+}

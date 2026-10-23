@@ -19,7 +19,7 @@ Electron + TypeScript + Vite + React 데스크톱 앱.
 ```
 src/
   main/
-    index.ts · window.ts · preview.ts · guidewin.ts · constants.ts   생명주기 · 메인 창 · 앱 안 창 · 받을 리소스 창 · 상한값
+    index.ts · window.ts · preview.ts · regress.ts · guidewin.ts · constants.ts   생명주기 · 메인 창 · 앱 안 창 · 회귀 검사의 숨긴 창 · 받을 리소스 창 · 상한값
     ipc/                 화면 단위 채널 — 로직 없음, 렌더러 입력 검증은 여기서 한 번
     services/            도메인 로직 — Electron 을 import 하지 않는다
     services/forge/      양산 — forge 를 부르는 자리는 runtime.ts 하나
@@ -69,6 +69,7 @@ yarn start        # 빌드 결과를 프로덕션 모드로 실행
 
 ```bash
 yarn package      # 설치 파일 없이 dist/ 에 실행 가능한 앱만 생성
+yarn dist:portable # 배포용 실행 파일 하나 — dist\SparkOn-Manager-<버전>.exe (이름은 electron-builder.yml 의 portable)
 yarn dist:win     # Windows NSIS 설치 파일
 yarn dist:mac     # macOS dmg
 yarn dist:linux   # Linux AppImage
@@ -99,12 +100,12 @@ yarn dist:linux   # Linux AppImage
 
 ## 코드 서명 / 백신 차단 — 이 PC 에서는 실제로 막힙니다
 
-**`yarn dist:win`(NSIS)은 이 PC 에서 안 됩니다.** 사내 보안 프로그램가 막습니다. 만들어진
+**`yarn dist:win`(NSIS)은 이 PC 에서 안 됩니다.** 사내 보안 프로그램이 막습니다. 만들어진
 exe 도 실행이 차단됩니다. 자세한 것과 IT 요청 방법은
 [docs/code-signing.md](docs/code-signing.md), 함정의 전말은 [../CLAUDE.md](../CLAUDE.md).
 
 ```powershell
-yarn dist:portable  # 배포 — 실행 파일 하나(dist\SparkOn Manager 1.0.0.exe), NSIS 를 안 거칩니다
+yarn dist:portable  # 배포 — 실행 파일 하나(dist\SparkOn-Manager-<버전>.exe, poppler 포함), NSIS 를 안 거칩니다
 .\start-app.bat     # 이 PC 에서 실행 — 소스로 띄웁니다(안 막힙니다). 9222 를 열고 감시 모드는 끕니다. 창을 보며 켤 때
 ```
 

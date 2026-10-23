@@ -5,6 +5,8 @@
   "title": "양쪽 세어 수 만들기 (버튼으로 답 입력)",
   "summary": "화면 왼쪽과 오른쪽에 물건이 놓이고, 각각 몇 개인지 세어 아래 숫자 버튼으로 답을 입력하는 활동. 이닝마다 두 수(num1 · num2)가 정답입니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M08",
     "activities": [
       "MAL1M01W2S2"

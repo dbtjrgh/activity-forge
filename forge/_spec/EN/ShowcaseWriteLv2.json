@@ -5,6 +5,8 @@
   "title": "글자판으로 낱말 쓰기 — 자판을 눌러 낱말을 채웁니다",
   "summary": "아래에 글자 자판이 있고 위에 빈 칸이 놓입니다. 그림과 소리를 보고 글자를 하나씩 눌러 낱말을 채웁니다. 잘못 누르면 지우개로 지울 수 있습니다. 다 채우면 사진이 찍혀 앨범에 쌓이고, 끝나면 앨범에서 낱말을 다시 들을 수 있습니다. 이닝 차례는 열 때마다 섞입니다.",
   "reference": {
+    "moduleCommit": "3fb22c7fc49049c8844a5a97e010cf23c6a4c63b",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-28) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/ShowcaseWriteLv2",
     "activities": [
       "ENL2M01W4S2",

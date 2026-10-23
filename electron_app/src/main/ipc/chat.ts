@@ -9,6 +9,7 @@ import { BrowserWindow, ipcMain } from 'electron'
 import type { ChatInfo } from '../../shared/forge'
 import { IPC } from '../../shared/ipc'
 import { chatClear, chatInfo, chatReply, chatStart, chatStop } from '../services/forge/chat'
+import { chatLookSeen } from '../services/forge/chatgate'
 import { onChat } from '../services/forge/chatstore'
 import { normalizeCode } from './answers'
 
@@ -40,9 +41,14 @@ export function registerChatIpc(): void {
     const ok = normalizeCode(String(code ?? ''))
     return ok ? chatInfo(ok) : bad(code)
   })
-  ipcMain.handle(IPC.forgeChatStart, async (_e, code: unknown) => {
+  // `force` — 남이 끝낸 학습코드를 작업대의 「그래도 고치기」로 푼 뒤에만 true(`chatgate.ts`)
+  ipcMain.handle(IPC.forgeChatStart, async (_e, code: unknown, force: unknown) => {
     const ok = normalizeCode(String(code ?? ''))
-    return ok ? chatStart(ok) : bad(code)
+    return ok ? chatStart(ok, force === true) : bad(code)
+  })
+  ipcMain.handle(IPC.forgeChatLookSeen, async (_e, code: unknown) => {
+    const ok = normalizeCode(String(code ?? ''))
+    return ok ? chatLookSeen(ok) : bad(code)
   })
   ipcMain.handle(IPC.forgeChatReply, async (_e, code: unknown, text: unknown, images: unknown) => {
     const ok = normalizeCode(String(code ?? ''))

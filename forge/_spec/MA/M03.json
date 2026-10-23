@@ -5,12 +5,14 @@
   "title": "네 개 중 고르기 (협력사 공통 기반)",
   "summary": "지시문을 듣고 버튼 네 개(btn_0 ~ btn_3) 중 맞는 것을 고르는 활동. 힌트를 볼 수 있고 이닝을 다 풀면 엔딩 연출이 나옵니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M03",
     "activities": [
       "MAL2M01W1S3",
       "MAL3M03W3S3"
     ],
-    "doc": "README 없음. 근거는 M03.ts · M03_Answer.ts · M03_Button.ts · M03_Director.ts · M03_Hint.ts · M03_Ending.ts 와 dori_common 의 Com_* 들, 표본 2차시입니다."
+    "doc": "README 없음. 근거는 M03.ts · M03_Answer.ts · M03_Button.ts · M03_Director.ts · M03_Hint.ts · M03_Ending.ts 와 partner_common 의 Com_* 들, 표본 2차시입니다."
   },
   "codegen": {
     "extends": {
@@ -83,7 +85,7 @@
       }
     ],
     "providedByModule": {
-      "note": "**dori_common(협력사 공통) 위에 올라간 모듈입니다** — Com_Create · Com_Audio · Com_Parent 를 씁니다. 자기 리소스는 등록하지 않고, 액티비티가 onLoad 에서 AssetTable 네 배열을 넘깁니다.\n\n**GameData 의 image · lottie 표는 열쇠가 곧 alias 입니다.** 이 스펙에 열거된 열쇠는 표본 두 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다.\n\n**이름이 코드에 박힌 음원** — `bgm`(PlayBGM) · `click` · `button` · `correct` · `wrong`(PlaySFX)."
+      "note": "**partner_common(협력사 공통) 위에 올라간 모듈입니다** — Com_Create · Com_Audio · Com_Parent 를 씁니다. 자기 리소스는 등록하지 않고, 액티비티가 onLoad 에서 AssetTable 네 배열을 넘깁니다.\n\n**GameData 의 image · lottie 표는 열쇠가 곧 alias 입니다.** 이 스펙에 열거된 열쇠는 표본 두 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다.\n\n**이름이 코드에 박힌 음원** — `bgm`(PlayBGM) · `click` · `button` · `correct` · `wrong`(PlaySFX)."
     }
   },
   "gameData": {
@@ -107,7 +109,7 @@
             "desc": "이닝 수. **M03_Answer 배열의 칸 수와 같아야 합니다.**"
           }
         ],
-        "desc": "이닝 구성. dori_common 의 Com_Inning 이 이 값으로 초기화됩니다."
+        "desc": "이닝 구성. partner_common 의 Com_Inning 이 이 값으로 초기화됩니다."
       },
       {
         "key": "Com_BG",
@@ -1095,7 +1097,7 @@
       "id": "fixed-sound-registered",
       "level": "error",
       "check": "bgm · click · button · correct · wrong 다섯 음원이 등록돼야 한다.",
-      "why": "dori_common 의 Com_Audio 가 이름으로 찾습니다. 없으면 무음으로 통과합니다."
+      "why": "partner_common 의 Com_Audio 가 이름으로 찾습니다. 없으면 무음으로 통과합니다."
     },
     {
       "id": "hooks-all-seven",

@@ -11,10 +11,10 @@
 
 import { ipcMain } from 'electron'
 import { IPC } from '../../shared/ipc'
-import type { CommitResult, DoneResult, LeftoverTrash, LinkResult, PubExtra, ReproResult, RscClean, Server, ViewCheck } from '../../shared/forge'
-import { commitDone, pushMain } from '../services/forge/hallcommit'
+import type { CodeReset, CommitResult, DoneResult, LeftoverTrash, LinkResult, PubExtra, ReproResult, Server, ViewCheck } from '../../shared/forge'
+import { commitDone } from '../services/forge/hallcommit'
 import { pubExtraOf, trashPubExtra } from '../services/forge/pubextra'
-import { cleanRsc, rscCleanPlan } from '../services/forge/rscclean'
+import { resetCode, resetPlan } from '../services/forge/reset'
 import { linkFor } from '../services/forge/link'
 import { markDone } from '../services/forge/done'
 import { normalizeCode } from './answers'
@@ -57,42 +57,38 @@ export function registerFinishIpc(): void {
 
   ipcMain.handle(IPC.forgeViewStop, (): Server => stopServer())
 
-  ipcMain.handle(IPC.forgeDone, (_e, code: unknown): Promise<DoneResult> => {
+  // `force` — 남이 끝낸 학습코드를 작업대의 「그래도 고치기」로 푼 뒤에만 true 가 온다(`owner.ts`). true 가 아니면 다 false 로 본다
+  ipcMain.handle(IPC.forgeDone, (_e, code: unknown, force: unknown): Promise<DoneResult> => {
     const ok = normalizeCode(String(code ?? ''))
-    return ok ? markDone(ok) : Promise.resolve({ ok: false, file: '', changed: [], note: '', error: badCode(code).error as string })
+    return ok ? markDone(ok, force === true) : Promise.resolve({ ok: false, file: '', changed: [], note: '', error: badCode(code).error as string })
   })
 
-  ipcMain.handle(IPC.forgeCommit, (_e, code: unknown): Promise<CommitResult> => {
+  ipcMain.handle(IPC.forgeCommit, (_e, code: unknown, force: unknown): Promise<CommitResult> => {
     const ok = normalizeCode(String(code ?? ''))
-    return ok ? commitDone(ok) : Promise.resolve({ ok: false, done: [], error: badCode(code).error as string })
+    return ok ? commitDone(ok, { force: force === true }) : Promise.resolve({ ok: false, done: [], error: badCode(code).error as string })
   })
-  // main 에 올리기는 커밋과 따로 누른다 (2026-10-02)
-  // `allow` — 사람이 보고 같이 올리기로 한 다른 커밋(40자 해시만 받는다). 서비스가 누른 때 다시 재 본다
-  ipcMain.handle(IPC.forgePushMain, (_e, code: unknown, allow: unknown): Promise<CommitResult> => {
-    const ok = normalizeCode(String(code ?? ''))
-    const shas = Array.isArray(allow) ? allow.filter((s): s is string => typeof s === 'string' && /^[0-9a-f]{40}$/.test(s)).slice(0, 200) : []
-    return ok ? pushMain(ok, shas) : Promise.resolve({ ok: false, done: [], error: badCode(code).error as string })
-  })
+  // main 에 올리기는 진행판의 「main 에 모두 올리기」가 한다(`ipc/sync.ts`, 2026-10-14) — 학습코드마다 올리던 채널은 걷었다
 
   // 안 쓰는 리소스 — 지울 것은 메인이 누른 때 다시 세고, 화면에 보인 목록(`shown`, 글자만 받는다)과 겹치는 것만 옮긴다
   ipcMain.handle(IPC.forgePubExtra, (_e, code: unknown): Promise<PubExtra> => {
     const ok = normalizeCode(String(code ?? ''))
     return ok ? pubExtraOf(ok) : Promise.resolve({ files: [], error: badCode(code).error as string })
   })
-  ipcMain.handle(IPC.forgePubExtraTrash, (_e, code: unknown, shown: unknown): Promise<LeftoverTrash> => {
+  ipcMain.handle(IPC.forgePubExtraTrash, (_e, code: unknown, shown: unknown, force: unknown): Promise<LeftoverTrash> => {
     const ok = normalizeCode(String(code ?? ''))
     const rels = Array.isArray(shown) ? shown.filter((s): s is string => typeof s === 'string').slice(0, 5000) : []
-    return ok ? trashPubExtra(ok, rels) : Promise.resolve({ moved: [], failed: [], error: badCode(code).error as string })
+    return ok ? trashPubExtra(ok, rels, force === true) : Promise.resolve({ moved: [], failed: [], error: badCode(code).error as string })
   })
-  // 완료 뒤 리소스 폴더 정리 — 같은 꼴(누른 때 다시 재고 화면에 보인 항목만)
-  ipcMain.handle(IPC.forgeRscCleanPlan, (_e, code: unknown): Promise<RscClean> => {
+  // 완료 뒤 리소스 폴더 정리는 진행판의 「리소스 폴더 정리」로 옮겼다(`ipc/sync.ts`, 2026-10-14)
+  // 학습코드 초기화 — 같은 꼴(누른 때 다시 재고 화면에 보인 열쇠만)
+  ipcMain.handle(IPC.forgeResetPlan, (_e, code: unknown, force: unknown): Promise<CodeReset> => {
     const ok = normalizeCode(String(code ?? ''))
-    return ok ? rscCleanPlan(ok) : Promise.resolve({ dir: '', finished: false, entries: [], why: '', error: badCode(code).error as string })
+    return ok ? resetPlan(ok, force === true) : Promise.resolve({ rsc: null, recipe: [], hall: [], why: '', error: badCode(code).error as string })
   })
-  ipcMain.handle(IPC.forgeRscClean, (_e, code: unknown, shown: unknown): Promise<LeftoverTrash> => {
+  ipcMain.handle(IPC.forgeReset, (_e, code: unknown, shown: unknown, force: unknown): Promise<LeftoverTrash> => {
     const ok = normalizeCode(String(code ?? ''))
-    const names = Array.isArray(shown) ? shown.filter((s): s is string => typeof s === 'string').slice(0, 5000) : []
-    return ok ? cleanRsc(ok, names) : Promise.resolve({ moved: [], failed: [], error: badCode(code).error as string })
+    const keys = Array.isArray(shown) ? shown.filter((s): s is string => typeof s === 'string').slice(0, 5000) : []
+    return ok ? resetCode(ok, keys, force === true) : Promise.resolve({ moved: [], failed: [], error: badCode(code).error as string })
   })
 
   ipcMain.handle(

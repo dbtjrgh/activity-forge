@@ -9,6 +9,11 @@
  *   못 찾으면 그렇다고 말한다. **짐작으로 고르지 않는다**
  * - MA 는 이 카드 대신 9호 기획서 1쪽의 모듈넘버가 채운다(`layoutfill.ts`) — 진행판에 놓을 때(`sortpaper.ts`)와 작업대를 열 때(`prepare.ts`).
  *   여기는 기획서가 없거나 아직 작업대를 안 연 칸이 남는다
+ * - **앞선 호 기록이 없는 칸(판정 「없음」)도 싣는다** (2026-10-21, 누리) — 1호 누리 L2 · L3 처럼 아무 호도 안 만든 칸은 후보가 0개라
+ *   진행판이 「모듈 못 정함」으로 세기만 하고 고를 길이 없었다(카드 제목 수와 목록 수도 어긋났다). 후보는 화면이 공용 모듈 폴더에서 따로 읽는다(`modulefolders.ts`)
+ * - **메인 스레드를 오래 안 붙잡는다** (2026-10-21). forge `placementFor` 는 부를 때마다 호 저장소를 다 훑는다(한 번 20ms 안팎).
+ *   NU01 은 36줄 가운데 35줄이 「없음」이라 줄마다 잇달아 부르면 메인이 0.7초 멈췄다 — 진행판을 열 때마다 이 카드가 묻는다.
+ *   그래서 싼 거르기(판정 · 개발 끝 표시)를 먼저 하고, `placementFor` 앞에서 한 줄마다 쉬어 간다(`newmodules.ts` 와 같은 꼴)
  *
  * 그림은 파일 경로로 낸다(data URL 은 `ipc/` 가). Electron 을 import 하지 않는다(services 규칙).
  */
@@ -27,6 +32,10 @@ import { plansOf } from './shot'
 /** 「호별 사용 유형」 쪽을 찾아볼 앞쪽 쪽수 — 표지 · 차례 다음에 온다(8호 Word Spark 는 3쪽) */
 const PAGES = 8
 const TYPE_PAGE = /호별\s*사용\s*유형/
+
+/** 앞선 호 기록이 없는 칸 — 후보 줄 대신 쓰는 글과 기획서 자리의 글 */
+const NO_HISTORY = '앞선 호에 이 위치의 학습코드가 없습니다.'
+const NO_HISTORY_PLAN = '기획서를 보고 공용 모듈 폴더에서 고르세요.'
 
 /** 앞선 호 같은 칸의 기획서에서 「호별 사용 유형」 쪽 — 없으면 까닭 */
 function typePage(forge: Forge, code: string): { plan: LayoutAsk['plan']; why: string } {
@@ -56,6 +65,9 @@ function typePage(forge: Forge, code: string): { plan: LayoutAsk['plan']; why: s
   return { plan: null, why: '앞선 호 기획서가 없습니다. 기획서의 「호별 사용 유형」 쪽을 보고 고르세요.' }
 }
 
+/** 다음 줄로 넘긴다 — 그 사이 쌓인 IPC 와 화면 일을 먼저 돌린다(`newmodules.ts` 와 같은 꼴) */
+const rest = (): Promise<void> => new Promise((r) => setImmediate(r))
+
 /** 호 저장소의 그 학습코드가 개발 끝인가 */
 function finished(forge: Forge, code: string): boolean {
   const month = /M(\d\d)/.exec(code)?.[1]
@@ -72,11 +84,20 @@ export async function layoutAsks(key: BoardKey): Promise<LayoutAsks> {
   try {
     const forge = await loadForge()
     for (const row of forge.layout.boardOf(key.subject, key.issue)) {
-      const at = forge.layout.placementFor(row.code)
-      if (!at || at.verdict !== '갈림') continue
+      // 진행판 「모듈 못 정함」과 같은 가름(forge `boardOf`) — 판정을 먼저 보고 거른다. `placementFor` 는 부를 때마다 호 저장소를 다 훑는다
+      if (row.verdict !== '갈림' && row.verdict !== '없음') continue
       // **이미 끝난 칸은 안 묻는다** — EN07 은 36/36 끝인데 배치표 판정만 갈림으로 남아 카드에 섰다. 더미도 Activity.ts 가 있어
-      // 「만들었음」으로는 못 가린다 — 개발 끝 표시(`activityInfo.json`)로 가린다
+      // 「만들었음」으로는 못 가린다 — 개발 끝 표시(`activityInfo.json`)로 가린다. 1호 누리 L1 의 완성본 11개도 판정은 「없음」이라 여기서 빠진다.
+      // `placementFor` 보다 먼저 본다(2026-10-21) — 파일 하나라 싸고, 끝난 11줄의 호 저장소 훑기가 통째로 빠진다
       if (finished(forge, row.code)) continue
+      await rest()
+      const at = forge.layout.placementFor(row.code)
+      if (!at || (at.verdict !== '갈림' && at.verdict !== '없음')) continue
+      if (at.verdict === '없음') {
+        // 앞선 호 기획서의 「호별 사용 유형」 쪽은 안 찾는다 — 그 위치를 만든 앞선 호가 없어 찾을 기획서가 없다
+        out.rows.push({ code: row.code, slot: at.slot, label: at.wbs?.title ?? '', ask: moduleAsk(at, NO_HISTORY), plan: null, planWhy: NO_HISTORY_PLAN })
+        continue
+      }
       const { plan, why } = typePage(forge, row.code)
       out.rows.push({ code: row.code, slot: at.slot, label: at.wbs?.title ?? '', ask: moduleAsk(at, ''), plan, planWhy: why })
     }

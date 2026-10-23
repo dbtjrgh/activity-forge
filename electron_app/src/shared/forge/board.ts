@@ -1,6 +1,12 @@
-/** 진행판 · 작업 폴더 · 스펙 갱신 · 리소스 화면이 처음 보여 줄 것. 왜 모양을 여기 적는지는 `../forge.ts` 머리말. */
+/**
+ * 진행판 · 작업 폴더 · 스펙 갱신 · 리소스 화면이 처음 보여 줄 것. 왜 모양을 여기 적는지는 `../forge.ts` 머리말.
+ * 옆줄의 진행판 목록과 호 이름(`BoardKey` · `BoardList` · `HO_OF`)은 `./boardlist.ts` 다(2026-10-21, 200줄을 넘어 뗐다)
+ */
 import type { Ask } from './ask'
+import type { BoardKey } from './boardlist'
 import type { ChatState } from './chat'
+import type { Devices } from './devices'
+import type { VacationLink } from './vacation'
 
 /** 차시 한 줄. forge `layoutboard.ts` 의 `BoardRow` 와 같은 모양이다. */
 export interface BoardRow {
@@ -43,11 +49,38 @@ export interface RowWork {
   /** 지금 대화가 도는 중이면 시작한 지 몇 ms (`chatstore.ts` 의 `since`). 안 돌면 null */
   running: number | null
   /**
-   * 원본보다 모자란 리소스 수 (2026-10-01, `services/forge/rsccount.ts` — 작업대 · 관리와 같은 셈).
-   * 리소스가 들어온 칸만 센다(빈 칸은 이미 「리소스 넣기」). 안 셌거나 못 셌으면 null
+   * 기획서에 적혔는데 없는 이 학습코드 소리 수 (2026-10-14, `services/forge/rsccount.ts` — 작업대 · 관리와 같은 셈).
+   * 원본과 개수를 견주던 때는 다 넣은 완성본에도 절반이 「부족」이었다 — 확실한 것만 센다.
+   * 리소스가 들어온 칸만 센다(빈 칸은 이미 「리소스 넣기」). 기획서가 없거나 영어라 못 셌으면 null
    */
   rscGap: number | null
+  /**
+   * 기획서 1쪽 모듈넘버가 배치표와 다르면 그 모듈 (2026-10-14, `services/forge/planmodule.ts`). 작업대를 열 때 남긴 결과만 읽는다 —
+   * 진행판을 열 때 기획서를 새로 읽지 않는다(pdftotext 가 메인 스레드를 잡는다). 같거나 모르면 없음
+   */
+  planModule?: string
+  /** 방학호와 리소스가 거의 다 같은 짝 (2026-10-20, `services/forge/vacation.ts` — `_layout/vacation.json` 을 읽기만). 짝이 없으면 없음 */
+  vacation?: VacationLink[]
+  /** 학습할 때 켜는 카메라 · 마이크 (2026-10-20, `services/forge/devices.ts`). 안 켜면 없음 */
+  devices?: Devices
 }
+
+/**
+ * 진행판 칸에 적을 모듈 — **개발 완료 칸은 호 저장소가 실제로 쓰는 모듈이 정본이다**.
+ * 배치표 판정(`module`)은 앞선 호 기록으로 고른 짐작이라 지난 호 완성본에서 틀린다(2026-10-14 에 재 보니 832칸 중 254칸 — 5호 MAL2M05W3S3 이 M35 인데 M07).
+ * 아직 안 끝난 칸은 판정이 먼저다 — 빈 뼈대가 부르는 모듈은 정한 것이 아니다.
+ * 개발 완료인데 저장소 모듈이 비면 빈 글(칸은 「모듈 사용 안 함」). `finished` 는 `work` 를 채우기 전(메인 `boardwork.ts` 카메라 · 마이크 셈)에 따로 준다
+ */
+export function shownModule(row: BoardRow, finished = row.work?.finished): string {
+  if (finished === true) return oneModule(row.usedModule ?? '')
+  return row.module || oneModule(row.usedModule ?? '')
+}
+
+/**
+ * 같은 모듈이 두 번 적힌 이름을 하나로 — forge 모듈 읽기가 주석 처리된 import 까지 세어 `M30+M30` · `E39+E39` 가 된다(9칸).
+ * 그 읽기는 deploy 와 같이 쓰는 정본(`activityModules.ts`)이라 여기서 합친다
+ */
+export const oneModule = (m: string): string => [...new Set(m.split('+'))].join('+')
 
 /** 같은 모듈을 쓰는 차시 무리. forge `layoutboard.ts` 의 `Group`. */
 export interface Group {
@@ -56,33 +89,6 @@ export interface Group {
   slots: string[]
   decided: boolean
   hasSpec: boolean
-}
-
-/** 어느 과목·호의 진행판인지 */
-export interface BoardKey {
-  subject: string
-  issue: string
-}
-
-/** 진행판 목록 한 줄 — 닫을 수 있나까지 (M7). 빈 글이면 닫을 수 있고, 아니면 못 닫는 까닭 */
-export interface BoardItem extends BoardKey {
-  closeWhy: string
-  /** 개발 끝(activityInfo.json devFinished)인 칸 수 — 옆줄이 색으로 보인다. 못 셌으면 null */
-  done: number | null
-  /** 셀 칸 수 — 36 에서 배치표가 뺀 칸(국어 협력사 몫)을 뺀 것 */
-  total: number
-}
-
-/**
- * 진행판 목록 — 그리고 **열 수 있는 다음 호**(M7). 연 호 가운데 빠진 과목이 있으면 그 호가 먼저고,
- * 없으면 가장 큰 호 + 1(호 저장소가 있을 때). 없으면 null
- */
-export interface BoardList {
-  boards: BoardItem[]
-  next: string | null
-  /** 다음 호에 새로 만들 과목 — 「+ 08호 KO 열기」 */
-  nextSubjects: string[]
-  error?: string
 }
 
 /** 진행판 한 화면. forge 의 boardOf · moduleOrder · skippedOf 를 합친 것. */
@@ -118,6 +124,20 @@ export interface LayoutAsks {
   error?: string
 }
 
+/**
+ * **과목의 공용 모듈 폴더** (2026-10-21, `services/forge/modulefolders.ts`) — 앞선 호가 없는 학습코드(후보 0개)의 모듈을 고를 목록.
+ * 매번 폴더를 읽어 새로 더한 모듈 폴더도 나온다. 폴더만 담는다(`index.ts` 같은 낱개 파일은 뺀다)
+ */
+export interface ModuleFolders {
+  subject: string
+  /** 읽은 과목 폴더 — 국어는 `KR` */
+  dir: string
+  modules: string[]
+  /** 배치표에 못 적는 이름이라 뺀 폴더 */
+  skipped: string[]
+  error?: string
+}
+
 /** 스펙이 없는 모듈 하나 — 열린 진행판의 배치표가 정했는데 `_spec` 에 없다 (`newmodules.ts`) */
 export interface NewModule {
   subject: string
@@ -134,31 +154,6 @@ export interface NewModules {
   modules: NewModule[]
   error?: string
 }
-
-/**
- * **M 번호 → 호 이름** (2026-09-29). 호 저장소 커밋이 스스로 부르는 이름에서 뽑았다 — 「9호(M08) 차시 36개 골격」 · 「6호(M11)」 · 「M11 방학호」.
- * **+1 이 아니다** — 6호가 방학호라 M11 이고, 7~11호는 M06~M10 이다. 처음에 +1 로 짐작해 옆줄에 「M11 12호」 「M01 2호」가 떴다.
- * 표에 없는 M(아직 커밋이 이름을 안 준 호)은 호 이름을 붙이지 않는다 — 짐작을 확정처럼 보이지 않는다.
- */
-export const HO_OF: Record<string, { name: string; order: number }> = {
-  '01': { name: '1호', order: 1 },
-  '02': { name: '2호', order: 2 },
-  '03': { name: '3호', order: 3 },
-  '04': { name: '4호', order: 4 },
-  '05': { name: '5호', order: 5 },
-  '11': { name: '6호(방학)', order: 6 },
-  '06': { name: '7호', order: 7 },
-  '07': { name: '8호', order: 8 },
-  '08': { name: '9호', order: 9 },
-  '09': { name: '10호', order: 10 },
-  '10': { name: '11호', order: 11 }
-}
-
-/** 화면에 부를 호 이름 — 「9호(M08)」. 표에 없는 M 은 M 번호만 */
-export const hoLabel = (m: string): string => (HO_OF[m] ? `${HO_OF[m].name}(M${m})` : `M${m}`)
-
-/** 호 차례 — 6호가 방학호 M11 이라 M 번호 차례와 다르다. 표에 없는 M 은 맨 뒤에 M 번호로 */
-export const hoOrder = (m: string): number => HO_OF[m]?.order ?? 100 + Number(m)
 
 /**
  * 「팀 일정표 갱신」의 결과 (2026-10-12) — 앱은 완료 목록을 내 컴퓨터에 잠깐 띄우고 일정표를 연다.

@@ -51,6 +51,20 @@ export type AliasFollow = {
   why?: string;
 };
 
+// **이 값이 모듈 안의 다른 구현을 고르는 자리** (2026-10-13). M01 은 `settings.typeList[]` 의 이름으로
+// 이닝마다 다른 클래스(type1_1.ts · type2.ts …)를 만든다(InningManager.ts typeMap). 완성본마다 쓴 값 묶음이 달라,
+// 원본 하나만 보면 다른 값의 짜임 · 리소스를 모른다 — 앱의 대화로 만들기가 **값마다 그 값을 쓴 완성본 하나는 열어 준다**(`chatothers.ts`).
+//   path    "settings.typeList[]"   관계와 같은 길 문법(`relpath.ts` `select`), GameData 뿌리부터
+//   ignore  ["Ending"]              모든 완성본이 늘 쓰는 것처럼 가르는 힘이 없는 값
+//   note    대화에게 보일 한 줄 — 무엇을 고르나
+// 값은 대소문자를 가리지 않는다(`variants.ts`). 길이 완성본에서 값을 못 찾으면 `tool/variantgate.ts` 가 실패한다.
+export type VariantKey = {
+  path: string;
+  ignore?: string[];
+  note: string;
+  why?: string;
+};
+
 export type Spec = {
   specVersion: number;
   module: string;
@@ -59,7 +73,16 @@ export type Spec = {
   summary?: string;
   aliases?: string[];
   aliasNote?: string;
-  reference?: { module?: string; activities?: string[] };
+  reference?: {
+    module?: string;
+    activities?: string[];
+    doc?: string;
+    // **이 스펙을 마지막으로 맞춰 본 모듈 커밋** (2026-10-14, `specdrift.ts`). 공용 저장소의 그 모듈 폴더가 이보다 새 커밋을 가지면
+    // check:spec · 완성본 점검이 「모듈이 스펙보다 새것입니다」로 알린다(막지 않음). 맞춰 본 뒤 `tool/specpin.ts` 로 적는다.
+    moduleCommit?: string;
+    // 그 커밋을 어떻게 정했나 — 처음 값은 스펙 파일 마지막 커밋 시각 이전의 모듈 마지막 커밋이라 어림이다
+    moduleCommitWhy?: string;
+  };
   // **학습코드마다 대사 성우의 성별** (2026-10-02 사용자 결정 — 「성우 성별 모듈에다가 넣어놓고 지정해서 쓰면」).
   // 같은 모듈이어도 호마다 박사가 남자 · 여자로 갈린다(K36 1호 남 · 2 · 5 · 6 · 7 · 9호 여). 소리 파일만으로는 모르고 기획서가 말한다 —
   // 그래서 사람이 한 번 적어 둔다. 앞 호 대사를 돌려 쓸 때 **같은 성별의 학습코드에서만** 가져온다(앱 `voice.ts`)
@@ -97,6 +120,9 @@ export type Spec = {
       alias: string;
       kind: AssetKind;
       fixedAlias?: boolean;
+      // **이 이름을 안 부르는 판이 있으면 그 까닭** (2026-10-13). 필드의 `aliasMayBeOff` 와 같은 뜻 — 없어도 막지 않고 경고만.
+      // M38_2 `mon_que02` 는 정답 고르기가 있을 때만 부르는데, 고르기가 없는 MAL1M08W2S3 이 등록하지 않아 check:spec 이 늘 걸렸다
+      aliasMayBeOff?: string;
       boundTo?: string;
       note?: string;
       // **그림 크기가 정해진 자리** (2026-09-23). 영상 모듈은 재생할 때 `1080 ÷ 썸네일 높이`
@@ -126,6 +152,7 @@ export type Spec = {
   relations?: SpecRelation[];
   fileTables?: FileTable[];
   aliasFollows?: AliasFollow[];
+  variantKey?: VariantKey;
   figma?: {
     note?: string;
     formula?: { x: string; y: string };

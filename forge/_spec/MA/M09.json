@@ -5,6 +5,8 @@
   "title": "선 따라 이동하며 수 세기",
   "summary": "이닝마다 길이 그려지고, 캐릭터가 이동 지점을 차례로 지나며 수를 셉니다. 도착 지점에 닿으면 이닝이 끝나고, 오프닝에서 수를 모아 보여 주는 연출이 있습니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M09",
     "activities": [
       "MAL2M01W1S2",

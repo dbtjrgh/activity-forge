@@ -35,8 +35,9 @@ function GuideZoom({ code, origin, item, onClose }: { code: string; origin: stri
         <div className="guide-zoom-foot">
           <div className="guide-zoom-name">
             <b className="mono">{item.name}</b>
+            {/* 격자는 받은 자리를 넣은 그림으로 그린다 — 크게 보기는 늘 원본 그림이라 그렇다고 적는다 (2026-10-15) */}
             <span className="sub mono">
-              {sizeOf(item)}, {origin}/{item.rel}
+              원본 그림, {sizeOf(item)}, {origin}/{item.rel}
             </span>
           </div>
           <CopyButton text={item.name}>이름 복사</CopyButton>

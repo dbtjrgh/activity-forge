@@ -7,22 +7,14 @@ import { parityOf } from "./parity";
 import { CODE, layoutFile, pinnedOrigin, runs, scanCells, type Cell, type Verdict } from "./layoutcore";
 import { placementOf } from "./layoutplace";
 import { reusesOther } from "./reused";
+import { hoName, hoOf } from "./honame";
 
 // ─── 원본 고르기 ─────────────────────────────────────────────────────────
 
-// M 번호 → 호 이름. **M11 이 6호(방학)** 라 1 을 더하면 M05 가 「6호」가 됩니다(저장소 함정). 앱 쪽 표는 `shared/forge/board.ts` 의 `HO_OF`
-function hoName(m: string): string {
-  const n = Number(m);
-  return n === 11 ? "6호(방학)" : n >= 6 ? `${n + 1}호` : `${n}호`;
-}
-
+// 호 이름(`hoName`) · 호 차례(`hoOf`)는 `honame.ts` 한 표에서 가져옵니다(2026-10-23 — 전에 여기 따로 적은 셈은 M12 를 「13호」로 불렀습니다).
 // 호 차례 — M11 은 6호라 5호(M05)와 7호(M06) 사이입니다 (2026-10-01 사용자 결정 — 「6호 아래 것으로 후보」).
-// 원본 후보의 앞 · 뒤와 가까움은 M 번호가 아니라 이 차례로 셉니다. 전에는 M 번호로 세서 9호를 만들 때 6호가 「뒤 호」로 밀렸고,
+// 아래 `originFor` 는 원본 후보의 앞 · 뒤와 가까움을 M 번호가 아니라 이 차례(`hoOf`)로 셉니다. 전에는 M 번호로 세서 9호를 만들 때 6호가 「뒤 호」로 밀렸고,
 // 6호를 만들 때 7~11호가 「앞선 호」로 올라왔습니다. **모듈 판정(`layoutplace.ts`)은 그대로 M 번호입니다** — EN M11 은 칸이 한 칸씩 어긋나 판정에서 뺍니다(`layout.ts` 머리말).
-function hoOf(m: string): number {
-  const n = Number(m);
-  return n === 11 ? 6 : n >= 6 ? n + 1 : n;
-}
 
 export type OriginPick = {
   target: string; // 만들 학습코드

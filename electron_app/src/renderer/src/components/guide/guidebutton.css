@@ -40,5 +40,7 @@ button.guide-open:hover:not(:disabled) {
   font-size: var(--font-xs);
   font-weight: 400;
   color: var(--warn);
+  /* 「소리 n개 없음」이 좁은 칸에서 두 줄로 갈렸다 */
+  white-space: nowrap;
 }
 

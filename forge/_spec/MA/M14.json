@@ -5,6 +5,8 @@
   "title": "가게에서 물건 담기 (수만큼 카트에)",
   "summary": "진열장에서 물건을 끌어다 카트에 담는 활동. 전광판이 담은 개수를 세어 주고, 이닝마다 담아야 하는 수와 물건 갈래가 다릅니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M14",
     "activities": [
       "MAL2M01W2S2"

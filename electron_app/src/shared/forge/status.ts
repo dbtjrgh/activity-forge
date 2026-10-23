@@ -40,8 +40,24 @@ export const BUTTON = {
   rewrite: '저장소에 다시 반영',
   done: '검수 완료',
   commit: '양산 완료 커밋',
-  main: 'main에 올리기',
-  seen: '확인'
+  /** 진행판 맨 위 — 학습코드마다 있던 「main에 올리기」를 모았다(2026-10-14). 작업대 검수 칸이 이 이름을 안내한다 */
+  mainAll: 'main 에 모두 올리기',
+  seen: '확인',
+  // 아래는 둘러보기(`lib/tour.ts`)가 글로 안내하는 단추 — 단추와 안내 글이 같은 이름을 쓰게 여기 둔다(2026-10-16)
+  chat: '대화로 생성',
+  /** 이 PC 에서 대화를 시작한 적이 있으면(`chat.json` 의 state 가 idle 이 아님) 「대화로 생성」 대신 */
+  chatAgain: '처음부터 다시 만들기',
+  /** 이미 개발 완료로 커밋한 내 학습코드면 「양산 완료 커밋」 대신 */
+  fixCommit: '수정사항 커밋',
+  guide: '받을 리소스 보기',
+  preview: '미리보기',
+  tour: '둘러보기'
+} as const
+
+/** 둘러보기가 이름을 부르는 화면 제목 — 제목과 안내 글이 같은 이름을 쓰게 */
+export const TITLE = {
+  now: '지금 바로 할 수 있는 학습코드',
+  settings: '설정'
 } as const
 
 /**
@@ -64,8 +80,9 @@ export function statusOf(row: BoardRow): { status: Status; next: string } {
   if (row.stage === '모듈 못 정함') return { status: '입력 필요', next: '모듈 선택' }
   if (row.stage === '스펙 먼저') return { status: '모듈 없음', next: '스펙 필요' }
   if (row.stage === '리소스 대기') return { status: '입력 필요', next: '리소스 넣기' }
-  // 들어왔지만 원본보다 모자라면 그것이 먼저다 — 작업대 순서 막대(`lib/benchorder.ts`)와 같은 차례 · 같은 셈(`rsccount.ts`)
-  if (w?.rscGap) return { status: '입력 필요', next: `리소스 ${w.rscGap}개 부족` }
+  // 들어왔지만 기획서에 적힌 소리가 없으면 그것이 먼저다 — 작업대 순서 막대(`lib/benchorder.ts`)와 같은 차례 · 같은 셈(`rsccount.ts`).
+  // 원본과 개수를 견주던 「리소스 n개 부족」은 다 넣은 완성본에도 절반이 떴다(2026-10-14)
+  if (w?.rscGap) return { status: '입력 필요', next: `소리 ${w.rscGap}개 없음` }
   // 대화로 다 만든 것은 화면을 다시 묻지 않는다 — 이미 그 입력으로 만들었다
   if (w?.needsShot && w.shots === 0 && chat !== 'done') return { status: '입력 필요', next: '화면 붙이기' }
   if (chat === 'done' || row.stage === '만들었음') return { status: '검수 대기', next: '미리보기' }
@@ -73,8 +90,8 @@ export function statusOf(row: BoardRow): { status: Status; next: string } {
 }
 
 /**
- * **figma 화면을 지금 붙일 수 있는 칸** — 진행판 「화면 연속 붙여넣기」와 「지금 바로 할 수 있는 학습코드」가 같이 쓴다 (2026-10-01).
- * 다음 할 일이 「리소스 n개 부족」인 칸도 넣는다 — 캡처는 리소스와 상관없이 지금 할 수 있다. 둘이 따로 세면 한 화면에서 「없다」와 「2개」가 같이 뜬다
+ * **figma 화면을 지금 붙일 수 있는 칸** — 진행판 「지금 바로 할 수 있는 학습코드」가 쓴다 (2026-10-01). 같이 쓰던 「화면 연속 붙여넣기」는 2026-10-14 에 걷었다.
+ * 다음 할 일이 「소리 n개 없음」인 칸도 넣는다 — 캡처는 리소스와 상관없이 지금 할 수 있다. 둘이 따로 세면 한 화면에서 「없다」와 「2개」가 같이 뜬다
  */
 export function wantsShot(row: BoardRow): boolean {
   const w = row.work

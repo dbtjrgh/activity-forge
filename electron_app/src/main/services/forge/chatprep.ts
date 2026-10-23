@@ -12,20 +12,21 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import { carriedRels, logCarried, pruneCarried } from './carrylog'
-import { carrySame } from './carryrsc'
-import { copyCommon } from './commonrsc'
+import { backdropScores } from './backdrop'
+import { carriedRels } from './carrylog'
+import { carryFiles } from './chatcarry'
+import { loreOf, type ChatLore } from './chatlore'
+import { driftOf, planDirs, planOpenOf, type PlanOpen } from './chatmodule'
+import { doneOf, hallOf, pickOthers, type Done, type VariantView } from './chatothers'
+import { pageLines, pagesOf } from './chatpages'
+import { measureBackdrop, sceneOf, type ChatScene, type OriginPick } from './chatscene'
 import { originNow } from './originpick'
 import type { Forge } from './runtime'
-import { plansOf, shotsOf } from './shot'
-import { pullCommonPlans } from './sortpaper'
+import { plansOf, shotsOf, wrongPlan } from './shot'
 import { stamp } from './stamp'
 import { rscTable } from './wholebrief'
 
-/** 같은 모듈 완성본을 몇 개까지 열어 주나 — 원본 하나에는 안 나오는 규칙을 본다(`whole.ts` 와 같은 까닭) */
-const OTHERS_MAX = 5
-
-export type Done = { code: string; act: string; rsc: string }
+export type { Done } from './chatothers'
 
 export type ChatCtx = {
   code: string
@@ -46,51 +47,58 @@ export type ChatCtx = {
   table: string
   /** 앱이 리소스 폴더로 가져온 파일 — 이번과 지난번 모두(`carrylog.ts` 기록) */
   carried: string[]
+  /** 같은 배경 그림의 짝과 다른 자리를 적은 글(`chatpages.ts`) — 첫 지시에만 싣고, 그림이 바뀌면 답에 다시 잰다 */
+  pages: string[]
+  /** 모듈 안 유형(스펙 `variantKey`)과 그것을 쓴 완성본 — 없는 모듈이면 null (`chatothers.ts`) */
+  variants: VariantView | null
+  /** figma 화면의 배경과 원본(`chatscene.ts`) — 배경 때문에 바꿨거나 사람이 정한 원본과 다를 때 */
+  scene: ChatScene | null
+  /** 기획서 1쪽이 적은 모듈이 배치표와 다를 때 그 모듈(`chatmodule.ts`) — 이을 때도 그 폴더를 열어 주려고 여기서 잰다 */
+  planModule: PlanOpen | null
+  /** 원본이 모듈 기본값을 덮는 별칭 · 대화로 만든 완성본의 어림 값 · figma 가 필요한 모듈인가(`chatlore.ts`) — 첫 지시에만 쓴다 */
+  lore: ChatLore | null
+  /** 스펙을 맞춰 본 뒤 공용 모듈에 더 새 커밋이 있나(forge `specdrift.ts`) — 대화를 시작할 때만 잰다(git 이라 비동기), 첫 지시에만 쓴다 */
+  drift?: { note: string; commits: string[] } | null
 }
 
-const hallOf = (forge: Forge, code: string): string =>
-  forge.paths.workPath(`sparkon_m${String(forge.spec.parseStudyCode(code)?.month ?? 0).padStart(2, '0')}`)
-
-const doneOf = (forge: Forge, code: string): Done => ({
-  code,
-  act: path.join(hallOf(forge, code), 'src', 'activity', code),
-  rsc: forge.common.rscOfDone(code)
-})
-
-/** 준비 — 원본을 정하고 공용 · 돌려 쓰는 파일을 리소스 폴더로 가져온다(파일을 건드린다). 못 하면 까닭 글 */
-export async function prepChat(forge: Forge, code: string): Promise<ChatCtx | string> {
+/**
+ * 준비 — 원본을 정하고 공용 · 돌려 쓰는 파일을 리소스 폴더로 가져온다(파일을 건드린다). 못 하면 까닭 글.
+ * `say` 는 오래 걸리는 단계를 진행 줄에 알린다
+ */
+export async function prepChat(forge: Forge, code: string, say: (line: string) => void = () => {}): Promise<ChatCtx | string> {
+  const failed = await measureBackdrop(forge, code, () => say('figma 화면과 원본 후보의 배경을 비교하고 있습니다.'))
+  if (failed) say(failed)
   const pick = originNow(forge, code)
   if (typeof pick === 'string') return pick
-  const ctx = ctxOf(forge, code, pick.origin, pick.module)
+  const ctx = ctxOf(forge, code, pick)
   if (typeof ctx === 'string') return ctx
-  const cloned = forge.api.clone(pick.origin, code)
-  if (!cloned.ok) return cloned.error ?? '원본을 불러오지 못했습니다.'
-
-  // 공용 · 돌려 쓰는 파일 — 지금 흐름(`assemble.ts` ②.5)과 같은 차례 · 같은 빗장
-  // 원본이 바뀌었으면 옛 원본에서 가져온 것부터 휴지통으로(`carrylog.ts`)
+  // 다른 학습코드 기획서면 AI 를 부르지 않는다 — Claude 가 $0.82 를 쓰고서야 「L2 기획서」라고 알아챘다(2026-10-13)
+  const wrong = wrongPlan(code, ctx.rsc)
+  if (wrong) return wrong
+  // 공용 · 돌려 쓰는 파일 — 원본이 바뀌었으면 옛 원본에서 가져온 것부터 휴지통으로(`chatcarry.ts`)
   const rsc = ctx.rsc
-  await pruneCarried(forge.paths.REPO_ROOT, code, pick.origin, rsc)
-  const fresh = forge.commonfresh.freshPictures(pick.origin, rsc)
-  const common = copyCommon(forge, pick.origin, code, pick.module, fresh)
-  const carried = carrySame(forge, pick.origin, code, cloned.recipe, fresh)
-  const took = [...common.took.map((t) => t.rel), ...carried.took]
-  logCarried(forge.paths.REPO_ROOT, code, pick.origin, rsc, took)
-  pullCommonPlans(forge, code, pick.module)
+  const files = await carryFiles(forge, code, pick, rsc)
+  if (typeof files === 'string') return files
   return {
     ...ctx,
     shots: shotsOf(rsc),
     plans: plansOf(rsc),
-    table: rscTable(forge, rsc, ctx.origin.rsc, cloned.recipe).text,
-    carried: [...carriedRels(forge.paths.REPO_ROOT, code)].sort()
+    table: rscTable(forge, rsc, ctx.origin.rsc, files.recipe).text,
+    carried: [...carriedRels(forge.paths.REPO_ROOT, code)].sort(),
+    pages: pageLines(pagesOf(forge, code, rsc, () => say('같은 배경 그림을 비교하고 있습니다.'))),
+    lore: loreOf(forge, ctx),
+    drift: await driftOf(forge, ctx)
   }
 }
+
 
 /**
  * 경로만 다시 모은다 — **파일을 건드리지 않는다.** 앱을 다시 켠 뒤 답을 이을 때 쓴다.
  * `prepChat` 을 다시 돌리면 그새 바뀐 원본으로 돌려 쓰는 파일을 갈아 끼워, Claude 가 본 것과 다른 파일이 같은 이름으로 남는다.
- * 리소스 표 · 가져온 파일은 첫 지시에만 쓰므로 비운다
+ * 리소스 표 · 가져온 파일은 첫 지시에만 쓰므로 비운다. 열어 줄 완성본은 같은 셈으로 다시 고른다(`chatothers.ts`)
  */
-export function ctxOf(forge: Forge, code: string, origin: string, module: string): ChatCtx | string {
+export function ctxOf(forge: Forge, code: string, pick: OriginPick): ChatCtx | string {
+  const { origin, module } = pick
   const rsc = forge.files.rscDir(code)
   if (!rsc || !fs.existsSync(rsc)) return '리소스 폴더가 아직 없습니다. 리소스를 먼저 넣으세요.'
   const subject = code.slice(0, 2)
@@ -102,11 +110,8 @@ export function ctxOf(forge: Forge, code: string, origin: string, module: string
   } catch {
     choices = []
   }
-  const others = choices
-    .filter((c) => c !== origin && c !== code)
-    .map((c) => doneOf(forge, c))
-    .filter((d) => fs.existsSync(path.join(d.act, 'GameData.ts')))
-    .slice(0, OTHERS_MAX)
+  const scores = backdropScores(forge, code)
+  const { others, variants } = pickOthers(forge, code, module, origin, choices, scores)
   return {
     code,
     subject,
@@ -121,7 +126,12 @@ export function ctxOf(forge: Forge, code: string, origin: string, module: string
     shots: shotsOf(rsc),
     plans: plansOf(rsc),
     table: '',
-    carried: []
+    carried: [],
+    pages: [],
+    variants,
+    scene: sceneOf(forge, code, pick, scores),
+    planModule: planOpenOf(forge, code, module),
+    lore: null
   }
 }
 
@@ -172,6 +182,6 @@ export function diffInputs(before: string[] | undefined, now: string[]): { added
 
 /** Claude 가 읽기만 할 폴더 — 있는 것만 */
 export function readDirsOf(ctx: ChatCtx): string[] {
-  const dirs = [ctx.rsc, ctx.origin.act, ctx.origin.rsc, ...ctx.others.flatMap((o) => [o.act, o.rsc]), ctx.moduleDir, path.dirname(ctx.specFile)]
+  const dirs = [ctx.rsc, ctx.origin.act, ctx.origin.rsc, ...ctx.others.flatMap((o) => [o.act, o.rsc]), ctx.moduleDir, path.dirname(ctx.specFile), ...planDirs(ctx.planModule)]
   return [...new Set(dirs)].filter((d) => d && fs.existsSync(d))
 }

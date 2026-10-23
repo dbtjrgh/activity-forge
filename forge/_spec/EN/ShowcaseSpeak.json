@@ -5,6 +5,8 @@
   "title": "낱말 따라 말하기 — 화면 속 아이를 보고 소리 내어 말합니다",
   "summary": "커다란 모니터 안에 아이가 서 있습니다. 낱말 그림이 뜨고 아이가 그 낱말을 말해 줍니다. 스피커를 누르면 다시 들을 수 있고 느리게도 들을 수 있습니다. 아이가 듣는 몸짓으로 바뀌면 따라 말합니다. 낱말 수만큼 되풀이하고, 끝나면 배운 낱말이 한 판에 모여 나옵니다.",
   "reference": {
+    "moduleCommit": "9c2c437f485498e3fe718f1eb21c302ae9495d12",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/ShowcaseSpeak",
     "activities": [
       "ENL1M01W4S1",

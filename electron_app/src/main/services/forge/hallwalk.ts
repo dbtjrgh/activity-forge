@@ -47,21 +47,7 @@ export function activities(workRoot: string): Activity[] {
     if (!existsSync(root)) continue
     for (const e of readdirSync(root, { withFileTypes: true })) {
       if (!e.isDirectory() || !CODE.test(e.name)) continue
-      const at = join(root, e.name, 'activityInfo.json')
-      let info: {
-        devFinished?: unknown
-        devTeam?: unknown
-        developer?: unknown
-      } = {}
-      let finished: boolean | null = false
-      if (existsSync(at)) {
-        try {
-          info = JSON.parse(readFileSync(at, 'utf8'))
-          finished = info.devFinished === true
-        } catch {
-          finished = null
-        }
-      }
+      const { info, finished } = infoAt(join(root, e.name))
       out.push({
         code: e.name,
         month: hall.month,
@@ -73,3 +59,24 @@ export function activities(workRoot: string): Activity[] {
   }
   return out
 }
+
+type Info = { devFinished?: unknown; devTeam?: unknown; developer?: unknown }
+
+/** 액티비티 폴더 하나의 activityInfo — 없으면 안 끝난 것, 못 읽으면 `finished: null` */
+function infoAt(actDir: string): { info: Info; finished: boolean | null } {
+  const at = join(actDir, 'activityInfo.json')
+  if (!existsSync(at)) return { info: {}, finished: false }
+  try {
+    const info = JSON.parse(readFileSync(at, 'utf8')) as Info
+    return { info, finished: info.devFinished === true }
+  } catch {
+    return { info: {}, finished: null }
+  }
+}
+
+/** 개발 완료인가 — 폴더 하나만 볼 때(대화가 열 완성본 고르기 `chatothers.ts`). 셈은 `activities` 와 같다 */
+export const finishedAt = (actDir: string): boolean | null => infoAt(actDir).finished
+
+/** forge `layout.scanCells` 의 칸 하나 → 학습코드(`L3W3S3` · `05` → `MAL3M05W3S3`) */
+export const cellCode = (subject: string, c: { slot: string; issue: string }): string =>
+  `${subject}${c.slot.slice(0, 2)}M${c.issue}${c.slot.slice(2)}`

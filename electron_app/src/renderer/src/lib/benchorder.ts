@@ -2,14 +2,18 @@
  * **작업대 순서 막대의 셈** (2026-10-01 사용자 요청 — 「필요한 것 · 순서 · 뭘 우선으로 할지 하이라이트로」).
  *
  * 지금 할 일은 **하나만** 고른다 — 여럿을 강조하면 아무것도 강조하지 않은 것과 같다.
- * 새로 재지 않는다: 작업대가 이미 읽은 값(부족한 리소스 · 화면 장수 · 대화 형편 · 호 저장소에 쓴 것 · 개발 완료)만 본다.
+ * 새로 재지 않는다: 작업대가 이미 읽은 값(없는 소리 · 화면 장수 · 대화 형편 · 호 저장소에 쓴 것 · 개발 완료)만 본다.
  * 진행판 칸의 「다음 할 일」(`shared/forge/status.ts`)과 같은 차례다 — 도는 중 → 대화가 기다림 → 개발 완료 → 리소스 → 화면 → 검수.
  * 둘이 어긋나면 칸은 「질문 2」인데 작업대는 「리소스가 부족합니다」를 강조한다(2026-10-08 리뷰).
  *
- * `target` 은 강조할 칸의 id — `Bench.tsx` 가 그 id 를 칸에 단다.
+ * `target` 은 강조할 칸의 id(`lib/anchors.ts` 의 `TARGET`) — `Bench.tsx` 가 그 id 를 칸에 단다.
  */
 
 import { chatWaiting, type ChatInfo, type Prepare } from '../../../shared/forge'
+import { TARGET } from './anchors'
+
+// 칸 id 의 정본은 `lib/anchors.ts` 다 — 여기서 부르던 곳이 그대로 쓰게 다시 내보낸다
+export { TARGET }
 
 export type OrderState = 'done' | 'now' | 'todo' | 'run'
 
@@ -30,15 +34,6 @@ export interface Order {
   blocked: boolean
 }
 
-export const TARGET = {
-  need: 'bench-need',
-  shot: 'bench-shot',
-  done: 'bench-done',
-  layout: 'bench-layout',
-  chat: 'bench-chat',
-  answer: 'bench-answer'
-} as const
-
 interface Input {
   data: Prepare
   canRun: boolean
@@ -54,6 +49,8 @@ export function orderOf({ data, canRun, busy, chat }: Input): Order {
   // 「갈림」은 작업대에 고르는 칸이 없다 — 진행판의 「모듈 선택이 필요한 학습코드」 카드(`LayoutPicks.tsx`)가 같은 배치표에 적는다.
   // 글은 그 카드 제목 그대로 부른다. MA 는 그 학습코드에 놓인 기획서의 모듈넘버로 작업대를 읽을 때 먼저 채운다
   // (`prepare.ts` → `layoutfill.ts`) — 여기까지 왔으면 기획서가 없거나 모듈넘버를 못 읽은 것이라 고르라고만 한다
+  // 배치표는 갈렸어도 이미 개발 완료인 학습코드 — 볼 것만 남았다(`prepare.ts` 가 호 저장소의 모듈을 채운다)
+  if (!canRun && data.layout.made) return { steps: [], say: '모든 단계를 마쳤습니다.', target: '', blocked: false }
   if (!canRun && data.layout.verdict === '갈림') {
     return { steps: [], say: '진행판의 「모듈 선택이 필요한 학습코드」에서 모듈을 고르세요.', target: TARGET.layout, blocked: true }
   }
@@ -68,13 +65,14 @@ export function orderOf({ data, canRun, busy, chat }: Input): Order {
     return { steps: [], say: `${data.layout.module} 모듈의 스펙이 없어 생성할 수 없습니다.`, target: TARGET.layout, blocked: true }
   }
 
-  const gap = data.need.reduce((n, r) => n + Math.max(0, r.origin - r.here), 0)
+  // 기획서에 적혔는데 없는 소리만 센다(2026-10-14, 메인 `rsccount.ts`) — 진행판 칸의 「소리 n개 없음」과 같은 수
+  const gap = data.need.reduce((n, r) => n + r.missing.length, 0)
   const finished = data.finished === true
   const talk = chat?.state ?? 'idle'
   const halted = talk === 'stopped' || talk === 'error'
   // 이어 갈 대화가 사람을 기다린다 — 진행판처럼 리소스 · 화면 · 개발 완료보다 먼저다
   const waiting = chatWaiting(chat)
-  // 호 저장소에 이미 있다 — 진행판의 「만들었음」이라 칸은 리소스 부족을 더 세지 않는다(`boardwork.ts` gap)
+  // 호 저장소에 이미 있다 — 진행판의 「만들었음」이라 칸은 없는 소리를 더 세지 않는다(`boardwork.ts` gap)
   const built = data.written || talk === 'done'
   // 그중 이어 갈 대화가 없는 것(이전 방식 · 손으로 만듦 · 대화 기록을 지움) — 생성 · 질문은 지난 일이다.
   // 안 보면 칸은 「검수 대기」인데 막대는 다 만든 것을 두고 「대화로 생성을 누르세요」라 한다
@@ -86,7 +84,7 @@ export function orderOf({ data, canRun, busy, chat }: Input): Order {
       label: '리소스',
       done: finished || built || (data.rsc.files.length > 0 && gap === 0),
       target: TARGET.need,
-      say: gap > 0 ? `리소스 ${gap}개가 부족합니다. 받을 리소스 보기로 확인하고 넣으세요.` : '리소스 파일을 넣으세요.'
+      say: gap > 0 ? `기획서에 적힌 소리 ${gap}개가 없습니다. 리소스 칸의 목록을 보고 넣으세요.` : '리소스 파일을 넣으세요.'
     },
     {
       key: 'shot',

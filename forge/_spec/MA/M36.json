@@ -5,6 +5,8 @@
   "title": "빈칸 채우기 (커서로 골라 넣기)",
   "summary": "위쪽에 문제 줄이 놓이고 아래쪽 같은 줄에는 몇 칸이 비어 있습니다. 커서가 지나가는 선택판에서 맞는 버튼을 눌러 빈칸을 채우는 활동.",
   "reference": {
+    "moduleCommit": "da41841eadd4039a80257f2cea72404a703ac436",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M36",
     "activities": [
       "MAL1M06W2S3",

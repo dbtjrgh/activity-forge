@@ -1,0 +1,297 @@
+{
+  "specVersion": 1,
+  "module": "N03",
+  "subject": "NU",
+  "title": "하루일과표 꾸미기",
+  "summary": "왼쪽 하루일과표의 물음표 칸에 오른쪽 트레이의 낱말 카드를 끌어다 붙입니다. 정답 차례는 없고, 칸을 다 채우지 않아도 한 번 이상 붙이면 다음 단추가 뜹니다. 넘어가면 누리 공통 평가 화면에서 선생님을 누르고 평가 항목 셋 가운데 하나를 고른 뒤 완료합니다. 판, 트레이, 칸 배치는 모듈 Layout.ts 가 갖고 있고, GameData 에는 낱말 목록과 평가 화면 구성만 둡니다. 같은 꼴로 스티커를 아무 자리에나 붙이는 것이 N05 입니다.",
+  "reference": {
+    "moduleCommit": "50e7cb9836b67215f94fc35c093119089d84daed",
+    "moduleCommitWhy": "2026-10-21 누리 스펙을 처음 쓰며 모듈 코드와 1호 표본을 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/NU/N03",
+    "activities": [
+      "NUL1M01W1S3"
+    ],
+    "note": "개발 완료 완성본은 1호 NUL1M01W1S3 하나입니다(2026-10-21). 필수 여부와 칸 수는 그 하나로 정했고, 모듈 타입(N03QuizData, EndPageInfo)이 없어도 된다고 밝힌 자리(chalkBoard, itemBorder)만 넓혔습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "N03.assetLoad();"
+      ],
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "await N03.handle.onInit(quizData);",
+        "this.addChild(N03.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await N03.handle.start();",
+        "await N03.handle.play();",
+        "await N03.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "N03",
+      "from": "@_common/module/NU/N03/N03"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "back",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "활동 배경(3840×2160 규격). component/DailySchedule.ts 가 AssetManager.get(\"back\") 으로 이름을 박아 부릅니다. 완성본 1개가 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "board",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "하루일과표 판. component/DailySchedule.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "tray",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "오른쪽 낱말 트레이. component/DailySchedule.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "slot_q",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "물음표 칸. component/DailySchedule.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "arrow_up",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "트레이를 위로 넘기는 화살표. component/DailySchedule.ts 가 `dir < 0 ? \"arrow_up\" : \"arrow_down\"` 으로 이름을 박아 부릅니다. litgate 정규식은 이 꼴을 못 잡아 손으로 올렸습니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "arrow_down",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "트레이를 아래로 넘기는 화살표. arrow_up 과 같은 줄에서 부릅니다(2026-10-21)."
+      },
+      {
+        "alias": "nar01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "첫 지시문. N03.ts play() 가 mainCharacter.guide(\"nar01\") 로 이름을 박아 부르고, 도우미를 누르면 다시 들려줍니다. 완성본 1개가 가짐(2026-10-21)."
+      }
+    ],
+    "providedByModule": {
+      "image": [
+        "complete_btn"
+      ],
+      "sound": [
+        "touchSound",
+        "particleSound",
+        "com_nar15",
+        "com_nar19",
+        "com_nar20",
+        "com_nar21",
+        "bgm"
+      ],
+      "lottie": [
+        "particle_ef"
+      ],
+      "note": "누리 공용 효과음, 평가 내레이션, BGM, 완료 단추, 파티클은 N03.assetLoad() 가 모듈 Assets.ts 에서 직접 넣습니다. 액티비티 AssetTable 에 넣지 마세요."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "words",
+        "type": "string",
+        "required": true,
+        "desc": "트레이에 깔 낱말 목록. 칸마다 { key, label, tint } 이고 차례가 곧 트레이 차례입니다. key 로 `word_tray_{key}`(트레이용)와 `word_slot_{key}`(칸 부착용) 그림을 찾고, tint 는 붙일 때 입자 색입니다(component/DailySchedule.ts). 완성본은 GameData 위쪽 상수 WORDS 를 가리켜 이 자리가 식(글자)으로 담깁니다."
+      },
+      {
+        "key": "endpageInfo",
+        "type": "object",
+        "required": true,
+        "desc": "누리 공통 평가 화면 구성(component/EndPage.ts 의 EndPageInfo). N05 와 같은 화면입니다.",
+        "fields": [
+          {
+            "key": "bg",
+            "type": "asset:image",
+            "required": true,
+            "desc": "평가 화면 배경"
+          },
+          {
+            "key": "chalkBoard",
+            "type": "object",
+            "optional": true,
+            "desc": "배경 위에 올리는 칠판. 배경에 칠판이 이미 그려져 있으면 뺍니다(EndPageInfo).",
+            "fields": [
+              {
+                "key": "img",
+                "type": "asset:image",
+                "required": true,
+                "desc": "칠판 그림"
+              },
+              {
+                "key": "x",
+                "type": "string",
+                "required": true,
+                "desc": "칠판 가운데 x(화면 가운데 기준). 완성본은 상수 식(CHALK.x)으로 적습니다."
+              },
+              {
+                "key": "y",
+                "type": "string",
+                "required": true,
+                "desc": "칠판 가운데 y. 완성본은 상수 식(CHALK.y)으로 적습니다."
+              }
+            ]
+          },
+          {
+            "key": "teacher",
+            "type": "object",
+            "required": true,
+            "desc": "선생님 그림. 두 번 들썩인 뒤 누르면 평가 항목이 나옵니다.",
+            "fields": [
+              {
+                "key": "img",
+                "type": "asset:image",
+                "required": true,
+                "desc": "선생님 그림"
+              },
+              {
+                "key": "x",
+                "type": "number",
+                "optional": true,
+                "desc": "선생님 자리 x. **모듈에는 꼭 있어야 합니다**(EndPageInfo). 완성본은 `...TEACHER` 펼침으로 넣어 forge 가 못 읽으므로 optional 로 둡니다."
+              },
+              {
+                "key": "y",
+                "type": "number",
+                "optional": true,
+                "desc": "선생님 자리 y. x 와 같은 까닭으로 optional 입니다."
+              },
+              {
+                "key": "scale",
+                "type": "number",
+                "required": true,
+                "desc": "배율. 들썩임과 눌림도 이 배율을 기준으로 합니다."
+              },
+              {
+                "key": "anchorY",
+                "type": "number",
+                "required": true,
+                "desc": "세로 기준점. 1 이면 발끝, 0.5 면 가운데입니다."
+              }
+            ]
+          },
+          {
+            "key": "completeBtn",
+            "type": "point",
+            "required": true,
+            "figma": true,
+            "desc": "완료 단추 자리. 창 오른쪽 아래 모서리에서의 거리로 바꿔 창 크기를 따라갑니다(component/EndPage.ts)."
+          },
+          {
+            "key": "narrations",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "desc": "선생님을 누르면 하나를 골라 트는 내레이션. 완성본은 모듈이 넣는 com_nar19, com_nar20, com_nar21 입니다.",
+            "of": {
+              "key": "",
+              "type": "string"
+            }
+          },
+          {
+            "key": "itemSize",
+            "type": "object",
+            "required": true,
+            "desc": "평가 항목 판 크기(누르는 자리와 노란 판 크기).",
+            "fields": [
+              {
+                "key": "w",
+                "type": "string",
+                "required": true,
+                "desc": "너비. 완성본은 상수 식(ITEM.w)입니다."
+              },
+              {
+                "key": "h",
+                "type": "string",
+                "required": true,
+                "desc": "높이. 완성본은 상수 식(ITEM.h)입니다."
+              }
+            ]
+          },
+          {
+            "key": "itemBorder",
+            "type": "object",
+            "optional": true,
+            "desc": "고른 항목 뒤에 까는 노란 판. 항목에 touchImg 가 있으면 그 그림을 쓰므로 필요 없습니다(EndPageInfo).",
+            "fields": [
+              {
+                "key": "color",
+                "type": "string",
+                "required": true,
+                "desc": "색(0xRRGGBB). 완성본은 상수 SELECT_YELLOW 입니다."
+              },
+              {
+                "key": "radius",
+                "type": "string",
+                "required": true,
+                "desc": "모서리 반지름. 완성본은 상수 식입니다."
+              },
+              {
+                "key": "pad",
+                "type": "string",
+                "required": true,
+                "desc": "판 밖으로 드러나는 폭. 완성본은 상수 식입니다."
+              }
+            ]
+          },
+          {
+            "key": "items",
+            "type": "array",
+            "required": true,
+            "minLength": 3,
+            "desc": "평가 항목 판. 하나를 고르면 효과와 소리가 나고 완료 단추가 뜹니다.",
+            "of": {
+              "key": "",
+              "type": "object",
+              "fields": [
+                {
+                  "key": "img",
+                  "type": "asset:image",
+                  "required": true,
+                  "desc": "평가 항목 그림"
+                },
+                {
+                  "key": "pos",
+                  "type": "point",
+                  "required": true,
+                  "figma": true,
+                  "desc": "평가 항목 자리(화면 가운데 기준). 완성본은 칠판 초록면 안에 상수 식으로 계산해 둡니다."
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "notes": [
+    "완성본 GameData 는 위쪽 상수(WORDS, CHALK, GREEN, ITEM, TEACHER 등)로 값을 계산해 적습니다. forge 는 그 식을 글자 그대로 담으므로, 새 학습코드를 만들 때는 상수 줄을 같이 가져오거나 숫자로 풀어 적어야 합니다.",
+    "낱말마다 `word_tray_{key}`(400×160)와 `word_slot_{key}`(300×140) 그림 두 장이 한 쌍입니다. key 를 바꾸면 두 그림 이름도 같이 바꿉니다.",
+    "도우미를 누르면 지금 화면의 지시문(활동 nar01, 평가 com_nar15)을 다시 들려줍니다."
+  ]
+}

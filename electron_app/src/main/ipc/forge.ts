@@ -1,15 +1,17 @@
 import { app, dialog, ipcMain, nativeImage, shell } from 'electron'
 import { IPC } from '../../shared/ipc'
-import type { BoardKey, Carried, LayoutAsks, TeamSheet } from '../../shared/forge'
+import type { BoardKey, Carried, LayoutAsks, ModuleFolders, TeamSheet } from '../../shared/forge'
 import { MODULE_PATH } from '../../shared/forge'
 import { layoutAsks, pickModule } from '../services/forge/layoutasks'
+import { moduleFolders } from '../services/forge/modulefolders'
 import { board, closeBoard, listBoards, openIssue } from '../services/forge/board'
 import { checkUpdate } from '../services/forge/refresh'
 import { runUpdate } from '../services/forge/update'
-import { getWorkspace, setForgeRoot, setMe, setRscRoot, setWorkspace } from '../services/forge/workspace'
+import { getWorkspace, setCommonRoot, setForgeRoot, setMe, setRscRoot, setShareRoot, setWorkspace } from '../services/forge/workspace'
 import { newModules } from '../services/forge/newmodules'
 import { normalizeCode } from './answers'
 import { stopAllSessions } from '../services/forge/aisession'
+import { busyWork } from '../services/forge/busy'
 import { runTable } from '../services/forge/runtable'
 import { serveTeamSheet, TEAM_SHEET_URL } from '../services/forge/teamsheet'
 
@@ -90,6 +92,14 @@ export function registerForgeHandlers(): void {
     return pickModule(ok, m, w)
   })
 
+  // 과목의 공용 모듈 폴더 — 과목 두 글자만 받는다(폴더 자리는 forge `moduleDir` 가 정한다)
+  ipcMain.handle(IPC.forgeModuleFolders, (_e, subject: unknown): Promise<ModuleFolders> => {
+    const s = String(subject ?? '').trim().toUpperCase()
+    return /^[A-Z]{2}$/.test(s)
+      ? moduleFolders(s)
+      : Promise.resolve({ subject: s, dir: '', modules: [], skipped: [], error: '과목이 올바르지 않습니다.' })
+  })
+
   /**
    * 리소스를 놓을 자리 고르기. **호 저장소 안이 아니어도 된다** — 바탕화면에
    * 두고 시험해 보는 것이 이 칸의 쓸모다 (완성된 회차를 안 건드린다).
@@ -107,6 +117,20 @@ export function registerForgeHandlers(): void {
 
   // 빈 글이면 원래대로(호 저장소 안). 그 밖의 글은 서비스가 절대 경로인지 본다.
   ipcMain.handle(IPC.forgeSetRscRoot, (_event, dir: unknown) => setRscRoot(String(dir ?? '')))
+  // 공유 폴더 — 빈 글이면 기본 주소. 그 밖의 글은 서비스가 절대 경로인지 본다(`\\서버\공유` 도 절대 경로다)
+  ipcMain.handle(IPC.forgeSetShareRoot, (_event, dir: unknown) => setShareRoot(String(dir ?? '').slice(0, 400)))
+  // 공용 폴더(sparkon_common) — 경로는 대화상자로만 받는다. 맞는 폴더인지는 서비스가 본다 (2026-10-21)
+  ipcMain.handle(IPC.forgePickCommonRoot, async () => {
+    const current = await getWorkspace()
+    const picked = await dialog.showOpenDialog({
+      title: '공용 폴더(sparkon_common) 고르기',
+      properties: ['openDirectory'],
+      ...(current.common?.dir ? { defaultPath: current.common.dir } : {})
+    })
+    if (picked.canceled || picked.filePaths.length === 0) return current
+    return setCommonRoot(picked.filePaths[0] as string)
+  })
+  ipcMain.handle(IPC.forgeClearCommonRoot, () => setCommonRoot(''))
   ipcMain.handle(IPC.forgeSetMe, (_e, developer: unknown, devTeam: unknown) =>
     setMe(String(developer ?? '').slice(0, 80), String(devTeam ?? '').slice(0, 40))
   )
@@ -136,6 +160,8 @@ export function registerForgeHandlers(): void {
     const r = await runUpdate()
     if (r.appChanged) {
       setTimeout(() => {
+        // 기다리는 사이에 대화를 시작했으면 다시 켜지 않는다 — 대화 중이면 `update.ts` 가 애초에 appChanged 를 안 켠다. 새 버전은 다음에 켤 때 열린다
+        if (busyWork().length) return
         app.relaunch({ execPath: process.env['PORTABLE_EXECUTABLE_FILE'] ?? process.execPath, args: process.argv.slice(1) })
         // app.exit 는 will-quit 을 안 낸다 — 도는 대화의 claude 를 여기서 내린다
         stopAllSessions()

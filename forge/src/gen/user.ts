@@ -23,11 +23,20 @@ export type DevUser = {
   workRoot: string;
   /** 리소스를 놓는 자리. 비면 호 저장소 안 `public/sparklab` */
   rscRoot: string;
+  // **스펙 주인(specOwner) 칸은 걷었습니다** (2026-10-21 사용자 결정 — 「git 권한 있는 사람은 다 스펙을 만들게」).
+  // 2026-09-29 부터 스펙은 한 사람만 만들었고 그 PC 의 이 파일에만 `"specOwner": true` 가 있었습니다.
+  // 이제 「새 모듈」 알림은 모두에게 뜹니다. 옛 파일에 그 칸이 남아 있어도 아래 `loadUser` 가 안 읽고,
+  // 다음 `saveUser` 때 저절로 빠집니다.
   /**
-   * **스펙 주인인가** (2026-09-29 사용자 결정 — 스펙은 한 사람만 만들고 고친다). 참이면 앱이 스펙 화면과
-   * 「새 모듈」 알림을 연다. 이 파일은 PC 마다 따로라(.gitignore) 주인 PC 에만 적는다. 없으면 거짓
+   * **사내 공유 폴더**(소리 · 애니메이션 · 영상, 2026-10-14). 비면 앱의 기본 주소(`\\nas.example\share\04. 콘텐츠`).
+   * 기본 주소는 앱(`electron_app/src/shared/forge/share.ts`)만 안다 — 이 파일은 사람이 바꾼 값만 든다
    */
-  specOwner: boolean;
+  shareRoot: string;
+  /**
+   * **공용 모듈 저장소(sparkon_common) 자리** (2026-10-21). 비면 `<작업 폴더>/sparkon_common`.
+   * 읽는 곳은 `commonroot.ts` 의 `commonRoot()` 하나입니다(여기를 부르면 서로 물고 돕니다) — 이 칸은 적는 길입니다
+   */
+  commonRoot: string;
 };
 
 const FILE = () => repoPath(".user.json");
@@ -44,13 +53,14 @@ export function loadUser(): DevUser {
         devTeam: j.devTeam ?? "my-team",
         workRoot: typeof j.workRoot === "string" ? j.workRoot : "",
         rscRoot: typeof j.rscRoot === "string" ? j.rscRoot : "",
-        specOwner: j.specOwner === true,
+        shareRoot: typeof j.shareRoot === "string" ? j.shareRoot : "",
+        commonRoot: typeof j.commonRoot === "string" ? j.commonRoot : "",
       };
     } catch {
       // 깨졌으면 없는 셈 치고 아래로 내려갑니다.
     }
   }
-  return { developer: gitUserName(), devTeam: "my-team", workRoot: "", rscRoot: "", specOwner: false };
+  return { developer: gitUserName(), devTeam: "my-team", workRoot: "", rscRoot: "", shareRoot: "", commonRoot: "" };
 }
 
 export function saveUser(user: Partial<DevUser>): DevUser {

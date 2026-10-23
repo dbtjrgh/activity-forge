@@ -3,6 +3,7 @@
 import fs from "fs";
 import path from "path";
 import { repoPath } from "./paths";
+import { STUDY_RE, type Subject } from "./subjects";
 import type {
   AssetKind,
   FigmaPoint,
@@ -21,14 +22,18 @@ export const SPEC_ROOT = repoPath("_spec");
 
 export type StudyCode = {
   code: string;
-  subject: "MA" | "KO" | "EN";
+  subject: Subject;
   level: number;
   month: number; // 코드상의 호 번호. 표시용 호와 다릅니다(85_양산.md 참고)
   week: number;
   session: number;
 };
 
-const CODE_RE = /^(MA|KO|EN)L([1-3])M(\d{2})W([1-4])S([1-3])$/;
+// 과목 표는 `subjects.ts` 한 곳입니다. 앱은 `forge/src/gen` 을 직접 못 부르고(`runtime.ts`)
+// 학습코드를 읽는 이 파일은 늘 불러 두므로, 과목 표도 여기서 다시 내보냅니다.
+export { SUBJECTS, SUBJECT_CODES, isSubject, dirOf, type Subject } from "./subjects";
+
+const CODE_RE = STUDY_RE;
 
 // 사람은 `KO-L1-M06-W3-S1` 처럼 끊어서 적습니다. WBS 표에도 그렇게 적혀 있고
 // 그대로 복사해 붙이게 됩니다. 글자와 숫자만 남기고 사이에 낀 것은 다 버립니다

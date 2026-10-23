@@ -3,6 +3,8 @@
  * **모르는 것은 null** 이다. 화면은 null 을 「—」로 그리고 0 으로 그리지 않는다.
  */
 
+import type { NeedRow, PlanCheck } from './prepare'
+
 /** 호 저장소 하나의 git 형편 — 받지 않고(fetch 안 함) 마지막으로 받아 둔 원격 가지 기준 */
 export interface HallRepo {
   /** `sparkon_m08` */
@@ -28,17 +30,17 @@ export interface HallStatus {
 }
 
 /**
- * 리소스를 기다리는 학습코드 하나. **개수로 모자람을 잰다** — 이름은 바뀌어 오므로 이름만 보면 온 것도 없다고 나온다.
- * 이름(`files`)은 원본이 쓰던 것 가운데 폴더에 없는 것 — 「이것일 것」이라는 실마리다.
+ * 리소스를 기다리는 학습코드 하나 (2026-10-14 에 셈을 바꿨다 — `services/forge/rsccount.ts`).
+ * **확실한 것은 기획서에 적혔는데 없는 소리 이름뿐이다.** 그림 · 로티는 같은 모듈 완성본 가운데 가장 적은 것보다도 적을 때만 참고로 싣는다
  */
 export interface RscWaitRow {
   code: string
   module: string
-  origin: string
   /** 이 회차 입력이 하나도 안 왔다(빈 폴더거나 공용 파일만) */
   empty: boolean
-  /** 갈래마다 원본 수 · 지금 수 · 원본 이름으로 없는 것. 모자란 갈래만 */
-  missing: { kind: string; origin: number; here: number; files: string[] }[]
+  /** 없는 소리가 있거나 같은 모듈 완성본보다 적은 종류만 */
+  need: NeedRow[]
+  plan: PlanCheck
   error?: string
 }
 
@@ -72,6 +74,18 @@ export interface GateResult {
   unmeasured: { code: string; why: string }[]
   /** 잰 데 걸린 시간(ms) */
   took: number
+  /**
+   * 잰 모듈 가운데 스펙을 맞춰 본 뒤 공용 모듈이 바뀐 것(forge `specdrift.ts`, 2026-10-14) — 막지 않고 알리기만.
+   * 이 필드가 없는 옛 결과도 있다
+   */
+  drift?: { module: string; note: string }[]
+  /** 하나도 견주지 못했을 때 그 까닭(git · 공용 저장소가 없음) — 빈 `drift` 를 「바뀐 것 없음」으로 읽지 않게 */
+  driftNote?: string
+  /**
+   * 다시 재야 하는 까닭 — 스펙이 잰 뒤에 바뀌었거나 하루가 지났다. **읽을 때만 셈하고 파일에는 안 쓴다**.
+   * 있으면 화면이 열 때 다시 잰다
+   */
+  stale?: string
   error?: string
 }
 

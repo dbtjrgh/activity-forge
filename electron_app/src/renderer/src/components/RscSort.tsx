@@ -1,8 +1,9 @@
 import { useCallback, useRef, useState } from 'react'
 import type { SortedInbox } from '../../../shared/forge'
+import { TOUR_ANCHOR } from '../lib/anchors'
 
 /**
- * **놓는 자리는 한 곳** — 통째로 놓으면 도구가 차시별로 가른다 (2026-09-16).
+ * **놓는 자리는 한 곳** — 통째로 놓으면 도구가 차시별로 가른다 (2026-09-16 사용자 결정). 넣고 나면 진행판을 다시 읽는다(파일 수가 바뀐다).
  *
  * 옆의 `RscDrop` 은 **차시 화면마다** 있는 받이라, 사람이 먼저 차시를 고르고
  * 놓아야 했다. 디자이너가 주는 것은 한 차시가 아니라 한 묶음이므로, 그걸
@@ -15,8 +16,14 @@ import type { SortedInbox } from '../../../shared/forge'
  * 남의 차시에 남의 파일을 넣는 것이 제일 나쁜 실패다.
  *
  * **여기가 잘하는 것은 이름에 학습코드가 든 것이다** (2026-09-29 사용자와 정함) — 기획서(1쪽 제목) · figma 화면(프레임 이름) ·
- * 학습코드 폴더. figma 에서 받은 `Mask group (2).png` 같은 낱개 리소스는 여기서 못 가리니 작업대로 보낸다고 적는다.
+ * 학습코드 폴더. figma 에서 받은 `Mask group (2).png` 같은 낱개 리소스는 여기서 못 가리니 넣지 않은 까닭(`sort.ts`)이 작업대로 보낸다.
  * 여기서 학습코드를 골라 넣는 칸도 만들어 봤다가 걷었다 — 그 일은 작업대가 이미 한다.
+ *
+ * **진행판 결과 바깥에 둔다** (`App.tsx` 에 있던 주석을 옮겼다). 안에 두면 다시 읽는 동안
+ * `result` 가 잠깐 null 이라 놓는 칸이 통째로 사라지고,
+ * **방금 넣은 결과와 「안 넣은 것」 목록이 같이 날아간다** —
+ * 넣자마자 화면이 비었다 (2026-09-16 앱에서 드롭해 보고 찾음).
+ * 놓는 칸은 고른 호와 아무 상관이 없으니 밖이 제자리다.
  */
 function RscSort({ onDone }: { onDone?: () => void }) {
   const [over, setOver] = useState(false)
@@ -60,6 +67,7 @@ function RscSort({ onDone }: { onDone?: () => void }) {
 
   return (
     <div
+      id={TOUR_ANCHOR.boardDrop}
       className={`drop${over ? ' over' : ''}`}
       onDragOver={(e) => {
         e.preventDefault()
@@ -70,9 +78,6 @@ function RscSort({ onDone }: { onDone?: () => void }) {
     >
       <p className="drop-say">
         {going ? '분류하는 중…' : '기획서, figma 화면, 학습코드 폴더를 여기에 놓으세요'}
-        <span className="sub">
-          학습코드별로 나눠 넣습니다. 이름에 학습코드가 없는 리소스는 해당 학습코드의 작업대에 넣으세요.
-        </span>
       </p>
 
       {got && (

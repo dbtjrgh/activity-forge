@@ -5,6 +5,8 @@
   "title": "대화로 묻고 고르기",
   "summary": "캐릭터가 말풍선으로 대화를 주고받다가 문제를 내고, 아래 선택판에서 맞는 아이콘을 고르는 활동. 이닝마다 대화 한 벌과 선지 한 벌이 있습니다.",
   "reference": {
+    "moduleCommit": "6c569ec99cf6dba9c9379f49a29893b79076507e",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M24",
     "activities": [
       "MAL1M02W1S2",

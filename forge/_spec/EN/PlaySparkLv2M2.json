@@ -5,12 +5,19 @@
   "title": "찾아서 눌러 보기 — 그림 속에 숨은 사물 찾기",
   "summary": "배경 그림 속에 사물이 여럿 숨어 있고, 아이가 하나씩 눌러 찾습니다. 누르면 그 사물이 빛나며 튀어나오고(out) 그 자리에서 계속 움직이며(idle4), 낱말 카드가 화면 가운데 크게 떠서 소리를 냅니다. 화면 아래 상자에는 사물 아이콘이 흐리게 늘어서 있다가 찾을 때마다 하나씩 켜집니다. 다 찾으면 완료 버튼이 뜨고, 그 뒤에는 다시 눌러 카드를 또 볼 수 있습니다. 한동안 안 누르면 아직 못 찾은 것 하나가 흔들려 알려 줍니다(어포던스).",
   "reference": {
+    "moduleCommit": "98795dcf647214f0d3300a77db22bf681d4be87a",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/PlaySparkLv2M2",
     "activities": [
       "ENL1M02W1S1",
       "ENL1M05W1S1",
       "ENL1M11W4S3"
     ]
+  },
+  "variantKey": {
+    "path": "things[].frontcover[].type",
+    "note": "앞표지 조각마다 로티(ani)인지 그림(img)인지 고릅니다. ani 는 name 이 로티 JSON 이어야 합니다.",
+    "why": "component/Thing.ts:71 ani → LottieSprite, :84 img → Sprite. 개발 완료 4개(2026-10-13) — img 4 · ani 1."
   },
   "codegen": {
     "hooks": {

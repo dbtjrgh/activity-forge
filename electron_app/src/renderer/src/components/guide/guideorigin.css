@@ -1,4 +1,4 @@
-/* 받을 리소스 창 머리 — 이 창의 쓰임(참고용) · 세 단계 · 참고 원본 한 줄 */
+/* 받을 리소스 창 머리 — 할 일 한 줄 · 참고 원본 한 줄 */
 
 .guide-origin {
   display: flex;
@@ -10,15 +10,8 @@
   background: var(--accent-soft);
 }
 
-.guide-origin-what {
-  margin: 0;
-  font-size: var(--font-md);
-  line-height: 1.5;
-}
-
 .guide-steps {
   margin: 0;
-  padding-left: 20px;
   font-size: var(--font-sm);
   line-height: 1.6;
   color: var(--fg);

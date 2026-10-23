@@ -48,7 +48,7 @@ function OriginPicker({ code, onChanged }: { code: string; onChanged?: () => voi
       onChanged?.()
     })
   }
-  // 생성 때 잰 장면 점수(`services/forge/scene.ts`) — 열 때 새로 재지 않는다
+  // 대화를 시작할 때 잰 배경 점수(`services/forge/backdrop.ts`), 없으면 이전 방식의 생성이 잰 장면 점수(`scene.ts`) — 열 때 새로 재지 않는다
   const sceneOf = (c: string): { hits: number; tried: number } | undefined => data?.scene?.scores.find((s) => s.code === c)
 
   if (!open)
@@ -62,12 +62,10 @@ function OriginPicker({ code, onChanged }: { code: string; onChanged?: () => voi
     <div className="origin-pick">
       <div className="origin-pick-head">
         <b>원본 선택</b>
-        <span className="sub">{data ? `${data.module} 모듈을 사용하는 학습코드 ${data.choices.length}개 (추천 순)` : '불러오는 중…'}</span>
+        <span className="sub">{data ? `${data.module} 모듈 학습코드 ${data.choices.length}개` : '불러오는 중…'}</span>
       </div>
       {data?.scene?.better && (
-        <p className="state warn">
-          figma 화면의 장면이 지금 원본과 다릅니다. {data.scene.better} 학습코드의 장면 그림이 화면에 더 많이 있습니다.
-        </p>
+        <p className="state warn">figma 화면에는 {data.scene.better} 학습코드의 장면 그림이 더 많이 있습니다.</p>
       )}
       {data?.error && !data.choices.length ? (
         <p className="state error">{data.error}</p>
@@ -83,12 +81,9 @@ function OriginPicker({ code, onChanged }: { code: string; onChanged?: () => voi
                 <span className="origin-pick-tags">
                   {c.code === data.now && <span className="tag mine">현재</span>}
                   {c.code === data.first && <span className="tag">추천</span>}
-                  {!c.sameSlot && <span className="tag warn" title="레벨, 주, 순서가 달라 구성이 다를 수 있습니다">위치 다름</span>}
+                  {!c.sameSlot && <span className="tag warn">위치 다름</span>}
                   {(sceneOf(c.code)?.tried ?? 0) > 0 && (
-                    <span
-                      className={`tag${c.code === data.scene?.better ? ' settled' : ''}`}
-                      title="figma 화면에서 이 학습코드의 장면 그림을 찾은 수와 찾아본 수입니다"
-                    >
+                    <span className={`tag${c.code === data.scene?.better ? ' settled' : ''}`}>
                       장면 {sceneOf(c.code)?.hits}/{sceneOf(c.code)?.tried}
                     </span>
                   )}
@@ -98,12 +93,9 @@ function OriginPicker({ code, onChanged }: { code: string; onChanged?: () => voi
           ))}
         </ul>
       )}
-      <p className="sub">원본을 변경하면 다음 생성 때 AI를 다시 실행합니다.</p>
       {!!data?.leftover.length && (
         <div className="origin-left">
-          <p className="state warn">
-            다른 호 원본의 파일 {data.leftover.length}개가 리소스 폴더에 남아 있습니다. 지금 원본은 쓰지 않는 파일입니다.
-          </p>
+          <p className="state warn">지금 원본이 쓰지 않는 다른 호 원본 파일 {data.leftover.length}개가 리소스 폴더에 남아 있습니다.</p>
           <details>
             <summary>파일 보기</summary>
             <ul>

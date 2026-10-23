@@ -38,11 +38,11 @@ export function useBoard() {
   const [tick, setTick] = useState(0)
   const shown = useRef<BoardKey | null>(null)
 
-  // 열 수 있는 다음 호와 그 호에 새로 만들 과목 (M7)
-  const [next, setNext] = useState<{ issue: string; subjects: string[] } | null>(null)
+  // 열 수 있는 다음 호와 그 호에 새로 만들 과목 (M7) — 과목마다 따로 세어 호마다 한 줄(2026-10-21)
+  const [opens, setOpens] = useState<BoardList['opens']>([])
   const take = useCallback((r: BoardList, pick?: BoardKey) => {
     setBoards(r.boards)
-    setNext(r.next ? { issue: r.next, subjects: r.nextSubjects } : null)
+    setOpens(r.opens)
     setBoardsError(r.error ?? '')
     setSelected((prev) =>
       pick && r.boards.some((b) => sameKey(pick, b)) ? pick : prev && r.boards.some((b) => sameKey(prev, b)) ? prev : (r.boards[0] ?? null)
@@ -95,5 +95,5 @@ export function useBoard() {
     setSelected((prev) => prev && { ...prev })
   }, [loadBoards])
 
-  return { boards, boardsError, next, openIssue, closeBoard, selected, setSelected, result, refresh, reload, sameKey }
+  return { boards, boardsError, opens, openIssue, closeBoard, selected, setSelected, result, refresh, reload, sameKey }
 }

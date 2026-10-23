@@ -5,6 +5,13 @@
 import fs from "fs";
 import path from "path";
 import { repoPath } from "./paths";
+import { SUBJECT_RE, STUDY_ANY_RE } from "./subjects";
+
+// 모듈 이름 규칙 (2026-10-21 에 내보냄). 앱의 공용 모듈 폴더 목록(`modulefolders.ts`)이 같은 규칙을 따로 적어 두고 있었습니다 —
+// 두 곳에 두면 한쪽만 바뀝니다. `MODULE_NAME_RE` 는 모듈 폴더 이름 하나, `MODULE_PICK_RE` 는 배치표 `module` 자리에 받는 값입니다.
+// `+` 는 「모듈 둘」을 쓰는 칸(`M30+M31`)을 잇는 글자라 배치표 값에만 들어갑니다.
+export const MODULE_NAME_RE = /^[A-Za-z0-9_]+$/;
+export const MODULE_PICK_RE = /^[A-Za-z0-9_+]+$/;
 
 // 사람이 정한 차시를 배치표에 적어 둡니다 — **다음부터 안 묻는 자리**입니다.
 //
@@ -21,10 +28,10 @@ export function writeLayoutPick(
   pick: { module: string; why: string; origin?: string },
 ): { ok: boolean; file: string; error?: string } {
   const file = repoPath("_layout", `${subject}${issue}.json`);
-  if (!/^(MA|KO|EN)$/.test(subject)) return { ok: false, file, error: "과목이 이상합니다." };
+  if (!SUBJECT_RE.test(subject)) return { ok: false, file, error: "과목이 이상합니다." };
   if (!/^\d\d$/.test(issue)) return { ok: false, file, error: "호가 이상합니다." };
   if (!/^L\dW\dS\d$/.test(slot)) return { ok: false, file, error: `칸 이름이 이상합니다: ${slot}` };
-  if (!/^[A-Za-z0-9_+]+$/.test(pick.module)) {
+  if (!MODULE_PICK_RE.test(pick.module)) {
     return { ok: false, file, error: `모듈 이름이 이상합니다: ${pick.module}` };
   }
   if (!pick.why.trim()) {
@@ -72,10 +79,10 @@ export function writeLayoutOrigin(
   pick: { origin: string | null; why: string },
 ): { ok: boolean; file: string; error?: string } {
   const file = repoPath("_layout", `${subject}${issue}.json`);
-  if (!/^(MA|KO|EN)$/.test(subject)) return { ok: false, file, error: "과목이 이상합니다." };
+  if (!SUBJECT_RE.test(subject)) return { ok: false, file, error: "과목이 이상합니다." };
   if (!/^\d\d$/.test(issue)) return { ok: false, file, error: "호가 이상합니다." };
   if (!/^L\dW\dS\d$/.test(slot)) return { ok: false, file, error: `칸 이름이 이상합니다: ${slot}` };
-  if (pick.origin !== null && !/^(MA|KO|EN)L\dM\d\dW\dS\d$/.test(pick.origin)) {
+  if (pick.origin !== null && !STUDY_ANY_RE.test(pick.origin)) {
     return { ok: false, file, error: `학습코드가 이상합니다: ${pick.origin}` };
   }
 
@@ -135,7 +142,7 @@ export const OPENED_NOTE =
 
 export function openLayout(subject: string, issue: string): { ok: boolean; file: string; made: boolean; error?: string } {
   const file = repoPath("_layout", `${subject}${issue}.json`);
-  if (!/^(MA|KO|EN)$/.test(subject)) return { ok: false, file, made: false, error: "과목이 이상합니다." };
+  if (!SUBJECT_RE.test(subject)) return { ok: false, file, made: false, error: "과목이 이상합니다." };
   if (!/^\d\d$/.test(issue)) return { ok: false, file, made: false, error: "호가 이상합니다." };
   if (fs.existsSync(file)) return { ok: true, file, made: false };
   const doc = {

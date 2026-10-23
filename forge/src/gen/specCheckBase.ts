@@ -7,7 +7,7 @@ import { HOOK_KEYS } from "./types";
 import { checkRelationShape } from "./relcheck";
 
 export const IDENT = /^[A-Za-z_][A-Za-z0-9_]*$/;
-export const SUBJECTS = ["MA", "KO", "EN"];
+// 과목 목록은 `subjects.ts` 한 곳입니다 — 여기 따로 두던 목록은 2026-10-21 에 걷었습니다(누리를 더하면서).
 const ASSET_KINDS: AssetKind[] = ["image", "sound", "lottie", "font"];
 export const FIELD_TYPES: string[] = [
   "string",

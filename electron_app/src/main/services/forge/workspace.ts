@@ -1,8 +1,13 @@
-import { isAbsolute } from 'node:path'
-import type { Workspace } from '../../../shared/forge'
+import { existsSync } from 'node:fs'
+import { isAbsolute, join } from 'node:path'
+import type { CommonPlace, FolderOpen, Workspace } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
+import { isRepoRoot } from '../../lib/git'
 import { rememberForgeRoot, savedForgeRoot } from './home'
 import { forgetForgeRoot, loadForge } from './runtime'
+
+/** 고른 공용 폴더가 저장소 맨 위인지 묻는 git 한 번의 상한 */
+const ROOT_TIMEOUT = 10_000
 
 /**
  * 작업 폴더(호 repo 들이 있는 자리)와 **리소스를 놓는 자리**.
@@ -41,9 +46,10 @@ export async function setForgeRoot(dir: string): Promise<Workspace> {
 
 export async function getWorkspace(): Promise<Workspace> {
   try {
-    const { paths, root, user } = await loadForge()
+    const { paths, commonroot, root, user } = await loadForge()
     const pick = paths.pickRoot()
     const me = user.loadUser()
+    const common: CommonPlace = commonroot.commonPick()
     return {
       dir: pick.dir,
       from: pick.from,
@@ -52,7 +58,8 @@ export async function getWorkspace(): Promise<Workspace> {
       rscRoot: me.rscRoot,
       developer: me.developer,
       devTeam: me.devTeam,
-      specOwner: me.specOwner,
+      shareRoot: me.shareRoot,
+      common,
       ...(pick.warn ? { warn: pick.warn } : {})
     }
   } catch (error) {
@@ -83,6 +90,42 @@ export async function setRscRoot(dir: string): Promise<Workspace> {
 }
 
 /**
+ * **사내 공유 폴더를 바꾼다** (2026-10-14, `sharefetch.ts`). **빈 글이면 기본 주소**(`SHARE_DEFAULT`)로 돌아간다.
+ * 글로 받는다 — `\\서버\공유` 꼴은 폴더 고르기 창으로 고르기 어렵다. 닿는지는 여기서 안 본다(못 닿는 PC 에서도 적어 둘 수 있게) —
+ * 찾을 때 공유 폴더 칸이 연결을 확인해 알린다
+ */
+export async function setShareRoot(dir: string): Promise<Workspace> {
+  const t = dir.trim()
+  // 드라이브 뿌리(`Z:\`)는 그대로 — 뒤 구분자를 떼면 `Z:` 가 되어 절대 경로가 아니다
+  const clean = /^[A-Za-z]:[\\/]?$/.test(t) ? t : t.replace(/[\\/]+$/, '')
+  // 이 칸 하나의 잘못은 서랍 전체 오류(`error`)로 돌려주지 않는다 — 작업 폴더 칸이 통째로 오류 화면이 되고 고칠 칸도 사라졌다(2026-10-15 검토)
+  if (clean && !isAbsolute(clean)) return { ...(await getWorkspace()), shareError: '공유 폴더 위치를 전체 경로로 적으세요.' }
+  return save({ shareRoot: clean }, '')
+}
+
+/**
+ * **공용 폴더(sparkon_common)를 바꾼다** (2026-10-21 사용자 말 — 「공용폴더도 비슷한 경로로 있긴한데 경로 정할 수 있게 해놔」).
+ * 빈 글이면 기본 자리(`<작업 폴더>/sparkon_common`)로. **고른 폴더가 기본 자리와 같아도 비워 둔다** — 작업 폴더를 바꾸면 따라가게.
+ * `_common/module` 이 없는 폴더는 안 받는다 — 엉뚱한 폴더를 적으면 모듈 폴더 · 회귀 검사 · main 올리기가 조용히 빈다.
+ * 잘못은 그 줄 아래에만(`commonError`) — `setShareRoot` 와 같은 까닭이다
+ */
+export async function setCommonRoot(dir: string): Promise<Workspace> {
+  const t = dir.trim()
+  if (!t) return save({ commonRoot: '' }, '')
+  const refuse = async (commonError: string): Promise<Workspace> => ({ ...(await getWorkspace()), commonError })
+  if (!isAbsolute(t)) return refuse('공용 폴더는 전체 경로로 정해야 합니다.')
+  if (!existsSync(join(t, '_common', 'module'))) return refuse('고른 폴더 안에 _common/module 폴더가 없어 공용 폴더로 쓸 수 없습니다.')
+  // 저장소 맨 위여야 한다 — 호 저장소의 `src` 는 `_common` 정션 덕에 위 검사를 통과하고, 그러면 「main 에 모두 올리기」가 그 호를 공용으로 올린다(2026-10-21 검증)
+  if (!(await isRepoRoot(t, ROOT_TIMEOUT))) return refuse('고른 폴더가 sparkon_common 저장소의 맨 위 폴더가 아니라 공용 폴더로 쓸 수 없습니다.')
+  try {
+    const { paths, commonroot } = await loadForge()
+    return save({ commonRoot: paths.samePlace(t, commonroot.commonPick().home) ? '' : t }, t)
+  } catch (error) {
+    return refuse(toMessage(error))
+  }
+}
+
+/**
  * **만든 사람 · 팀을 바꾼다** (2026-09-29). 「끝」이 activityInfo.json 에 적는 이름이다 — 옛 양산 창에만 있던 칸이라,
  * 걷은 뒤로 다른 개발자가 제 이름을 적을 길이 없었다. 빈 글은 안 받는다(빈 이름으로 끝을 적지 않게).
  */
@@ -97,7 +140,7 @@ export async function setMe(developer: string, devTeam: string): Promise<Workspa
  * 그 학습코드의 리소스 폴더를 만들고 탐색기로 연다 — forge `api.resourceDir` 그대로(자리 셈은 `files.ts` `rscDir` 하나).
  * 옛 양산 창 채널에 있던 것을 M8 에 여기로 옮겼다 — 작업대의 「리소스 폴더 열기」가 부른다.
  */
-export async function makeRscDir(code: string): Promise<{ ok: true; dir: string } | { ok: false; error: string }> {
+export async function makeRscDir(code: string): Promise<FolderOpen> {
   try {
     return (await loadForge()).api.resourceDir(code)
   } catch (error) {
@@ -105,7 +148,10 @@ export async function makeRscDir(code: string): Promise<{ ok: true; dir: string 
   }
 }
 
-async function save(patch: { workRoot?: string; rscRoot?: string; developer?: string; devTeam?: string }, dir: string): Promise<Workspace> {
+async function save(
+  patch: { workRoot?: string; rscRoot?: string; developer?: string; devTeam?: string; shareRoot?: string; commonRoot?: string },
+  dir: string
+): Promise<Workspace> {
   try {
     // **절대 경로만 받는다.** 상대 경로는 「지금 서 있는 폴더」에 따라 달라지는데,
     // 앱과 CLI 는 서 있는 자리가 다르다 — 같은 설정이 두 자리를 가리키게 된다.

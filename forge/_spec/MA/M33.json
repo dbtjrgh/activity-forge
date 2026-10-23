@@ -5,6 +5,8 @@
   "title": "지오보드 (핀 이어 도형 만들기)",
   "summary": "핀이 격자로 박힌 판에서 핀과 핀을 이어 선을 만들고, 정답 도형을 완성하는 활동. 붓(색)을 골라 그을 수 있고 이닝마다 만들 도형이 다릅니다.",
   "reference": {
+    "moduleCommit": "efa827ff2005678a94e409b83de34826ac24e6a4",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M33",
     "activities": [
       "MAL1M03W2S3",

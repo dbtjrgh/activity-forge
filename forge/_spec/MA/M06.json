@@ -5,6 +5,8 @@
   "title": "활 쏘기 (수만큼 맞히기)",
   "summary": "가운데 활이 저절로 돌고, 활을 눌러 화살을 날려 표적 인형을 맞히는 활동. 맞힌 인형은 before → after 그림으로 바뀌고, 그 이닝의 표적 수만큼 맞히면 이닝이 끝나며 인형이 end 그림으로 바뀝니다.",
   "reference": {
+    "moduleCommit": "7c718185f91d89369638043e7bc25f2945cfc7c6",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M06",
     "activities": [
       "MAL1M04W2S3",

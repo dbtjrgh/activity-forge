@@ -1,0 +1,142 @@
+{
+  "specVersion": 1,
+  "module": "N07",
+  "subject": "NU",
+  "title": "영상 보기 — 액자 속 영상을 재생합니다",
+  "summary": "누리 영상 활동입니다. 화면 가운데 액자 안에 영상 섬네일이 뜨고, 도우미 지시문(play)이 끝나면 섬네일이 들썩입니다. 재생을 누르면 액자가 물러나며 영상이 화면을 채우고, 끝나면 EOP 로 갑니다. 영어와 수학의 VideoPlayer 와 같은 꼴이지만 누리 모듈(N07)을 상속하고, 지시문을 playGuide 로 내서 도우미를 누르면 다시 들려줍니다. GameData 는 빈 배열입니다.",
+  "reference": {
+    "moduleCommit": "be57310dc1a31c31f1195daa5a678d9c784c4580",
+    "moduleCommitWhy": "2026-10-21 누리 스펙을 처음 쓰며 모듈 코드와 1호 표본을 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/NU/N07",
+    "activities": [
+      "NUL1M01W1S1",
+      "NUL1M01W2S1",
+      "NUL1M01W4S1"
+    ],
+    "note": "개발 완료 완성본은 1호 NUL1M01W1S1 · NUL1M01W2S1 · NUL1M01W4S1 셋입니다(2026-10-21)."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "await super.onInit();",
+        "this.initVideoPlay(\"bgFrame\", \"thumb\", \"video\");"
+      ],
+      "onStart": [
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.5);",
+        "bgm.play();",
+        "await SparkApp.mainMenu.mainCharacter.show();",
+        "await this.mPlayer.ready();",
+        "// N07 의 playGuide 로 재생한다 — 재생 동안 활동을 잠그고, 도우미 캐릭터를",
+        "// 누르면 이 지시문을 다시 들려준다 (수정 요청).",
+        "await this.playGuide(\"play\");",
+        "this.mPlayer.thumbFocusAni();",
+        "this.on(\"startPlay\", async () => {",
+        "  if (bgm.playing()) {",
+        "    bgm.fade(1, 0, 2000);",
+        "    bgm.once(\"fade\", () => {",
+        "      bgm.stop();",
+        "    });",
+        "  }",
+        "});",
+        "this.on(\"endPlay\", async () => {",
+        "  // const nar=['end_nar01','end_nar02','end_nar03']",
+        "  // shuffleArray( nar );",
+        "  // await SparkApp.mainMenu.mainCharacter.guide( nar[0] )",
+        "  await SparkApp.eop.show(1);",
+        "});",
+        "//await AudioManager.playAsync('play');"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "N07",
+      "from": "@/_common/module/NU/N07/N07"
+    },
+    "import": {
+      "symbol": "SparkApp",
+      "from": "@/_common/sparkLib/Application"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "video",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "**영상 파일입니다.** AssetManager 가 mp4 를 텍스처로 읽어 kind 가 image 입니다. images 가 아니라 액티비티 폴더 바로 아래(`${RscPath}/video.mp4`)에 둡니다. initVideoPlay 의 세 번째 인자로 생성된 Activity.ts 가 이 이름을 부릅니다. 완성본 3개 다 가짐(2026-10-21)."
+      },
+      {
+        "alias": "thumb",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "재생 전에 액자 안에 보이는 섬네일. initVideoPlay 의 두 번째 인자입니다.",
+        "size": {
+          "w": 1280,
+          "h": 720,
+          "why": "재생을 누르면 플레이어를 1080 ÷ 플레이어 높이만큼 키웁니다(N07.ts initVideoPlay). 완성본 3개가 모두 1280×720 입니다(2026-10-21). 화면 크기로 오면 배율이 1 이라 확대가 안 됩니다 — 영어 · 수학 VideoPlayer 에서 밟은 함정과 같은 계산입니다."
+        }
+      },
+      {
+        "alias": "bgFrame",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "영상을 감싸는 액자. initVideoPlay 의 첫 인자입니다. 완성본 3개가 같은 frame_case.png 를 씁니다."
+      },
+      {
+        "alias": "playBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "재생 단추. VideoPlayer.ts 가 AssetManager.get(\"playBTN\") 으로 이름을 박아 부릅니다. 완성본 3개 다 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "pauseBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "일시정지 단추. VideoPlayer.ts 가 이름을 박아 부릅니다. 완성본 3개 다 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "closeBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "영상을 닫는 X 단추. VideoPlayer.ts 가 이름을 박아 부릅니다. 완성본 3개 다 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "액자 화면 배경음. 모듈이 아니라 생성된 Activity.ts onStart 가 getSound(\"bgm\") 으로 틀고, 재생이 시작되면 2초 동안 줄여 멈춥니다. 완성본 3개 다 가짐(2026-10-21)."
+      },
+      {
+        "alias": "play",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "「재생 단추를 눌러 보세요」 지시문. 생성된 Activity.ts 가 playGuide(\"play\") 로 부르고, 끝날 때까지 재생 단추를 잠급니다. 완성본 3개 다 가짐(2026-10-21)."
+      }
+    ],
+    "providedByModule": {
+      "sound": [
+        "playBTNclick"
+      ],
+      "note": "재생 단추 누르는 소리는 VideoPlayer.ts 가 /sparklab/common/SL_en_com_sfx01.mp3 을 직접 등록합니다. 액티비티 AssetTable 에 넣지 마세요."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "unused",
+    "fields": []
+  },
+  "notes": [
+    "넣을 값이 없습니다. 진짜 작업은 public/sparklab/<코드>/video.mp4 와 images/thumb.png 를 넣는 것입니다.",
+    "완성본 셋의 play 소리 파일 이름에는 nar01 과 .mp3 사이에 눈에 안 보이는 글자(U+200B)가 들어 있고, 리소스 폴더의 파일 이름도 같습니다. 파일 이름을 고치려면 AssetTable 과 파일을 같이 고칩니다.",
+    "완성본 셋의 bgm 은 영어 공용 파일 이름(SL_en_com_bgm_01.mp3)입니다."
+  ]
+}

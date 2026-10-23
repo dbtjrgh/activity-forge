@@ -5,6 +5,8 @@
   "title": "목표수 만들기(모으기)",
   "summary": "개미가 든 목표수를 보고, 판에 놓인 숫자 칸 중 합이 목표수가 되는 두 칸을 연달아 터치해 짝을 지어 없애는 활동. 판의 숫자가 모두 사라지면 이닝 종료.",
   "reference": {
+    "moduleCommit": "c243ba1b382bc2cb68c1bf1e4bfa1538a69a784b",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-23) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M37",
     "activities": [
       "MAL1M07W3S3"

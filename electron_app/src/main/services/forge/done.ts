@@ -11,6 +11,11 @@
  * 쓴 뒤에는 도구가 쓴 모습으로 적어 둔다(`recordWrote`) — 다음 덮어쓰기가 이것을 「사람 것」으로 오해하지 않게.
  * 그 뒤 다시 만들어 써도 「끝」 표시는 그 자리 것을 지킨다(`write.ts` `keepFinished`).
  *
+ * 빗장 (2026-10-14, `owner.ts`) —
+ * - 이미 개발 완료인 내 것이면 날짜 · 만든 사람을 안 바꾸고 「이미 개발 완료입니다」로 끝낸다 — 고친 뒤 다시 눌러도 처음 끝낸 날짜가 남는다
+ * - 남이 끝낸 것이면 `force`(작업대의 「그래도 고치기」) 없이는 안 한다. 다른 팀이 만드는 중인 칸은 `force` 로도 안 한다
+ * - 쓰기 직전에 타입 검사(`halltsc.ts`) — 이 학습코드에 오류가 있거나 검사를 못 돌렸으면 안 한다. `force` 로도 못 넘긴다
+ *
  * Electron 을 import 하지 않는다(services 규칙).
  */
 
@@ -18,17 +23,29 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { DoneResult } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
+import { hallTsc, tscBlock } from './halltsc'
 import { mark } from './measure'
+import { otherTeam, ownerLine, ownerOf } from './owner'
 import { loadForge } from './runtime'
-import { recordWrote, writeCheck } from './writecheck'
+import { recordWrote, repoOf, writeCheck } from './writecheck'
 
 type Info = { devFinished?: unknown; finishedDate?: unknown; devTeam?: unknown; developer?: unknown; description?: unknown }
 const KEYS = ['devFinished', 'finishedDate', 'devTeam', 'developer'] as const
 
-export async function markDone(code: string): Promise<DoneResult> {
-  const fail = (error: string): DoneResult => ({ ok: false, file: '', changed: [], note: '', error })
+export async function markDone(code: string, force = false): Promise<DoneResult> {
+  const fail = (error: string, tscErrors?: string[]): DoneResult => ({ ok: false, file: '', changed: [], note: '', error, ...(tscErrors?.length ? { tscErrors } : {}) })
   try {
     const forge = await loadForge()
+    const user = forge.user.loadUser()
+    // 주인부터 — 타입 검사(10초 넘게)를 할 일이 없는 데 쓰지 않는다
+    const owner = ownerOf(forge, code)
+    if (owner.mine) return { ok: true, file: '', changed: [], note: '이미 개발 완료입니다.' }
+    if (owner.theirs && !force) return fail(`${ownerLine(owner)} 개발 완료 정보를 바꾸지 않습니다.`)
+    // **남의 팀 것은 끝으로 적지 않는다** (2026-09-29 시험에서 밟음) — KOL1M07W1S1(협력사 · 다른 개발자)에 누르자 만든 사람이
+    // 내 이름으로 갈렸다. 9호 KO 협력사 칸은 개발 완료가 아니라 `theirs` 로는 안 걸린다 — 팀이 적힌 만드는 중인 칸도 막는다
+    const team = otherTeam(owner, user.devTeam)
+    if (team) return fail(`이 액티비티는 ${team}${owner.developer ? `(${owner.developer})` : ''} 담당이라 개발 완료로 바꾸지 않습니다.`)
+
     const check = await writeCheck(code)
     // **커밋 안 된 변경으로는 막지 않는다** (2026-10-08 사용자 말 — 「검수완료 하면 안되는데 되게끔 해놔」).
     // 그 점검은 반영이 사람 것을 덮을까 봐 있는 것인데, 여기서 쓰는 파일은 activityInfo.json 하나다. 대화로 만든 학습코드는
@@ -37,19 +54,18 @@ export async function markDone(code: string): Promise<DoneResult> {
     if (!check.exists) return fail('아직 호 저장소에 없습니다. 먼저 대화로 생성하세요.')
     // **빈 뼈대는 끝이 아니다** (2026-09-29 시험에서 밟음) — 안 만든 9호 더미에 누르자 개발 끝으로 적혔다
     if (check.dummy) return fail('아직 빈 뼈대입니다. 대화로 생성한 뒤 누르세요.')
+
+    // 대화 뒤에 손으로 고친 것까지 — 대화가 끝날 때 잰 결과는 그 뒤를 모른다
+    const types = await hallTsc(repoOf(forge.paths, code), code)
+    const stop = tscBlock(types, '개발 완료로 저장')
+    if (stop) return fail(stop, types.lines)
+
     const file = join(check.dir, 'activityInfo.json')
     let was: Info = {}
     try {
       was = JSON.parse(readFileSync(file, 'utf8')) as Info
     } catch {
       // 없거나 깨졌으면 새로 쓴다 — 칸은 생성기와 같은 꼴이다
-    }
-    const user = forge.user.loadUser()
-    // **남의 팀 것은 끝으로 적지 않는다** (2026-09-29 시험에서 밟음) — KOL1M07W1S1(협력사 · 다른 개발자)에 누르자 만든 사람이
-    // 내 이름으로 갈렸다. KO07 도 진행판에 있어 작업대에서 누를 수 있다. 빈 칸(9호 더미)이거나 같은 팀일 때만 적는다
-    const team = typeof was.devTeam === 'string' ? was.devTeam : ''
-    if (team && team !== user.devTeam) {
-      return fail(`이 액티비티는 ${team}${typeof was.developer === 'string' && was.developer ? `(${was.developer})` : ''} 담당이라 개발 완료로 바꾸지 않습니다.`)
     }
     const info = {
       devFinished: true,

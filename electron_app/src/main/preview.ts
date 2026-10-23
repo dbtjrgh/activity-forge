@@ -22,11 +22,28 @@ const HEIGHT = 720
  * **미리보기 창 콘솔의 오류를 모은다** (2026-09-29). 9호 KOL1M08W1S3 이 검사 · 반영을 다 지나고도 빈 배경에서 멈췄는데,
  * 까닭(「해당 asset[ post ]이 존재하지않습니다」)은 창 콘솔에만 있었다. 사람은 콘솔을 안 연다 — 그래서 작업대에 옮긴다.
  * 새 주소를 열 때마다 비운다. 같은 글은 한 번만, 상한 `ISSUE_MAX`.
+ * **무엇을 흠으로 셀지는 회귀 검사 창(`regress.ts`)과 한 거름이다**(`consoleIssue`, 2026-10-15) — 두 벌일 때 회귀 검사는 error 단계만 봐서
+ * PixiJS 가 warn 으로 내는 「not found in the Cache」(별칭이 없어 그림이 빔)를 놓쳤다.
  */
-const ISSUE_MAX = 30
+/** 모으는 글 수 상한 — 회귀 검사 창도 같은 값을 쓴다 */
+export const ISSUE_MAX = 30
 const WANT = /존재하지\s*않|not found in the Cache|Failed to load|404|Uncaught|TypeError|ReferenceError/i
 let issues: string[] = []
 let issueUrl = ''
+
+/** 콘솔 한 줄이 액티비티 흠인가 — 흠이면 공백을 접고 200자로 줄인 글, 아니면 null. error 단계는 다, 그 밖은 `WANT` 에 걸릴 때만 */
+export function consoleIssue(level: string, message: unknown): string | null {
+  const text = String(message ?? '').trim()
+  if (!text || (level !== 'error' && !WANT.test(text))) return null
+  // Electron 이 스스로 내는 보안 경고는 액티비티 흠이 아니다
+  if (/Electron Security Warning/.test(text)) return null
+  return text.replace(/\s+/g, ' ').slice(0, 200)
+}
+
+/** 같은 글은 한 번만, `max` 개까지 */
+export function keepIssue(list: string[], line: string | null, max: number): void {
+  if (line && !list.includes(line) && list.length < max) list.push(line)
+}
 
 function listen(one: BrowserWindow): void {
   one.webContents.on('did-start-navigation', (d) => {
@@ -35,14 +52,7 @@ function listen(one: BrowserWindow): void {
       issueUrl = d.url
     }
   })
-  one.webContents.on('console-message', (e) => {
-    const text = String(e.message ?? '').trim()
-    if (!text || (e.level !== 'error' && !WANT.test(text))) return
-    // Electron 이 스스로 내는 보안 경고는 액티비티 흠이 아니다
-    if (/Electron Security Warning/.test(text)) return
-    const line = text.replace(/\s+/g, ' ').slice(0, 200)
-    if (!issues.includes(line) && issues.length < ISSUE_MAX) issues.push(line)
-  })
+  one.webContents.on('console-message', (e) => keepIssue(issues, consoleIssue(e.level, e.message), ISSUE_MAX))
 }
 
 /** 지금 창에 뜬 주소와 그 주소를 연 뒤 모인 오류. 창이 없으면 빈 것 */

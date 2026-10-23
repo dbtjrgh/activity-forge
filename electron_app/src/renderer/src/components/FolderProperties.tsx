@@ -133,7 +133,7 @@ function FolderProperties({ path }: Props) {
                   <span className="sub">
                     하위 폴더 {size.folders.toLocaleString('ko-KR')}개, 파일{' '}
                     {size.files.toLocaleString('ko-KR')}개
-                    {size.truncated && ' (항목이 많아 일부만 계산한 최솟값)'}
+                    {size.truncated && ' (일부만 계산)'}
                   </span>
                   {size.error && <span className="sub error">{size.error}</span>}
                 </>

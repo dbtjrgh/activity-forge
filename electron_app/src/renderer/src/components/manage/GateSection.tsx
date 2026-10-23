@@ -4,6 +4,7 @@ import { formatAgo } from '../../lib/format'
 /**
  * 완성본 점검 칸 — 개발 완료를 전부 스펙 검사에 넣어 막는 에러가 난 것.
  * **고치는 단추는 없다.** 걸린 것은 대개 그 완성본 쪽 흠(없는 이름을 부름)이고, 남의 팀 저장소다.
+ * 아래에는 스펙을 맞춘 뒤 바뀐 공용 모듈(`drift`)을 접어 둔다 (2026-10-14). 다시 재는 까닭(`stale`)은 안 보인다 — 저절로 다시 잰다.
  */
 function GateSection({ gate, measuring, onMeasure }: { gate: GateResult | null; measuring: boolean; onMeasure: () => void }) {
   if (!gate) return <p className="state">지난 결과를 불러오는 중…</p>
@@ -32,7 +33,7 @@ function GateSection({ gate, measuring, onMeasure }: { gate: GateResult | null; 
     <>
       {bar}
       {gate.failed.length === 0 ? (
-        <p className="manage-ok">점검한 {gate.passed}개가 모두 스펙을 통과했습니다.</p>
+        <p className="manage-ok">{gate.passed}개 모두 통과했습니다.</p>
       ) : (
         <table className="run-table manage-table">
           <thead>
@@ -57,9 +58,22 @@ function GateSection({ gate, measuring, onMeasure }: { gate: GateResult | null; 
           </tbody>
         </table>
       )}
+      {gate.driftNote && <p className="sub">{gate.driftNote}</p>}
+      {(gate.drift?.length ?? 0) > 0 && (
+        <details className="manage-more">
+          <summary>스펙을 맞춘 뒤 바뀐 모듈 {gate.drift?.length}개</summary>
+          <ul className="manage-files">
+            {gate.drift?.map((d) => (
+              <li key={d.module}>
+                <span className="mono">{d.module}</span> <span className="sub">{d.note}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
       {gate.unmeasured.length > 0 && (
         <details className="manage-more">
-          <summary>점검하지 못한 항목 {gate.unmeasured.length}개 (스펙이 없거나 모듈을 읽지 못함)</summary>
+          <summary>점검하지 못한 항목 {gate.unmeasured.length}개</summary>
           <ul className="manage-files">
             {gate.unmeasured.map((u) => (
               <li key={u.code}>

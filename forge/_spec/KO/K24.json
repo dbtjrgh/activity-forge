@@ -5,6 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/KR/K24",
     "activities": [
       "KOL1M01W2S3",
@@ -13,6 +15,11 @@
       "KOL1M07W2S3",
       "KOL3M02W2S3"
     ]
+  },
+  "variantKey": {
+    "path": "quizType",
+    "note": "판을 고릅니다. block 은 벨트와 크레인, battery 는 이닝 배경과 덮개(cover)를 씁니다.",
+    "why": "InningManager.ts:56 block 이면 belt, Quiz.ts:135 belt2 · :742 크레인. BlockGroup.ts:42 battery 면 inningBg · highlight, Quiz.ts:178 cover1~N. 개발 완료 7개(2026-10-13) — block 3 · battery 4."
   },
   "codegen": {
     "hooks": {

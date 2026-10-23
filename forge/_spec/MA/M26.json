@@ -5,6 +5,8 @@
   "title": "선으로 잇기 (짝 찾아 잇기)",
   "summary": "왼쪽 문제 대상과 오른쪽 정답 대상을 손가락으로 그어 잇는 활동. 획이 맞는 짝에 닿으면 선이 남고 두 대상이 합쳐진 그림(result)으로 바뀝니다. 한 이닝의 짝을 다 이으면 이닝이 끝납니다.",
   "reference": {
+    "moduleCommit": "b762d757b53b3b0db80f17577c84dce94305678f",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-28) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M26",
     "activities": [
       "MAL1M02W2S2",

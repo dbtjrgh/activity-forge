@@ -1,87 +1,84 @@
 /**
- * **원본보다 리소스가 몇 개 모자란가 — 세는 곳은 여기 하나** (2026-10-01).
+ * **리소스가 모자란가 — 세는 곳은 여기 하나** (2026-10-01, 2026-10-14 에 셈을 바꿨다). 작업대 · 진행판 · 관리가 같은 것을 본다.
  *
- * 전에는 셋이 따로 셌다 — 작업대 「부족한 리소스」는 별칭 수로(`prepare.ts`), 「관리」 받을 리소스는 파일 수로(`rscwait.ts`),
- * 진행판은 아예 안 셌다. 그래서 진행판은 「화면 붙이기」, 작업대는 「리소스 35개 부족」이라 말이 갈렸다.
- * - **파일 수로 센다** — 별칭 여럿이 한 파일을 쓰면 별칭 수는 실제로 받을 수보다 많다
- * - **모자람은 개수로 잰다** — 파일은 이름이 바뀌어 오므로 이름만 견주면 온 것도 없다고 나온다. 원본 이름은 참고로만 싣는다
- * - 영상은 AssetTable 이 그림 목록에 올리지만 사람에게는 그림이 아니다 — 따로 센다
- * - **원본은 만들 때 쓰는 원본**(`originNow` — 배치표에 크기 맞추기까지) — 받을 리소스 창과 같다. 배치표 판정만 보면 크기로 원본이 바뀐 칸에서 수가 갈린다
+ * 10-01 부터 원본 하나와 종류별 파일 수를 견줬다. 완성본 835개로 재 보니 **다 넣은 완성본도 같은 모듈 다른 완성본을 원본으로
+ * 견주면 짝의 49%에서 「부족」이 떴다**(뜰 때 평균 12.5개) — 같은 모듈도 이닝 · 장면 수가 학습코드마다 다르다(함정 문서).
+ * 사람은 매번 「정말 모자란가」를 헷갈렸다. 그래서 **확실한 것만 「없음」으로 센다.**
+ * - **소리** — 기획서 녹음 표에 낱개로 적힌 이 학습코드 몫 이름 가운데 리소스 폴더와 호 저장소 어디에도 없는 것(`plansound.ts`)
+ * - **그림 · 로티 · 영상** — 미리 알 길이 없다. 같은 모듈 개발 완료 완성본이 쓴 수의 범위만 참고로 싣는다(`rscrange.ts`)
+ * - 공용 파일(com · cor · quiz …)은 앱이 대화를 시작할 때 가져온다 — 기획서 몫 이름이 아니라 안 센다
+ * 원본은 이제 안 본다 — 원본 이름은 받을 리소스 창(`rscguide.ts`)이 그림마다 보인다.
  *
  * Electron 을 import 하지 않는다(services 규칙).
  */
 
-import path, { basename } from 'node:path'
-import { originNow } from './originpick'
+import fs from 'node:fs'
+import path from 'node:path'
+import type { NeedRow, PlanCheck } from '../../../shared/forge'
+import { doneOf } from './chatothers'
+import { joinedParts, planSound, stem } from './plansound'
+import { kindKey, rangeOf } from './rscrange'
 import type { Forge } from './runtime'
-import { stamp, stampTree } from './stamp'
 
-export const kindKey = (file: string, kind: string): string => (file.toLowerCase().endsWith('.mp4') ? 'video' : kind)
+export { kindKey }
 
-export interface RscCount {
-  kind: string
-  /** 원본이 쓰는 파일 수 */
-  origin: number
-  /** 이번 폴더에 있는 수 */
-  here: number
-  /** 원본 이름 가운데 이번 폴더에 없는 것 — 참고용 */
-  files: string[]
-}
+const AUDIO = /\.(mp3|wav|ogg|m4a)$/i
+const KIND_ORDER = ['video', 'image', 'sound', 'lottie', 'font']
 
-type Recipe = { assets?: Record<string, { file: string }[] | undefined> }
-
-/** 종류마다 원본 · 지금. 원본에도 폴더에도 없는 종류는 안 싣는다 */
-export function rscCount(recipe: Recipe, files: { name: string; kind: string }[]): RscCount[] {
-  const names = new Set(files.map((f) => basename(f.name).toLowerCase()))
-  const here = new Map<string, number>()
-  for (const f of files) here.set(kindKey(f.name, f.kind), (here.get(kindKey(f.name, f.kind)) ?? 0) + 1)
-  const want = new Map<string, Set<string>>()
-  for (const [kind, list] of Object.entries(recipe.assets ?? {})) {
-    for (const a of list ?? []) {
-      const f = basename(a.file)
-      want.set(kindKey(f, kind), (want.get(kindKey(f, kind)) ?? new Set()).add(f))
-    }
+/** 폴더 아래 소리 파일 전부 — 하위 폴더 깊이가 학습코드마다 다르다(sounds/nar · sounds/narration …) */
+function audioIn(dir: string, out: Set<string>): Set<string> {
+  let names: fs.Dirent[]
+  try {
+    names = fs.readdirSync(dir, { withFileTypes: true })
+  } catch {
+    return out
   }
-  const kinds = [...new Set([...want.keys(), ...here.keys()])]
-  return kinds.map((kind) => {
-    const set = want.get(kind) ?? new Set<string>()
-    return { kind, origin: set.size, here: here.get(kind) ?? 0, files: [...set].filter((f) => !names.has(f.toLowerCase())).sort() }
-  })
+  for (const e of names) {
+    if (e.isDirectory()) audioIn(path.join(dir, e.name), out)
+    // 합본(`nar10-11`)이 있으면 기획서의 낱개 둘(`nar10` · `nar11`)도 있는 것이다(`plannames.ts` `joinedParts`)
+    else if (AUDIO.test(e.name)) [stem(e.name), ...joinedParts(stem(e.name))].forEach((n) => out.add(n))
+  }
+  return out
 }
 
-/** 모자란 수의 합 */
-export const gapOf = (rows: RscCount[]): number => rows.reduce((n, r) => n + Math.max(0, r.origin - r.here), 0)
-
-type Counted = { origin: string; rows: RscCount[] } | string
-
-/**
- * **한 번 센 것은 다시 안 센다** (2026-10-01). 진행판은 리소스가 든 칸마다 이것을 부르고, 도는 판이 있으면 30초마다 다시 읽는다.
- * 원본을 불러오는 것이 메인 스레드를 붙잡아(함정 — 동기 계산은 화면 전체를 멈춘다) 칸이 수십 개면 몇 초씩 멈춘다.
- * 열쇠는 그 리소스 폴더의 파일 도장과 배치표(원본 고정) 도장 — 바뀌면 다시 센다. 호 저장소에 새 액티비티가 들어와
- * 원본 후보가 바뀌는 것은 도장에 안 잡혀서 **10분이 지나면 다시 센다**
- */
-const KEEP_MS = 10 * 60_000
-const kept = new Map<string, { key: string; at: number; value: Counted }>()
-
-function keyOf(forge: Forge, code: string): string {
-  const layout = path.join(forge.paths.REPO_ROOT, '_layout', `${code.slice(0, 2)}${/M(\d\d)/.exec(code)?.[1] ?? ''}.json`)
-  return [stamp(layout), ...stampTree(forge.files.rscDir(code), forge.files.walk)].join('\n')
+/** 기획서 소리 이름 가운데 없는 것 — 리소스 폴더와 호 저장소(만든 뒤 · 폴더 정리 뒤에는 거기에만 있다)를 같이 본다 */
+export function planGap(forge: Forge, code: string): { plan: PlanCheck; missing: string[]; unsure: string[] } {
+  const rsc = forge.files.rscDir(code)
+  const got = rsc ? planSound(forge, code, rsc) : { own: [], unsure: [], note: '리소스 폴더를 정하지 않았습니다.' }
+  const plan = { names: got.own.length, note: got.note }
+  if (got.note) return { plan, missing: [], unsure: [] }
+  const have = audioIn(doneOf(forge, code).rsc, rsc ? audioIn(rsc, new Set()) : new Set())
+  const lack = (n: string): boolean => !have.has(n.toLowerCase())
+  return { plan, missing: got.own.filter(lack), unsure: got.unsure.filter(lack) }
 }
 
-/** 만들 때 쓰는 원본을 불러와 센다 — 못 하면 까닭 */
-export function countFor(forge: Forge, code: string): Counted {
-  const key = keyOf(forge, code)
-  const hit = kept.get(code)
-  if (hit && hit.key === key && Date.now() - hit.at < KEEP_MS) return hit.value
-  const value = countNow(forge, code)
-  kept.set(code, { key, at: Date.now(), value })
-  return value
+export interface Counted {
+  rows: NeedRow[]
+  plan: PlanCheck
 }
 
-function countNow(forge: Forge, code: string): Counted {
-  const now = originNow(forge, code)
-  if (typeof now === 'string') return now
-  const cloned = forge.api.clone(now.origin, code)
-  if (!cloned.ok) return cloned.error ?? '원본을 불러오지 못했습니다.'
-  return { origin: now.origin, rows: rscCount(cloned.recipe as Recipe, forge.files.listFiles(code)?.files ?? []) }
+/** 종류마다 지금 수 · 같은 모듈 범위 · 없는 소리. 모듈을 모르면 범위 없이 */
+export function countFor(forge: Forge, code: string, module: string): Counted {
+  const here = new Map<string, number>()
+  for (const f of forge.files.listFiles(code)?.files ?? []) here.set(kindKey(f.name, f.kind), (here.get(kindKey(f.name, f.kind)) ?? 0) + 1)
+  const range = module ? rangeOf(forge, code.slice(0, 2), module) : new Map()
+  const gap = planGap(forge, code)
+  const kinds = new Set([...here.keys(), ...range.keys(), ...(gap.plan.names ? ['sound'] : [])])
+  const rank = (k: string): number => (KIND_ORDER.includes(k) ? KIND_ORDER.indexOf(k) : KIND_ORDER.length)
+  const rows = [...kinds]
+    .sort((a, b) => rank(a) - rank(b))
+    .map((kind) => ({
+      kind,
+      here: here.get(kind) ?? 0,
+      range: range.get(kind) ?? null,
+      missing: kind === 'sound' ? gap.missing : [],
+      unsure: kind === 'sound' ? gap.unsure : []
+    }))
+  return { rows, plan: gap.plan }
+}
+
+/** 진행판 칸의 없는 소리 수 — 기획서로 못 셌으면 null(숫자 0 이 「다 있음」으로 읽히지 않게) */
+export function gapFor(forge: Forge, code: string): number | null {
+  const gap = planGap(forge, code)
+  return gap.plan.note ? null : gap.missing.length
 }

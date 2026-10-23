@@ -5,6 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/KR/K11",
     "activities": [
       "KOL2M01W4S1",
@@ -13,6 +15,11 @@
       "KOL2M04W4S1",
       "KOL2M05W4S1"
     ]
+  },
+  "variantKey": {
+    "path": "settings.type",
+    "note": "판 종류를 고릅니다. 1 이면 bg2 와 내려가는 움직임이 있고 끌 그림 이름이 image_ 로, 2 면 btn_ 으로 시작합니다.",
+    "why": "InningManager.ts:60 type === 1 일 때만 bg2, :150 내려가는 트윈. Books.ts:328 끌 그림 이름이 type 마다 다릅니다. 개발 완료 6개(2026-10-13) — 1 이 3 · 2 가 3."
   },
   "codegen": {
     "hooks": {

@@ -5,13 +5,15 @@
   "title": "썸네일 골라서 꾸미기",
   "summary": "썸네일 3~10개 중 하나를 골라 사진을 찍고, 그 사진을 꾸미기 보드에 올려 색연필·롤러·스티커로 꾸민 뒤 포트폴리오에 저장하는 모듈. M30 에서 갈라 만들었습니다.",
   "reference": {
+    "moduleCommit": "48034afb310a40c7dc593d2f99b0d3d23d6587c5",
+    "moduleCommitWhy": "2026-10-14 neonOffset · doneGuide 를 받게 모듈(48034af)과 스펙을 같이 고치며 맞춰 봄. 9-29 커밋 둘(c457863 BGM 페이드 · 5c3fab8 완료 버튼 자리)은 GameData 항목에 닿지 않음",
     "module": "sparkon_common/_common/module/MA/M30_3",
     "activities": [
       "MAL1M07W4S1",
       "MAL2M07W4S1",
       "MAL3M07W2S1"
     ],
-    "doc": "sparkon_common/_common/module/MA/M30_3/README.md — 양산 가이드는 §10. **2026-09-29 모듈 고침**: 완료 버튼이 보드 · 도구 패널 밑에 깔려 맨 위로 올렸습니다(Editor.ts `addChild` 차례, sparkon_common 7754577, 수정요청 #144). 모듈을 고친 것이라 세 활동에 다 먹고, 액티비티 · 스펙 쪽에서 할 것은 없습니다."
+    "doc": "sparkon_common/_common/module/MA/M30_3/README.md — 양산 가이드는 §10. **2026-09-29 모듈 고침**: 완료 버튼이 보드 · 도구 패널 밑에 깔려 맨 위로 올렸습니다(Editor.ts `addChild` 차례, sparkon_common 7754577, 수정 요청). 모듈을 고친 것이라 세 활동에 다 먹고, 액티비티 · 스펙 쪽에서 할 것은 없습니다."
   },
   "codegen": {
     "hooks": {
@@ -148,6 +150,18 @@
           "type": "number",
           "optional": true,
           "desc": "꾸미기 보드에 올릴 그림 배율. **보드에 꽉 채운 크기를 1 로 본 상대값**이라 그림 여백이 달라도 결과가 흔들리지 않습니다. 값을 안 쓰면 1(꽉 참)입니다."
+        },
+        {
+          "key": "neonOffset",
+          "type": "point",
+          "optional": true,
+          "desc": "도구를 누를 때 반짝이는 네온(`cover-neon`) 그림의 자리 보정 {x, y}. 모듈은 네온 그림 가운데를 보드 흰 영역 가운데에 놓습니다 — 그림 속 보드가 그림 가운데에 있지 않으면(아래 테두리가 두꺼운 판) 어긋납니다. **네온 그림의 보드를 배경 보드와 픽셀로 맞춰 정합니다.** 9호 MAL3M08W2S1 은 {x: 0, y: 30}. 네온 그림이 없는 활동(8호 세 활동)은 쓰지 않습니다."
+        },
+        {
+          "key": "doneGuide",
+          "type": "asset:sound",
+          "optional": true,
+          "desc": "완료 버튼이 처음 생길 때 한 번 틀 나레이션 alias(꾸미는 손은 막지 않음). 9호 기획서는 ③ 완료 줄에 「꾸미기가 끝나면 완료 버튼을 꾹 눌러줘」(SL_ma_m30_3_guide_nar03)를 적었고, 8호 상세기획은 같은 대사를 가이드 영상 속 대사로 적었습니다. 파일을 AssetTable 에 등록한 뒤 씁니다. 안 쓰면 안 틉니다."
         },
         {
           "key": "toolData",

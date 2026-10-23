@@ -1,22 +1,23 @@
 import type { CSSProperties } from 'react'
-import type { BoardItem, BoardKey } from '../../../../shared/forge'
-import { HO_OF, hoOrder } from '../../../../shared/forge'
-
-const SUBJECT_NAME: Record<string, string> = { EN: '영어', MA: '수학', KO: '국어' }
-const SUBJECT_ORDER = ['EN', 'MA', 'KO']
+import type { BoardItem, BoardKey, BoardList as BoardListData } from '../../../../shared/forge'
+import { HO_OF, SUBJECTS, hoLabel, hoOrder, subjectName, subjectRank } from '../../../../shared/forge'
+import { TOUR_ANCHOR } from '../../lib/anchors'
 
 /**
- * 진행판 목록을 호마다 한 줄로 — **옛 호가 위**(사용자 말 — 「역순으로, M07 이 맨 위」), 줄 안은 영어 · 수학 · 국어 차례.
+ * 진행판 목록을 호마다 한 줄로 — **옛 호가 위**(사용자 말 — 「역순으로, M07 이 맨 위」), 줄 안은 과목 표 차례(영어 · 수학 · 국어 · 누리, `shared/forge/subjects.ts`).
  * 차례는 **호 차례**다(`HO_OF`) — 6호가 방학호 M11 이라 M 번호 차례와 다르다. 표에 없는 M 은 맨 뒤에 M 번호로
  */
 function issuesOf(boards: BoardItem[]): [string, BoardItem[]][] {
   const by = new Map<string, BoardItem[]>()
   for (const b of boards) by.set(b.issue, [...(by.get(b.issue) ?? []), b])
-  const rank = (s: string): number => (SUBJECT_ORDER.indexOf(s) + 4) % 4
   return [...by.entries()]
     .sort((a, b) => hoOrder(a[0]) - hoOrder(b[0]))
-    .map(([i, row]) => [i, row.sort((a, b) => rank(a.subject) - rank(b.subject))])
+    .map(([i, row]) => [i, row.sort((a, b) => subjectRank(a.subject) - subjectRank(b.subject))])
 }
+
+/** 열기 단추 글 — 과목 표 전부를 여는 호는 과목 이름을 안 붙인다(「+ M12 열기」), 일부만이면 붙인다(「+ 1호(M01) 누리 열기」) */
+const openText = (o: { issue: string; subjects: string[] }): string =>
+  `+ ${hoLabel(o.issue)} ${o.subjects.length < SUBJECTS.length ? `${o.subjects.map(subjectName).join(', ')} ` : ''}열기`
 
 const allDone = (b: BoardItem): boolean => b.done !== null && b.total > 0 && b.done === b.total
 
@@ -31,7 +32,7 @@ export default function BoardList({
   isSelected,
   onSelect,
   onClose,
-  next,
+  opens,
   onOpen
 }: {
   boards: BoardItem[]
@@ -39,12 +40,12 @@ export default function BoardList({
   isSelected: (a: BoardKey | null, b: BoardKey) => boolean
   onSelect: (b: BoardKey) => void
   onClose: (b: BoardKey) => void
-  next: { issue: string; subjects: string[] } | null
+  opens: BoardListData['opens']
   onOpen: (issue: string, subject: string) => void
 }) {
   return (
     <>
-      <ul className="board-list">
+      <ul className="board-list" id={TOUR_ANCHOR.sideBoards}>
         {issuesOf(boards).map(([issue, row]) => (
           <li key={issue} className="board-row">
             {/* 사람은 호로 부른다 — 호가 앞, M 번호는 옆에 작게 */}
@@ -61,7 +62,7 @@ export default function BoardList({
                     style={{ '--p': b.done === null || !b.total ? 0 : b.done / b.total } as CSSProperties}
                     title={b.done === null ? '호 저장소가 없어 진행률을 계산할 수 없습니다' : `개발 완료 ${b.done} / ${b.total}`}
                   >
-                    {SUBJECT_NAME[b.subject] ?? b.subject}
+                    {subjectName(b.subject)}
                   </button>
                   {/* **사람이 정한 칸이 없는 것만 닫는다** — 배치표는 휴지통으로, 호 저장소 · 리소스는 그대로 */}
                   {!b.closeWhy && (
@@ -80,16 +81,12 @@ export default function BoardList({
           </li>
         ))}
       </ul>
-      {/* **다음 호는 사람이 한 번 연다** (M7) — 작업 폴더에 m09~m11 더미까지 있어 저절로 고르면 틀린다 */}
-      {next && (
-        <button
-          className="ghost board-open"
-          onClick={() => onOpen(next.issue, next.subjects[0] ?? 'EN')}
-          title={`${next.subjects.join(', ')} 빈 배치표를 생성합니다`}
-        >
-          + {HO_OF[next.issue] ? `${HO_OF[next.issue].name}(M${next.issue})` : `M${next.issue}`} {next.subjects.length < 3 ? `${next.subjects.map((s) => SUBJECT_NAME[s] ?? s).join(', ')} ` : ''}열기
+      {/* **다음 호는 사람이 한 번 연다** (M7) — 작업 폴더에 m09~m11 더미까지 있어 저절로 고르면 틀린다. 과목마다 다음 호가 달라 단추가 여럿일 수 있다 */}
+      {opens.map((o) => (
+        <button key={o.issue} className="ghost board-open" onClick={() => onOpen(o.issue, o.subjects[0] ?? '')}>
+          {openText(o)}
         </button>
-      )}
+      ))}
     </>
   )
 }

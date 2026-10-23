@@ -100,13 +100,10 @@ export default function GuideVoice({ code, onChanged }: { code: string; onChange
       <h2>
         대사 성우 <span className="guide-ref">대사 {info.talk.length}개</span>
       </h2>
-      <p className="guide-sec-tip">
-        같은 모듈이어도 호마다 성우가 다릅니다. 이 학습코드 성우의 성별을 고르고, 같은 성별인 학습코드의 대사를 한 번에 가져오세요. 성별은 스펙에 저장되어 다른 사람에게도 보입니다.
-      </p>
       <div className="voice-row voice-mine">
         <b className="mono">{code}</b>
         <Pick value={info.gender} disabled={busy} onPick={(g) => void pickMine(g)} />
-        <button className="ghost" onClick={() => void hear(code)} title="이 폴더에 새로 온 소리 하나를 틉니다.">
+        <button className="ghost" onClick={() => void hear(code)}>
           ▶ 새로 온 소리
         </button>
         {heard[code] ? <span className="sub">{heard[code]}</span> : null}
@@ -119,9 +116,7 @@ export default function GuideVoice({ code, onChanged }: { code: string; onChange
       )}
       {none && !info.kept && (
         <div className="state warn">
-          <p className="voice-none">
-            {info.gender}자 성우 대사는 어느 학습코드에도 없습니다. 지금 대사를 그대로 쓰거나, 담당자에게 이 학습코드용 녹음을 요청하세요.
-          </p>
+          <p className="voice-none">{info.gender}자 성우 대사는 어느 학습코드에도 없습니다. 담당자에게 녹음을 요청하세요.</p>
           {wrong && (
             <button className="ghost" disabled={busy} onClick={() => void act(() => window.api.guideVoiceKeep(code))}>
               지금 대사 그대로 쓰기
@@ -130,7 +125,7 @@ export default function GuideVoice({ code, onChanged }: { code: string; onChange
         </div>
       )}
       {unknownLeft && (
-        <p className="state warn">성우가 {info.gender}자로 저장된 학습코드가 없습니다. 아래에서 ▶로 들어 보고 성별을 고르세요.</p>
+        <p className="state warn">성우가 {info.gender}자로 저장된 학습코드가 없습니다. 아래에서 들어 보고 성별을 고르세요.</p>
       )}
       {best && (
         <p className="row-actions">
@@ -147,12 +142,12 @@ export default function GuideVoice({ code, onChanged }: { code: string; onChange
               {s.twins.length ? <span className="sub"> 외 {s.twins.length}개</span> : null}
             </span>
             <Pick value={s.gender} disabled={busy} onPick={(g) => void act(() => window.api.guideVoiceSet(code, s.code, g))} />
-            <button className="ghost" onClick={() => void hear(s.code)} title="이 학습코드의 시작 대사를 틉니다.">
+            <button className="ghost" onClick={() => void hear(s.code)}>
               ▶
             </button>
             {heard[s.code] ? <span className="sub">{heard[s.code]}</span> : null}
             {s.same === info.talk.length && <span className="guide-mark name">지금 쓰는 대사</span>}
-            <button className="ghost" disabled={busy || s.same === info.talk.length} onClick={() => void act(() => window.api.guideVoiceUse(code, s.code))} title={`${s.code} 학습코드의 대사 ${s.files}개를 이 폴더로 가져와 대사 항목에 지정합니다.`}>
+            <button className="ghost" disabled={busy || s.same === info.talk.length} onClick={() => void act(() => window.api.guideVoiceUse(code, s.code))}>
               이 대사 쓰기
             </button>
           </li>

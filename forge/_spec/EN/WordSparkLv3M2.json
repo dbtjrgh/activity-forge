@@ -5,6 +5,8 @@
   "title": "파이프 조립해 물탱크 채우기 (낱말 철자)",
   "summary": "물탱크로 이어지는 파이프에 빠진 부품(동그라미·손잡이·작은관)을 색칠된 것 중에서 골라 끼우는 활동. 파이프를 다 채우면 물이 흐릅니다.",
   "reference": {
+    "moduleCommit": "b9be3c8d5768fae9695e2c51bda9464bbcb04344",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/WordSparkLv3M2",
     "activities": [
       "ENL3M02W1S3",

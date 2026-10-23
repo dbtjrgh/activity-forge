@@ -6,7 +6,8 @@
  * 그 파일이 「이름 그대로」 짝을 지어 미리보기에 박사가 나왔다.
  *
  * - **바이트로 가른다** — 폴더 파일이 그 모듈의 **다른 완성본** 파일과 바이트까지 같고, **지금 원본에는 같은 바이트도 같은 이름도 없을 때만**
- * - 사람 · AI 답이 가리키는 파일은 안 센다 — 「대사 성우」로 다른 호 대사를 일부러 가져온 것(`voiceset.ts`)이 그렇다
+ * - 사람 · AI 답이 가리키는 파일은 안 센다 — 「대사 성우」로 다른 호 대사를 일부러 가져온 것(`voiceset.ts`)이 그렇다.
+ *   공유 폴더에서 가져온 파일(`sharelog.ts` 기록)도 안 센다
  * - `_` 로 시작하는 폴더(`_figma` · `_원본`)는 안 본다
  * - **저절로 지우지 않는다.** 목록을 보이고 사람이 누르면 휴지통으로(`lib/trash.ts`). 누를 때 다시 센다 — 화면이 보낸 목록을 믿지 않는다
  *
@@ -21,6 +22,7 @@ import { toTrash } from '../../lib/trash'
 import { readAnswers } from './answer'
 import { sameBytes } from './rsccopy'
 import { loadForge, type Forge } from './runtime'
+import { readLog } from './sharelog'
 
 /** 폴더 안 파일 — `_` 폴더는 뺀다. 없으면 빈 목록 */
 function filesIn(forge: Forge, dir: string): string[] {
@@ -96,7 +98,12 @@ export function leftoverFiles(forge: Forge, code: string, origin: string): Lefto
     return []
   }
   const mine = indexOf(forge, origin)
-  const asked = new Set(readAnswers(forge.paths.REPO_ROOT, code).answers.map((a) => a.value).filter((v): v is string => typeof v === 'string'))
+  // 공유 폴더에서 가져온 자리(`sharelog.ts`)도 뺀다 — 이 학습코드 자리 규칙으로 고른 것이라 다른 호 원본 것이 아니다.
+  // 수학 숫자 읽기 소리는 같은 모듈 다른 완성본과 바이트까지 같아 그대로면 「다른 호 원본 파일」로 보였다(2026-10-23 검토)
+  const asked = new Set([
+    ...readAnswers(forge.paths.REPO_ROOT, code).answers.map((a) => a.value).filter((v): v is string => typeof v === 'string'),
+    ...Object.keys(readLog(forge.paths.REPO_ROOT, code).files)
+  ])
   const theirs = others.map((c) => ({ code: c, ...indexOf(forge, c) }))
   const out: Leftover[] = []
   for (const rel of filesIn(forge, dir)) {

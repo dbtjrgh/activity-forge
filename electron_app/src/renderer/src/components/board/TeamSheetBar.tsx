@@ -23,7 +23,7 @@ export default function TeamSheetBar() {
 
   return (
     <div className="team-sheet row-actions">
-      <button className="ghost" disabled={busy} onClick={() => void go()} title="완료한 학습코드를 팀 일정표에 파란색으로 칠할 준비를 합니다.">
+      <button className="ghost" disabled={busy} onClick={() => void go()}>
         {busy ? '준비하는 중…' : '팀 일정표 갱신'}
       </button>
       {got?.error ? (

@@ -5,6 +5,8 @@
   "title": "점 잇기 (선 그어 모양 만들기)",
   "summary": "점(마커)들이 놓이고, 정해진 구간을 순서대로 그어 모양을 완성하는 활동. 구간마다 소리가 나고 다 이으면 정답 애니가 재생됩니다.",
   "reference": {
+    "moduleCommit": "f12c42d144404e10ebddab3c8ffa1b2dd042c074",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M10_1",
     "activities": [
       "MAL1M03W3S3",

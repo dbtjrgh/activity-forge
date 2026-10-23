@@ -15,17 +15,19 @@
 
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import type { Prepare, RscFile } from '../../../shared/forge'
+import { oneModule, type Prepare, type RscFile } from '../../../shared/forge'
 import { readPermissions } from '../permissions'
 import { toMessage } from '../../lib/errors'
 import { behindOf } from './behind'
 import { isDummy, slotLine } from './dummy'
-import { fillFromPlans } from './layoutfill'
+import { fillFromPlans } from './planmodule'
 import { originNow } from './originpick'
-import { rscCount } from './rsccount'
+import { countFor } from './rsccount'
 import { loadForge } from './runtime'
 import { poppler } from './poppler'
 import { finishedOf } from './boardwork'
+import { cellCode } from './hallwalk'
+import { ownerFor } from './owner'
 import { shotsOf } from './shot'
 import { needsShot } from './shotfirst'
 
@@ -37,6 +39,7 @@ function blank(code: string, error?: string): Prepare {
     layout: { ok: false, module: '', origin: '', slot: '', verdict: '', why, sameSlot: false, alt: [] },
     rsc: { dir: '', exists: false, files: [], ...(error ? { error } : {}) },
     need: [],
+    planSound: { names: 0, note: '' },
     write: { dir: '', writable: null, why },
     hasSpec: false,
     planReader: '',
@@ -70,7 +73,7 @@ export async function prepare(code: string): Promise<Prepare> {
     if (filled) pick = api.layoutFor(code)
   }
   if (pick.ok) {
-    // 원본은 만들 때 쓰는 원본 — 받은 그림 크기로 바꾼 것까지(`originNow`). 받을 리소스 창 · 원본 변경 · 부족 개수가 같은 원본을 본다
+    // 원본은 만들 때 쓰는 원본 — 받은 그림 크기로 바꾼 것까지(`originNow`). 받을 리소스 창 · 원본 변경이 같은 원본을 본다
     const now = originNow(forge, code)
     const fit = typeof now === 'string' ? null : now
     out.layout = {
@@ -106,6 +109,27 @@ export async function prepare(code: string): Promise<Prepare> {
     }
   }
 
+  // ─ 이미 개발 완료면 호 저장소가 실제로 쓰는 모듈이 정본 ─
+  // 배치표는 앞선 호 기록으로 고른 짐작이라 지난 호 완성본에서 틀린다 — 2026-10-14 에 재 보니 832칸 중 254칸이 달랐고(5호 MAL2M05W3S3 은 M35 인데 M07),
+  // 「갈림」이면 아예 못 열었다(MAL3M05W3S3). 다른 모듈로 대화를 돌리면 다 만든 것을 덮으므로 대화는 닫고 보기 · 미리보기만 연다(`made`).
+  // 원본은 짐작 모듈의 것이라 비운다 — 남기면 머리줄 · 받을 리소스 창이 다른 모듈 완성본을 보인다.
+  // 저장소 모듈이 빈 글이면(로컬 component · 다른 과목 모듈, 27칸) 짐작이 정본처럼 남아 대화가 열렸다 — 그 칸도 닫는다
+  if (finishedOf(forge, code) === true) {
+    const subject = code.slice(0, 2)
+    const cell = forge.layout.scanCells(subject).find((c) => cellCode(subject, c) === code)
+    const made = cell ? oneModule(cell.module) : null
+    // 배치표가 못 정한 칸(갈림)은 모듈이 같은 빈 글이어도 넘긴다 — 다른 과목 모듈을 쓰는 MAL1M05W1S2(KR/K08)가 그랬다
+    if (made !== null && (made !== out.layout.module || !out.layout.ok)) {
+      const guess = out.layout.module
+      out.layout = { ...out.layout, ok: false, module: made, made: true, first: false, origin: '', alt: [], sameSlot: false }
+      out.layout.why = !made
+        ? '호 저장소의 완성본은 공용 모듈을 쓰지 않아 대화로 만들 수 없습니다.'
+        : guess
+          ? `배치표는 ${guess} 모듈로 짐작했지만, 호 저장소에 만든 ${made} 모듈로 보여 줍니다.`
+          : `배치표가 모듈을 정하지 못해, 호 저장소에 만든 ${made} 모듈로 보여 줍니다.`
+    }
+  }
+
   // ─ 스펙이 있나 ─
   if (out.layout.module) {
     const subject = code.slice(0, 2)
@@ -125,17 +149,15 @@ export async function prepare(code: string): Promise<Prepare> {
     out.rsc.error = listing.error
   }
 
-  // ─ 원본과 견준 모자란 것 ─
-  // 원본을 통째로 떠 와서 그 파일 수와 지금 파일 수를 갈래별로 견준다(2026-10-01 까지는 별칭 수였다).
-  if (out.layout.ok && out.layout.origin) {
-    const cloned = api.clone(out.layout.origin, code)
-    // 세는 곳은 `rsccount.ts` 하나 — 진행판 · 관리가 같은 수를 본다
-    if (cloned.ok) out.need = rscCount(cloned.recipe, out.rsc.files).map(({ kind, origin, here }) => ({ kind, origin, here }))
-    else out.needError = cloned.error
-  } else if (out.layout.first) {
-    out.needError = '첫 학습코드라 비교할 원본이 없습니다.'
-  } else if (out.layout.why) {
-    out.needError = '원본이 정해지지 않아 비교할 수 없습니다.'
+  // ─ 모자란 것 ─
+  // 기획서에 적혔는데 없는 소리만 「없음」으로 세고, 그림 · 로티는 같은 모듈 완성본 범위만 참고로 싣는다(2026-10-14).
+  // 세는 곳은 `rsccount.ts` 하나 — 진행판 · 관리가 같은 수를 본다. 모듈을 모르면 범위 없이 센다
+  try {
+    const counted = countFor(forge, code, out.layout.module)
+    out.need = counted.rows
+    out.planSound = counted.plan
+  } catch (error) {
+    out.needError = toMessage(error)
   }
 
   // 이전 방식의 「만들어 봤나」(`run.json`)와 「열면 한 번 저절로 만들기」(M3)는 2026-10-08 에 걷었다 — 대화는 사람이 눌러 시작한다
@@ -143,6 +165,7 @@ export async function prepare(code: string): Promise<Prepare> {
   // ─ 기획서를 읽을 poppler ─ 실제로 돌려 본다(M5). 못 돌면 기획서 칸이 「기획서를 못 읽음」을 띄운다
   out.planReader = poppler().why
   out.finished = finishedOf(forge, code)
+  out.owner = await ownerFor(forge, code) // 남이 끝낸 것이면 작업대가 경고하고 고치는 단추를 막는다(`owner.ts`)
 
   // ─ 쓰기 권한 ─
   // 양산이 실제로 파일을 쓰는 자리는 액티비티 폴더다. 그 폴더는 아직 없을 수

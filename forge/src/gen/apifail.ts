@@ -4,8 +4,6 @@
 
 import { generateRecipe } from "./index";
 
-export const SUBJECTS = ["MA", "KO", "EN"] as const;
-
 export type Fail = { ok: false; error: string };
 export type GenOut = ReturnType<typeof generateRecipe> | { ok: false; issues: never[]; error: string };
 

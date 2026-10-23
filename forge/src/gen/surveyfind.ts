@@ -7,12 +7,11 @@ import path from "path";
 import { modulesInSource, type ModuleRef } from "@/util/activityModules";
 import { listSpecs } from "./spec";
 import { workRoot } from "./paths";
+import { commonRoot } from "./commonroot";
 import type { Sample } from "./survey";
 import { readGameData } from "./surveyread";
-
-// 공통 repo 의 폴더 이름과 학습코드의 과목 글자가 다릅니다. 국어만 어긋납니다.
-//   학습코드 KOL1M03…   ↔   sparkon_common/_common/module/KR/
-const SUBJECT_DIR: Record<string, string> = { MA: "MA", KO: "KR", EN: "EN" };
+// 공통 repo 의 폴더 이름과 학습코드의 과목 글자가 다릅니다(국어 KO ↔ KR). 그 표는 `subjects.ts` 한 곳입니다.
+import { SUBJECT_CODES, dirOf } from "./subjects";
 
 // ─── 찾기 ────────────────────────────────────────────────────────────────
 // 액티비티 하나가 어떤 모듈을 쓰는지. `Activity.ts` 의 import 줄만 봅니다.
@@ -33,7 +32,7 @@ export function modulesOf(activityDir: string): ModuleRef[] {
     return [];
   }
   return modulesInSource(text)
-    // **`dori_common` 은 뺍니다.** `Com_Content` 같은 것은 게임 모듈이 아니라
+    // **`partner_common` 은 뺍니다.** `Com_Content` 같은 것은 게임 모듈이 아니라
     // 여러 액티비티가 같이 쓰는 부품입니다. GameData 로 값을 받지 않으니
     // 스펙을 만들 것이 없습니다. 자동 검증은 이것도 대상으로 삼습니다 —
     // 거기는 「고치면 무엇이 영향받나」를 보는 자리라 셈이 다릅니다.
@@ -90,7 +89,7 @@ export type ModuleRow = {
 // 스펙을 쓰면 그만큼 많이 쓰게 되니 그 차례가 곧 이득 순서입니다.
 export function listModules(): ModuleRow[] {
   const have = new Set<string>();
-  for (const subject of ["MA", "KO", "EN"]) {
+  for (const subject of SUBJECT_CODES) {
     for (const m of listSpecs(subject)) have.add(subject + "/" + m);
   }
   const out: ModuleRow[] = [];
@@ -101,15 +100,9 @@ export function listModules(): ModuleRow[] {
   return out.sort((a, b) => b.count - a.count || a.subject.localeCompare(b.subject));
 }
 
+// 공용 폴더 자리는 `commonroot.ts` 의 `commonRoot()` 하나입니다 — 사람이 다른 자리로 정할 수 있습니다(2026-10-21).
 export function moduleDir(subject: string, module: string): string {
-  return path.join(
-    workRoot(),
-    "sparkon_common",
-    "_common",
-    "module",
-    SUBJECT_DIR[subject] ?? subject,
-    module,
-  );
+  return path.join(commonRoot(), "_common", "module", dirOf(subject), module);
 }
 
 // ─── 잔손 ────────────────────────────────────────────────────────────────

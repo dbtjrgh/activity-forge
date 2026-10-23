@@ -5,6 +5,8 @@
   "title": "이젤에 그리기 (대칭선 보고 그리기)",
   "summary": "이젤에 종이가 올라오고, 색연필과 굵기를 골라 그림을 그리는 활동. 종이마다 대칭선(가로·세로·대각)이 안내로 깔립니다. 완료 버튼을 누르면 그린 것이 포트폴리오로 저장됩니다.",
   "reference": {
+    "moduleCommit": "2f8988b43259e50c757081bf6ffd5ba160e6da93",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M29",
     "activities": [
       "MAL1M03W2S1",

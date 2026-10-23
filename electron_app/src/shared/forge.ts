@@ -12,6 +12,7 @@
 // **조각은 화면 단위로 나눴다** (2026-09-18, 895줄이라). 부르는 쪽은 여태처럼
 // 이 파일만 import 한다 — 59곳을 안 고치려고 여기서 다시 내보낸다.
 export * from './forge/board'
+export * from './forge/boardlist'
 export * from './forge/workspace'
 export * from './forge/prepare'
 export * from './forge/run'
@@ -29,3 +30,9 @@ export * from './forge/origin'
 export * from './forge/setup'
 export * from './forge/chat'
 export * from './forge/cleanup'
+export * from './forge/sync'
+export * from './forge/share'
+export * from './forge/regress'
+export * from './forge/vacation'
+export * from './forge/devices'
+export * from './forge/subjects'

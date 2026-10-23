@@ -31,6 +31,9 @@ type Saved = { key: string; scores: SceneScore[]; shots: number }
 
 const fileOf = (forge: Forge, code: string): string => path.join(forge.paths.REPO_ROOT, '_recipe', `${code}.scene.json`)
 
+/** figma 화면 이름과 도장 — 붙인 화면이 바뀌면 남긴 결과를 버린다(`backdrop.ts` 도 같이 쓴다) */
+export const shotStamps = (dir: string, shots: string[]): string[] => shots.map((s) => `${s}|${stamp(path.join(dir, s))}`)
+
 /** 잴 것 — 1x figma 화면 자리와 후보. 화면이 없으면 null */
 function inputOf(forge: Forge, code: string, origin: string): { dir: string; shots: string[]; cands: string[]; key: string; module: string } | null {
   const dir = forge.files.rscDir(code)
@@ -40,7 +43,7 @@ function inputOf(forge: Forge, code: string, origin: string): { dir: string; sho
   const c = forge.layout.originChoices(code)
   const cands = forge.scenefind.sceneCands(c.choices, code, origin)
   if (cands.length < 2) return null
-  const key = JSON.stringify([VERSION, c.module, cands, shots.map((s) => `${s}|${stamp(path.join(dir, s))}`)])
+  const key = JSON.stringify([VERSION, c.module, cands, shotStamps(dir, shots)])
   return { dir, shots, cands, key, module: c.module }
 }
 
@@ -73,6 +76,41 @@ export function savedScene(forge: Forge, code: string, origin: string): SceneChe
 const running = new Map<string, Promise<SceneCheck | null>>()
 const rest = (): Promise<void> => new Promise((r) => setImmediate(r))
 
+/**
+ * 후보마다 장면 그림을 화면에 대 본 점수 — 그림마다 쉬어 간다. 1x 화면이 없으면 null.
+ * `keep` 으로 잴 그림을 고른다 — 배경만 재는 `backdrop.ts` 와 같이 쓴다
+ */
+export async function scoreScenes(
+  forge: Forge,
+  input: { dir: string; shots: string[]; cands: string[]; module: string },
+  code: string,
+  keep: (f: { w: number; h: number }) => boolean = () => true
+): Promise<{ scores: SceneScore[]; shots: number } | null> {
+  const sf = forge.scenefind
+  // 화면 한 장 풀기도 0.3초쯤이라 장마다 쉬어 간다
+  const raw: NonNullable<ReturnType<Forge['png']['readPng']>>[] = []
+  for (const s of input.shots) {
+    await rest()
+    const b = forge.png.readPng(path.join(input.dir, s))
+    if (b) raw.push(b)
+  }
+  const shots = sf.sceneShots(raw)
+  if (!shots.length) return null
+  const subject = forge.spec.parseStudyCode(code)?.subject ?? ''
+  const files = sf.sceneFiles(subject, input.module, input.cands)
+  const memo = new Map<string, number>()
+  const scores: SceneScore[] = []
+  for (const cand of input.cands) {
+    const seen: SceneScore['seen'] = []
+    for (const f of (files.get(cand) ?? []).filter(keep)) {
+      await rest()
+      seen.push({ rel: f.rel, ratio: Math.round(sf.sceneRatio(shots, f, memo) * 100) / 100 })
+    }
+    scores.push({ code: cand, hits: seen.filter((s) => s.ratio >= sf.HIT).length, tried: seen.length, seen })
+  }
+  return { scores, shots: shots.length }
+}
+
 /** 재고 남긴다. 같은 입력이면 남긴 것을 쓴다. 1x figma 화면이 없거나 후보가 하나면 null */
 export async function sceneCheck(forge: Forge, code: string, origin: string): Promise<SceneCheck | null> {
   const input = inputOf(forge, code, origin)
@@ -82,23 +120,9 @@ export async function sceneCheck(forge: Forge, code: string, origin: string): Pr
   const busy = running.get(input.key)
   if (busy) return busy
   const job = (async (): Promise<SceneCheck | null> => {
-    const sf = forge.scenefind
-    const raw = input.shots.map((s) => forge.png.readPng(path.join(input.dir, s))).filter((b) => b !== null)
-    const shots = sf.sceneShots(raw)
-    if (!shots.length) return null
-    const subject = forge.spec.parseStudyCode(code)?.subject ?? ''
-    const files = sf.sceneFiles(subject, input.module, input.cands)
-    const memo = new Map<string, number>()
-    const scores: SceneScore[] = []
-    for (const cand of input.cands) {
-      const seen: SceneScore['seen'] = []
-      for (const f of files.get(cand) ?? []) {
-        await rest()
-        seen.push({ rel: f.rel, ratio: Math.round(sf.sceneRatio(shots, f, memo) * 100) / 100 })
-      }
-      scores.push({ code: cand, hits: seen.filter((s) => s.ratio >= sf.HIT).length, tried: seen.length, seen })
-    }
-    const out: Saved = { key: input.key, scores, shots: shots.length }
+    const got = await scoreScenes(forge, input, code)
+    if (!got) return null
+    const out: Saved = { key: input.key, scores: got.scores, shots: got.shots }
     fs.mkdirSync(path.dirname(fileOf(forge, code)), { recursive: true })
     fs.writeFileSync(fileOf(forge, code), JSON.stringify(out, null, 2) + '\n', 'utf8')
     return viewOf(forge, out, origin)

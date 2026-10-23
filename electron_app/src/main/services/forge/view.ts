@@ -16,18 +16,18 @@
  * ① 은 `viewcheck.ts` 에 있습니다.
  */
 
-import { spawn, type ChildProcess } from 'node:child_process'
+import type { ChildProcess } from 'node:child_process'
 import { existsSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import type { Server } from '../../../shared/forge'
+import { VIEW_EXITED, type Server } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import { writeDevConfig } from './devconfig'
 import { mark } from './measure'
 import { loadForge } from './runtime'
+import { noVite, plain, portIn, READY_TIMEOUT, spawnVite, viteBin, waitVitePort } from './vitespawn'
 import { viewCheck } from './viewcheck'
 
-/** vite 가 뜨기를 이만큼 기다린다. 넘으면 죽이고 로그를 보여 준다. */
-const READY_TIMEOUT = 60_000
+// vite 가 뜨기를 `READY_TIMEOUT`(`vitespawn.ts`)만큼 기다린다. 넘으면 죽이고 로그를 보여 준다.
 
 /** 앱 자신의 dev 서버(5173~)와 안 부딪히게 멀찍이 잡는다. 막혀 있으면 vite 가 올린다. */
 const PORT_FROM = 5300
@@ -101,15 +101,12 @@ export async function startServer(
   }
   if (state.running) stopServer()
 
-  const bin = join(check.repo, 'node_modules', 'vite', 'bin', 'vite.js')
-  if (!existsSync(bin)) {
-    return { ...serverState(), error: `vite 가 없습니다. 호 폴더에서 yarn 을 먼저 실행하세요: ${bin}` }
-  }
+  if (!existsSync(viteBin(check.repo))) return { ...serverState(), error: noVite(check.repo) }
 
   state = { running: true, port: null, url: '', repo: check.repo, log: [] }
   const push = (line: string): void => {
     for (const one of line.split(/\r?\n/)) {
-      const text = one.replace(/\u001b\[[0-9;]*m/g, '').trimEnd()
+      const text = plain(one).trimEnd()
       if (!text.trim()) continue
       state.log.push(text)
       if (state.log.length > LOG_CAP) state.log.shift()
@@ -117,14 +114,12 @@ export async function startServer(
     }
   }
 
-  // **`process.execPath` 를 node 로 쓴다.** `ELECTRON_RUN_AS_NODE=1` 이면
-  // Electron 바이너리가 node 로 동작한다 — PATH 에 node 가 있는지에 기대지
-  // 않으려는 것이다(패키징한 exe 에는 없을 수 있다).
+  // 앱의 node 로 띄운다(`vitespawn.ts`).
   // **앱이 띄운 서버에만 덧config 를 끼운다** — 안내 영상이 없을 때 건너뛰게
   // 하는 글 한 줄이다. 공용 코드를 안 고치고, 사람이 손으로 `yarn dev` 를
   // 돌릴 때는 안 끼므로 평소 개발은 그대로다 (`devconfig.ts`).
   // **못 만들어도 서버는 띄운다** — 편의 때문에 띄우기 자체가 막히면 안 된다.
-  const args = [bin, '--port', String(PORT_FROM)]
+  const args = ['--port', String(PORT_FROM)]
   try {
     args.push('--config', writeDevConfig(check.repo))
   } catch (error) {
@@ -132,54 +127,40 @@ export async function startServer(
   }
 
   startedAt = Date.now()
-  child = spawn(process.execPath, args, {
-    cwd: check.repo,
-    env: { ...process.env, ELECTRON_RUN_AS_NODE: '1', FORCE_COLOR: '0' },
-    windowsHide: true
-  })
+  child = spawnVite(check.repo, args)
   const mine = child
 
-  return new Promise<Server>((done) => {
-    let settled = false
-    const finish = (extra: Partial<Server>): void => {
-      if (settled) return
-      settled = true
-      clearTimeout(timer)
-      done({ ...serverState(), ...extra })
-    }
-
-    const timer = setTimeout(() => {
-      push(`${READY_TIMEOUT / 1000}초 안에 서버가 열리지 않아 중지합니다.`)
-      stopServer()
-      finish({ error: '서버가 열리지 않았습니다. 아래 로그를 확인하세요.' })
-    }, READY_TIMEOUT)
-
-    const look = (chunk: Buffer): void => {
-      const text = chunk.toString()
-      push(text)
-      // vite 가 실제로 잡은 포트를 읽는다 — 5300 이 막혀 있으면 올려 잡는다.
-      const at = /localhost:(\d+)/.exec(text.replace(/\u001b\[[0-9;]*m/g, ''))
-      if (at && !state.port) {
-        state.port = Number(at[1])
-        state.url = url(state.port)
-        finish({ port: state.port, url: state.url })
-      }
-    }
-    mine.stdout?.on('data', look)
-    mine.stderr?.on('data', look)
-
-    mine.on('error', (error) => {
-      push(toMessage(error))
-      stopServer()
-      finish({ error: `서버를 열지 못했습니다: ${toMessage(error)}` })
-    })
-    mine.on('exit', (codeOut) => {
-      if (child === mine) {
-        child = null
-        state = { ...state, running: false, port: null }
-      }
-      push(`서버가 종료되었습니다(코드 ${codeOut}).`)
-      finish({ error: `서버가 시작 직후 종료되었습니다(코드 ${codeOut}). 아래 로그를 확인하세요.` })
-    })
+  // 뜬 뒤에도 듣는다 — 오류는 로그에 남기고 내리며, 끝나면 화면에 알린다. 뜨기를 기다리는 셈(상한 · 처음 것 하나)은 `waitVitePort` 다
+  mine.on('error', (error) => {
+    push(toMessage(error))
+    stopServer()
   })
+  mine.on('exit', (codeOut) => {
+    // 내가 내린 앞 서버의 끝은 안 알린다 — 알리면 새로 뜬 서버의 화면이 꺼진 줄 안다
+    if (child === mine) {
+      child = null
+      state = { ...state, running: false, port: null }
+      push(`${VIEW_EXITED}(코드 ${codeOut}).`)
+    }
+  })
+
+  // 출력은 뜬 뒤에도 끝까지 로그로 간다
+  const look = (text: string): number | null => {
+    push(text)
+    // vite 가 실제로 잡은 포트를 읽는다 — 5300 이 막혀 있으면 올려 잡는다.
+    const at = portIn(text)
+    if (!at || state.port) return null
+    state.port = at
+    state.url = url(state.port)
+    return at
+  }
+  const ready = await waitVitePort(mine, READY_TIMEOUT, look)
+  if ('port' in ready) return { ...serverState(), port: state.port, url: state.url }
+  if (ready.why === 'timeout') {
+    push(`${READY_TIMEOUT / 1000}초 안에 서버가 열리지 않아 중지합니다.`)
+    stopServer()
+    return { ...serverState(), error: '서버가 열리지 않았습니다. 아래 로그를 확인하세요.' }
+  }
+  if (ready.why === 'error') return { ...serverState(), error: `서버를 열지 못했습니다: ${ready.detail}` }
+  return { ...serverState(), error: `서버가 시작 직후 종료되었습니다(코드 ${ready.code}). 아래 로그를 확인하세요.` }
 }

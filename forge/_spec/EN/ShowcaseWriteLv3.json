@@ -5,6 +5,8 @@
   "title": "공책에 낱말 쓰기 — 자판으로 낱말을 적어 공책에 남깁니다",
   "summary": "공책이 펼쳐져 있고 아래에 글자 자판이 있습니다. 그림과 소리를 보고 낱말을 자판으로 적습니다. 다 적으면 공책에 남고 다음 낱말로 넘어갑니다. Lv2 와 달리 빈 칸을 채우는 것이 아니라 공책에 줄을 맞춰 적는 꼴입니다. 이닝 차례는 열 때마다 섞입니다.",
   "reference": {
+    "moduleCommit": "401051a4660d2f475e5fd86f92ac2dcb1ae80d2c",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-28) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/ShowcaseWriteLv3",
     "activities": [
       "ENL3M01W4S2",

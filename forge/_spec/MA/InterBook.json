@@ -5,6 +5,8 @@
   "title": "인터북 (옛 모듈 · Adobe Animate 번들)",
   "summary": "표지를 눌러 펼치고 넘겨 보는 그림책. 내용이 PixiJS 가 아니라 **Adobe Animate(CreateJS) 로 뽑은 js 번들**이고, 모듈은 그것을 오프스크린 캔버스에 돌려 화면에 붙입니다. 1~5호가 이 모듈이고 6호부터는 MIB 로 바뀌었습니다.",
   "reference": {
+    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/sparkLib/module/InterBook/InterBookActivity",
     "doc": "README 없음. 근거는 InterBookActivity.ts · InterBookPlayer.ts 와 1~5호 차시들입니다.",
     "note": "초안이 module 경로를 과목 폴더로 적어 두었는데, 이 모듈은 과목 폴더가 아니라 sparkLib 에 있습니다.",

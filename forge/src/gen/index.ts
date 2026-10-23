@@ -8,6 +8,7 @@ import fs from "fs";
 import path from "path";
 import type { GenResult, Recipe } from "./types";
 import { effectiveAssets, loadSpec, parseStudyCode, resolveModule } from "./spec";
+import { SUBJECT_CODES } from "./subjects";
 import { genPath, repoPath, workPath } from "./paths";
 import { resolveGameData } from "./resolve";
 import { checkAssetSizes } from "./rscsize";
@@ -40,7 +41,7 @@ export function generate(recipeFile: string, opts: GenOptions = {}): GenResult {
   const study = parseStudyCode(recipe.code);
   if (!study) {
     throw new Error(
-      `학습코드를 인식할 수 없습니다: ${recipe.code}\n  형식: {MA|KO|EN}L{1-3}M{01-12}W{1-4}S{1-3} ex) MAL1M07W3S2`,
+      `학습코드를 인식할 수 없습니다: ${recipe.code}\n  형식: {${SUBJECT_CODES.join("|")}}L{1-3}M{01-12}W{1-4}S{1-3} ex) MAL1M07W3S2`,
     );
   }
 

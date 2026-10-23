@@ -5,6 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/KR/K19",
     "activities": [
       "KOL1M01W3S3",
@@ -13,6 +15,11 @@
       "KOL1M04W3S3",
       "KOL1M05W3S3"
     ]
+  },
+  "variantKey": {
+    "path": "type",
+    "note": "판을 고릅니다. seed, cookie, people 마다 흐름과 소리가 다릅니다. people 은 질문 소리와 캐릭터 효과음을 씁니다.",
+    "why": "InningManager.ts:276 cookie 면 정원을 숨기고 파티클, :286~340 people 은 questionAlias.before · characterSfxAlias, SoundManager.ts:112 people 만 narrationAlias. 개발 완료 7개(2026-10-13) — seed 1 · cookie 3 · people 3."
   },
   "codegen": {
     "hooks": {

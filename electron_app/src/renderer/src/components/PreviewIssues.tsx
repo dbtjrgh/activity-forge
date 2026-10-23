@@ -39,7 +39,7 @@ function PreviewIssues({ code }: { code: string }) {
   }
   return (
     <div className="state error">
-      <p>미리보기에서 오류가 발생했습니다. 화면이 비어 있거나 멈출 수 있습니다.</p>
+      <p>미리보기에서 오류가 발생했습니다.</p>
       {names.size > 0 && <p>없는 리소스: {[...names].join(', ')}</p>}
       {rest.slice(0, SHOW).map((l) => (
         <p key={l} className="mono">

@@ -5,6 +5,8 @@
   "title": "숫자 상자 묶기 (위로 올라가는 화면)",
   "summary": "격자로 놓인 숫자 상자에서 같은 무리끼리 눌러 터뜨리는 활동. 화면이 아래에서 위로 길게 이어져 있고 이닝을 마칠 때마다 위로 올라갑니다.",
   "reference": {
+    "moduleCommit": "b9e933f310ec1ac54579c44d1c4054a3b1ee390c",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M11",
     "activities": [
       "MAL1M06W3S3",

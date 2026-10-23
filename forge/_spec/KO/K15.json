@@ -5,6 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
+    "moduleCommit": "920456cf7cce02c8acb77534a057ce4ea9967901",
+    "moduleCommitWhy": "2026-10-14 모듈 코드와 맞춰 봤습니다 — settings.outlineDelay · outlineHold(공용 920456c).",
     "module": "sparkon_common/_common/module/KR/K15",
     "activities": [
       "KOL1M01W3S2",
@@ -13,6 +15,11 @@
       "KOL1M04W3S2",
       "KOL1M05W3S2"
     ]
+  },
+  "variantKey": {
+    "path": "settings.quizType",
+    "note": "판을 고릅니다. bee 는 나뭇가지 로티와 낱말 내레이션, dron 은 창문 로티를 쓰고 정답 연출이 다릅니다.",
+    "why": "Quiz.ts:95 bee 면 complete 로티(animation.branchAni) · itemNar · endObject, dron 이면 window 로티. :472 · :511 정답 흐름도 다릅니다. 개발 완료 7개(2026-10-13) — bee 2 · dron 5."
   },
   "codegen": {
     "hooks": {
@@ -286,6 +293,18 @@
             "key": "bgmVolume",
             "type": "number",
             "required": true
+          },
+          {
+            "key": "outlineDelay",
+            "type": "number",
+            "optional": true,
+            "desc": "제시문 글자 칸마다 노란 테두리를 켜기 전에 쉬는 시간(초). 안 적으면 모듈이 0.25 를 씁니다(Quiz.ts showOutline, 공용 920456c)."
+          },
+          {
+            "key": "outlineHold",
+            "type": "number",
+            "optional": true,
+            "desc": "노란 테두리가 켜진 채 머무는 시간(초). 안 적으면 모듈이 1 을 씁니다. 10호 KOL1M10W3S2 는 0.5 입니다."
           },
           {
             "key": "quiztype",

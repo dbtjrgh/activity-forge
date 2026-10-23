@@ -5,6 +5,8 @@
   "title": "숫자 키패드로 답 입력 (협력사 공통 기반)",
   "summary": "화면에 놓인 것을 보고 숫자 키패드로 답을 입력하는 활동. 맞히면 정답 이펙트가 나오고, 끌어다 놓는 조작과 조각 나누기(slice) 연출이 함께 쓰입니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M23",
     "activities": [
       "MAL1M01W1S3"
@@ -64,7 +66,7 @@
   "assets": {
     "required": [],
     "providedByModule": {
-      "note": "**dori_common(협력사 공통) 꼴의 모듈입니다.** 자기 리소스를 등록하지 않고, 액티비티 onLoad 가 **AssetTable 객체 자체와 네 배열을 함께** 넘깁니다 — `mM23.onLoad(AssetTable, AssetTable.font, AssetTable.image, AssetTable.lottie, AssetTable.sound)`. 첫 인자가 객체 통째라 **스펙이 alias 목록을 정확히 적어 줄 수 없습니다**(M13 · M15 · M18 과 같은 갈래).\n\n**모든 배치표의 열쇠가 곧 AssetTable 의 alias 입니다.** 여기 열거된 열쇠는 표본 한 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다.\n\n**onStart 가 quizData 를 다시 받습니다**(`mM23.onStart(quizData)`) — onInit 에서 이미 넘겼는데도 그렇습니다. 표본 그대로 두세요."
+      "note": "**partner_common(협력사 공통) 꼴의 모듈입니다.** 자기 리소스를 등록하지 않고, 액티비티 onLoad 가 **AssetTable 객체 자체와 네 배열을 함께** 넘깁니다 — `mM23.onLoad(AssetTable, AssetTable.font, AssetTable.image, AssetTable.lottie, AssetTable.sound)`. 첫 인자가 객체 통째라 **스펙이 alias 목록을 정확히 적어 줄 수 없습니다**(M13 · M15 · M18 과 같은 갈래).\n\n**모든 배치표의 열쇠가 곧 AssetTable 의 alias 입니다.** 여기 열거된 열쇠는 표본 한 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다.\n\n**onStart 가 quizData 를 다시 받습니다**(`mM23.onStart(quizData)`) — onInit 에서 이미 넘겼는데도 그렇습니다. 표본 그대로 두세요."
     }
   },
   "gameData": {

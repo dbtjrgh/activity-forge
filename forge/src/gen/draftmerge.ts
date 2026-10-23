@@ -53,6 +53,15 @@ export function mergeHuman(
   }
   // 사람이 적는 것뿐이라 기계 것과 겨룰 일이 없습니다.
   // `reference`(표본 목록)는 뺍니다 — 그건 기계가 매번 새로 셉니다.
+  // **다만 그 안의 사람 것 셋은 옮깁니다** (2026-10-14) — 근거 글(`doc`)과 맞춰 본 모듈 커밋(`moduleCommit`, `specdrift.ts`).
+  // 다시 뽑을 때 버리면 모든 스펙이 「맞춰 본 커밋 없음」으로 돌아가 모듈이 바뀌어도 아무도 모릅니다.
+  for (const k of ["doc", "moduleCommit", "moduleCommitWhy"] as const) {
+    const v = old.reference?.[k];
+    if (typeof v === "string" && v !== "") {
+      fresh.reference = { ...(fresh.reference ?? {}), [k]: v };
+      kept += 1;
+    }
+  }
   for (const k of ["rules", "relations", "figma"] as const) {
     if (old[k] !== undefined) {
       (fresh as Record<string, unknown>)[k] = old[k];

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Prepare } from '../../../../shared/forge'
 import { kindClass, kindName } from '../../lib/format'
+import ResetCode from './ResetCode'
 import { useThumbs } from './useThumbs'
 
 /** 쓰기 권한 세 갈래 — 됨 · 안 됨 · 모름. 모름을 「됨」으로 보이지 않게 한다. */
@@ -16,7 +17,21 @@ const relOf = (f: Prepare['rsc']['files'][number]): string => (f.base === 'root'
  * 리소스 폴더 칸 — 옛 `Resource.tsx` 에서 떼어 냄 (M4).
  * 목록을 **펼쳤을 때만** 썸네일을 받는다 — 폴더에 그림이 수백 장이라 열 때마다 그리면 IPC 가 무겁다.
  */
-export function FolderCard({ code, rsc, onOpen }: { code: string; rsc: Prepare['rsc']; onOpen: () => void }) {
+export function FolderCard({
+  code,
+  rsc,
+  lock,
+  force,
+  onOpen,
+  onReset
+}: {
+  code: string
+  rsc: Prepare['rsc']
+  lock: string
+  force: boolean
+  onOpen: () => void
+  onReset: () => void
+}) {
   const [shown, setShown] = useState(false)
   const thumbs = useThumbs(code, shown ? rsc.files.map(relOf) : [])
   return (
@@ -31,7 +46,12 @@ export function FolderCard({ code, rsc, onOpen }: { code: string; rsc: Prepare['
             <button className="ghost" onClick={onOpen}>
               {rsc.exists ? '탐색기로 열기' : '폴더 생성 후 열기'}
             </button>
-            <span className="sub">{rsc.exists ? `파일 ${rsc.files.length}개` : '폴더가 없습니다.'}</span>
+            {/* 파일 수는 아래 목록 제목이 말한다 — 비었을 때만 따로 적는다 */}
+            {!rsc.exists ? (
+              <span className="sub">폴더가 없습니다.</span>
+            ) : (
+              rsc.files.length === 0 && <span className="sub">폴더가 비어 있습니다.</span>
+            )}
           </p>
           {rsc.files.length > 0 && (
             <details className="files" onToggle={(e) => setShown(e.currentTarget.open)}>
@@ -53,6 +73,8 @@ export function FolderCard({ code, rsc, onOpen }: { code: string; rsc: Prepare['
           )}
         </>
       )}
+      {/* 다른 학습코드의 리소스를 넣었을 때 처음으로 — 리소스 폴더 · 대화 기록 · 호 저장소의 커밋 안 한 변경 */}
+      <ResetCode code={code} lock={lock} force={force} onDone={onReset} />
     </section>
   )
 }

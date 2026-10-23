@@ -1,0 +1,186 @@
+{
+  "specVersion": 1,
+  "module": "NU_ebook",
+  "subject": "NU",
+  "title": "그림책 보기(누리 이북)",
+  "summary": "배경 그림의 뚫린 창(TV 화면) 안에 그림책 표지가 놓입니다. 도우미 지시문(nar1)이 끝나면 표지가 들썩이고, 누르면 책이 화면 가득 펼쳐집니다. 펼침면마다 나레이션(soundInfo)이 끝나면 다음 장으로 넘어가고, 다 보면 EOP 로 갑니다. 책 안쪽은 공용 Ebook 의 Book 이 하고, BGM, 지시문, EOP 같은 바깥 흐름은 생성된 Activity.ts 가 합니다. 영어 ExploreStory 와 같은 Book 을 쓰지만 모듈이 다릅니다.",
+  "reference": {
+    "moduleCommit": "2b1fedf8ba06b8c44b901ad2b8fa9b1de27a22b1",
+    "moduleCommitWhy": "2026-10-21 누리 스펙을 처음 쓰며 모듈 코드와 1호 표본을 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/NU/NU_ebook",
+    "activities": [
+      "NUL1M01W3S1"
+    ],
+    "note": "개발 완료 완성본은 1호 NUL1M01W3S1 하나입니다(2026-10-21). 필수 여부와 칸 수는 그 하나로 정했고, 모듈이 없어도 된다고 밝힌 자리(frameWindow, EbookOption)만 넓혔습니다. 완성본 Activity.ts 는 BGM 볼륨을 파일 위 상수 BGM_VOLUME(0.5)으로 두는데, 스펙 codegen 은 클래스 밖 상수를 못 내서 0.5 를 훅에 바로 적었습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onInit": [
+        "await super.onInit();",
+        "await this.initEbook(quizData.bgAlias, quizData.coverAlias, quizData.pageInfo, quizData.soundInfo, {",
+        "  frameWindow: quizData.frameWindow,",
+        "  guideSound: \"nar1\",",
+        "});"
+      ],
+      "onStart": [
+        "// BGM 볼륨 0.5 — 아래 pause 에서 되돌리는 값과 같아야 합니다(완성본은 파일 위 상수 BGM_VOLUME).",
+        "const bgm = AudioManager.getSound(\"bgm\");",
+        "bgm.loop(true);",
+        "bgm.volume(0.5);",
+        "bgm.play();",
+        "await SparkApp.mainMenu.mainCharacter.show();",
+        "// 표지 등장 → 가이드 나레이션이 끝날 때까지 표지를 잠가 둡니다.",
+        "await this.ready();",
+        "this.coverLock(true);",
+        "await SparkApp.mainMenu.mainCharacter.guide(\"nar1\");",
+        "this.coverLock(false);",
+        "this.coverFocusAni();",
+        "// 책을 펼치면 BGM 을 내리고, 표지로 돌아오면 다시 올립니다.",
+        "this.on(\"startPlay\", () => {",
+        "  bgm.fade(bgm.volume(), 0, 1000);",
+        "});",
+        "this.on(\"pause\", () => {",
+        "  bgm.fade(bgm.volume(), 0.5, 1000);",
+        "});",
+        "this.on(\"endPlay\", async () => {",
+        "  if (bgm.playing()) {",
+        "    bgm.fade(bgm.volume(), 0, 2000);",
+        "    bgm.once(\"fade\", () => bgm.stop());",
+        "  }",
+        "  await SparkApp.eop.show(1);",
+        "});"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "NU_ebookActivity",
+      "from": "@_common/module/NU/NU_ebook/NU_ebookActivity"
+    },
+    "import": {
+      "symbol": "SparkApp",
+      "from": "@_common/sparkLib/Application"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "close",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "책을 덮는 X 단추. 공용 sparkLib/module/Ebook/Book.ts 가 AssetManager.get('close') 로 이름을 박아 부릅니다 — litgate 는 모듈 폴더만 봐서 못 잡아 손으로 올렸습니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "leftBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "앞장으로 가는 화살표. 공용 Book.ts 가 init('leftBTN') 으로 이름을 박아 부릅니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "rightBTN",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다음 장으로 가는 화살표. 공용 Book.ts 가 init('rightBTN') 으로 이름을 박아 부릅니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. 생성된 Activity.ts onStart 가 getSound(\"bgm\") 으로 틀고 바로 loop 를 겁니다 — 없으면 시작하자마자 멈춥니다. 책을 펼치면 0 으로 내리고 표지로 돌아오면 0.5 로 올립니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "nar1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "도우미 지시문. 생성된 Activity.ts 가 guide(\"nar1\") 로 틀고 initEbook 의 guideSound 로도 넘겨, 도우미를 누르면 다시 들려줍니다. 완성본 1개가 가짐(2026-10-21)."
+      }
+    ],
+    "providedByModule": {
+      "sound": [
+        "pageflip",
+        "clickBTN"
+      ],
+      "note": "책장 넘기는 소리(pageflip)와 단추 누르는 소리(clickBTN)는 공용 Book.ts 가 /sparklab/common/ 의 파일을 직접 등록합니다. 액티비티 AssetTable 에 넣지 마세요."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "bgAlias",
+        "type": "asset:image",
+        "required": true,
+        "desc": "배경 그림(3840×2160 규격, 배율 없이 그려 가운데 절반만 보입니다). frameWindow 를 주면 이 그림이 책 위로 올라가 틀이 됩니다."
+      },
+      {
+        "key": "coverAlias",
+        "type": "asset:image",
+        "required": true,
+        "desc": "그림책 표지. frameWindow 를 주면 창을 빈틈없이 덮는 가장 작은 크기로 맞춥니다."
+      },
+      {
+        "key": "frameWindow",
+        "type": "object",
+        "optional": true,
+        "desc": "배경 그림의 뚫린 창. 값은 배경 그림 한가운데를 원점으로 한 그림 픽셀입니다 — 스테이지 크기로 반 나누지 않습니다(EbookOption). 안 주면 배경이 책 뒤에 깔리고 책은 처음부터 전체 크기입니다.",
+        "fields": [
+          {
+            "key": "x",
+            "type": "number",
+            "required": true,
+            "desc": "창 가운데 x(그림 픽셀, 그림 가운데 기준)"
+          },
+          {
+            "key": "y",
+            "type": "number",
+            "required": true,
+            "desc": "창 가운데 y(그림 픽셀, 그림 가운데 기준)"
+          },
+          {
+            "key": "w",
+            "type": "number",
+            "required": true,
+            "desc": "창 너비(그림 픽셀). 책을 이 너비에 맞춰 줄입니다."
+          },
+          {
+            "key": "h",
+            "type": "number",
+            "required": true,
+            "desc": "창 높이(그림 픽셀)"
+          }
+        ]
+      },
+      {
+        "key": "pageInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 14,
+        "desc": "면 차례대로의 그림. 두 면이 종이 한 장이라 **길이는 짝수**입니다. 표지 뒷면(맨 앞)과 마지막 면은 보통 비어서 null 입니다. 완성본은 펼침면 6개(면 14)입니다.",
+        "of": {
+          "key": "",
+          "type": "asset:image"
+        }
+      },
+      {
+        "key": "soundInfo",
+        "type": "array",
+        "required": true,
+        "minLength": 6,
+        "desc": "펼침면별 나레이션. 재생이 끝나면 다음 장으로 넘어갑니다. 완성본은 sound.mp3 하나를 bookdata.json 의 sync 대로 잘라 펼침면 수만큼 넣었습니다.",
+        "of": {
+          "key": "",
+          "type": "asset:sound"
+        }
+      }
+    ]
+  },
+  "notes": [
+    "initEbook 의 EbookOption 에는 titleSound(표지를 처음 누를 때 한 번 트는 제목 소리)도 있습니다. 완성본은 안 씁니다.",
+    "완성본의 nar1 소리 파일 이름에도 nar01 과 .mp3 사이에 눈에 안 보이는 글자(U+200B)가 들어 있습니다. 이름을 고치려면 AssetTable 과 파일을 같이 고칩니다."
+  ]
+}

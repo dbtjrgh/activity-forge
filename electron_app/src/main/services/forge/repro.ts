@@ -19,6 +19,7 @@ import { execFile } from 'node:child_process'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
 import type { ReproResult } from '../../../shared/forge'
+import { isSubject } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import { loadForge } from './runtime'
 
@@ -44,7 +45,8 @@ function tail(text: string): string[] {
 
 export async function repro(subject: string, module: string): Promise<ReproResult> {
   const out: ReproResult = { subject, module, ok: false, out: [] }
-  if (!/^(MA|KO|EN)$/.test(subject) || !NAME.test(module)) {
+  // 과목은 과목 표 하나로 거른다(`shared/forge/subjects.ts`, forge 표와 컴파일에서 맞춰 본다) — 따로 적어 두면 누리(NU) 같은 새 과목만 「이름이 이상합니다」가 된다
+  if (!isSubject(subject) || !NAME.test(module)) {
     return { ...out, error: '과목이나 모듈 이름이 이상합니다.' }
   }
 

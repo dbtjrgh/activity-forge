@@ -5,12 +5,14 @@
   "title": "끌어다 놓고 꾸미기 (협력사 공통 기반)",
   "summary": "왼쪽 재료를 끌어다 판에 놓아 꾸미는 활동. 같은 재료를 여러 번 복제해 놓을 수 있고, 잘못 놓은 것은 쓰레기통에 버립니다. 완료 버튼을 누르면 결과가 포트폴리오로 저장됩니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M17",
     "activities": [
       "MAL3M01W2S1",
       "MAL3M11W1S1"
     ],
-    "doc": "README 없음. 근거는 M17.ts 와 M17_Drag · M17_Drop · M17_DragData · M17_DropData · M17_Clone · M17_Trash · M17_Face · M17_Ending · M17_Affordance · M17_Wrong · M17_DragLock 그리고 dori_common 의 Com_* 들, 표본 2차시입니다."
+    "doc": "README 없음. 근거는 M17.ts 와 M17_Drag · M17_Drop · M17_DragData · M17_DropData · M17_Clone · M17_Trash · M17_Face · M17_Ending · M17_Affordance · M17_Wrong · M17_DragLock 그리고 partner_common 의 Com_* 들, 표본 2차시입니다."
   },
   "codegen": {
     "extends": {
@@ -101,7 +103,7 @@
       }
     ],
     "providedByModule": {
-      "note": "**dori_common(협력사 공통) 위에 올라간 모듈입니다.** 자기 리소스는 등록하지 않고, 액티비티가 onLoad 에서 AssetTable 네 배열을 넘깁니다.\n\n**GameData 의 배치표는 열쇠가 곧 alias 입니다.** 열거된 열쇠는 표본 두 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다.\n\n**이름이 코드에 박힌 음원** — `bgm`(PlayBGM) · `ending_nar01`(PlayNarration) · `click` · `drop_sfx` · `drag_undo` · `clone_remove` · `trash_open` · `trash_close`(PlaySFX)."
+      "note": "**partner_common(협력사 공통) 위에 올라간 모듈입니다.** 자기 리소스는 등록하지 않고, 액티비티가 onLoad 에서 AssetTable 네 배열을 넘깁니다.\n\n**GameData 의 배치표는 열쇠가 곧 alias 입니다.** 열거된 열쇠는 표본 두 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다.\n\n**이름이 코드에 박힌 음원** — `bgm`(PlayBGM) · `ending_nar01`(PlayNarration) · `click` · `drop_sfx` · `drag_undo` · `clone_remove` · `trash_open` · `trash_close`(PlaySFX)."
     }
   },
   "gameData": {
@@ -1150,7 +1152,7 @@
       "id": "fixed-sound-registered",
       "level": "error",
       "check": "bgm · ending_nar01 · click · drop_sfx · drag_undo · clone_remove · trash_open · trash_close 여덟 음원을 등록해야 한다.",
-      "why": "dori_common 의 Com_Audio 가 이름으로 찾습니다. 없으면 무음으로 통과합니다."
+      "why": "partner_common 의 Com_Audio 가 이름으로 찾습니다. 없으면 무음으로 통과합니다."
     },
     {
       "id": "hooks-all-seven",

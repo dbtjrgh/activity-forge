@@ -5,6 +5,8 @@
   "title": "두더지 잡기 (문제 보고 맞는 것 때리기)",
   "summary": "언덕 뒤 구멍에서 토끼들이 판을 들고 올라오고, 문제 패널의 문제에 맞는 토끼를 망치로 때리는 활동. 문제를 맞히면 다음 문제로 넘어가고, 문제를 다 풀면 이닝이 끝납니다.",
   "reference": {
+    "moduleCommit": "a3d7784a4d71b99525234e3c104bdd30c25e7372",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M25",
     "activities": [
       "MAL1M02W1S3",
@@ -188,7 +190,7 @@
                     "key": "normal",
                     "type": "asset:image",
                     "required": true,
-                    "desc": "풀기 전 문제 그림. **판을 뺀 내용만** 넣습니다 — 판(quiz_panel)은 모듈이 width · height 로 따로 그리고, 문제 그림이 소리 버튼보다 나중에 올라가(QuizPanel.ts:55-56) 판까지 든 통그림이면 **스피커 버튼을 덮습니다**(MAL3M07W2S3 900×504 → 503×338, 수정요청 #145). 완성본 10곳 모두 문제 그림이 판보다 작습니다."
+                    "desc": "풀기 전 문제 그림. **판을 뺀 내용만** 넣습니다 — 판(quiz_panel)은 모듈이 width · height 로 따로 그리고, 문제 그림이 소리 버튼보다 나중에 올라가(QuizPanel.ts:55-56) 판까지 든 통그림이면 **스피커 버튼을 덮습니다**(MAL3M07W2S3 900×504 → 503×338, 수정 요청). 완성본 10곳 모두 문제 그림이 판보다 작습니다."
                   },
                   {
                     "key": "answered",

@@ -5,6 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
+    "moduleCommit": "46875658bce75c8c3739cddffe4ae2753235f866",
+    "moduleCommitWhy": "2026-10-14 모듈 코드와 맞춰 봤습니다 — 4이닝(공용 4687565)을 관계로 받습니다.",
     "module": "sparkon_common/_common/module/KR/K14",
     "activities": [
       "KOL3M01W1S2",
@@ -105,7 +107,8 @@
         "key": "answerImagePos",
         "type": "array",
         "required": true,
-        "minLength": 5,
+        "minLength": 1,
+        "minLengthWhy": "칸 수는 inningCount 와 같아야 합니다 — 관계 inning-count-matches 가 봅니다. 공용 4687565(2026-10-06)부터 5이닝 고정이 풀렸습니다.",
         "of": {
           "key": "",
           "type": "object",
@@ -273,7 +276,8 @@
         "key": "inning",
         "type": "array",
         "required": true,
-        "minLength": 5,
+        "minLength": 1,
+        "minLengthWhy": "칸 수는 inningCount 와 같아야 합니다 — 관계 inning-count-matches 가 봅니다. 공용 4687565(2026-10-06)부터 5이닝 고정이 풀렸습니다.",
         "of": {
           "key": "",
           "type": "object",
@@ -420,5 +424,18 @@
         }
       }
     ]
-  }
+  },
+  "relations": [
+    {
+      "id": "inning-count-matches",
+      "kind": "sameCount",
+      "picks": [
+        "inningCount",
+        "inning",
+        "answerImagePos"
+      ],
+      "note": "inning · answerImagePos 칸 수가 inningCount 와 같아야 한다.",
+      "why": "모듈이 1~inningCount 이닝을 돌며 inning[이닝-1] 과 answerImagePos[이닝-1] 을 읽습니다(K14.ts). 모자라면 그 이닝에서 멈추고 남으면 조용히 안 쓰입니다. 10호는 4이닝입니다."
+    }
+  ]
 }

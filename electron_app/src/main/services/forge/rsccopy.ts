@@ -1,13 +1,14 @@
 /**
  * 리소스 복사의 바닥 — **찾아내기 · 복사 · 양쪽 대조 · 한 줄 요약.**
  *
- * `inbox.ts` 의 두 길(놓은 것 넣기 · 호 저장소로 따라 보내기)이 함께 쓴다.
+ * `inbox.ts` 의 두 길(놓은 것 넣기 · 호 저장소로 따라 보내기)과 공유 폴더 가져오기(`sharefetch.ts`)가 함께 쓴다.
  * **어디로 갈지 정하는 일은 여기 없다** — 그것은 `inbox.ts` 가 한다. 여기는
  * 정해진 자리로 옮기고, 옮긴 뒤에 양쪽을 센다 (저장소 CLAUDE.md 7번).
  * 견주는 규칙이 두 벌이 되면 한쪽만 고쳐지므로 여기 하나에 둔다.
  */
 
-import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { constants, copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { copyFile, mkdir } from 'node:fs/promises'
 import { basename, dirname, join, relative, sep } from 'node:path'
 import type { InboxResult } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
@@ -82,36 +83,67 @@ export function put(dir: string, plan: Planned[], overwrite: boolean, out: Inbox
   for (const one of plan) {
     const to = join(dir, ...one.to.split('/'))
     try {
-      if (existsSync(to)) {
-        const mine = statSync(to).size
-        if (sameBytes(to, one.from, mine, one.bytes)) {
-          out.same.push(one.to)
-          continue
-        }
-        if (!overwrite) {
-          out.clash.push({ rel: one.to, from: one.from, mine, theirs: one.bytes })
-          continue
-        }
-      }
+      if (!ready(to, one, overwrite, out)) continue
       mkdirSync(dirname(to), { recursive: true })
       copyFileSync(one.from, to)
-      // **양쪽에서 센다** (CLAUDE.md 7번). 반쯤 쓰인 파일은 브라우저에서
-      // 깨진 그림으로만 드러나고, 그때는 어디서 깨졌는지 알 길이 없다.
-      const wrote = statSync(to).size
-      if (wrote !== one.bytes) {
-        out.failed.push({
-          name: one.to,
-          from: one.from,
-          why: `복사한 파일의 크기가 다릅니다(원본 ${one.bytes.toLocaleString()}B, 복사본 ${wrote.toLocaleString()}B).`
-        })
-        continue
-      }
-      out.took.push({ rel: one.to, from: one.from, bytes: wrote })
-      out.bytes += wrote
+      counted(to, one, out)
     } catch (error) {
       out.failed.push({ name: one.to, from: one.from, why: toMessage(error) })
     }
   }
+}
+
+/**
+ * 위와 같은 규칙으로 **복사만 비동기로** — 사내 공유 폴더처럼 느린 곳에서 가져올 때(`sharefetch.ts`).
+ * 동기 복사는 메인 스레드를 잡아 화면 전체가 멈춘다(함정 문서). `deadline` 을 넘기면 남은 것은 안 넣고 `truncated` 로 알린다.
+ */
+export async function putAsync(dir: string, plan: Planned[], out: InboxResult, deadline: number): Promise<void> {
+  for (const one of plan) {
+    if (Date.now() > deadline) {
+      out.truncated = true
+      return
+    }
+    const to = join(dir, ...one.to.split('/'))
+    try {
+      if (!ready(to, one, false, out)) continue
+      await mkdir(dirname(to), { recursive: true })
+      await copyFile(one.from, to, constants.COPYFILE_EXCL)
+      counted(to, one, out)
+    } catch (error) {
+      out.failed.push({ name: one.to, from: one.from, why: toMessage(error) })
+    }
+  }
+}
+
+/** 넣어도 되나 — 이미 같은 파일이면 `same`, 다른 파일이면(덮어쓰기가 아니면) `clash` 에 담고 false */
+function ready(to: string, one: Planned, overwrite: boolean, out: InboxResult): boolean {
+  if (!existsSync(to)) return true
+  const mine = statSync(to).size
+  if (sameBytes(to, one.from, mine, one.bytes)) {
+    out.same.push(one.to)
+    return false
+  }
+  if (overwrite) return true
+  out.clash.push({ rel: one.to, from: one.from, mine, theirs: one.bytes })
+  return false
+}
+
+/**
+ * 넣은 뒤 **양쪽에서 센다** (CLAUDE.md 7번). 반쯤 쓰인 파일은 브라우저에서
+ * 깨진 그림으로만 드러나고, 그때는 어디서 깨졌는지 알 길이 없다.
+ */
+function counted(to: string, one: Planned, out: InboxResult): void {
+  const wrote = statSync(to).size
+  if (wrote !== one.bytes) {
+    out.failed.push({
+      name: one.to,
+      from: one.from,
+      why: `복사한 파일의 크기가 다릅니다(원본 ${one.bytes.toLocaleString()}B, 복사본 ${wrote.toLocaleString()}B).`
+    })
+    return
+  }
+  out.took.push({ rel: one.to, from: one.from, bytes: wrote })
+  out.bytes += wrote
 }
 
 /**

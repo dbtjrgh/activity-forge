@@ -5,6 +5,8 @@
   "title": "끌어다 나눠 담기 (캐릭터별 분류)",
   "summary": "캐릭터 여럿이 말풍선으로 무엇을 달라고 말하고, 학생이 아이템을 끌어다 맞는 캐릭터 자리(dragzone)에 놓는 활동. 정답이 필요한 아이템이 모두 안착하면 이닝이 끝납니다.",
   "reference": {
+    "moduleCommit": "7992ec529f91f2443561c15c068b120f8e04e201",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M31",
     "activities": [
       "MAL1M06W3S2",
@@ -12,6 +14,11 @@
       "MAL3M06W3S2"
     ],
     "doc": "README 없음. 근거는 M31.ts · CharacterPanel.ts · QuizPanel.ts · TablePanel.ts · Dragzone.ts 와 6호 세 차시입니다."
+  },
+  "variantKey": {
+    "path": "inningData[].character.child[].data.type",
+    "note": "캐릭터를 그림(image) 한 장으로 둘지 로티(lottie) 네 개로 둘지 고릅니다. lottie 는 alias_normal, talk, correct, end 가 다 로티여야 합니다.",
+    "why": "CharacterPanel.ts:31 image 는 Sprite 하나, :38 lottie 는 readyAni 로 LottieSprite 넷(:80~97). 개발 완료 7개(2026-10-13) — lottie 6 · image 1."
   },
   "codegen": {
     "hooks": {

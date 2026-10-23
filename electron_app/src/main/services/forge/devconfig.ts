@@ -10,9 +10,11 @@
  * 앱이 띄운 서버에만** 작은 글 한 줄을 끼운다 — 사람이 손으로 `yarn dev` 를
  * 돌리면 이 config 가 안 끼므로 **평소 개발은 그대로다.**
  *
- * 하는 일은 하나뿐이다. 안내 영상이 없어 `<video>` 가 오류를 내면 **「다 봤다」와
+ * 하는 일은 둘이다. 안내 영상이 없어 `<video>` 가 오류를 내면 **「다 봤다」와
  * 같은 자리로 보낸다.** 그러면 액티비티가 시작한다. 영상이 실제로 있으면
  * 오류가 안 나므로 아무 일도 안 일어난다.
+ * 그리고 **파일 감시 오류에 귀를 단다** — vite 는 감시 오류를 받는 곳이 없어, 쓰는 중인 파일(EBUSY)
+ * 하나에 서버째 죽는다. 대화가 끝에 리소스를 호 저장소로 복사할 때 그랬다(2026-10-14 MAL3M08W2S2).
  *
  * 호 저장소에는 **파일을 남기지 않는다.** 덧config 는 앱의 임시 폴더에 쓰고
  * 절대 경로로 넘긴다 — 저장소에 남기면 `git status` 가 더러워지고, 그러면
@@ -24,6 +26,9 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+
+/** 안내 영상 자리 — 배포 쪽이 주는 파일이라 호 저장소에 없다. 회귀 검사도 이 자리의 404 와 콘솔 줄은 흠으로 안 센다(`main/regress.ts`) */
+export const GUIDE_MOVIE = '/storage/guide_movie/'
 
 /**
  * 페이지에 끼우는 글. **오류가 났을 때만** 움직인다.
@@ -38,7 +43,7 @@ const SKIP = `<script>
     function (e) {
       var v = e.target
       if (!v || v.tagName !== 'VIDEO') return
-      if (String(v.currentSrc || v.src).indexOf('/storage/guide_movie/') < 0) return
+      if (String(v.currentSrc || v.src).indexOf('${GUIDE_MOVIE}') < 0) return
       console.log('[양산기] 안내 영상이 없어 건너뜁니다 — 앱에서 띄운 서버에서만 그럽니다.')
       v.dispatchEvent(new Event('ended'))
     },
@@ -47,6 +52,18 @@ const SKIP = `<script>
 })()
 </script>`
 
+/** 덧config 글 안의 `guideSkip` 플러그인 — 회귀 검사의 덧config(`regressserve.ts`)도 같은 글을 쓴다 */
+export const GUIDE_SKIP_PLUGIN = `// 앱이 띄운 서버에만 끼는 것 — 안내 영상이 없으면 「다 봤다」로 보낸다.
+const guideSkip = {
+  name: 'forge-guide-skip',
+  transformIndexHtml(html) {
+    return html.replace('</head>', ${JSON.stringify(SKIP)} + '</head>')
+  }
+}`
+
+/** 덧config 첫 줄 — 호 저장소의 config 를 그대로 들여온다. 회귀 검사의 덧config 도 같은 줄로 시작한다 */
+export const baseImport = (repo: string): string => `import base from ${JSON.stringify(join(repo, 'vite.config.ts').replace(/\\/g, '/'))}`
+
 /**
  * 호 저장소의 config 를 그대로 쓰되 위 글만 더한 config 를 만들어 그 자리를 돌려준다.
  *
@@ -54,18 +71,19 @@ const SKIP = `<script>
  * 옮겨 적으면 두 벌이 되어 갈린다. 그대로 들여와 플러그인 하나만 얹는다.
  */
 export function writeDevConfig(repo: string): string {
-  const base = join(repo, 'vite.config.ts').replace(/\\/g, '/')
-  const text = `import base from ${JSON.stringify(base)}
+  const text = `${baseImport(repo)}
 
-// 앱이 띄운 서버에만 끼는 것 — 안내 영상이 없으면 「다 봤다」로 보낸다.
-const guideSkip = {
-  name: 'forge-guide-skip',
-  transformIndexHtml(html) {
-    return html.replace('</head>', ${JSON.stringify(SKIP)} + '</head>')
+${GUIDE_SKIP_PLUGIN}
+
+// 감시 오류로 서버가 죽지 않게 — 대화가 끝에 리소스를 복사하는 동안 쓰던 파일을 감시하려다 EBUSY 로 죽었다(2026-10-14)
+const watchGuard = {
+  name: 'forge-watch-guard',
+  configureServer(server) {
+    server.watcher.on('error', (e) => console.warn('[양산기] 파일 감시 오류를 건너뜁니다: ' + (e && e.message)))
   }
 }
 
-export default { ...base, plugins: [...(base.plugins ?? []), guideSkip] }
+export default { ...base, plugins: [...(base.plugins ?? []), guideSkip, watchGuard] }
 `
   // **한 자리에 덮어쓴다** (M6) — 띄울 때마다 새 임시 폴더를 만들면 쌓이기만 하고 아무도 안 지운다
   const dir = join(tmpdir(), 'sparkon-forge')

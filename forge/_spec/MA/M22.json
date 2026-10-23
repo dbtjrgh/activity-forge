@@ -5,6 +5,8 @@
   "title": "붙였다 떼며 수 만들기 (룰렛·게시판)",
   "summary": "물건을 끌어다 게시판에 붙여 수를 만드는 활동. 룰렛을 돌려 나온 수를 쓰고, 결과를 출력 버튼으로 확인합니다. 세트를 바꿔 가며 여러 벌을 만듭니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M22",
     "activities": [
       "MAL2M01W2S1",
@@ -52,7 +54,7 @@
   "assets": {
     "required": [],
     "providedByModule": {
-      "note": "**dori_common(협력사 공통) 꼴의 모듈입니다** — 자기 리소스를 등록하지 않고, 액티비티 onLoad 가 AssetTable 네 배열을 넘깁니다(`mM22.onLoad(font, image, lottie, sound)`).\n\n**모든 배치표의 열쇠가 곧 AssetTable 의 alias 입니다.** 여기 열거된 열쇠는 표본 두 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다. 코드에 이름을 박은 자리는 없습니다 — 그래서 **열쇠를 알아보기 쉽게 바꿔 적으면 그 그림이 통째로 사라집니다.**\n\n이름 규칙 — `drag_Obj_{세트}_{번호}`(그림 물건) · `drag_Anim_{세트}_{번호}`(애니 물건) · `drag_Area_{세트}_{번호}`(그 물건을 놓는 영역) · `post_img_{번호}`(게시판 그림) · `Roll_{숫자}`(룰렛 숫자) · `result0` · `result1`(출력 결과)."
+      "note": "**partner_common(협력사 공통) 꼴의 모듈입니다** — 자기 리소스를 등록하지 않고, 액티비티 onLoad 가 AssetTable 네 배열을 넘깁니다(`mM22.onLoad(font, image, lottie, sound)`).\n\n**모든 배치표의 열쇠가 곧 AssetTable 의 alias 입니다.** 여기 열거된 열쇠는 표본 두 차시가 쓴 이름이고, 활동마다 쓰는 것만 적으면 됩니다. 코드에 이름을 박은 자리는 없습니다 — 그래서 **열쇠를 알아보기 쉽게 바꿔 적으면 그 그림이 통째로 사라집니다.**\n\n이름 규칙 — `drag_Obj_{세트}_{번호}`(그림 물건) · `drag_Anim_{세트}_{번호}`(애니 물건) · `drag_Area_{세트}_{번호}`(그 물건을 놓는 영역) · `post_img_{번호}`(게시판 그림) · `Roll_{숫자}`(룰렛 숫자) · `result0` · `result1`(출력 결과)."
     }
   },
   "gameData": {

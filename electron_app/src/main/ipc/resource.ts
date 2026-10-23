@@ -1,6 +1,6 @@
 /**
  * 작업대 채널 — 진행판에서 학습코드를 누르면 열리는 화면이 부르는 것.
- * 처음 보여 줄 것 · 리소스 폴더 · 놓은 것 넣기 · 원본 변경.
+ * 처음 보여 줄 것 · 리소스 폴더 · 호 저장소 폴더 열기 · 놓은 것 넣기 · 원본 변경.
  *
  * 결과는 `unknown` 이 아니라 `shared/forge.ts` 의 타입이다 — 앱 화면은
  * 렌더러도 타입을 보므로 갈라지면 컴파일에서 걸린다(옛 양산 창의 `unknown` 채널은 M8 에 걷었다).
@@ -10,16 +10,20 @@
  */
 
 import { isAbsolute } from 'node:path'
-import { ipcMain } from 'electron'
+import { ipcMain, shell } from 'electron'
 import { IPC } from '../../shared/ipc'
-import type { InboxResult, LeftoverTrash, OriginChoices, Prepare, SortedInbox } from '../../shared/forge'
+import type { FolderOpen, InboxResult, LeftoverTrash, OriginChoices, PageNeeds, PlanModule, Prepare, ShareLook, ShareTake, SortedInbox } from '../../shared/forge'
+import { pageNeedsOf } from '../services/forge/chatpages'
+import { hallFolder } from '../services/forge/hallfolder'
 import { takeInbox } from '../services/forge/inbox'
+import { planModuleFor, usePlanModule } from '../services/forge/planmodule'
 import { sortInbox } from '../services/forge/sort'
 import { prepare } from '../services/forge/prepare'
+import { shareLook, shareTake } from '../services/forge/sharefetch'
 import { makeRscDir } from '../services/forge/workspace'
 import { originChoices, pickOrigin, trashOldOrigin } from '../services/forge/originpick'
 import { normalizeCode } from './answers'
-import { badCode, badInbox, badSort } from './respond'
+import { badCode, badInbox, badShare, badSort } from './respond'
 
 const noOrigin = (code: unknown): OriginChoices => ({
   code: String(code ?? ''),
@@ -44,9 +48,20 @@ export function registerResourceIpc(): void {
     return ok ? prepare(ok) : Promise.resolve(badCode(code))
   })
 
-  ipcMain.handle(IPC.forgeResourceDir, (_e, code: unknown) => {
+  ipcMain.handle(IPC.forgeResourceDir, (_e, code: unknown): Promise<FolderOpen> => {
     const ok = normalizeCode(String(code ?? ''))
-    return ok ? makeRscDir(ok) : Promise.resolve({ ok: false, error: badCode(code).error })
+    return ok ? makeRscDir(ok) : Promise.resolve({ ok: false, error: badCode(code).error ?? '' })
+  })
+
+  // 렌더러는 학습코드와 어느 폴더인지만 보낸다 — 경로는 메인이 정한다(`hallfolder.ts`)
+  ipcMain.handle(IPC.forgeHallFolder, async (_e, code: unknown, kind: unknown): Promise<FolderOpen> => {
+    const ok = normalizeCode(String(code ?? ''))
+    if (!ok) return { ok: false, error: badCode(code).error ?? '' }
+    if (kind !== 'activity' && kind !== 'public') return { ok: false, error: '열 폴더를 알 수 없습니다.' }
+    const found = await hallFolder(ok, kind)
+    if (!found.ok) return found
+    const why = await shell.openPath(found.dir)
+    return why ? { ok: false, error: `폴더를 열지 못했습니다: ${why}` } : found
   })
 
   /**
@@ -92,6 +107,23 @@ export function registerResourceIpc(): void {
   )
 
   // 원본 바꾸기 — 후보는 서비스가 forge 로 센다. 받는 원본은 학습코드 꼴만 보고, 후보인지는 서비스가 본다. null 은 「처음 추천으로」
+  // 인터북 그림에서 아직 없는 판 — 작업대와 받을 리소스 창이 같이 부른다
+  ipcMain.handle(IPC.forgePageNeeds, (_e, code: unknown): Promise<PageNeeds> => {
+    const ok = normalizeCode(String(code ?? ''))
+    return ok ? pageNeedsOf(ok) : Promise.resolve({ stars: 0, needs: [], same: [], error: badCode(code).error as string })
+  })
+  // 사내 공유 폴더 — 렌더러는 학습코드와 화면에 보였던 자리(리소스 폴더 안 상대 길)만 보낸다. 무엇을 어디서 가져올지는 서비스가 다시 찾는다
+  // `fresh` — 공유 폴더 연결을 다시 묻는다(「다시 확인」). 아니면 메인이 들고 있는 연결 형편을 쓴다
+  ipcMain.handle(IPC.forgeShareLook, (_e, code: unknown, fresh: unknown): Promise<ShareLook> => {
+    const ok = normalizeCode(String(code ?? ''))
+    return ok ? shareLook(ok, fresh === true) : Promise.resolve(badShare(code).look)
+  })
+  ipcMain.handle(IPC.forgeShareTake, (_e, code: unknown, shown: unknown): Promise<ShareTake> => {
+    const ok = normalizeCode(String(code ?? ''))
+    if (!ok) return Promise.resolve(badShare(code))
+    if (!Array.isArray(shown) || shown.length > DROP_MAX * 4) return Promise.resolve(badShare(code, '가져올 목록을 읽지 못했습니다.'))
+    return shareTake(ok, shown.map((s) => String(s ?? '')).filter(Boolean))
+  })
   ipcMain.handle(IPC.forgeOriginChoices, (_e, code: unknown): Promise<OriginChoices> => {
     const ok = normalizeCode(String(code ?? ''))
     return ok ? originChoices(ok) : Promise.resolve(noOrigin(code))
@@ -105,5 +137,15 @@ export function registerResourceIpc(): void {
   ipcMain.handle(IPC.forgeLeftoverTrash, (_e, code: unknown): Promise<LeftoverTrash> => {
     const ok = normalizeCode(String(code ?? ''))
     return ok ? trashOldOrigin(ok) : Promise.resolve({ moved: [], failed: [], error: badCode(code).error as string })
+  })
+  // 기획서 모듈넘버와 배치표 — 바꿀 때도 학습코드만 받는다. 무엇으로 바꿀지는 서비스가 기획서를 다시 읽어 정한다
+  const noPlan = (code: unknown): PlanModule => ({ code: String(code ?? ''), planModule: '', plan: '', layoutModule: '', differs: false, note: '', error: badCode(code).error as string })
+  ipcMain.handle(IPC.forgePlanModule, (_e, code: unknown): Promise<PlanModule> => {
+    const ok = normalizeCode(String(code ?? ''))
+    return ok ? planModuleFor(ok) : Promise.resolve(noPlan(code))
+  })
+  ipcMain.handle(IPC.forgePlanModuleUse, (_e, code: unknown): Promise<PlanModule> => {
+    const ok = normalizeCode(String(code ?? ''))
+    return ok ? usePlanModule(ok) : Promise.resolve(noPlan(code))
   })
 }

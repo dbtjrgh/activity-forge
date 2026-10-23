@@ -10,7 +10,8 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import type { ChatInfo, ChatTurn } from '../../../shared/forge'
+import { chatWaiting, type ChatInfo, type ChatTurn } from '../../../shared/forge'
+import { lookFromTurns } from './chatlook'
 
 /** 화면에 보일 진행 줄 상한 */
 const PROGRESS_MAX = 200
@@ -20,8 +21,9 @@ const PROGRESS_MAX = 200
  * `inputs` Claude 에게 마지막으로 알린 때의 리소스 폴더 파일(`이름|도장`, figma · 기획서 포함 — `chatprep.ts` `inputsOf`).
  * 옛 대화는 이름만 들었다.
  * `origin` 대화를 시작할 때 정한 원본 — 그 뒤 원본이 바뀌면 같은 대화로 잇지 않는다
+ * `module` 그때의 모듈 — 대화 도중 배치표 모듈이 바뀌면 읽을 폴더를 다시 열고 알린다(`chatresume.ts`). 옛 대화에는 없다
  */
-type Saved = Omit<ChatInfo, 'progress' | 'since' | 'rev'> & { fixRounds: number; inputs?: string[]; origin?: string }
+type Saved = Omit<ChatInfo, 'progress' | 'since' | 'rev'> & { fixRounds: number; inputs?: string[]; origin?: string; module?: string }
 
 const live = new Map<string, { progress: string[]; since: number | null; stop: boolean }>()
 let push: (info: ChatInfo) => void = () => {}
@@ -45,6 +47,8 @@ export function readChat(repoRoot: string, code: string): Saved {
     const s = JSON.parse(fs.readFileSync(chatFile(repoRoot, code), 'utf8')) as Saved
     // 도는 중으로 남았는데 이 앱에서 도는 것이 없다 — 앱을 껐다 켰다. 멈춘 것으로 본다
     if ((s.state === 'running' || s.state === 'checking') && !chatBusy(code)) return { ...s, state: 'stopped' }
+    // 「확인할 것」을 따로 남기기 전(2026-10-14)에 끝난 대화 — 마지막 완료 글에서 다시 뽑는다(`chatlook.ts`)
+    if (s.state === 'done' && s.look === undefined) return { ...s, look: lookFromTurns(s.turns ?? []) }
     return s
   } catch {
     return blankChat(code)
@@ -53,7 +57,7 @@ export function readChat(repoRoot: string, code: string): Saved {
 
 export function infoOf(s: Saved): ChatInfo {
   const l = live.get(s.code)
-  const { fixRounds: _f, inputs: _i, origin: _o, ...rest } = s
+  const { fixRounds: _f, inputs: _i, origin: _o, module: _m, ...rest } = s
   return { ...rest, progress: l?.progress ?? [], since: l?.since ?? null, rev }
 }
 
@@ -73,6 +77,19 @@ export function saveChat(repoRoot: string, s: Saved): ChatInfo {
  */
 export const chatBusy = (code: string): boolean => (live.get(code)?.since ?? null) !== null
 
+/** 이 앱에서 대화가 도는 학습코드 전부 — 끄기 · 업데이트 뒤 다시 켜기 전에 본다(`busy.ts`) */
+export const busyChats = (): string[] => [...live.keys()].filter(chatBusy).sort()
+
+/**
+ * 그 학습코드의 대화를 건드리면 안 되는 형편 — 도는 중(`busy`) · 답을 기다림(`waiting`) · 아님(빈 글).
+ * 리소스 폴더 정리(`rscclean.ts`)와 「main 에 모두 올리기」(`hallsyncall.ts`)가 같은 셈을 쓴다 — 두 곳에 따로 있었다(2026-10-14).
+ * 파일에 「도는 중」으로 남았는데 이 앱에서 안 도는 것은 `readChat` 이 「멈춤」으로 읽는다 — 그것도 기다리는 대화다
+ */
+export function chatHold(repoRoot: string, code: string): 'busy' | 'waiting' | '' {
+  if (chatBusy(code)) return 'busy'
+  return chatWaiting(infoOf(readChat(repoRoot, code))) ? 'waiting' : ''
+}
+
 export function beginLive(code: string): void {
   live.set(code, { progress: [], since: Date.now(), stop: false })
 }
@@ -83,6 +100,13 @@ export function endLive(code: string): void {
     l.since = null
     l.stop = false
   }
+}
+
+/** 대화 기록 파일을 치운 뒤(학습코드 초기화) — 진행 줄을 버리고 지금 파일 형편을 화면에 민다. 파일은 새로 안 쓴다 */
+export function forgetChat(repoRoot: string, code: string): void {
+  live.delete(code)
+  rev += 1
+  push(infoOf(readChat(repoRoot, code)))
 }
 
 /** 멈춰 달라는 요청 — 도는 claude 가 없는 때(준비 · 검사 중)에 눌러도 다음 차례 앞에서 멈춘다 */

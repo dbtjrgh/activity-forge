@@ -93,6 +93,16 @@ export interface ForgeModules {
   rescale: typeof import('@/gen/rescale')
   /** figma 화면에 원본 후보의 장면 그림이 있나(`scene.ts` 가 부른다). */
   scenefind: typeof import('@/gen/scenefind')
+  /** 그 가운데 배경만 보고 원본 판을 가르는 셈(`backdrop.ts` 가 부른다). */
+  scenebackdrop: typeof import('@/gen/scenebackdrop')
+  /** 스펙 `variantKey` — 모듈 안 구현을 고르는 값과 그 값을 쓴 완성본(`chatothers.ts` 가 부른다). */
+  variants: typeof import('@/gen/variants')
+  /** 같은 배경 그림의 짝과 다른 자리 — 인터북의 별 · 효과 판(`chatpages.ts` 가 부른다). */
+  pagepairs: typeof import('@/gen/pagepairs')
+  /** 스펙을 맞춰 본 뒤 공용 모듈이 바뀌었나(`gatecheck.ts` 가 부른다, 2026-10-14). 대화 시작에 붙이는 것은 아직 안 했다. */
+  specdrift: typeof import('@/gen/specdrift')
+  /** 공용 모듈 저장소(sparkon_common) 자리 — `commonRoot` · `commonPick`(2026-10-23 에 `paths` 에서 뗐다). */
+  commonroot: typeof import('@/gen/commonroot')
 }
 
 /**
@@ -120,7 +130,7 @@ export function loadForge(): Promise<ForgeModules> {
     // import 보다 먼저 심어야 한다. 이 한 줄이 이 파일의 존재 이유다.
     process.env['FORGE_REPO_ROOT'] = root
 
-    const [layout, paths, user, spec, api, swap, odd, reslot, restock, files, parts, rolename, relpath, common, commonfresh, rscsize, tailwit, aliasfollow, placefind, imgfind, png, render, survey, scenefind, rescale] =
+    const [layout, paths, user, spec, api, swap, odd, reslot, restock, files, parts, rolename, relpath, common, commonfresh, rscsize, tailwit, aliasfollow, placefind, imgfind, png, render, survey, scenefind, rescale, scenebackdrop, variants, pagepairs, specdrift, commonroot] =
       await Promise.all([
       import('@/gen/layout'),
       import('@/gen/paths'),
@@ -146,7 +156,12 @@ export function loadForge(): Promise<ForgeModules> {
       import('@/gen/render'),
       import('@/gen/surveyfind'),
       import('@/gen/scenefind'),
-      import('@/gen/rescale')
+      import('@/gen/rescale'),
+      import('@/gen/scenebackdrop'),
+      import('@/gen/variants'),
+      import('@/gen/pagepairs'),
+      import('@/gen/specdrift'),
+      import('@/gen/commonroot')
     ])
 
     // 심은 값이 실제로 먹었는지 확인한다. 안 먹었으면 빈 진행판이 나올 뿐이라
@@ -157,7 +172,7 @@ export function loadForge(): Promise<ForgeModules> {
       )
     }
 
-    return { root, layout, paths, user, spec, api, swap, odd, reslot, restock, files, parts, rolename, relpath, common, commonfresh, rscsize, tailwit, aliasfollow, placefind, imgfind, png, render, survey, scenefind, rescale }
+    return { root, layout, paths, user, spec, api, swap, odd, reslot, restock, files, parts, rolename, relpath, common, commonfresh, rscsize, tailwit, aliasfollow, placefind, imgfind, png, render, survey, scenefind, rescale, scenebackdrop, variants, pagepairs, specdrift, commonroot }
   })()
 
   // **실패한 약속을 쥐고 있지 않는다.** 여기 담아 두면 처음 한 번 못 찾은 것이

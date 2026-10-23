@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import type { ChatState } from '../../../../shared/forge'
+import { BUTTON, type ChatState } from '../../../../shared/forge'
 import { TARGET } from '../../lib/benchorder'
+import { formatDate } from '../../lib/format'
 import type { Chat } from './useChat'
 import './chat.css'
 
@@ -11,11 +12,11 @@ import './chat.css'
 const STATE: Record<ChatState, string> = {
   idle: '아직 시작하지 않았습니다.',
   running: 'Claude 가 만드는 중입니다.',
-  asking: '답을 기다립니다. 오른쪽에서 답하세요.',
-  checking: '리소스를 복사하고 타입 검사를 하는 중입니다.',
-  done: '만들었습니다. 미리보기로 확인하세요.',
-  stopped: '멈췄습니다. 오른쪽에 답을 적으면 이어서 진행합니다.',
-  error: '오류로 멈췄습니다. 오른쪽에 답을 적으면 이어서 진행합니다.'
+  asking: '답을 기다립니다.',
+  checking: '검사하는 중입니다.',
+  done: '만들었습니다.',
+  stopped: '멈췄습니다.',
+  error: '오류로 멈췄습니다.'
 }
 
 function useSeconds(since: number | null): number {
@@ -28,21 +29,34 @@ function useSeconds(since: number | null): number {
   return since ? Math.max(0, Math.round((now - since) / 1000)) : 0
 }
 
-export default function ChatFlow({ chat, canRun }: { chat: Chat; canRun: boolean }) {
+/**
+ * `lock` — 남이 끝낸 학습코드라 시작을 막는 까닭(작업대 「그래도 고치기」 전). `force` — 푼 뒤라 메인에 그렇게 부른다.
+ * `noShot` — 화면을 받아야 하는 모듈인데 figma 화면이 0장. 첫 누름에는 무엇으로 대신하는지 보이고 한 번 더 눌러야 시작한다 (2026-10-14)
+ */
+export default function ChatFlow({ chat, canRun, lock, force, noShot }: { chat: Chat; canRun: boolean; lock: string; force: boolean; noShot: boolean }) {
   const { info, busy, sending } = chat
   const sec = useSeconds(info?.since ?? null)
   const log = useRef<HTMLOListElement>(null)
+  const [armed, setArmed] = useState(false)
   useEffect(() => {
     log.current?.scrollTo({ top: log.current.scrollHeight })
   }, [info?.progress.length])
+  // 다른 학습코드로 가거나 화면을 붙이면 다시 묻는다
+  useEffect(() => setArmed(false), [info?.code, noShot])
   if (!info) return <p className="sub">불러오는 중…</p>
   const started = info.state !== 'idle'
   const checks = info.checks
+  const common = checks.tsc?.common ?? []
+  const go = (): void => {
+    if (noShot && !armed) return setArmed(true)
+    setArmed(false)
+    void chat.start(force)
+  }
   return (
     <section className="chat-flow">
       <div className="chat-flow-head">
-        <button id={TARGET.chat} className="go" disabled={!canRun || busy || sending} onClick={() => void chat.start()}>
-          {started ? '처음부터 다시 만들기' : '대화로 생성'}
+        <button id={TARGET.chat} className="go" disabled={!canRun || busy || sending || Boolean(lock)} onClick={go}>
+          {started ? BUTTON.chatAgain : BUTTON.chat}
         </button>
         {busy && (
           <button className="ghost" disabled={sending} onClick={() => void chat.stop()}>
@@ -57,11 +71,12 @@ export default function ChatFlow({ chat, canRun }: { chat: Chat; canRun: boolean
         )}
         <span className={`chat-state chat-state-${info.state}`}>
           {/* 이어 갈 대화가 없으면 답으로 이을 수 없다 */}
-          {!info.sessionId && info.state === 'error' ? '진행할 수 없습니다.' : !info.sessionId && info.state === 'stopped' ? '멈췄습니다.' : STATE[info.state]}
+          {!info.sessionId && info.state === 'error' ? '진행할 수 없습니다.' : STATE[info.state]}
         </span>
         {busy && <span className="sub">{Math.floor(sec / 60)}분 {sec % 60}초째</span>}
         {info.cost > 0 && <span className="sub">사용 금액 ${info.cost.toFixed(2)}</span>}
       </div>
+      {armed && <p className="state warn">figma 화면이 없습니다. 그대로 시작하려면 한 번 더 누르세요.</p>}
       {info.error && <p className="state error">{info.error}</p>}
       {info.progress.length > 0 && (
         <ol className="chat-progress" ref={log}>
@@ -79,17 +94,34 @@ export default function ChatFlow({ chat, canRun }: { chat: Chat; canRun: boolean
                 ? '타입 검사를 통과했습니다.'
                 : `타입 오류가 ${checks.tsc.errors.length}개 있습니다.`}
           </p>
+          {/* 찍어 둔 결과다 — 스펙 · 코드를 고친 뒤에도 옛 결과가 보여서 잰 때를 같이 적는다 */}
+          {checks.at && <p className="sub">{formatDate(Date.parse(checks.at))}에 검사한 결과입니다.</p>}
           {checks.tsc.ran === false && checks.tsc.why && <p className="sub">{checks.tsc.why}</p>}
           {checks.tsc.errors.length > 0 && <pre className="chat-pre">{checks.tsc.errors.slice(0, 20).join('\n')}</pre>}
+          {/* 공용 모듈 오류는 막지 않는다 — 남의 모듈일 수 있어 Claude 에게도 안 맡긴다. 배포 빌드는 이것으로 실패한다 */}
+          {common.length > 0 && (
+            <>
+              <p className="state warn">공용 모듈에 타입 오류가 {common.length}개 있어 배포 빌드가 실패합니다.</p>
+              <pre className="chat-pre">{common.slice(0, 5).join('\n')}</pre>
+            </>
+          )}
           {checks.unread && <p className="state error">{checks.unread}</p>}
+          {/* 학습코드가 폴더와 다르면 학습 기록이 다른 학습코드로 간다 — 막는 검사(`chatident.ts`) */}
+          {checks.ident?.ok === false && <p className="state error">{checks.ident.lines.join(' ')}</p>}
           {checks.files && (checks.files.missing.length > 0 || checks.files.failed.length > 0) && (
             <p className="state warn">
               호 저장소에 없는 파일 {checks.files.missing.length}개, 복사 실패 {checks.files.failed.length}개가 있습니다. {[...checks.files.missing, ...checks.files.failed].slice(0, 5).join(', ')}
             </p>
           )}
+          {/* 막지 않는다 — 빠뜨린 이펙트 · 소리일 수 있어 보인다(9호 MAL2M08W1S3 의 새 정답 파티클이 그렇게 빠졌다) */}
+          {checks.files?.unused && checks.files.unused.length > 0 && (
+            <p className="state warn">
+              리소스 폴더에 받았는데 쓰지 않은 파일이 {checks.files.unused.length}개 있습니다. {checks.files.unused.slice(0, 6).join(', ')}
+            </p>
+          )}
           {checks.spec && checks.spec.length > 0 && (
             <details className="chat-spec">
-              <summary className="sub">스펙 검사에서 참고할 것 {checks.spec.length}개</summary>
+              <summary className="sub">스펙 검사 결과 {checks.spec.length}개</summary>
               <pre className="chat-pre">{checks.spec.slice(0, 40).join('\n')}</pre>
             </details>
           )}

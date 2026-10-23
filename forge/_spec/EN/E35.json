@@ -5,6 +5,8 @@
   "title": "풍선 터뜨려 낱말 담기",
   "summary": "낱말이 든 풍선들이 떠오르고, 지시에 맞는 풍선을 터뜨려 바구니에 담는 활동. 이닝마다 정답 낱말과 오답 풍선 구성이 다릅니다.",
   "reference": {
+    "moduleCommit": "ba0f54eb49cc0d787ab080ef208b9482eb1c6c6d",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E35",
     "activities": [
       "ENL1M02W3S2",

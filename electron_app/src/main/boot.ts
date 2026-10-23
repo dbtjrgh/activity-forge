@@ -36,6 +36,11 @@ function downloaded(): string | null {
   return theirs.builtAt > (mine?.builtAt ?? 0) ? entry : null
 }
 
+// **초기 설정 해 보기**(`SPARKON_FIRST_RUN=1`)는 userData 를 통째로 새 임시 폴더로 — 한 번만 켜기 잠금 · localStorage · 받은 앱 자리까지
+// 켜 둔 앱과 갈린다. settings 만 옮기던 때는 잠금이 켜 둔 앱과 부딪혀 시험 앱이 안 뜨고 사용자 창이 앞으로 왔다(2026-10-16 설계).
+// 잠금(index.ts)보다 먼저여야 해서 여기 둔다
+if (process.env['SPARKON_FIRST_RUN'] === '1') app.setPath('userData', join(app.getPath('temp'), `sparkon-first-run-${Date.now()}`))
+
 // 번들러가 이 require 를 따라 들어가 boot 에 index 를 통째로 묶지 않게 createRequire 로 부른다
 const load = createRequire(__filename)
 const entry = downloaded()

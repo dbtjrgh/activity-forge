@@ -10,6 +10,7 @@
  */
 
 import { execFile } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import { promisify } from 'node:util'
 
 const run = promisify(execFile)
@@ -44,4 +45,38 @@ export async function gitClone(url: string, to: string, timeout: number, extra: 
 /** 줄 목록. 빈 줄은 뺀다. */
 export function lines(text: string): string[] {
   return text.split(/\r?\n/).filter((l) => l.trim())
+}
+
+/** git 한 번 — 던지지 않는다. 실패해도 stderr 를 돌려준다(합치기가 왜 멈췄는지 읽어야 하는 자리) */
+export async function tryGit(cwd: string, args: string[], timeout: number): Promise<{ ok: boolean; out: string; err: string }> {
+  try {
+    return { ok: true, out: await git(cwd, args, timeout), err: '' }
+  } catch (error) {
+    const e = error as { stdout?: string; stderr?: string; message?: string; killed?: boolean }
+    return { ok: false, out: String(e.stdout ?? ''), err: e.killed ? 'timeout' : String(e.stderr || e.message || '') }
+  }
+}
+
+/**
+ * 그 폴더가 git 저장소의 맨 위인가 — 다른 저장소 안의 폴더면 거짓(뿌리면 `--show-cdup` 이 빈 글).
+ * 정션 너머 폴더(호 저장소의 `src/_common`)를 저장소로 잘못 받지 않게 쓴다(2026-10-21)
+ */
+export async function isRepoRoot(dir: string, timeout: number): Promise<boolean> {
+  if (!dir || !existsSync(dir)) return false
+  const top = await tryGit(dir, ['rev-parse', '--show-cdup'], timeout)
+  return top.ok && top.out.trim() === ''
+}
+
+/** `a` 가 `b` 의 조상인가(같으면 참). 어느 쪽이든 없는 이름이면 거짓 */
+export async function isAncestor(cwd: string, a: string, b: string, timeout: number): Promise<boolean> {
+  return (await tryGit(cwd, ['merge-base', '--is-ancestor', a, b], timeout)).ok
+}
+
+/**
+ * 미리 담아 둔(staged) 파일 가운데 `keep` 폴더들 밖의 것 — 있으면 커밋에 같이 딸려 간다.
+ * 한글 파일 이름이 따옴표 · 8진수로 오면 「밖」으로 잘못 센다 — 있는 그대로 받는다
+ */
+export async function stagedOutside(cwd: string, keep: string[], timeout: number): Promise<string[]> {
+  const staged = lines(await git(cwd, ['-c', 'core.quotepath=false', 'diff', '--cached', '--name-only'], timeout))
+  return staged.filter((f) => !keep.some((k) => f.startsWith(`${k.replace(/\/$/, '')}/`)))
 }

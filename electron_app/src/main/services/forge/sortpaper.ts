@@ -5,7 +5,8 @@
  * 기획서는 1쪽 제목을 단서로 삼는다. **못 가리면 안 넣고 까닭과 함께 묻는다**(`sort.ts` 와 같은 약속).
  *
  *   figma 화면  프레임 이름 → 학습코드(`section.ts` frameCode) · 크기는 붙여넣기와 같은 가름(`frame.ts`)
- *   MA 기획서   1쪽의 `(MA-L2-M07-W2-S1)` · `07호` · `모듈넘버: M05` — 호가 서로 어긋나거나 배치표 모듈과 다르면 안 넣는다
+ *   MA 기획서   1쪽의 `(MA-L2-M07-W2-S1)` · `07호` · `모듈넘버: M05` — 호가 서로 어긋나면 안 넣는다. 배치표 모듈과 다르면
+ *               넣고 작업대의 「기획서대로 바꾸기」를 가리킨다(2026-10-14 — 전에는 안 넣어서 작업대가 견줄 기획서가 없었다)
  *   EN 기획서   `영어 Level 1_01주_Word Spark` — 호 · S 가 없는 공용 기획서라 **공용 자리에 한 번만** 둔다(여쭐 것 7).
  *               학습코드 폴더로 가져가는 것은 만들 때다(`pullCommonPlans`) — AI 는 리소스 폴더 밖을 못 읽는다
  *   KO 기획서   제목 꼴을 아직 모른다 — 묻는다
@@ -15,15 +16,16 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import type { InboxHold, PaperPlaced } from '../../../shared/forge'
+import { HO_OF, type InboxHold, type PaperPlaced } from '../../../shared/forge'
 import { toTrash } from '../../lib/trash'
 import { FRAME, frameScale } from './frame'
 import { resizePng } from './imgsize'
 import { listPaper } from './pasted'
 import { fillFromPlan, moduleOnPage } from './layoutfill'
+import { layoutModuleOf, planVsLayout } from './planmodule'
 import { pageText } from './poppler'
 import type { Forge } from './runtime'
-import { frameCode } from './section'
+import { frameCode, planCode } from './section'
 import { putShot } from './shot'
 
 const PICTURE = /\.(png|jpe?g|webp)$/i
@@ -35,25 +37,35 @@ export type Routed = { placed: PaperPlaced } | { hold: InboxHold }
 const hold = (from: string, why: string): Routed => ({ hold: { name: path.basename(from), from, why } })
 const same = (a: string, bytes: Buffer): boolean => fs.existsSync(a) && fs.readFileSync(a).equals(bytes)
 
+/** 넣은 기획서의 모듈이 배치표와 어떤가 한 줄(앞에 띄어쓰기) — 다르면 작업대의 「기획서대로 바꾸기」를 가리킨다(`planmodule.ts` 와 같은 셈) */
+function planSay(forge: Forge, code: string, module: string, filled: string): string {
+  if (filled) return ` ${filled}`
+  if (!module) return ' 기획서에서 모듈넘버를 찾지 못했습니다.'
+  const layoutModule = layoutModuleOf(forge, code)
+  if (!layoutModule) return ` 기획서 모듈넘버는 ${module}이며 배치표는 아직 모듈을 정하지 못했습니다.`
+  const cmp = planVsLayout(forge, code, module, layoutModule)
+  if (cmp.differs) return ` 기획서 모듈넘버는 ${module}인데 배치표는 ${layoutModule}입니다. 작업대에서 「기획서대로 ${module} 모듈로 바꾸기」를 누르세요.`
+  return ` ${cmp.note || `기획서 모듈넘버가 배치표와 같습니다(${module}).`}`
+}
+
 async function routePlan(forge: Forge, file: string, overwrite: boolean): Promise<Routed> {
   const read = pageText(file, 1)
   if ('why' in read) return hold(file, read.why)
   const t = read.text
   const bytes = fs.readFileSync(file)
 
-  const ma = /\(\s*MA-L(\d)-M(\d\d)-W(\d)-S(\d)\s*\)/i.exec(t)
-  if (ma) {
-    const code = `MAL${ma[1]}M${ma[2]}W${ma[3]}S${ma[4]}`
-    // 호 이름 세 벌 — 학습코드의 M07 · 제목의 `07호` · `7호`. 하나라도 다르면 어느 호 것인지 모른다
-    const hos = [...t.matchAll(/(\d{1,2})\s*호/g)].map((m) => Number(m[1]))
-    if (hos.some((h) => h !== Number(ma[2]))) {
+  const code = planCode(t)
+  if (code) {
+    // 호 이름 세 벌 — 학습코드의 M07 · 제목의 `07호` · `7호`. 하나라도 다르면 어느 호 것인지 모른다.
+    // 9호 기획서는 제목이 실제 호(`09호(M08)`)라 M 번호만 보면 9호 MA 기획서가 다 여기서 돌아섰다(2026-10-14) — 둘 다 받는다
+    const m = code.slice(5, 7)
+    const ho = new Set([Number(m), HO_OF[m]?.order])
+    const hos = [...t.matchAll(/(\d{1,2})\s*호/g)].map((x) => Number(x[1]))
+    if (hos.some((h) => !ho.has(h))) {
       return hold(file, `제목의 호(${[...new Set(hos)].join(', ')}호)가 ${code} 학습코드와 달라 넣지 않았습니다.`)
     }
     const module = moduleOnPage(t)
     const pick = forge.api.layoutFor(code)
-    if (module && pick.ok && pick.module && pick.module !== module) {
-      return hold(file, `기획서 모듈(${module})이 배치표(${pick.module})와 달라 넣지 않았습니다.`)
-    }
     const dir = forge.files.rscDir(code)
     if (!dir) return hold(file, `${code} 학습코드의 리소스 폴더를 정하지 못했습니다.`)
     const twin = listPaper(dir, 'plan').find((f) => same(path.join(dir, f), bytes))
@@ -61,18 +73,14 @@ async function routePlan(forge: Forge, file: string, overwrite: boolean): Promis
       // 이미 있어도 배치표가 못 정한 칸이면 채운다 — 작업대에 먼저 넣은 기획서는 여기를 안 거친다(`shot.ts` putShot).
       // 안 그러면 진행판에 다시 놓으라는 안내대로 해도 「같은 기획서」에서 돌아서고 영영 「갈림」으로 남는다
       const filled = module && !pick.ok ? await fillFromPlan(forge, code, module, path.join(dir, twin)) : ''
-      return { placed: { code, kind: 'plan', file: '', note: `${code} 학습코드에 같은 기획서가 이미 있습니다.${filled ? ` ${filled}` : ''}` } }
+      return { placed: { code, kind: 'plan', file: '', note: `${code} 학습코드에 같은 기획서가 이미 있습니다.${planSay(forge, code, module, filled)}` } }
     }
+    // 배치표와 모듈이 달라도 넣는다 — 안 넣으면 작업대가 견줄 기획서가 없어 「기획서대로 바꾸기」를 못 보인다(2026-10-14, 전에는 안 넣었다)
     const got = await putShot(code, bytes, 'plan', '.pdf')
     if (got.error) return hold(file, got.error)
     // 배치표가 못 정한 칸이면 **기획서의 모듈넘버로 채운다** (M7 · `layoutfill.ts`)
     const filled = module && !pick.ok ? await fillFromPlan(forge, code, module, got.file) : ''
-    const why = module
-      ? pick.ok
-        ? ` 기획서의 모듈(${module})이 배치표와 같습니다.`
-        : ` ${filled || `기획서의 모듈은 ${module}이며 배치표는 아직 정하지 못했습니다.`}`
-      : ' 기획서에 모듈넘버가 없습니다.'
-    return { placed: { code, kind: 'plan', file: got.file, note: `${code} 기획서를 넣었습니다.${why}` } }
+    return { placed: { code, kind: 'plan', file: got.file, note: `${code} 기획서를 넣었습니다.${planSay(forge, code, module, filled)}` } }
   }
 
   const en = /영어\s*Level\s*(\d)\s*_\s*(\d{1,2})\s*주\s*_\s*([^\r\n]+)/i.exec(t)

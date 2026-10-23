@@ -6,7 +6,7 @@
  * - 적는 자리는 배치표(`_layout/<과목><M>.json`)의 그 칸 — **모듈 판정은 안 건드린다**(forge `writeLayoutOrigin`)
  * - 후보에 없는 것은 안 받는다 · 도는 중이면 안 바꾼다 · 적은 뒤 다시 읽어 그 원본이 잡히는지 본다
  * - 사람이 고르면 만들 때 크기로 바꾸는 걸음(`originfit.ts`)도 손대지 않는다
- * - 원본이 바뀌면 이어 가던 대화는 잇지 않는다(`chat.ts` `ctxFor`) — 「처음부터 다시 만들기」로 새 대화를 시작한다
+ * - 대화를 이을 때(`chatresume.ts` `ctxFor`) — 사람이 적은 원본이 바뀌었으면 잇지 않고(「처음부터 다시 만들기」), 저절로 바뀐 것은 시작한 원본으로, 모듈이 바뀌었으면 새 모듈 원본으로 잇는다
  *
  * Electron 을 import 하지 않는다(services 규칙).
  */
@@ -18,6 +18,7 @@ import { fitOrigin } from './originfit'
 import { leftoverFiles, trashLeftovers } from './leftover'
 import { chatBusy } from './chatstore'
 import { savedScene } from './scene'
+import { backdropBetter, savedBackdrop } from './backdrop'
 import { loadForge, type Forge } from './runtime'
 
 const blank = (code: string, error: string): OriginChoices => ({
@@ -35,15 +36,26 @@ const blank = (code: string, error: string): OriginChoices => ({
 })
 
 /**
- * 만들 때 쓸 원본 — 배치표 판정에 크기 맞추기를 얹은 것. `assemble.ts` ①과 같은 셈이다(그 걸음은 얼려 둬서 여기서 따로 부른다).
- * 받을 리소스 창 · 원본 바꾸기가 같이 본다 — 창에 적힌 원본과 만들 때 쓰는 원본이 달라지면 사람이 엉뚱한 것을 내보낸다
+ * 만들 때 쓸 원본 — 배치표 판정에 크기 맞추기와 배경 맞추기를 얹은 것. `assemble.ts` ①과 같은 셈이다(그 걸음은 얼려 둬서 여기서 따로 부른다).
+ * 받을 리소스 창 · 원본 바꾸기 · 대화가 같이 본다 — 창에 적힌 원본과 만들 때 쓰는 원본이 달라지면 사람이 엉뚱한 것을 내보낸다.
+ * 배경 맞추기(2026-10-13)는 대화를 시작할 때 잰 것을 **읽기만** 한다(`backdrop.ts`) — 사람이 배치표에 적은 원본은 안 바꾼다.
+ * `sceneFrom` 은 배경 때문에 바꿨을 때 바꾸기 전 원본이다
  */
-export function originNow(forge: Forge, code: string): { origin: string; module: string; fitNote: string } | string {
+export function originNow(forge: Forge, code: string): { origin: string; module: string; fitNote: string; sceneFrom: string } | string {
   const p = forge.api.layoutFor(code)
   if (!p.ok) return p.error ?? '배치표를 읽지 못했습니다.'
   if (!p.origin) return '원본이 정해지지 않았습니다.'
   const fit = fitOrigin(forge, code, p.origin, p.alt)
-  return { origin: fit?.origin ?? p.origin, module: p.module, fitNote: fit?.note ?? '' }
+  const base = fit?.origin ?? p.origin
+  const better = pinnedHere(forge, code) ? null : backdropBetter(forge, code, base)
+  return { origin: better ?? base, module: p.module, fitNote: fit?.note ?? '', sceneFrom: better ? base : '' }
+}
+
+/** 사람이 배치표에 원본을 적었나 — forge `originChoices` 의 `pinned` 와 같은 셈(그것은 호 저장소를 다 훑어 무겁다) */
+export function pinnedHere(forge: Forge, code: string): boolean {
+  const s = forge.spec.parseStudyCode(code)
+  if (!s) return false
+  return Boolean(forge.layout.pinnedOrigin(s.subject, String(s.month).padStart(2, '0'), `L${s.level}W${s.week}S${s.session}`))
 }
 
 function choicesOf(forge: Forge, code: string): OriginChoices {
@@ -64,9 +76,9 @@ function choicesOf(forge: Forge, code: string): OriginChoices {
     choices: c.choices,
     // 도는 대화가 호 저장소에 쓰는 중이다 — 그동안 원본을 바꾸면 Claude 가 옛 원본으로 쓴 것과 섞인다 (2026-10-08, 전에는 이전 방식의 `runstate`)
     running: chatBusy(code),
-    // 장면 비교는 남아 있는 것만 — 여기서 재면 창을 열 때 몇 초씩 멈춘다 (`scene.ts`). 재던 이전 방식의 생성은 2026-10-08 에 걷었다
-    // 그래서 그 뒤로는 새로 안 생긴다 — 대화로 만들기에 붙이는 것은 다음 일이다
-    scene: typeof now === 'string' ? null : savedScene(forge, code, now.origin),
+    // 장면 비교는 남아 있는 것만 — 여기서 재면 창을 열 때 몇 초씩 멈춘다. 2026-10-13 부터 대화를 시작할 때 배경만 잰다(`backdrop.ts`),
+    // 그것이 없으면 이전 방식의 생성이 남긴 것(`scene.ts`)
+    scene: typeof now === 'string' ? null : (savedBackdrop(forge, code, now.origin) ?? savedScene(forge, code, now.origin)),
     leftover: typeof now === 'string' ? [] : leftoverFiles(forge, code, now.origin),
     ...(typeof now === 'string' ? { error: now } : {})
   }

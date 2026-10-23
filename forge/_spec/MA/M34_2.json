@@ -5,6 +5,8 @@
   "title": "시소로 무게 비교 (이닝 고르기 확장판)",
   "summary": "M34_1 과 같은 시소 활동인데, **이닝마다 시소 그림과 표정 애니를 GameData 로 받고** 이닝을 카드로 골라 들어갈 수 있습니다.",
   "reference": {
+    "moduleCommit": "6994ca4f86a0f73bdb819a67530ed7dec258cb61",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M34_2",
     "activities": [
       "MAL1M05W1S3",

@@ -8,16 +8,23 @@ import type { Spec } from "./types";
 import { listSpecs, loadSpec, resolveModule, specPath } from "./spec";
 import { listModules, type ModuleRow } from "./survey";
 import { draftSpec } from "./draft";
-import { SUBJECTS, type Fail, fail } from "./apifail";
+import { type Fail, fail } from "./apifail";
+import { SUBJECT_CODES, SUBJECT_RE } from "./subjects";
 
 // ── 스펙 ────────────────────────────────────────────────────────────
 
 export type SpecSummary = { subject: string; module: string; title: string; summary?: string };
 
+// 이 목록의 차례가 양산 화면(forge ui)의 모듈 고르기 칸에 그대로 나옵니다. 과목 표(`subjects.ts`)는
+// 영어가 먼저지만 여기는 여태 차례(수학, 국어, 영어)를 지키고, 표에 더한 과목은 표 차례대로 뒤에 붙입니다.
+const SHOWN_FIRST: readonly string[] = ["MA", "KO", "EN"];
+const rank = (s: string): number => (SHOWN_FIRST.includes(s) ? SHOWN_FIRST.indexOf(s) : SHOWN_FIRST.length);
+const SPEC_ORDER = [...SUBJECT_CODES].sort((a, b) => rank(a) - rank(b));
+
 // 과목 폴더와 `_common` 을 함께 봅니다.
 export function specs(): SpecSummary[] {
   const out: SpecSummary[] = [];
-  for (const subject of SUBJECTS) {
+  for (const subject of SPEC_ORDER) {
     for (const module of listSpecs(subject)) {
       try {
         const spec = loadSpec(subject, module);
@@ -64,7 +71,7 @@ export function draft(subject: string, module: string) {
 // 사람이 채운 스펙을 `_spec/{과목}/{모듈}.json` 으로 남깁니다.
 // **손으로 다듬어 둔 것을 실수로 덮지 않게 한 번 막습니다.**
 export function writeSpec(subject: string, module: string, value: unknown, force: boolean) {
-  if (!/^(MA|KO|EN)$/.test(subject) || !/^[A-Za-z0-9_]+$/.test(module)) {
+  if (!SUBJECT_RE.test(subject) || !/^[A-Za-z0-9_]+$/.test(module)) {
     return { ok: false as const, error: "과목이나 모듈 이름이 이상합니다." };
   }
   if (!value || typeof value !== "object") return { ok: false as const, error: "스펙이 비었습니다." };

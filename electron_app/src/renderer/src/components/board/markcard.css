@@ -1,0 +1,83 @@
+/*
+ * 진행판에서 따로 모아 보이는 카드 한 벌 — 「지금 바로 할 수 있는 학습코드」(NowList) · 「방학호와 겹치는 학습코드」(VacationList)가 같이 쓴다.
+ * 카드마다 `--tone` 만 바꾸고, 다른 것은 그 카드 css 에 둔다(nowlist · vacation)
+ */
+
+.mark-list {
+  --tone: var(--accent);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 var(--gap-4);
+  padding: var(--gap-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--surface);
+}
+
+.mark-list h3 {
+  margin: 0;
+  font-size: var(--font-md);
+  font-weight: 600;
+}
+
+.mark-list h3 strong {
+  color: var(--tone);
+}
+
+.mark-desc {
+  margin: 0 0 4px;
+  font-size: var(--font-sm);
+  color: var(--muted);
+}
+
+.mark-group {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-3);
+  padding: 6px 8px;
+  border-left: 3px solid var(--tone);
+  border-radius: var(--radius-1);
+  background: color-mix(in srgb, var(--tone) 9%, transparent);
+}
+
+.mark-title {
+  flex: none;
+  min-width: 96px;
+  padding-top: 3px;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: color-mix(in srgb, var(--tone) 50%, var(--fg));
+}
+
+.mark-title b {
+  margin-left: 4px;
+}
+
+.mark-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+button.mark-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border: 1px solid color-mix(in srgb, var(--tone) 45%, transparent);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: var(--font-xs);
+}
+
+/* 이 진행판의 학습코드는 밝게 */
+button.mark-code.mine {
+  color: var(--fg);
+}
+
+button.mark-code:hover {
+  background: color-mix(in srgb, var(--tone) 22%, var(--bg));
+  color: var(--fg);
+}

@@ -6,8 +6,10 @@ import fs from "fs";
 import path from "path";
 import { modulesOf } from "./survey";
 import { repoPath, workRoot } from "./paths";
+import { STUDY_ANY_RE } from "./subjects";
 
-export const CODE = /^(MA|KO|EN)L(\d)M(\d\d)W(\d)S(\d)$/;
+// 폴더 이름 · 배치표에 적힌 원본을 가르는 꼴. 과목 목록은 `subjects.ts` 한 곳입니다.
+export const CODE = STUDY_ANY_RE;
 
 export type Cell = { slot: string; issue: string; module: string };
 // **「사람」이 맨 위입니다.** 기계 판정은 앞선 호를 세어 본 짐작일 뿐이라,

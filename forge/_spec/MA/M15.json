@@ -5,6 +5,8 @@
   "title": "점 이어 길 만들기 (색깔 점 순서대로)",
   "summary": "색마다 번호가 붙은 점들을 순서대로 이어 길을 만드는 활동. 차가 그 길을 따라 달리고, 새들이 자리마다 놓입니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M15",
     "activities": [
       "MAL1M01W2S3"

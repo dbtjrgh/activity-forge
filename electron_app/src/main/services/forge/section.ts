@@ -34,6 +34,28 @@ const ACTS_KNOWN = new Set(['EN'])
 export type Study = { subject: string; level: number; month: number; week: number; session: number }
 
 /**
+ * MA 기획서 1쪽 글의 학습코드 — `(MA-L2-M08-W1-S1)` → `MAL2M08W1S1`. 없으면 null.
+ * 진행판에 놓을 때 가르기(`sortpaper.ts`)와 작업대 · 대화 시작의 「다른 학습코드 기획서」 막기(`shot.ts`)가 같이 쓴다
+ */
+export function planCode(text: string): string | null {
+  const m = /\(\s*MA-L(\d)-M(\d\d)-W(\d)-S(\d)\s*\)/i.exec(text)
+  return m ? `MAL${m[1]}M${m[2]}W${m[3]}S${m[4]}` : null
+}
+
+/**
+ * 기획서 1쪽이 말하는 주인 학습코드 — `planCode` 꼴(괄호)이 먼저, 없으면 괄호 없이 적은 것(`모듈 ID  MA-L1-M08-W2-S1`, 국어 `KO-L1-…`).
+ * 기획서 모듈넘버를 배치표와 견줄 때(`layoutfill.ts` · `planmodule.ts`)만 쓴다 — 9호 「개발자 전달」 기획서는 괄호 없이 적어,
+ * MAL1M08W3S3 폴더에 잘못 든 W2S1 기획서(M30_1)를 못 가렸다(2026-10-14).
+ * 진행판 가르기 · 대화 시작 막기는 그대로 `planCode`(괄호만)다 — 넓히면 그 둘의 동작이 바뀐다
+ */
+export function pageOwner(text: string): string | null {
+  const strict = planCode(text)
+  if (strict) return strict
+  const m = /(?<![A-Za-z0-9])(MA|KO)-L(\d)-M(\d\d)-W(\d)-S(\d)(?![0-9])/.exec(text)
+  return m ? `${m[1]}L${m[2]}M${m[3]}W${m[4]}S${m[5]}` : null
+}
+
+/**
  * figma 에서 찾아갈 자리를 사람 말로 한 줄.
  *
  * **화면이 이 글을 그대로 글자로 찍는다** — 별표를 넣으면 별표가 보인다
@@ -67,18 +89,30 @@ export function figmaSpot(study: Study | null): string {
 const FRAME_NAME = /(\d{1,2})\s*호[\s_]*lv\.?\s*(\d)[\s_]*(\d)\s*주(?:차)?[\s_]*(.*)$/i
 
 /**
+ * 영어가 아닌 과목 표시 — 한글 과목 이름이나 **대문자 KO · MA · NU 한 덩어리만** (2026-10-21). 두 글자를 대소문자 없이 보면
+ * `Number` · `Menu` 의 nu, `Make` · `Mascot` 의 ma, `Kong` 의 ko 에도 걸려 영어 프레임을 막는다(누리를 더할 때 짚혔고 KO · MA 도 같은 날 고쳤다).
+ * 앞은 영문자가 아니고(`MENU` 아님), 뒤는 학습코드의 `L<숫자>`(`MAL1M08…` · `KOL1…`)이거나 영문자가 아니어야 한다(`MA` · `MA 1호` · `MA2` · `KO-L1-…` · `NU_`).
+ * 2026-10-23 에 뒤를 영문자 전부로 막았다 — 10-21 판은 뒤가 소문자만 아니면 걸어 `MAKE` · `MAP` · `NUMBER` · `KOREA` 처럼 대문자로 쓴 영어 낱말도 막았다.
+ * 그 판이 일부러 막던 대문자 과목 이름(`MATH` · `KOREAN` · `NURI`)은 낱말째 따로 둔다. 뒤의 숫자는 그대로 막는다 — 숫자까지 놓으면 `MA2` 가 영어 학습코드로 간다.
+ * `KOR`(국어 로티 이름의 `Kor_` 를 대문자로 쓴 것)도 10-21 판이 막던 것이라 따로 둔다 — 뒤가 영문자가 아닐 때만(`KOREA` 는 영어 낱말이다)
+ */
+const OTHER_SUBJECT = /국어|수학|누리|(?<![A-Za-z])(?:(?:KO|MA|NU)(?:L\d|(?![A-Za-z]))|(?:MATH|KOREAN|NURI)(?![a-z])|KOR(?![A-Za-z]))/
+
+/**
  * **거꾸로 — figma 프레임 이름에서 학습코드** (2026-09-29, M5). figma 에서 파일로 내보낸 PNG 는 프레임 이름을 달고 온다.
  * 섹션 이름과 같은 짜임이라(위 `figmaSpot` 의 세 예) 같은 표를 뒤집는다.
  *
  * - 프레임 이름 꼴이 아니면 null — 부르는 쪽이 여느 파일로 다룬다
  * - 꼴은 맞는데 학습코드까지 못 가면 `why` — **활동 이름 표는 영어만 맞춰 봤다.** 국어 · 수학은 섹션 이름에
- *   S 번호가 없어 짐작하지 않고 묻는다(저장소 규칙 6)
+ *   S 번호가 없어 짐작하지 않고 묻는다(저장소 규칙 6). 누리(2026-10-21)는 프레임 이름을 본 적이 없다 — 영어 활동 이름과 겹쳐
+ *   영어 학습코드로 가지 않게 같이 막는다. 그래서 글도 「S 가 없다」가 아니라 「영어만 안다」로 적는다
  */
 export function frameCode(name: string): { code: string } | { why: string } | null {
   const m = FRAME_NAME.exec(name)
   if (!m) return null
-  if (/국어|수학|KO|MA/i.test(name.slice(0, m.index))) {
-    return { why: '국어와 수학 프레임 이름에는 몇 번째 활동(S)인지가 없어 학습코드를 알 수 없습니다. 파일 이름 앞에 학습코드를 붙이세요.' }
+  const head = name.slice(0, m.index)
+  if (OTHER_SUBJECT.test(head)) {
+    return { why: '영어 프레임 이름만 학습코드로 바꿀 수 있습니다. 파일 이름 앞에 학습코드를 붙이세요.' }
   }
   const act = m[4].replace(/\(\s*\d+\s*\)\s*$/, '').trim().toLowerCase()
   for (const [session, names] of Object.entries(ACTS)) {

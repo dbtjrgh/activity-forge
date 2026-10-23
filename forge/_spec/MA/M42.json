@@ -5,6 +5,8 @@
   "title": "카드 뒤집어 짝 맞추기",
   "summary": "뒤집힌 카드들 중 두 장을 골라 같은 그림이면 짝을 맞추는 활동. 카드 종류는 모듈이 미리 정해 둔 사전(car · robot · apple … 24가지)에서 고릅니다.",
   "reference": {
+    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M42",
     "activities": [
       "MAL1M03W2S2",

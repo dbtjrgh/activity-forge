@@ -108,6 +108,18 @@ export function pageText(file: string, page: number): { text: string } | { why: 
   return { text: run.stdout.replace(/[​-‍﻿]/g, '') }
 }
 
+/**
+ * 기획서 전체의 글 — `pdftotext -raw` (2026-10-14, 기획서 소리 이름 `plansound.ts`). 못 읽으면 까닭.
+ * **`-layout` 이 아니라 `-raw`** — 표 칸 안에서 갈린 이름에 `-layout` 은 옆 칸 숫자를 붙여 없는 이름을 만들었다(MAL3M08W3S3 `nar1`+`3`)
+ */
+export function docText(file: string): { text: string } | { why: string } {
+  const tool = poppler().tools.find((t) => t.name === 'pdftotext')
+  if (!tool) return { why: poppler().why || '기획서를 읽을 수 없습니다. pdftotext 프로그램이 없습니다.' }
+  const run = spawnSync(tool.path, ['-enc', 'UTF-8', '-raw', file, '-'], { encoding: 'utf8', timeout: 20000, windowsHide: true, maxBuffer: 32 * 1024 * 1024 })
+  if (run.error || run.status !== 0) return { why: `기획서를 읽지 못했습니다: ${run.error?.message ?? run.stderr.trim().slice(0, 80)}` }
+  return { text: run.stdout }
+}
+
 /** 기획서 한 쪽을 PNG 로 — `pdftoppm -r 60`. 만든 파일 경로, 못 뜨면 null. 판정은 종료 코드와 파일로만 한다 */
 export function pagePng(file: string, page: number, outBase: string): string | null {
   const tool = poppler().tools.find((t) => t.name === 'pdftoppm')

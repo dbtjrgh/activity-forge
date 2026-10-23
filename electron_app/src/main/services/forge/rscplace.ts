@@ -10,7 +10,11 @@ import { basename } from 'node:path'
 import type { Forge } from './runtime'
 import type { Found } from './rsccopy'
 
-/** 파일 이름에 붙은 차시 — `enl1m07w1s1_crayon1.png`. */
+/**
+ * 파일 이름에 붙은 차시 — `enl1m07w1s1_crayon1.png`.
+ * 옛 꼴(`Ko_L01_M01_W1_S3_…` · `En_L3_M01_W3_S3_…`, `planreuse.ts` `lottieHome`)은 일부러 안 본다(2026-10-23 잼) — 공유 폴더 학습코드 자리에
+ * 그 꼴로 다른 학습코드 이름이 붙은 로티 84개 가운데 71개를 그 자리 학습코드 완성본이 썼다. 막으면 쓰는 로티를 못 가져온다
+ */
 const CODE_AT = /^([a-z]{2}l\dm\d\dw\ds\d)[_-]/i
 
 /**

@@ -1,0 +1,20 @@
+/* 방학호와 겹치는 학습코드 — 카드 꼴은 markcard.css, 여기는 짝 하나(앞선 호 → 방학호, 같은 파일 비율)만 */
+
+/* 몸통은 묶음일 뿐이고 누르는 것은 두 학습코드 단추(.mark-code)다 */
+.vac-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  font-size: var(--font-xs);
+}
+
+.vac-arrow {
+  color: var(--tone);
+}
+
+.vac-pct {
+  color: var(--muted);
+  font-size: var(--font-xs);
+  font-variant-numeric: tabular-nums;
+}

@@ -5,6 +5,8 @@
   "title": "썸네일 골라 사진 찍고 꾸미기 · 영상 보기",
   "summary": "썸네일 3~7개 중 하나를 골라 사진을 찍은 뒤, 두 번째 화면에서 그 사진을 꾸미거나(editorPanel) 사진첩 영상으로 봅니다(videoPanel). 완성본 15개 가운데 꾸미기 7 · 영상 8. **9호 L3W2S1 · L3W4S1 이 어느 쪽인지는 기획서가 정합니다** — L3 는 2·4·5·6호가 영상, 7호가 꾸미기였습니다. M30_3 은 이 모듈에서 꾸미기만 떼어 낸 것입니다.",
   "reference": {
+    "moduleCommit": "2ed8a63b5569b92c820ceeca6391cd4193ddaf80",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M30",
     "activities": [
       "MAL1M02W4S1",
@@ -23,6 +25,14 @@
       "MAL2M06W4S1",
       "MAL3M06W4S1"
     ]
+  },
+  "variantKey": {
+    "path": "[].panel",
+    "ignore": [
+      "cameraPanel"
+    ],
+    "note": "두 번째 칸의 panel 이 화면을 고릅니다. videoPanel 은 영상 판(VideoPanel), editorPanel 은 꾸미기 판(Editor)이고 받는 값과 리소스가 다릅니다.",
+    "why": "M30.ts:85 이 quizData[1].panel 만 읽고 :91 에서 VideoPanel · Editor 를 가릅니다. 첫 칸의 cameraPanel 은 안 읽어 뺍니다. 개발 완료 16개(2026-10-13) — editorPanel 8 · videoPanel 8."
   },
   "codegen": {
     "hooks": {

@@ -40,11 +40,15 @@ export function checkFixedAliases(ctx: Ctx): void {
   for (const req of ctx.spec.assets.required ?? []) {
     if (!req.fixedAlias) continue;
     if (!ctx.aliases.has(req.alias)) {
+      // 안 부르는 판이 있는 이름 — 막지 않고 알리기만(필드의 aliasMayBeOff 와 같은 꼴)
+      const off = req.aliasMayBeOff;
       ctx.issues.push({
-        level: "error",
+        level: off ? "warn" : "error",
         rule: "fixed-alias-registered",
         path: `assets.${req.kind}`,
-        message: `alias '${req.alias}' 가 없습니다. 이름이 고정된 자원입니다.`,
+        message: off
+          ? `alias '${req.alias}' 가 없습니다. 이 이름을 안 부르는 판이면 괜찮습니다 — ${off}`
+          : `alias '${req.alias}' 가 없습니다. 이름이 고정된 자원입니다.`,
         ...(req.note ? { why: req.note } : {}),
       });
     }

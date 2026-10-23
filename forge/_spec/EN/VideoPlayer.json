@@ -5,6 +5,8 @@
   "title": "영상 보기 — 액자 속 영상을 재생합니다",
   "summary": "화면 가운데 액자가 놓이고 그 안에 영상 섬네일이 뜹니다. 재생 버튼을 누르면 액자가 커지면서 물러나고 영상이 화면을 꽉 채웁니다. 도우미 캐릭터는 재생 중에 숨었다가 끝나면 다시 나옵니다. 영상이 끝나면 액자가 돌아오고 액티비티가 끝납니다. **값을 넣는 칸이 없는 유일한 갈래입니다** — 영상 파일과 그림 몇 장이 전부입니다.",
   "reference": {
+    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-23) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/VideoPlayer",
     "activities": [
       "ENL1M01W1S2",

@@ -5,6 +5,8 @@
   "title": "긁어서 색칠하기 (숫자 색칠)",
   "summary": "색 버튼을 골라 숫자 칸을 색칠하는 활동. 팝업에서 긁어내는 연출이 있고, 다 칠하면 꽃·애벌레 애니로 마무리합니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M19",
     "activities": [
       "MAL1M01W1S2",

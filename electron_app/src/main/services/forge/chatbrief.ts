@@ -11,8 +11,11 @@
  */
 
 import path from 'node:path'
-import type { ChatChecks, ChatQuestion } from '../../../shared/forge'
+import type { ChatChecks, ChatQuestion, ChatTurn } from '../../../shared/forge'
 import type { ChatCtx } from './chatprep'
+import { planLines } from './chatmodule'
+import { driftLines, FIGMA_REDO, folderLines, howLines, loreLines, noShotLines } from './chatrules'
+import { sceneLines } from './chatscene'
 
 const OPEN = '<<<양산>>>'
 const CLOSE = '<<<끝>>>'
@@ -25,24 +28,39 @@ export type ChatReply =
 
 const list = (xs: string[]): string => (xs.length ? xs.map((x) => `- ${x}`).join('\n') : '- (없음)')
 
-export function firstBrief(c: ChatCtx): string {
+/** 사람이 시작 전에 남긴 말(`chat.ts` `chatNote`) — 기획서에 없는 값(어포던스 위치 · 배율 같은 것)이 여기 온다 */
+function noteLines(c: ChatCtx, notes: ChatTurn[]): string[] {
+  if (!notes.length) return []
+  const pic = (r: string): string => path.join(c.rsc, r).split(path.sep).join('/')
+  return [
+    '',
+    '## 사람이 시작 전에 남긴 말',
+    '기획서에 없는 값은 이 말이 정본이다. 기획서나 figma 와 어긋나면 ask 로 묻는다. 붙인 그림은 Read 로 열어 본다.',
+    ...notes.flatMap((n) => [`- ${n.text.trim() || '(글 없음)'}`, ...(n.images ?? []).map((i) => `  - 붙인 그림: ${pic(i)}`)])
+  ]
+}
+
+export function firstBrief(c: ChatCtx, notes: ChatTurn[] = []): string {
   const rel = (p: string): string => p.split(path.sep).join('/')
   return [
     `스파크온 액티비티 ${c.code} 를 만든다. 모듈은 ${c.module} 이다.`,
     '일하는 동안 쓰는 글(무엇을 읽고 무엇을 하는지)도 한국어로 짧게 쓴다 — 사람이 진행 줄로 본다.',
     '너는 이 학습코드의 호 저장소 폴더 안에서 일한다. 지금 작업 폴더가 그 폴더이고, 쓸 수 있는 곳은 여기뿐이다.',
+    ...planLines(c),
     '',
     '## 폴더',
     `- 작업 폴더(쓰기): ${rel(c.act)} — 지금은 빈 뼈대다. GameData.ts · AssetTable.ts · Activity.ts 를 쓴다`,
     `- 리소스 폴더(읽기): ${rel(c.rsc)} — 사람이 넣은 그림 · 소리 · 로티. _figma 는 figma 화면, _plan 은 기획서`,
-    `- 원본 완성본(읽기, 앱이 추천): ${c.origin.code} — 코드 ${rel(c.origin.act)} · 리소스 ${rel(c.origin.rsc)}`,
-    ...c.others.map((o) => `- 같은 모듈 다른 완성본(읽기): ${o.code} — 코드 ${rel(o.act)} · 리소스 ${rel(o.rsc)}`),
-    `- 모듈 소스(읽기): ${rel(c.moduleDir)}`,
-    `- 모듈 스펙(읽기): ${rel(c.specFile)} — 항목 설명 · 값 범위 · 모듈이 이름을 박아 부르는 그림(fixedAlias)`,
+    ...folderLines(c),
+    ...sceneLines(c.scene),
+    ...variantLines(c),
+    ...loreLines(c),
+    ...driftLines(c),
     '',
     '## 받은 입력',
     'figma 화면(붙인 차례 = 이닝 차례):',
     list(c.shots),
+    ...noShotLines(c),
     '기획서:',
     list(c.plans),
     '앱이 앞 호에서 리소스 폴더로 가져온 파일(모든 호가 같은 파일을 쓰는 것):',
@@ -50,28 +68,9 @@ export function firstBrief(c: ChatCtx): string {
     '',
     '리소스 표(탭 구분 — 파일, 그림 크기, 원본 같은 이름 파일과 바이트가 같은가, 원본에서 쓰던 별칭):',
     c.table,
-    '',
-    '## 하는 법',
-    '1. 원본의 GameData.ts · AssetTable.ts · Activity.ts 와 모듈 스펙을 먼저 읽는다. 원본에서 출발한다. 새로 짓지 않는다.',
-    '2. 값(낱말 · 문장 · 정답 · 소리 파일 번호)의 정본은 기획서다. 기획서를 끝까지 읽는다. 쪽이 많으면 pages 로 나눠 연다.',
-    '   기획서도 틀릴 수 있다. 앞뒤가 안 맞는 값(그 이닝 낱말과 다른 주어, 어긋난 번호 같은 것)은 그대로 넣지 말고 ask 로 바로 묻는다.',
-    '   기획서대로 두는 답과 고친 값을 고를 답으로 두고, 그 소리 파일 이름도 질문에 적는다(녹음이 기획서와 같으면 의도일 수 있다). 끝 보고 check 에만 적고 넘어가지 않는다.',
-    '3. 자리(좌표 · 배치)의 정본은 figma 화면이다. 화면을 모두 열어 본다. 이닝 차례는 figma 화면을 붙인 차례다.',
-    '   figma 가 없는 이닝의 글자 조각(자모) 간격은 다른 이닝 간격을 옮겨 쓰지 않는다. 옆으로 놓인 글자(틱)와 위아래로 쌓은 글자(폼)는 간격이 다르다.',
-    '   종이에 이미 찍힌 같은 짜임의 글자(위아래로 쌓은 글자, 받침 글자)를 열어 보고 그 간격을 따른다. 어림한 자리는 끝 보고 check 에 적는다.',
-    '4. 그림은 이름만 보고 짐작하지 않는다. 후보 그림은 Read 로 열어 눈으로 본다. 소리는 기획서 대본의 파일 이름과 번호로 맞춘다.',
-    '5. 이번 회차 내용(낱말 그림 · 책 · 스티커 · 대사처럼 회차마다 바뀌는 것)은 리소스 폴더의 파일에서 고른다. 그림을 편집하지 않는다.',
-    '   리소스 표에서 「폴더에 없음」인 자리 가운데 호마다 같은 틀(타자기 · 자판 · 배경 틀 같은 것)은 원본이나 같은 모듈 완성본의 리소스를 그대로 써도 된다.',
-    '   그럴 때는 여러 완성본에서 같은 파일인지(크기 · 모양) 확인하고 쓴다. 내용이 바뀌어야 할 것 같은데 받은 파일이 없으면 묻는다.',
-    '   앱이 앞 호에서 가져온 파일은 앞 호들이 다 같았다는 뜻일 뿐이다. figma 화면의 같은 틀(빈칸 상자 같은 것)과 크기나 모양이 다르면 figma 가 정본이다.',
-    '   가져온 파일을 그대로 쓰지 말고, figma 와 같은 파일을 달라고 묻는다. 어느 이닝에 어느 크기가 맞는지는 획 그림이 그 틀 안에 드는지로 본다.',
-    '   호 저장소에 놓일 파일은 끝 덩어리 files 에 적는다 — 앱이 복사한다.',
-    '   모듈이 이름을 박아 부르는 그림(스펙 fixedAlias, 원본 AssetTable 의 「이름 고정」)은 그 이름 그대로 둔다.',
-    '6. Activity.ts 는 원본 것에서 학습코드만 바꾼다. activityInfo.json · index.html · main.ts · App.vue · style.css 는 건드리지 않는다.',
-    '7. 원본 · 모듈을 바꾸거나 모듈 코드를 고쳐야 할 것 같으면 하지 말고 묻는다. 시키지 않은 판단을 하지 않는다.',
-    '8. 묻는 것은 기획서 · figma 로도 정할 수 없는 것, 기획서 오기로 보이는 것, 빠진 입력뿐이다. 모아서 한 번에 묻는다. 사소한 것은 원본대로 하고 끝 보고에 적는다.',
-    '   figma 화면이나 기획서가 없어서 정할 수 없으면 그것부터 달라고 묻는다.',
-    '   입력이 빠져 GameData.ts · AssetTable.ts 를 다 쓸 수 없으면 done 으로 끝내지 않는다. 짐작으로 채우지 말고 ask 로 묻는다.',
+    ...c.pages,
+    ...noteLines(c, notes),
+    ...howLines(),
     '',
     '## 끝맺음 (반드시)',
     `차례를 끝낼 때마다 마지막에 ${OPEN} 와 ${CLOSE} 사이에 JSON 하나를 둔다. 사람에게 보이는 글은 한국어, 업무용 말투로 짧게 쓴다.`,
@@ -92,11 +91,28 @@ export function firstBrief(c: ChatCtx): string {
   ].join('\n')
 }
 
+/** 모듈 안 유형(스펙 variantKey) — 값마다 그 값을 쓴 완성본. 다 같은 하나뿐이면 싣지 않는다 */
+function variantLines(c: ChatCtx): string[] {
+  const v = c.variants
+  if (!v || v.rows.length < 2) return []
+  return [
+    '',
+    `## 모듈 안 유형 (스펙 variantKey: ${v.path})`,
+    v.note,
+    '기획서에서 이닝(칸)마다 어느 유형인지 먼저 읽는다. 원본에 없는 유형은 아래에서 그 유형을 쓴 완성본의 GameData · AssetTable · 리소스와 모듈 소스를 열어 보고 따른다.',
+    ...v.rows.map((r) =>
+      r.open.length
+        ? `- ${r.value}: ${r.open.slice(0, 3).map((o) => (o === c.origin.code ? `${o}(원본)` : o)).join(', ')}${r.open.length > 3 ? ` 외 ${r.open.length - 3}곳` : ''}`
+        : `- ${r.value}: 열어 준 완성본에 없다(완성본 ${r.all}개가 쓴다). 이 유형이 필요하면 모듈 소스를 읽고, 모르면 묻는다.`
+    )
+  ]
+}
+
 /** 지난 차례 뒤 리소스 폴더에서 바뀐 것 — 앱이 알린다(`chatprep.ts` `diffInputs`) */
 export type Moved = { added: string[]; gone: string[]; changed: string[] }
 
 /** 사람의 답 — 붙인 그림은 리소스 폴더 안 경로로. figma 화면이 바뀌었으면 지금 차례 전체를 다시 준다(차례 = 이닝 차례) */
-export function replyBrief(text: string, images: string[], rsc: string, moved: Moved, shots: string[]): string {
+export function replyBrief(text: string, images: string[], rsc: string, moved: Moved, shots: string[], pages: string[] = []): string {
   const pics = images.map((i) => path.join(rsc, i).split(path.sep).join('/'))
   const lines = (title: string, xs: string[]): string[] => (xs.length ? ['', title, ...xs.map((a) => `- ${a}`)] : [])
   const figma = [...moved.added, ...moved.gone, ...moved.changed].some((f) => f.startsWith('_figma/'))
@@ -108,13 +124,17 @@ export function replyBrief(text: string, images: string[], rsc: string, moved: M
     ...lines('지난 차례 뒤에 내용이 바뀐 파일(같은 이름 — 다시 열어 본다):', moved.changed),
     ...lines('지난 차례 뒤에 리소스 폴더에서 없어진 파일:', moved.gone),
     ...(figma ? lines('지금의 figma 화면 차례(붙인 차례 = 이닝 차례):', shots) : []),
+    // 그새 figma 가 들어왔으면 figma 없이 어림한 자리를 다시 맞추게 한다 — 알리기만 하면 앞서 쓴 어림을 그대로 둔다
+    ...([...moved.added, ...moved.changed].some((f) => f.startsWith('_figma/')) ? ['', FIGMA_REDO] : []),
+    // 그림이 새로 들어왔으면 같은 배경 짝을 다시 잰 것 — 별 없는 판 · 효과 판을 나중에 넣는 일이 잦다(9호 인터북)
+    ...pages,
     '',
     `이어서 진행하고, 같은 꼴(${OPEN} … ${CLOSE})로 끝맺는다.`
   ].join('\n')
 }
 
 /**
- * 앱 검사 결과 — 막는 것(타입 오류 · 다시 못 읽음 · 없는 파일 · 복사 실패)과 참고(스펙).
+ * 앱 검사 결과 — 막는 것(타입 오류 · 학습코드 다름 · 다시 못 읽음 · 없는 파일 · 복사 실패)과 참고(스펙).
  * `last` 는 사람의 답에 덧붙일 때 — 세 번 고쳐도 막혀 사람에게 넘어온 결과는 Claude 가 아직 못 봤다
  */
 export function fixBrief(c: ChatChecks, opts: { spec: boolean; last?: boolean }): string {
@@ -126,9 +146,11 @@ export function fixBrief(c: ChatChecks, opts: { spec: boolean; last?: boolean })
     '',
     ...(notRun ? [`앱이 타입 검사를 실행하지 못했다(${c.tsc?.why ?? ''}). 파일을 다 썼으면 같은 done 끝맺음으로 다시 끝내면 앱이 다시 검사한다.`, ''] : []),
     ...part('타입 오류(반드시 고친다):', c.tsc?.errors ?? []),
+    ...part('학습코드가 폴더와 다르다(반드시 고친다 — 학습 기록이 다른 학습코드로 올라간다. 원본에 틀린 값이 들어 있었을 수 있다):', c.ident?.lines ?? []),
     ...part('쓴 액티비티를 앱이 다시 읽지 못했다(Activity.ts 가 모듈을 import 하는지, GameData.ts · AssetTable.ts 가 있고 문법이 맞는지 본다):', c.unread ? [c.unread] : []),
     ...part('AssetTable 이 가리키는데 호 저장소에 없는 파일(files 에 빠졌거나 이름이 다르다):', c.files?.missing ?? []),
     ...part('리소스 복사 실패:', c.files?.failed ?? []),
+    ...part('리소스 폴더에 왔는데 AssetTable 이 안 부르는 파일(참고 — 기획서의 이펙트 · 소리를 빠뜨린 것인지 본다. 일부러 안 쓴 것이면 끝 보고에 까닭을 적는다):', c.files?.unused ?? []),
     ...part('스펙 검사(참고 — 맞게 한 것이면 그대로 두고 끝 보고에 까닭을 적는다):', opts.spec ? (c.spec ?? []) : [])
   ].join('\n')
 }

@@ -31,13 +31,30 @@ export interface ChatChecks {
    * 반드시 통과해야 하는 검사 — 이 학습코드 폴더에서 난 타입 오류.
    * `ran` 이 false 면 검사를 돌리지 못했다(프로그램 없음 · 시간 초과) — 오류가 아니라 까닭(`why`)이고 AI 에게 안 맡긴다
    */
-  tsc: { ok: boolean; errors: string[]; ran?: boolean; why?: string } | null
+  tsc: {
+    ok: boolean
+    errors: string[]
+    ran?: boolean
+    why?: string
+    /**
+     * 공용 모듈(`src/_common/`)에서 난 타입 오류 줄 (2026-10-14). **막지 않고 경고만** — 배포 빌드는 실패하지만 남의 모듈일 수 있어
+     * 대화 고침 글(`fixBrief`)에는 안 싣는다
+     */
+    common?: string[]
+  } | null
   /** 참고 — 스펙 검사 에러 */
   spec: string[] | null
-  /** 앱이 리소스를 호 저장소로 복사한 결과 · AssetTable 이 가리키는데 없는 파일 */
-  files: { copied: number; missing: string[]; failed: string[] } | null
+  /** 앱이 리소스를 호 저장소로 복사한 결과 · AssetTable 이 가리키는데 없는 파일 · 리소스 폴더에 왔는데 안 쓴 파일(참고, 2026-10-14) */
+  files: { copied: number; missing: string[]; failed: string[]; unused?: string[] } | null
   /** 쓴 액티비티를 forge 가 다시 읽지 못한 까닭 — 있으면 없는 파일 검사도 못 한 것이라 막는다 */
   unread?: string
+  /** 잰 시각(ISO) — 찍어 둔 결과라 스펙 · 코드를 고친 뒤에도 옛 결과가 보인다(2026-10-14) */
+  at?: string
+  /**
+   * Activity.ts 의 mStudyCode · AssetTable.ts 의 ActivityCode 가 폴더 학습코드와 같은가(2026-10-14) — 다르면 막는다.
+   * 학습 기록이 다른 학습코드로 올라간다. 옛 대화 기록에는 없다
+   */
+  ident?: { ok: boolean; lines: string[] }
 }
 
 export interface ChatInfo {
@@ -60,6 +77,12 @@ export interface ChatInfo {
    */
   rev: number
   error?: string
+  /**
+   * Claude 가 끝 보고에 적은 「미리보기에서 확인할 것」(done 덩어리의 `check`, 2026-10-14). 옛 대화는 마지막 완료 글에서 다시 뽑는다(`chatlook.ts`).
+   * `lookSeenAt` — 사람이 「확인했습니다」를 누른 때. 그 전에는 검수 완료 단추가 꺼진다
+   */
+  look?: string[]
+  lookSeenAt?: string
 }
 
 /** 메인이 화면에 밀어 주는 소식 — 한 학습코드의 형편 전체 */

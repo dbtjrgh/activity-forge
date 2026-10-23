@@ -56,15 +56,19 @@ export function useChat(code: string, onSettled?: () => unknown) {
     [take]
   )
 
-  const start = useCallback(() => call(() => window.api.forgeChatStart(code)), [call, code])
+  // `force` — 남이 끝낸 학습코드를 작업대에서 「그래도 고치기」로 푼 뒤에만 true
+  const start = useCallback((force = false) => call(() => window.api.forgeChatStart(code, force)), [call, code])
   const reply = useCallback((text: string, images: Uint8Array[]) => call(() => window.api.forgeChatReply(code, text, images)), [call, code])
   const stop = useCallback(() => call(() => window.api.forgeChatStop(code)), [call, code])
   const clear = useCallback(() => call(() => window.api.forgeChatClear(code)), [call, code])
+  const lookSeen = useCallback(() => call(() => window.api.forgeChatLookSeen(code)), [call, code])
 
   const busy = info?.state === 'running' || info?.state === 'checking'
   // 끝나지 않은 대화가 있으면 호 저장소 폴더가 반쯤 쓰인 채다 — 검수 완료 · 커밋을 막는다(`chatWaiting`)
   const wait = busy || chatWaiting(info) ? '대화로 만들기를 마치거나 대화 기록을 지운 뒤 누를 수 있습니다.' : ''
-  return { info, sending, busy, wait, start, reply, stop, clear }
+  // 다 만든 대화의 「미리보기에서 확인할 것」 가운데 아직 「확인했습니다」를 안 누른 목록 — 검수 단추 위에 보인다
+  const look = info?.state === 'done' && info.look?.length && !info.lookSeenAt ? info.look : []
+  return { info, sending, busy, wait, look, start, reply, stop, clear, lookSeen }
 }
 
 export type Chat = ReturnType<typeof useChat>

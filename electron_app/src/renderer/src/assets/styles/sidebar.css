@@ -29,12 +29,17 @@
   font-size: 12px;
 }
 
-/* 만든 사람 · 팀 — 서랍 안 두 칸 */
+/* 만든 사람 · 팀 — 서랍 안 두 칸. 사내 공유 폴더 위치 칸도 같은 모양(`ShareRootRow.tsx`) */
 .me-fields {
   display: flex;
   gap: 6px;
 }
-.me-fields input {
+.share-row input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.me-fields input,
+.share-row input {
   flex: 1;
   min-width: 0;
   padding: 5px 8px;
@@ -46,7 +51,7 @@
   font-size: 12px;
 }
 
-/* 새 모듈 알림 — 스펙 주인의 옆줄에만. 모듈 한 줄에 칸 수 · 완성본 · 「스펙 만들기」 */
+/* 새 모듈 알림 — 모두의 옆줄에(2026-10-21 까지는 스펙 주인에게만). 모듈 한 줄에 학습코드 수 · 완성본 · 「요청문 복사」 */
 .new-modules {
   margin: 8px 0;
   padding: 6px 8px;

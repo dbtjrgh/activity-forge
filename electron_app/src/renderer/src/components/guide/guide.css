@@ -107,13 +107,6 @@
   color: var(--fg);
 }
 
-/* 묶음 머리 아래 한 줄 — 그 묶음을 어디서 받는지 */
-.guide-sec-tip {
-  margin: 0 0 var(--gap-2);
-  font-size: var(--font-xs);
-  color: var(--muted);
-}
-
 /* 스크롤 막대는 안 보인다 — 다른 화면과 같다 */
 .guide-body {
   flex: 1;
@@ -149,15 +142,4 @@
   font-size: var(--font-xs);
   font-weight: 400;
   color: var(--fg);
-}
-
-.guide-done {
-  margin: var(--gap-4) 0 0;
-  padding: var(--gap-3);
-  border: 1px solid var(--ok);
-  border-radius: var(--radius-2);
-  background: rgba(76, 195, 107, 0.08);
-  color: var(--ok);
-  text-align: center;
-  font-size: var(--font-md);
 }

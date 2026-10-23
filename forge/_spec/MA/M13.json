@@ -5,6 +5,8 @@
   "title": "자물쇠 열기 (블록 끌어다 맞추기)",
   "summary": "구름에 가려진 자물쇠 세 개가 있고, 블록을 끌어다 맞는 자리에 넣어 자물쇠를 여는 활동. 다 열면 완료 도장이 찍힙니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M13",
     "activities": [
       "MAL1M01W3S2"

@@ -5,6 +5,8 @@
   "title": "나만의 이야기책 짓기 — 표지를 고르고 칸마다 골라 채워 책을 냅니다",
   "summary": "먼저 책 표지를 고릅니다. 책이 펼쳐지면 인물·배경 같은 칸이 차례로 나오고, 칸마다 고를 것 셋이 놓입니다. 문제 칸(quiz)은 맞는 것을 골라야 넘어가고, 고르기 칸(choice)은 마음에 드는 것을 고릅니다. 고른 것이 그 칸의 빈자리에 붙습니다. 다 채우면 이름을 적고 책이 완성되어 불꽃이 터집니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/ExploreMakeLv3",
     "activities": [
       "ENL3M01W2S3",

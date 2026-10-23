@@ -5,12 +5,19 @@
   "title": "같은 종류끼리 세어 그래프 만들기",
   "summary": "몬스터가 말풍선으로 보여 준 종류를 밭에서 모두 찾아 누르면 누를 때마다 오른쪽 그래프 그 열에 칸이 하나씩 쌓이는 활동(그림그래프 · 막대그래프는 이닝마다 고름). 이닝마다 2~3종류, 그래프가 완성되면 몬스터가 설명하고, 그 이닝에 pick 이 있으면 「더 많은 꽃 / 가장 적은 꽃」을 그래프 아래 선택 칸에서 고른다.",
   "reference": {
+    "moduleCommit": "2ebbd1a856cc80251556fd17a9679a63efa653bc",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M38_2",
     "activities": [
       "MAL3M08W3S3"
     ],
     "doc": "sparkon_common/_common/module/MA/M38_2/README.md — 좌표와 근거는 §5, 리소스 배치는 §6, GameData 규칙과 양산 체크리스트는 §7, 미확정은 §9.",
     "note": "첫 적용 학습코드는 MAL3M08W3S3(9호 L3W3S3, 2026-10-08, 네 이닝 모두 정답 고르기 있음)입니다. 정답 고르기가 없는 판(W2S3 30차시 활동)은 같은 모듈에서 모든 이닝의 pick 을 빼서 만듭니다. 스펙은 모듈 코드(M38_2.ts · component/*.ts)와 README 를 읽어 적고 그 학습코드로 대조했습니다. M38_1(표 만들기)은 다른 모듈이라 서로 바꿔 쓸 수 없습니다."
+  },
+  "variantKey": {
+    "path": "inningData[].graph.type",
+    "note": "그래프 모양을 고릅니다. bar 는 막대 그래프, 그 밖의 값은 그림 그래프이고 칸을 그리는 함수와 보드가 다릅니다.",
+    "why": "component/Graph.ts:148 bar 면 _barCell, 아니면 _pictureCell. 개발 완료 4개(2026-10-13) — picture 3 · bar 3(둘 다 쓴 것 2)."
   },
   "codegen": {
     "hooks": {
@@ -96,6 +103,7 @@
         "alias": "mon_que02",
         "kind": "lottie",
         "fixedAlias": true,
+        "aliasMayBeOff": "모듈은 정답 고르기(pick)가 있는 이닝에서만 que02 를 부릅니다. 고르기가 없는 판(MAL1M08W2S3)은 등록하지 않아도 됩니다.",
         "note": "몬스터 정답 고르기 모션 — 그래프와 아래 선택 칸을 번갈아 보며 말함. 정답 고르기가 없는 활동도 몬스터 로티 한 벌로 등록합니다(없으면 그 상태를 건너뛰지만 이름은 고정)."
       },
       {

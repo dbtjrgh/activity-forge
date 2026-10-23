@@ -5,6 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/KR/K21",
     "activities": [
       "KOL3M01W2S2",
@@ -13,6 +15,11 @@
       "KOL3M04W2S2",
       "KOL3M05W2S2"
     ]
+  },
+  "variantKey": {
+    "path": "quizType",
+    "note": "판을 고릅니다. typeA 는 바구니(Basket), typeB 는 물건 판(ObjectManager)이고 고르기 그림 이름도 다릅니다.",
+    "why": "Quiz.ts:86 typeA → new Basket, 아니면 new ObjectManager. :519 고르기 그림 select_A · typeB_select_A, :113 typeA 만 frame. 개발 완료 7개(2026-10-13) — typeA 1 · typeB 6."
   },
   "codegen": {
     "hooks": {

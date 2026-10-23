@@ -63,7 +63,7 @@ function ShotPaste({
     if (busy) {
       // **받아는 뒀다고 말한다.** 조용히 넘어가면 안 붙은 것과 구별이 안 된다.
       // 대화 중에 붙인 화면은 다음 답과 함께 Claude 에게 간다(chat.ts 가 새로 들어온 파일을 알린다) — 이전 방식처럼 다시 생성하지 않는다(2026-10-08)
-      setShot(`${got.note} 다음 답을 보낼 때 Claude 에게 함께 알립니다.`)
+      setShot(`${got.note} 다음 답을 보낼 때 Claude 에게 알립니다.`)
       setWaiting(true)
       return
     }
@@ -92,10 +92,7 @@ function ShotPaste({
   useEffect(() => {
     if (busy || !waiting) return
     setWaiting(false)
-    void (async () => {
-      setShot('붙인 화면을 반영해 다시 읽었습니다.')
-      await onPasted()
-    })()
+    void onPasted()
   }, [busy, waiting, onPasted])
 
   return (
@@ -103,27 +100,11 @@ function ShotPaste({
       icon="shot"
       title="figma 화면"
       how="paste"
-      hint="figma 프레임을 캡처해 넣으세요."
+      hint="figma 프레임을 Ctrl+Shift+C 로 복사한 뒤 붙여넣으세요."
       count={shots.length}
       busy={busy}
     >
-      {/* **비어 있을 때만 크게** (2026-09-23 사용자 말 — 「이쁘게 실용성 있게」). 무엇을 누르면
-          되는지가 한눈에 — 캡처 단축키 둘과 붙이는 길 둘(Ctrl+V · 단추). 쌓이면 미리보기가 자리를 쓴다. */}
-      {shots.length === 0 && (
-        <div className="shot-empty">
-          <p className="shot-keys">
-            <span>
-              figma 프레임 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd>
-            </span>
-            <span className="shot-arrow">→</span>
-            <span>
-              <kbd>Ctrl</kbd>+<kbd>V</kbd> 붙여넣기
-            </span>
-          </p>
-          {/* M5 — 붙일 때 1x 를 가른다(`ipc/shots.ts` oneX). 제멋대로 크기의 캡처는 받지 않으니 권하지 않는다 */}
-          <p className="sub" title="Win+Shift+S 캡처는 크기가 맞지 않아 받지 않습니다.">1x(1920×1080) PNG만 받습니다.</p>
-        </div>
-      )}
+      {/* 붙일 때 1x 를 가른다(`ipc/shots.ts` oneX) — 크기가 틀리면 그 오류 글이 말한다 */}
       <p className="row-actions">
         <button className="ghost" type="button" onClick={() => void pasteNow()}>
           클립보드에서 붙여넣기

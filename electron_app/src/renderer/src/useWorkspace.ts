@@ -47,6 +47,11 @@ export function useWorkspace(reload: () => Promise<void>) {
    * 받은 앱은 옆에 저장소가 없어 진행판이 통째로 비어 있다. 이 한 번에 살아난다.
    */
   const pickForgeRoot = useCallback(() => change(() => window.api.forgePickForgeRoot(), true), [change])
+  /** 사내 공유 폴더 — 빈 글이면 기본 주소. 진행판 숫자는 안 바뀐다 */
+  const setShareRoot = useCallback((dir: string) => change(() => window.api.forgeSetShareRoot(dir), false), [change])
+  /** 공용 폴더(sparkon_common) — 고르기 · 기본 자리로. 진행판 숫자는 호 저장소를 세므로 안 바뀐다 (2026-10-21) */
+  const pickCommonRoot = useCallback(() => change(() => window.api.forgePickCommonRoot(), false), [change])
+  const clearCommonRoot = useCallback(() => change(() => window.api.forgeClearCommonRoot(), false), [change])
   /** 만든 사람 · 팀 — 「끝」이 activityInfo.json 에 적는 이름. 진행판 숫자는 안 바뀐다 */
   const setMe = useCallback(
     (developer: string, devTeam: string) => change(() => window.api.forgeSetMe(developer, devTeam), false),
@@ -76,6 +81,9 @@ export function useWorkspace(reload: () => Promise<void>) {
     clearRscRoot,
     pickForgeRoot,
     setMe,
+    setShareRoot,
+    pickCommonRoot,
+    clearCommonRoot,
     refreshSpecs
   }
 }

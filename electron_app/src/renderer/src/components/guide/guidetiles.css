@@ -60,6 +60,7 @@
 }
 
 .guide-pic {
+  position: relative;
   aspect-ratio: 1;
   display: flex;
   align-items: center;
@@ -113,6 +114,25 @@
 .guide-mark.hint {
   border-color: var(--warn);
   color: var(--warn);
+}
+
+/* 그림이 어디 것인가 — 원본 그림(회색) · 넣은 그림(파랑). 딱지(.guide-mark)가 오른쪽 위라 왼쪽 아래 (2026-10-15) */
+.guide-src {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 1px 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(20, 20, 22, 0.88);
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.guide-src.mine {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ── 한 줄씩 (소리 · 로티 · 앱이 가져올 것) ── */

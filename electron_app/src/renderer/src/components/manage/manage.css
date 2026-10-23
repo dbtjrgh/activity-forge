@@ -52,3 +52,6 @@
 .manage-kind { flex: none; min-width: 64px; padding: 1px 6px; border-radius: var(--radius-1); border: 1px solid color-mix(in srgb, var(--kind, var(--accent)) 60%, transparent); background: color-mix(in srgb, var(--kind, var(--accent)) 16%, transparent); color: var(--fg); font-size: var(--font-xs); text-align: center; }
 .manage-chips { display: flex; gap: 6px; }
 .manage-totals { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-2); margin: 0 0 var(--gap-3); }
+
+/* 빠른 모듈 회귀 검사 — 모듈 이름 칸은 줄을 다 차지하지 않게 */
+.manage-bar .manage-regress-name { flex: 0 1 220px; }

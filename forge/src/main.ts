@@ -21,6 +21,7 @@ import { runClone } from "@/gen/clone";
 import { runSwap } from "@/gen/swap";
 import { printLayout, resolvePair } from "@/gen/layout";
 import { repoPath } from "@/gen/paths";
+import { SUBJECT_CODES, SUBJECT_RE } from "@/gen/subjects";
 
 const HELP = `
 액티비티 양산
@@ -35,7 +36,7 @@ const HELP = `
                                          --write 를 붙여야 _recipe/ 에 남습니다
   yarn forge swap <새코드>    거기에 리소스까지 새 회차 폴더 것으로 갈아끼웁니다
                                          이름으로 못 맞춘 것은 무리로 묶어 보여 줍니다
-  yarn forge layout EN 07     진행판 — 그 호의 차시마다 어디까지 왔나
+  yarn forge layout EN 07     진행판 — 그 호의 차시마다 어디까지 왔나 (과목은 ${SUBJECT_CODES.join(", ")})
                                          --order 만드는 차례 · --why 왜 그 모듈인가
   yarn forge survey           모듈별로 쓰는 액티비티가 몇 개인지 셉니다
   yarn forge survey MA/M27    그 모듈을 쓰는 액티비티를 견줍니다 (--all 로 전부)
@@ -153,8 +154,8 @@ function main(): void {
   if (cmd === "layout") {
     const subject = (argv[1] ?? "").toUpperCase();
     const issue = (argv[2] ?? "").padStart(2, "0");
-    if (!/^(MA|KO|EN)$/.test(subject) || !/^\d\d$/.test(issue)) {
-      console.log(chalk.red("과목과 호가 필요합니다. ex) yarn forge layout EN 07"));
+    if (!SUBJECT_RE.test(subject) || !/^\d\d$/.test(issue)) {
+      console.log(chalk.red(`과목(${SUBJECT_CODES.join(", ")})과 호가 필요합니다. ex) yarn forge layout EN 07`));
       process.exit(1);
     }
     const view = argv.includes("--why") ? "왜" : argv.includes("--order") ? "순서" : "진행판";

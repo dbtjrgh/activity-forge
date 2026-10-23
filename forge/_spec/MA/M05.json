@@ -5,6 +5,8 @@
   "title": "번호 눌러 답하기 (협력사 공통 기반)",
   "summary": "위쪽에 문제가 보이고 아래 번호 버튼(0~7)을 눌러 답하는 활동. 이닝마다 정답 번호가 단계별로 정해져 있고, 다 맞히면 진행 표(table)가 채워지며 마지막에 엔딩 연출이 나옵니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M05",
     "activities": [
       "MAL1M01W4S1",
@@ -13,7 +15,12 @@
       "MAL1M04W2S1",
       "MAL1M05W4S1"
     ],
-    "doc": "README 없음. 근거는 M05.ts · M05_Answer.ts · M05_View.ts · M05_Button.ts · M05_Table.ts · M05_Ending.ts 와 dori_common 의 Com_* 들, 그리고 표본 5차시입니다."
+    "doc": "README 없음. 근거는 M05.ts · M05_Answer.ts · M05_View.ts · M05_Button.ts · M05_Table.ts · M05_Ending.ts 와 partner_common 의 Com_* 들, 그리고 표본 5차시입니다."
+  },
+  "variantKey": {
+    "path": "M05_Ending.style",
+    "note": "엔딩 연출을 고릅니다. version_1, version_2, version_3 마다 엔딩 함수가 따로 있고 쓰는 배경, 캐릭터, 효과음이 다릅니다.",
+    "why": "M05_Ending.ts:55 switch (style) 가 Version1 · Version2 · Version3 을 부릅니다. 개발 완료 24개(2026-10-13) — version_1 18 · version_2 3 · version_3 3."
   },
   "codegen": {
     "extends": {
@@ -115,7 +122,7 @@
             "desc": "시작 이닝 번호(0부터). 보통 0 입니다."
           }
         ],
-        "desc": "이닝 구성. dori_common 의 Com_Inning 이 이 값으로 초기화됩니다."
+        "desc": "이닝 구성. partner_common 의 Com_Inning 이 이 값으로 초기화됩니다."
       },
       {
         "key": "Com_bg",
@@ -311,7 +318,7 @@
             "desc": "배경 그림 표. **열쇠가 곧 AssetTable 의 alias 입니다** — 여기 적은 이름과 AssetTable 의 이름이 한 글자라도 다르면 그 그림이 안 나옵니다. 값은 화면에 놓이는 자리와 크기입니다. 활동에서 쓰는 것만 적으면 되고, 여기 열거된 것은 표본 5차시가 쓴 이름의 합집합입니다.\n\n**배경 그림에 없는 고정 그림은 여기에 이름을 더해 얹습니다** — 이닝이 바뀌어도 그대로인 것만. 완성본이 쓴 것: 높은음자리표 `bg_note`(MAL1M01 · MAL2M02 · MAL1M04 · MAL1M08, 모두 같은 그림이라 MAL1M04W2S1 의 bg_note.png 를 그대로 가져다 씁니다), 단추 받침 나무판 `bg_button_table`(M01 · M02 · M06 다섯 곳), 그래프 축 `bg_axis`(MAL1M08W4S1). 기획서가 이닝마다 판 그림(`…_[이닝]_Q`)을 적어도, 이닝마다 바뀌는 그림은 M05_View 의 단계 그림에 들어가고 바뀌지 않는 판만 여기 옵니다 — 판 그림을 따로 달라고 묻지 않습니다. 고정 그림이 리소스에 없으면 무엇이 없는지(figma 자리와 크기)를 한 줄로 달라고 합니다."
           }
         ],
-        "desc": "화면 배경 판들. dori_common 의 Com_BG 가 이 표를 그대로 받습니다."
+        "desc": "화면 배경 판들. partner_common 의 Com_BG 가 이 표를 그대로 받습니다."
       },
       {
         "key": "M05_Answer",
@@ -5612,7 +5619,7 @@
     }
   ],
   "notes": [
-    "**dori_common(협력사 공통) 위에 올라간 모듈입니다.** Com_Audio · Com_BG · Com_Inning · Com_Content · Com_Dimmed · Com_Affordance 를 쓰므로, 소리·배경·이닝 표시의 동작은 그쪽 규칙을 따릅니다.",
+    "**partner_common(협력사 공통) 위에 올라간 모듈입니다.** Com_Audio · Com_BG · Com_Inning · Com_Content · Com_Dimmed · Com_Affordance 를 쓰므로, 소리·배경·이닝 표시의 동작은 그쪽 규칙을 따릅니다.",
     "액티비티는 다섯 훅을 그대로 넘기기만 합니다 — onLoad(AssetTable 네 배열) · onInit(this, quizData, tableCheck) · onStart(quizData) · onEnd() · onUpdate(ticker). **onUpdate 를 빠뜨리면 애니가 멈춥니다.**",
     "onInit 의 세 번째 인자 tableCheck 가 진행 표를 쓸지 정합니다. 표본은 false 로 넘기면서 GameData 에는 M05_Table 을 채워 둔 차시가 있습니다 — 값이 있어도 표가 안 나오면 이 인자를 보세요.",
     "8호는 MAL1M07W2S1 · MAL2M07W2S1 · MAL3M07W4S1 세 자리(표현수학)입니다.",

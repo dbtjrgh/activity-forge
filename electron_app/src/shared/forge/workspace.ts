@@ -21,12 +21,35 @@ export interface Workspace {
   /** 「끝」이 activityInfo.json 에 적는 만든 사람 · 팀 (`.user.json`) — 다른 개발자는 서랍에서 제 이름으로 바꾼다 */
   developer?: string
   devTeam?: string
-  /** 스펙 주인인가 — 참이면 스펙 화면 · 「새 모듈」 알림이 열린다 (`.user.json` 의 specOwner, PC 마다 따로) */
-  specOwner?: boolean
+  /** 사내 공유 폴더를 바꿨으면 그 자리(`.user.json` 의 shareRoot). 비면 기본 주소(`SHARE_DEFAULT`) */
+  shareRoot?: string
+  /** 공유 폴더 칸에 적은 글을 받지 않은 까닭 — 그 칸 아래에만 보인다(서랍 전체 `error` 와 따로) */
+  shareError?: string
+  /** 공용 모듈 저장소(sparkon_common) 자리 (2026-10-21) — forge `commonroot.commonPick()` 그대로 */
+  common?: CommonPlace
+  /** 고른 공용 폴더를 받지 않은 까닭 — 그 줄 아래에만 보인다(`shareError` 와 같은 까닭) */
+  commonError?: string
   /** 고른 자리에 호가 없는 등, 알려야 할 것 */
   warn?: string
   /** 아예 읽지 못한 경우의 사용자용 메시지 */
   error?: string
+}
+
+/**
+ * **공용 폴더 자리** (2026-10-21 사용자 말 — 「공용폴더도 비슷한 경로로 있긴한데 경로 정할 수 있게 해놔」).
+ * forge `CommonPick` 의 모양을 적어 둔 것이다 — `workspace.ts` 가 그 결과를 대입하므로 갈라지면 컴파일에서 걸린다
+ */
+export interface CommonPlace {
+  /** 쓰는 자리 */
+  dir: string
+  /** `.user.json` 의 commonRoot. 비면 기본 자리(`home`)를 본다 */
+  saved: string
+  /** 기본 자리 — `<작업 폴더>/sparkon_common` */
+  home: string
+  /** 기본 자리가 쓰는 자리로 이어지나(같은 자리이거나 그리로 가는 정션) — `sparkon link`(미리보기 연결)는 기본 자리만 본다 */
+  beside: boolean
+  /** 기본 자리에 아무것도 없나 — 그러면 미리보기 「연결」이 거기에 쓰는 자리로 가는 정션을 먼저 건다(`services/forge/commonlink.ts`) */
+  free: boolean
 }
 
 /**
@@ -58,6 +81,26 @@ export interface SpecRefresh {
   /** 사람이 읽을 한 줄 */
   note: string
   error?: string
+  /** 공용 저장소(sparkon_common)를 받은 결과 — 자료 · 앱 받기와 따로 보인다(`services/forge/commonpull.ts`) */
+  common?: CommonPull
+}
+
+/** 「업데이트」가 공용 저장소를 받은 결과 (2026-10-21) — 못 받아도 자료 · 앱 받기는 그대로다 */
+export interface CommonPull {
+  /** 받았거나 이미 최신이면 참. 안 받았으면(하던 일 · 고친 파일 · 충돌 · 폴더 없음 등) 거짓 */
+  ok: boolean
+  /** 사람이 읽을 한 줄 */
+  note: string
+  /** 받기를 막은 커밋 안 한 파일 · 충돌한 파일(공용 저장소 기준 경로) */
+  files?: string[]
+}
+
+/** 공용 저장소에 받을 것이 있나 (2026-10-21) — 원격 main 커밋만 묻고(`ls-remote`) 받지 않는다 */
+export interface CommonCheck {
+  /** 원격 main 의 커밋이 지금 브랜치에 없으면 참. 못 물어봤으면 null — 단추를 켜지 않는다 */
+  newer: boolean | null
+  /** 못 물어본 까닭 한 줄 */
+  why?: string
 }
 
 /**
@@ -73,6 +116,8 @@ export interface UpdateCheck {
   checkedAt: number
   /** 받을 수 있는 앱 새 버전 — 없거나 소스로 띄운 앱이면 null */
   app: AppStamp | null
+  /** 공용 저장소 — 못 물어봐도 `error` 에 넣지 않는다(화면이 1분마다 묻기를 멈춘다) */
+  common?: CommonCheck
   error?: string
 }
 
@@ -84,3 +129,16 @@ export interface AppStamp {
   version?: string
 }
 
+/** dev 앱에서 켤 때 빌드한 뒤 고친 소스(`main/lib/newer.ts`) — 메인 · preload 는 앱을 다시 켜야 먹는다 */
+export interface CodeChanged {
+  /** electron_app 기준 경로, 늦게 고친 것부터 */
+  files: string[]
+  /** 훑을 파일 수 상한에 걸려 그 뒤는 안 봤다 */
+  truncated: boolean
+}
+
+/** 작업대 머리줄에서 여는 호 저장소 폴더 — 액티비티 `src/activity/<코드>` · 리소스 `public/sparklab/<코드>`(`services/forge/hallfolder.ts`) */
+export type HallFolder = 'activity' | 'public'
+
+/** 폴더를 탐색기로 열었나 — 못 열었으면 사람이 읽을 까닭 */
+export type FolderOpen = { ok: true; dir: string } | { ok: false; error: string }

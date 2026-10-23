@@ -29,15 +29,47 @@ export interface LayoutPick {
    * 대화로 생성은 못 하지만, Claude Code 세션에서 만든 것을 미리보기 · 검수 완료는 한다 (2026-10-12, M38_1 · M38_2)
    */
   first?: boolean
+  /**
+   * 배치표가 모듈을 못 정했지만 호 저장소에 개발 완료로 만들어 둔 학습코드라 그 모듈을 보인다(`ok` 는 false).
+   * 앞선 호 기록으로만 정하는 배치표가 지난 호의 완성본을 「갈림」으로 막던 것 — 열어서 보고 미리보기는 된다 (2026-10-14)
+   */
+  made?: boolean
 }
 
-/** 갈래마다 「원본은 몇 개, 지금 몇 개」 */
+/**
+ * 종류마다 지금 몇 개, 같은 모듈 완성본은 몇~몇 개, 기획서에 적혔는데 없는 소리 (2026-10-14, `services/forge/rsccount.ts`).
+ * **「없음」으로 세는 것은 `missing` 하나뿐이다** — 원본 하나와 개수를 견주던 때는 다 넣은 완성본에도 절반이 「부족」이었다
+ */
 export interface NeedRow {
   kind: string
-  /** 원본이 쓰는 별칭 수 */
-  origin: number
   /** 리소스 폴더에 지금 놓인 파일 수 */
   here: number
+  /** 같은 모듈 개발 완료 완성본이 쓴 수의 범위 — 완성본이 둘 밑이거나 모듈을 모르면 null(`rscrange.ts`) */
+  range: { min: number; max: number; n: number } | null
+  /** 기획서에 낱개로 적혔는데 리소스 폴더와 호 저장소 어디에도 없는 이 학습코드 소리 — 소리 줄에만 */
+  missing: string[]
+  /** 기획서에 범위(`nar01~16`)로만 나와 확실하지 않은 것 가운데 없는 것 — 세지 않는다 */
+  unsure: string[]
+}
+
+/** 기획서로 소리 이름을 확인했나 — `note` 가 비었으면 `names` 개를 확인했다(`plansound.ts`) */
+export interface PlanCheck {
+  names: number
+  note: string
+}
+
+/**
+ * **그 학습코드를 누가 끝냈나** (`services/forge/owner.ts`) — 호 저장소 작업 트리의 activityInfo.json.
+ * `mine` 개발 완료이고 만든 사람과 팀이 설정(.user.json)과 둘 다 같다. `theirs` 개발 완료인데 내 것이 아니다.
+ * 개발 완료가 아니면 둘 다 false 다 — 만드는 중인 학습코드는 막지 않는다. 못 읽었으면 `finished` 가 null
+ */
+export interface Owner {
+  finished: boolean | null
+  developer: string
+  devTeam: string
+  finishedDate: string
+  mine: boolean
+  theirs: boolean
 }
 
 /**
@@ -52,8 +84,10 @@ export interface Prepare {
   layout: LayoutPick
   /** 리소스 폴더. `exists: false` 면 아직 안 만든 것이다 */
   rsc: { dir: string; exists: boolean; files: RscFile[]; error?: string }
-  /** 원본과 견준 모자란 것. 원본을 못 떠 왔으면 빈 배열이고 `needError` 에 까닭 */
+  /** 종류마다 지금 수 · 같은 모듈 범위 · 기획서에 적혔는데 없는 소리. 못 셌으면 빈 배열이고 `needError` 에 까닭 */
   need: NeedRow[]
+  /** 기획서로 소리 이름을 확인했나 */
+  planSound: PlanCheck
   needError?: string
   /**
    * 양산이 파일을 쓸 자리의 쓰기 권한. **ACL 로 판정한다** —
@@ -84,7 +118,46 @@ export interface Prepare {
   needsShot: boolean
   written: boolean
   finished: boolean | null
+  /**
+   * 주인 형편 (2026-10-14). `line` 은 남이 끝냈을 때 보일 한 문장(아니면 빈 글),
+   * `committed` 는 마지막 커밋에서도 개발 완료인가 — 그러면 커밋 단추가 「수정사항 커밋」이다
+   */
+  owner?: Owner & { line: string; committed: boolean }
   /** 아예 읽지 못한 경우의 사용자용 메시지 */
   error?: string
 }
 
+
+/**
+ * 인터북 그림에서 **아직 없는 판** (`chatpages.ts` · forge `gen/pagemarks.ts`, 2026-10-13).
+ * figma 는 누를 자리에 별을 그려서만 내보내 준다 — 그림에서 별을 찾아 별을 숨긴 판 · 효과만 남긴 판을 그림마다 적는다
+ */
+export interface PageNeeds {
+  /** 누를 자리 별이 그려진 그림 수 — 0 이면 화면이 칸을 안 그린다 */
+  stars: number
+  needs: { rel: string; missing: string[] }[]
+  /** 픽셀까지 같은 그림 */
+  same: [string, string][]
+  error?: string
+}
+
+/**
+ * **기획서 1쪽 모듈넘버와 배치표 모듈** (2026-10-14, `services/forge/planmodule.ts`). 9호 MAL3M08W2S1 은 배치표가 M30 인데
+ * 기획서는 M30_3 이었고, 앱 어디에도 다르다는 말이 없었다 — 대화 속 Claude 가 기획서를 읽고서야 물었다.
+ */
+export interface PlanModule {
+  code: string
+  /** 기획서 1쪽에서 읽은 모듈 — 기획서가 없거나 못 읽었으면 빈 글 */
+  planModule: string
+  /** 그 기획서 파일 이름 */
+  plan: string
+  /** 배치표가 정한 모듈 — 못 정했으면(갈림) 빈 글 */
+  layoutModule: string
+  /** 기획서 모듈이 모듈 폴더(또는 스펙)가 있는 다른 모듈일 때만 true — 작업대가 「기획서대로 바꾸기」를 보인다 */
+  differs: boolean
+  /** 다르다고는 안 하지만 알릴 한 줄 — 판 이름(`M30_1`) · 기획서마다 다름 · 다른 학습코드 기획서. 없으면 빈 글 */
+  note: string
+  /** 「기획서대로 바꾸기」를 누른 결과 한 줄 */
+  said?: string
+  error?: string
+}

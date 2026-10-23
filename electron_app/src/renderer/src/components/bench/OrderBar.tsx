@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { TOUR_ANCHOR } from '../../lib/anchors'
 import type { Order } from '../../lib/benchorder'
 import { spot } from '../../lib/spot'
 import './orderbar.css'
@@ -18,12 +19,12 @@ function OrderBar({ order }: { order: Order }) {
   }, [order.target])
 
   return (
-    <div className={`order-bar${order.blocked ? ' blocked' : ''}`}>
+    <div id={TOUR_ANCHOR.benchOrder} className={`order-bar${order.blocked ? ' blocked' : ''}`}>
       {order.steps.length > 0 && (
         <ol className="order-steps">
           {order.steps.map((s, i) => (
             <li key={s.key}>
-              <button className={`order-step ${s.state}`} onClick={() => spot(s.target)} title="눌러서 해당 칸으로 이동">
+              <button className={`order-step ${s.state}`} onClick={() => spot(s.target)}>
                 <span className="order-mark">{MARK[s.state] || i + 1}</span>
                 {s.label}
               </button>

@@ -5,6 +5,8 @@
   "title": "정리 문제 8유형 (문항 유형별 선지 고르기)",
   "summary": "회차를 마무리하는 정리수학 문제집. 문항 유형이 여덟 개(type1_1 · type1_2 · type1_3 · type2 · type3_1 · type3_2 · type3_3 · type4)이고, 이닝마다 그중 하나를 골라 문제·선지·스피커 버튼을 배치합니다. 이닝을 다 풀면 엔딩 연출이 나옵니다.",
   "reference": {
+    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M01",
     "activities": [
       "MAL1M01W4S3",
@@ -14,6 +16,12 @@
       "MAL1M05W4S3"
     ],
     "doc": "README 없음. 근거는 InningManager.ts · TypeBase.ts · ButtonBase.ts · SpkButton.ts · Background.ts · Ending.ts 와 유형별 type*.ts 여덟 개, 그리고 표본 5차시입니다."
+  },
+  "variantKey": {
+    "path": "settings.typeList[]",
+    "ignore": ["Ending"],
+    "note": "이닝마다 문항 유형을 고릅니다. typeList 의 이름마다 모듈 안 클래스(type1_1.ts, type2.ts 같은 파일)가 따로 있고, 유형마다 화면 짜임과 리소스(체크박스, 스피커 단추, 숫자 그림 같은 것)가 다릅니다.",
+    "why": "InningManager.ts:29~41 typeMap 이 이름을 클래스로 잇고 :92~101 이 typeList 차례대로 만듭니다. 완성본 21개(2026-10-13)가 쓴 유형 묶음이 다릅니다 — type3_1 20 · type1_1 11 · type1_3 7 · type1_2 5 · type4 3 · type3_2 2 · type2 1, type3_3 은 0(MAL3M01W4S3 에 주석으로만). inningData[].type 이 아니라 typeList 를 보는 까닭 — 실제로 클래스를 고르는 것이 typeList[index] 이고, inningData[].type 은 대소문자가 섞였고(Type1_3) MAL2M05W4S3 은 index 와 어긋납니다. Ending 은 모든 완성본에 있어 뺍니다."
   },
   "codegen": {
     "extends": {
@@ -35,11 +43,11 @@
       },
       {
         "symbol": "CommonUse",
-        "from": "@dori_common/CommonUse"
+        "from": "@partner_common/CommonUse"
       },
       {
         "symbol": "Com_Content",
-        "from": "@dori_common/Com_Content"
+        "from": "@partner_common/Com_Content"
       }
     ],
     "members": [
@@ -163,7 +171,7 @@
       }
     ],
     "providedByModule": {
-      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset.ts 가 없습니다. 아래 것들을 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 코드에 박힌 것** — bg · bg2 · frame · wing · lever · elecWave · checkBox · mark.\n\n**이름을 조합해 찾는 것** (required 에는 고정 이름만 적을 수 있어 여기에 규칙을 둡니다)\n- `btn{answerNum}_{선지번호}` — 선지 버튼 기본 그림 (ButtonBase.ts:42)\n- `btn_select{answerNum}` · `btn_wrong{answerNum}` · `btn_correct{answerNum}` — 선지 버튼의 선택·오답·정답 상태\n- `exam{answerNum}` — 문제(예제) 그림\n- `spkBtn{이닝번호}_{버튼번호}` — 문항 안에 놓이는 스피커 버튼\n- `{mStudy}_spk` · `{mStudy}_spkPress` — 과목 스피커 버튼. mStudy 가 MA 이므로 **MA_spk · MA_spkPress**\n\n도우미 캐릭터 음원은 MainCharacter 가 과목별로 물고 있어 등록하지 않습니다.\n\n`checkBox` · `mark` 은 **체크박스를 쓰는 차시에만** 필요합니다 — 표본 다섯 중 MAL1M01W4S3 하나만 등록해 두었습니다. inningData[].isCheckBox 를 false 로 두면 만들지 않으므로, 모든 차시에 있어야 하는 것이 아니라 required 목록에서는 뺐습니다."
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset.ts 가 없습니다. 아래 것들을 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 코드에 박힌 것** — bg · bg2 · frame · wing · lever · elecWave · checkBox · mark.\n\n**이름을 조합해 찾는 것** (required 에는 고정 이름만 적을 수 있어 여기에 규칙을 둡니다)\n- `btn{answerNum}_{선지번호}` — 선지 버튼 기본 그림 (ButtonBase.ts:42)\n- `btn_select{answerNum}` · `btn_wrong{answerNum}` · `btn_correct{answerNum}` — 선지 버튼의 선택·오답·정답 테두리. **없으면 모듈이 그립니다**(2026-10-13, ButtonBase.ts `OUTLINE`) — 버튼보다 사방 10px 크고, 선 10px, 바깥 모서리 반지름 40, 안은 비우고, 주황 FFA600 · 빨강 FF5757 · 파랑 0084FF. 완성본 테두리 그림 거의 전부와 9호 figma 가 이 꼴이라 **figma 테두리가 이 꼴이면 그림을 받지 말고 AssetTable 에서 뺍니다.** 꼴이 다를 때(테두리에 바탕까지 칠한 판 등)만 그림을 넣습니다. 앱이 앞 호에서 가져온 `btn_select.png` 등은 앞 호 버튼 크기(270x220 · 300x280)라 새 버튼 크기와 다르면 쓰지 않습니다\n- `exam{answerNum}` — 문제(예제) 그림\n- `spkBtn{이닝번호}_{버튼번호}` — 문항 안에 놓이는 스피커 버튼\n- `{mStudy}_spk` · `{mStudy}_spkPress` — 과목 스피커 버튼. mStudy 가 MA 이므로 **MA_spk · MA_spkPress**\n\n도우미 캐릭터 음원은 MainCharacter 가 과목별로 물고 있어 등록하지 않습니다.\n\n`checkBox` · `mark` 은 **체크박스를 쓰는 차시에만** 필요합니다 — 표본 다섯 중 MAL1M01W4S3 하나만 등록해 두었습니다. inningData[].isCheckBox 를 false 로 두면 만들지 않으므로, 모든 차시에 있어야 하는 것이 아니라 required 목록에서는 뺐습니다."
     }
   },
   "gameData": {
@@ -2177,8 +2185,8 @@
     {
       "id": "answer-num-aliases",
       "level": "error",
-      "check": "이닝마다 btn{answerNum}_{선지번호} · btn_select{answerNum} · btn_wrong{answerNum} · btn_correct{answerNum} · exam{answerNum} 이 AssetTable 에 있어야 한다.",
-      "why": "**answerNum 은 정답 번호가 아니라 리소스 이름에 들어가는 문항 번호입니다.** 하나라도 빠지면 그 상태의 버튼이나 문제 그림이 조용히 사라집니다."
+      "check": "이닝마다 btn{answerNum}_{선지번호} · exam{answerNum} 이 AssetTable 에 있어야 한다. 테두리 셋(btn_select · btn_wrong · btn_correct{answerNum})은 없으면 모듈이 그리므로 없어도 된다.",
+      "why": "**answerNum 은 정답 번호가 아니라 리소스 이름에 들어가는 문항 번호입니다.** 버튼이나 문제 그림이 빠지면 조용히 사라집니다. 테두리는 2026-10-13 부터 그림이 없으면 ButtonBase 가 완성본과 같은 꼴로 그립니다(그린 것과 7호 그림을 픽셀로 견줘 크기 같음 · 색 차 0)."
     },
     {
       "id": "spk-alias-by-study",

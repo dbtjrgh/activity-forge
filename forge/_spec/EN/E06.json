@@ -5,6 +5,8 @@
   "title": "스티커 불빛 찾기 — 낱말 스티커 모으기",
   "summary": "어두운 판에 손전등 불빛을 비춰 숨은 스티커 그림을 찾고, 찾으면 팝업과 낱말 소리가 나온 뒤 낱말 스티커가 붙습니다. 다 찾으면 완료 단추가 뜹니다. 칸 하나가 스티커 하나(그림 · 팝업 · 낱말 한 벌)입니다. 완성본 ENL2M01W1S1 · ENL2M04W1S1 은 6칸, ENL2M06W1S1 은 8칸입니다(ENL2M11W1S1 은 quizData 가 빈 뼈대라 표본에서 뺐습니다).",
   "reference": {
+    "moduleCommit": "adff88caeb619f2ca6d46c81778dae17b9dd7ca6",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-30) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E06",
     "activities": [
       "ENL2M01W1S1",

@@ -84,7 +84,7 @@ export function checkParser(): void {
     "sparkLib 은 경로의 폴더 이름 (과목은 부르는 쪽이 채웁니다)",
   );
   ok(
-    one(`import { Com_Content } from '@dori_common/Com_Content'`) ===
+    one(`import { Com_Content } from '@partner_common/Com_Content'`) ===
       "common:/Com_Content",
     "과목을 안 가리는 공용 모듈",
   );
@@ -101,5 +101,19 @@ export function checkParser(): void {
     one(`import { GameMap } from "@_common/module/EN/E28/GameMap"`) ===
       "activity:EN/E28",
     "이름이 아니라 자리로 — GameMap 은 EN/E28 과 KR/K32 둘 다 있습니다",
+  );
+  // 누리(2026-10-21). 1호 NUL1 완성본에 실제로 있는 꼴 셋입니다 — `@/` 로 시작하는 것과 폴더 이름이 파일 이름과 다른 것.
+  ok(
+    one(`import { N01 } from "@_common/module/NU/N01/N01"`) === "activity:NU/N01",
+    "누리는 폴더도 학습코드도 NU",
+  );
+  ok(
+    one(`import { N07 } from "@/_common/module/NU/N07/N07"`) === "activity:NU/N07",
+    "`@/_common` 으로 시작해도 같은 모듈",
+  );
+  ok(
+    one(`import { NU_ebookActivity } from "@_common/module/NU/NU_ebook/NU_ebookActivity"`) ===
+      "activity:NU/NU_ebook",
+    "파일 이름이 아니라 폴더 이름 — NU_ebook",
   );
 }

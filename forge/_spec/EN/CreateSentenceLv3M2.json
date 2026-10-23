@@ -5,6 +5,8 @@
   "title": "문장 카드 뒤집기 — 낱말 카드를 차례대로 눌러 문장을 만듭니다",
   "summary": "위쪽 그림판에 장면이 뜨고 스피커를 누르면 문장을 읽어 줍니다. 아래에는 뒤집힌 카드가 낱말 수만큼 놓여 있습니다. 문장 차례대로 카드를 누르면 카드가 뒤집히며 낱말이 드러나고 문장 칸에 하나씩 채워집니다. 틀리면 도로 덮이고 다시 고릅니다. 다 채우면 답 카드가 뜨고 문장이 완성됩니다. 이닝 차례도, 카드가 놓이는 자리도 열 때마다 섞입니다.",
   "reference": {
+    "moduleCommit": "d99db9c46d007ff2ec32a8799ccdfdc7c1d9bfa7",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-23) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/CreateSentenceLv3M2",
     "activities": [
       "ENL3M02W3S3",

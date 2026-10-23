@@ -14,7 +14,8 @@
  * - 빼는 것 — `readme.md`(빈 폴더를 저장소에 남기려고 뼈대에 든 것), 점으로 시작하는 파일, 대소문자만 다른 것(「없는 파일」 검사가 알린다)
  * - forge 가 액티비티를 다시 못 읽거나 모듈 소스를 못 찾으면 **하나도 안 고른다** — 모르고 고르면 쓰는 것까지 고른다
  * - **저절로 지우지 않는다** — 조립한 이름은 다 못 알아본다. 사람이 목록을 보고 누르면 그때 다시 세어 **화면에 보인 것과 겹치는 것만** 휴지통으로
- *   (그새 새로 들어온 파일은 사람이 못 봤다). 대화가 도는 중이거나 남의 팀 것이면 안 옮긴다 — 남의 팀 것은 목록에 까닭을 같이 낸다
+ *   (그새 새로 들어온 파일은 사람이 못 봤다). 대화가 도는 중이거나 남의 것이면 안 옮긴다 — 남의 것은 목록에 까닭을 같이 낸다.
+ *   남이 끝낸 것은 「그래도 고치기」(`force`)로 옮긴다. 다른 팀이 만드는 중인 칸은 그것으로도 안 옮긴다(`owner.ts`)
  * - 옮긴 것은 호 저장소 git 에 지운 것으로 남고 다음 「양산 완료 커밋」에 같이 담긴다(`hallcommit.ts` 가 `git add -A -- public/sparklab/<코드>`)
  *
  * Electron 을 import 하지 않는다(services 규칙).
@@ -27,6 +28,7 @@ import { toMessage } from '../../lib/errors'
 import { escapeRe } from '../../lib/regex'
 import { toTrash } from '../../lib/trash'
 import { chatBusy } from './chatstore'
+import { otherTeam, ownerLine, ownerOf } from './owner'
 import { listPub, wantOf } from './pubfiles'
 import { loadForge, type Forge } from './runtime'
 import { repoOf } from './writecheck'
@@ -63,7 +65,7 @@ function textsIn(dir: string, pick: RegExp, skipCommon = false): Map<string, str
 
 /**
  * 학습코드 소스가 불러오는 모듈 폴더 — 배치표가 아니라 실제로 도는 코드를 본다.
- * 옛 호는 배치표에 모듈이 없고, 한 학습코드가 모듈 둘(공용 조각 `dori_common` 등)을 부르기도 한다. 폴더가 아니면 한 칸 위 폴더.
+ * 옛 호는 배치표에 모듈이 없고, 한 학습코드가 모듈 둘(공용 조각 `partner_common` 등)을 부르기도 한다. 폴더가 아니면 한 칸 위 폴더.
  * 과목째 부르는 꼴(`import { E05 } from "@_common/module/EN/"`, 1호 영어)은 가져온 이름의 폴더 — 없으면 과목 폴더 통째.
  * `module` 폴더는 깊이가 다르다 — `@_common/sparkLib/module/VideoPlayer/…`(1호 영상)
  */
@@ -123,18 +125,15 @@ const skipped = (rel: string): boolean => {
   return /^readme\.md$/i.test(name) || name.startsWith('.')
 }
 
-/** 남의 팀 것인가 — activityInfo 의 팀이 비었으면(빈 뼈대 · 만드는 중) 우리 것으로 본다. 남의 것이면 그 팀 이름 */
-function theirs(forge: Forge, repo: string, code: string): string {
-  try {
-    const info = JSON.parse(fs.readFileSync(path.join(repo, 'src', 'activity', code, 'activityInfo.json'), 'utf8')) as { devTeam?: unknown }
-    const team = typeof info.devTeam === 'string' ? info.devTeam : ''
-    return team && team !== forge.user.loadUser().devTeam ? team : ''
-  } catch {
-    return ''
-  }
+/** 옮기지 않는 까닭 — 남이 끝낸 것(`force` 면 옮김) · 다른 팀이 만드는 중인 칸. 비면 옮긴다 */
+function lockOf(forge: Forge, code: string, force: boolean): string {
+  const o = ownerOf(forge, code)
+  if (o.theirs) return force ? '' : `${ownerLine(o)} 파일을 옮기지 않습니다.`
+  const team = otherTeam(o, forge.user.loadUser().devTeam)
+  return team ? `${team} 담당 액티비티라 파일을 옮기지 않습니다.` : ''
 }
 
-export function pubExtra(forge: Forge, code: string): PubExtra {
+export function pubExtra(forge: Forge, code: string, force = false): PubExtra {
   const repo = repoOf(forge.paths, code)
   if (!repo) return { files: [], error: '호 저장소 위치를 정하지 못했습니다.' }
   const act = path.join(repo, 'src', 'activity', code)
@@ -160,11 +159,8 @@ export function pubExtra(forge: Forge, code: string): PubExtra {
   // 리소스 자리의 글 파일은 남은 것이 있을 때만 읽는다 — 로티가 많으면 수십 MB 다
   const pubTexts = textsIn(pub, PUB_TEXT)
   const files = left.filter((r) => !listed(r, pubTexts, path.join(pub, ...r.split('/'))))
-  const team = theirs(forge, repo, code)
-  return {
-    files: files.map((rel) => ({ rel, size: sizeOf(path.join(pub, rel)) })),
-    ...(team && files.length ? { locked: `${team} 담당 액티비티라 파일을 옮기지 않습니다.` } : {})
-  }
+  const locked = files.length ? lockOf(forge, code, force) : ''
+  return { files: files.map((rel) => ({ rel, size: sizeOf(path.join(pub, rel)) })), ...(locked ? { locked } : {}) }
 }
 
 export async function pubExtraOf(code: string): Promise<PubExtra> {
@@ -176,12 +172,12 @@ export async function pubExtraOf(code: string): Promise<PubExtra> {
 }
 
 /** 다시 세어 **화면에 보인 것(`shown`)과 겹치는 것만** 휴지통으로. 하나가 안 돼도 나머지는 옮기고, 안 된 것을 알린다 */
-export async function trashPubExtra(code: string, shown: string[]): Promise<LeftoverTrash> {
+export async function trashPubExtra(code: string, shown: string[], force = false): Promise<LeftoverTrash> {
   const out: LeftoverTrash = { moved: [], failed: [] }
   try {
     const forge = await loadForge()
     if (chatBusy(code)) return { ...out, error: '생성 중에는 파일을 옮길 수 없습니다. 생성이 끝난 뒤 다시 시도하세요.' }
-    const now = pubExtra(forge, code)
+    const now = pubExtra(forge, code, force)
     if (now.error || now.locked) return { ...out, error: now.error ?? now.locked }
     const seen = new Set(shown)
     const pub = path.join(repoOf(forge.paths, code), 'public', 'sparklab', code)

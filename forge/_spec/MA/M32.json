@@ -5,6 +5,8 @@
   "title": "찾아서 노트에 채우기",
   "summary": "배경 그림 속에 숨은 것들을 눌러 찾고, 찾은 것을 오른쪽 노트에 채워 나가는 활동. 이닝마다 찾을 목록이 달라지고 위쪽 이닝 띠에 진행이 표시됩니다.",
   "reference": {
+    "moduleCommit": "5f4f0593f11b5f7dcdbb0edbc48876f6c757f13e",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M32",
     "activities": [
       "MAL1M02W3S3",
@@ -14,6 +16,11 @@
       "MAL2M06W1S3"
     ],
     "doc": "README 없음. 근거는 M32.ts · BG.ts · InningBar.ts · NotePanel.ts · CorrectPanel.ts · MonterAni.ts 와 표본 3차시입니다."
+  },
+  "variantKey": {
+    "path": "items[].type",
+    "note": "항목마다 종류를 고릅니다. item 은 누르는 물건, deco-image 와 deco-lottie 는 꾸밈 그림과 꾸밈 로티이고 클래스가 다릅니다.",
+    "why": "BG.ts:195 item → BGItem, deco-image → DecoImageItem, deco-lottie → DecoLottieItem. 개발 완료 9개(2026-10-13) — item 9 · deco-lottie 9 · deco-image 2."
   },
   "codegen": {
     "hooks": {

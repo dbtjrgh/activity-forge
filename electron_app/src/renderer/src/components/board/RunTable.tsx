@@ -40,7 +40,7 @@ function RunTable({ subject, issue, refresh }: { subject: string; issue: string;
             <th>AI 호출</th>
             <th>비용</th>
             <th>캐시 읽기</th>
-            <th title="처음 작업부터 마지막 작업까지의 기간입니다. 쉬는 날도 포함됩니다.">처음~마지막</th>
+            <th>처음~마지막</th>
             <th>반영</th>
             <th>작업 내용</th>
           </tr>

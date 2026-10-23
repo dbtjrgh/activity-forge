@@ -1,68 +1,16 @@
-/* 지금 바로 할 수 있는 학습코드 — 그룹마다 진행판 상태 색(`base.css` `--tone-*`) */
+/*
+ * 지금 바로 할 수 있는 학습코드 — 카드 꼴은 markcard.css(방학호 · 카메라 마이크 카드와 같은 꼴), 여기는 다른 것만.
+ * 그룹마다 진행판 상태 색(`base.css` `.tone-*` 이 그룹의 `--tone` 을 바꾼다)
+ */
 
-.now-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 0 0 var(--gap-4);
-  padding: var(--gap-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-2);
-  background: var(--surface);
+/* 설명 줄이 없어 제목 아래를 조금 띄운다 */
+.mark-list.now-list h3 {
+  margin-bottom: 4px;
 }
 
-.now-list h3 {
-  margin: 0 0 4px;
-  font-size: var(--font-md);
-  font-weight: 600;
-}
-
-.now-list h3 strong {
-  color: var(--accent);
-}
-
-.now-group {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--gap-3);
-  padding: 6px 8px;
-  border-left: 3px solid var(--tone);
-  border-radius: var(--radius-1);
-  background: color-mix(in srgb, var(--tone) 9%, transparent);
-}
-
-.now-title {
-  flex: none;
+/* 그룹 이름(「미리보기와 검수」)이 길다 */
+.mark-title.now-title {
   min-width: 120px;
-  padding-top: 3px;
-  font-size: var(--font-sm);
-  font-weight: 600;
-  color: color-mix(in srgb, var(--tone) 50%, var(--fg));
-}
-
-.now-title b {
-  margin-left: 4px;
-}
-
-.now-codes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-button.now-code {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 2px 8px;
-  border: 1px solid color-mix(in srgb, var(--tone) 45%, transparent);
-  border-radius: 999px;
-  background: var(--bg);
-  font-size: 11px;
-}
-
-button.now-code:hover {
-  background: color-mix(in srgb, var(--tone) 22%, var(--bg));
 }
 
 .now-module {

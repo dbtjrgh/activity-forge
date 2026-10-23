@@ -5,6 +5,8 @@
   "title": "블록 쌓아 올라가기 (UFO 까지)",
   "summary": "블록을 쌓아 캐릭터가 위로 올라가게 하는 활동. 목표 개수만큼 쌓으면 UFO 에 닿고, 쌓은 개수를 세어 답합니다.",
   "reference": {
+    "moduleCommit": "7c718185f91d89369638043e7bc25f2945cfc7c6",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M07",
     "activities": [
       "MAL2M01W3S3",
@@ -12,6 +14,11 @@
       "MAL3M01W1S3"
     ],
     "doc": "README 없음. 근거는 M07.ts · JumpQuizManager.ts · Block.ts · CountObj.ts · Monster.ts 와 표본 3차시입니다."
+  },
+  "variantKey": {
+    "path": "blockType",
+    "note": "블록 종류를 고릅니다. 1 이면 아이템 그림과 별 로티(starMotion)를 더 만들고, 0 이면 만들지 않습니다.",
+    "why": "JumpQuizManager.ts:171 blockType === 1 일 때만 item 그림, :227 일 때만 starMotion 로티 15개. 나머지 분기(:110 · :302 · :362 · :978)는 자리 값. 개발 완료 3개(2026-10-13) — 1 이 2 · 0 이 1."
   },
   "codegen": {
     "extends": {

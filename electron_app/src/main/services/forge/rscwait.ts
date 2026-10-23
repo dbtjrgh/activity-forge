@@ -1,10 +1,10 @@
 /**
- * **받을 리소스** — 고른 호에서 아직 덜 온 칸마다, 갈래별로 원본보다 모자란 수 (2026-09-30, 「관리」 화면).
+ * **받을 리소스** — 고른 호에서 아직 덜 온 학습코드마다 무엇이 없나 (2026-09-30, 「관리」 화면).
  *
  * 디자인 쪽에 「무엇을 몇 개」 보낼지 적으려고 둔다 — 전에는 사람이 폴더를 뒤져 셌다.
- * **모자람은 개수로 잰다.** 파일은 이름이 바뀌어 오므로 이름만 견주면 온 것도 없다고 나온다. 처음엔 「리소스 대기」 칸만
- * 이름으로 봤는데, 그러면 영상만 빠진 ENL1M08W1S2(파일 9개가 와서 「만들 수 있음」)가 목록에서 아예 빠졌다.
- * 원본 이름으로 없는 것은 **실마리로만** 싣는다 — 개수가 모자란 갈래에서만.
+ * 09-30 에는 원본과 개수로 쟀다. 그 셈은 다 넣은 완성본에도 절반이 「부족」이라(`rsccount.ts` 머리) 10-14 에 바꿨다 —
+ * **기획서에 적혔는데 없는 소리 이름**이 확실한 것이고, 그림 · 로티는 같은 모듈 완성본 가운데 가장 적은 것보다도 적을 때만 참고로 싣는다.
+ * 영상만 빠진 ENL1M08W1S2 처럼 파일이 조금 온 칸도 범위 아래면 목록에 남는다.
  * 호를 다 그리면 호 하나에 몇 초라, **한 호씩** 본다.
  *
  * Electron 을 import 하지 않는다(services 규칙).
@@ -20,10 +20,15 @@ import { loadForge, type Forge } from './runtime'
 const WAITING = new Set(['리소스 대기', '만들 수 있음'])
 
 function missingOf(forge: Forge, code: string, module: string, empty: boolean): RscWaitRow {
-  const row: RscWaitRow = { code, module, origin: '', empty, missing: [] }
-  const counted = countFor(forge, code)
-  if (typeof counted === 'string') return { ...row, error: counted }
-  return { ...row, origin: counted.origin, missing: counted.rows.filter((r) => r.here < r.origin) }
+  const row: RscWaitRow = { code, module, empty, need: [], plan: { names: 0, note: '' } }
+  try {
+    const counted = countFor(forge, code, module)
+    // 확실한 것(없는 소리)과, 같은 모듈 완성본 가운데 가장 적은 것보다도 적은 종류만 — 범위 안이면 그 학습코드는 그만큼 쓰는 것일 수 있다
+    const need = counted.rows.filter((r) => r.missing.length || (r.range && r.here < r.range.min))
+    return { ...row, need, plan: counted.plan }
+  } catch (error) {
+    return { ...row, error: toMessage(error) }
+  }
 }
 
 /**
@@ -45,7 +50,7 @@ export async function rscWait(want?: string): Promise<RscWait> {
       for (const r of got.rows) {
         if (r.work?.finished === true || !WAITING.has(r.stage)) continue
         const row = missingOf(forge, r.code, r.module, r.stage === '리소스 대기')
-        if (row.empty || row.error || row.missing.length) rows.push(row)
+        if (row.empty || row.error || row.need.length) rows.push(row)
       }
     }
     return { month, months, rows }

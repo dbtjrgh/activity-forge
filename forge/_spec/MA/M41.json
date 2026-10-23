@@ -5,6 +5,8 @@
   "title": "창문 열어 낱말 찾기",
   "summary": "다락방 창문들이 차례로 열리고, 창 안에 나타난 것 중 낱말에 맞는 것을 고르는 활동. 맞으면 정답 애니, 틀리면 오답 애니가 나옵니다.",
   "reference": {
+    "moduleCommit": "efa827ff2005678a94e409b83de34826ac24e6a4",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/MA/M41",
     "activities": [
       "MAL1M02W2S3",

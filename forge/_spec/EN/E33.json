@@ -5,6 +5,8 @@
   "title": "파이프에 공 굴리기 (낱말 듣고 길 고르기)",
   "summary": "파이프를 이어 만든 길에 공을 굴려 목표 자리로 보내는 활동. 낱말을 듣고 맞는 모니터 쪽으로 길을 잡습니다. 제한 시간이 있습니다.",
   "reference": {
+    "moduleCommit": "c36c39677e71d33a12f22fb10304fa5796896f64",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E33",
     "activities": [
       "ENL2M02W1S3",

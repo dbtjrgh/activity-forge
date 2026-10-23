@@ -38,8 +38,13 @@
   background: var(--surface);
   font-size: var(--font-sm);
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.7;
+  word-break: keep-all;
   overflow-wrap: anywhere;
+}
+/* 지금 하는 일 — 맨 아래 줄만 밝게 */
+.chat-progress li:last-child {
+  color: var(--fg);
 }
 
 .chat-checks {
@@ -104,32 +109,85 @@
   gap: var(--gap-2);
 }
 
+/* 말한 사람 — Claude · 나 · 앱을 왼쪽 색 띠와 이름표 색으로 가른다(2026-10-13 「식별이 잘 되고 가독성 좋게」).
+   Claude 는 주황 계열이지만 「입력 필요」 노랑과 섞이지 않게 붉은 쪽으로 둔다 */
+.chat-side {
+  --who-ai: #e0896a;
+  --who-person: var(--accent);
+  --who-app: var(--fg-faint);
+  --chat-ink: #e6e6ea;
+  --chat-mark: #ffd27a;
+}
+
 .chat-turn {
-  padding: var(--gap-2) var(--gap-3);
+  padding: 10px 12px 11px;
   border-radius: var(--radius-2);
   background: var(--surface);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--who-ai);
 }
 .chat-turn.chat-by-person {
+  margin-left: 24px;
   background: var(--accent-soft);
   border-color: transparent;
+  border-left-color: var(--who-person);
 }
+/* 앱 알림 — 작고 흐리게. 대화 흐름을 가리지 않는다 */
 .chat-turn.chat-by-app {
+  padding: 6px 10px;
   background: transparent;
+  border-color: transparent;
+  border-left-color: var(--who-app);
+}
+.chat-turn.chat-by-app .chat-text {
+  font-size: var(--font-sm);
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 .chat-who {
-  display: block;
-  margin-bottom: 2px;
-  font-size: var(--font-xs);
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap-2);
+  margin-bottom: 4px;
+  font-size: var(--font-sm);
+}
+.chat-who b {
+  font-weight: 700;
+  color: var(--who-ai);
+}
+.chat-by-person .chat-who b {
+  color: var(--who-person);
+}
+.chat-by-app .chat-who b {
   color: var(--muted);
+  font-weight: 600;
+}
+.chat-who time {
+  font-size: var(--font-xs);
+  color: var(--fg-faint);
 }
 
+/* 본문 — 낱말 가운데서 줄을 바꾸지 않는다(keep-all). 긴 경로만 아무 데서나 끊는다 */
 .chat-text {
   margin: 0;
-  line-height: 1.55;
+  font-size: var(--font-md);
+  line-height: 1.7;
+  color: var(--chat-ink);
   white-space: pre-wrap;
+  word-break: keep-all;
   overflow-wrap: anywhere;
+}
+/* 굵게 — Claude 가 사람이 꼭 볼 것(기획서 오기 같은 것)에 쓴다. 굵기만으로는 문단 전체가 굵을 때 안 띄어 색을 더한다 */
+.chat-text b {
+  font-weight: 600;
+  color: var(--chat-mark);
+}
+.chat-note {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: var(--font-xs);
+  color: var(--muted);
 }
 
 .chat-questions {
@@ -137,13 +195,66 @@
   min-height: 0;
   max-height: 55%;
   overflow-y: auto;
-  margin: 0;
-  padding: var(--gap-2) var(--gap-3) var(--gap-2) 28px;
+  padding: 10px 12px;
   border: 1px solid var(--tone-ask);
   border-radius: var(--radius-2);
+  background: rgba(229, 96, 155, 0.06);
+}
+.chat-q-head {
+  margin: 0 0 var(--gap-2);
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--tone-ask);
+}
+.chat-questions ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: chat-q;
   display: flex;
   flex-direction: column;
-  gap: var(--gap-2);
+  gap: var(--gap-3);
+}
+.chat-questions ol > li {
+  position: relative;
+  padding-left: 26px;
+  counter-increment: chat-q;
+}
+.chat-questions ol > li::before {
+  content: counter(chat-q);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--tone-ask);
+  color: #fff;
+  font-size: var(--font-xs);
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+/* 고를 답 — 문장이 길어 한 줄에 하나씩. 고른 것은 체크와 강조색 */
+.chat-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: var(--gap-2);
+}
+.chat-options button.chat-pick {
+  width: 100%;
+  padding: 7px 10px;
+  text-align: left;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  font-size: var(--font-md);
+  line-height: 1.5;
+}
+.chat-options button.chat-pick.on::before {
+  content: '✓ ';
+  font-weight: 700;
 }
 
 .chat-input {
@@ -155,13 +266,22 @@
 .chat-input textarea {
   min-height: 84px;
   resize: vertical;
-  padding: var(--gap-2);
-  border-radius: var(--radius-1);
+  padding: 10px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--fg);
   font: inherit;
   font-size: var(--font-md);
+  line-height: 1.6;
+}
+.chat-input textarea::placeholder {
+  color: var(--fg-faint);
+}
+.chat-input textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 .chat-send {
   display: flex;

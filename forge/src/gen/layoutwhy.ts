@@ -6,6 +6,7 @@ import { listSpecs } from "./spec";
 import { chalk } from "./color";
 import { runs, scanCells, type Verdict } from "./layoutcore";
 import { placementOf } from "./layoutplace";
+import { hoLabel } from "./honame";
 
 // ─── 왜 그 모듈인가 ──────────────────────────────────────────────────────
 
@@ -24,7 +25,7 @@ export function printWhy(subject: string, target: string): boolean {
   const after = issues.filter((i) => i > target && builtIssue(i));
 
   console.log();
-  console.log(chalk.bold(`${subject} ${Number(target) + 1}호(M${target}) 모듈 배치표`));
+  console.log(chalk.bold(`${subject} ${hoLabel(target)} 모듈 배치표`));
   console.log(
     chalk.gray(
       `  칸마다 어느 모듈이 들어가는지 앞선 호에서 찾습니다` +

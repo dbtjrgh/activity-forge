@@ -1,0 +1,109 @@
+/* 학습코드 초기화 (2026-10-13, `ResetCode.tsx`). 클래스는 reset- 로 시작한다(짧은 이름이 온 앱을 덮은 함정) */
+
+.reset-code {
+  margin-top: var(--gap-3);
+  padding-top: var(--gap-3);
+  border-top: 1px dashed var(--border);
+  font-size: var(--font-sm);
+}
+
+.reset-hint {
+  margin: 6px 0 0;
+  font-size: var(--font-sm);
+  line-height: 1.6;
+  color: var(--muted);
+  word-break: keep-all;
+}
+
+/* 펼친 목록 — 지우는 일이라 붉은 테두리로 둘레와 가른다 */
+.reset-open {
+  padding: 10px 12px 12px;
+  border: 1px solid rgba(255, 107, 107, 0.45);
+  border-radius: var(--radius-2);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.reset-title {
+  margin: 0 0 var(--gap-2);
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.reset-group {
+  margin: var(--gap-2) 0 4px;
+  font-size: var(--font-xs);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.reset-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.reset-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-2);
+  line-height: 1.5;
+}
+
+.reset-tag {
+  flex: 0 0 auto;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: var(--font-xs);
+  font-weight: 700;
+}
+.reset-tag-trash {
+  color: #ffb3b3;
+  background: rgba(255, 107, 107, 0.16);
+}
+.reset-tag-restore {
+  color: #a9c6ff;
+  background: var(--accent-soft);
+}
+
+.reset-what {
+  min-width: 0;
+  color: var(--fg);
+  word-break: keep-all;
+}
+.reset-path {
+  display: block;
+  font-size: var(--font-xs);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.reset-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-2);
+  margin-top: var(--gap-3);
+}
+
+/* 지우는 단추 — 크기는 작은 단추와 같고 색으로만 가른다. 큰 「go」 단추는 칸 너비를 다 먹었다 */
+button.reset-go {
+  padding: 5px 12px;
+  border-color: var(--danger);
+  border-radius: 6px;
+  background: rgba(255, 107, 107, 0.14);
+  color: #ffc2c2;
+  font-size: var(--font-sm);
+  font-weight: 700;
+}
+button.reset-go:hover:not(:disabled) {
+  background: rgba(255, 107, 107, 0.26);
+}
+button.reset-go:disabled {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  opacity: 0.6;
+}

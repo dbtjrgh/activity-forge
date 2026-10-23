@@ -6,24 +6,24 @@
  * - **없는 파일** — 쓴 AssetTable 을 forge 가 다시 읽어(`api.clone`) 가리키는 파일이 호 저장소에 다 있나 본다.
  *   **대소문자까지 같은 이름으로** 본다 — Windows 는 대소문자를 안 가려 통과하고 서버(리눅스)에서 404 가 난다.
  *   로티 폴더는 AssetTable 의 경로 상수(`animation/` · `animations/`)를 따른다 — 레시피는 늘 `animations/` 로 읽는다
- * - **타입 검사(막음)** — 호 저장소 전체 `vue-tsc --noEmit`(재 보니 10~12초). **이 학습코드 폴더에서 난 오류만** 막는다 — 남의 폴더 오류는 우리 탓이 아니다.
- *   **검사를 못 돌린 것은 오류와 따로 둔다**(`ran: false`) — 처음에는 못 돌린 것을 「통과」로, 프로그램이 없는 것을 「타입 오류」로 AI 에게 세 번 맡겼다
+ * - **타입 검사(막음)** — 호 저장소 전체 `vue-tsc --noEmit`(`halltsc.ts`). **이 학습코드 폴더에서 난 오류만** 막는다 — 남의 폴더 오류는 우리 탓이 아니다.
+ *   공용 모듈 오류는 막지 않고 실어 둔다(`common`, 화면이 경고) · 잰 시각(`at`)을 같이 남긴다 — 찍어 둔 결과라 스펙을 고쳐도 옛 결과가 보였다
+ * - **받았는데 안 쓴 리소스(참고)** — 리소스 폴더에 왔는데 AssetTable 이 안 부르는 파일(`pubfiles.ts` `unusedRsc`). 9호 MAL2M08W1S3 의 새 정답 파티클이 그렇게 빠졌다
  * - **스펙 검사(참고)** — 2026-10-08 사용자 결정으로 막지 않는다. 리소스 파일 검사(`asset-file-*`)는 뺀다 — 호 저장소가 아니라 리소스 폴더를 봐서 틀리게 나온다
  *
  * Electron 을 import 하지 않는다(services 규칙).
  */
 
-import { execFile } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import type { ChatChecks } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import type { ChatFile } from './chatbrief'
+import { identCheck } from './chatident'
 import type { ChatCtx } from './chatprep'
-import { listPub, wantOf } from './pubfiles'
+import { hallTsc } from './halltsc'
+import { listPub, unusedRsc, wantOf } from './pubfiles'
 import type { Forge } from './runtime'
-
-const TSC_TIMEOUT = 180_000
 
 /** `base` 안에 머무는 경로인가 — `..` 로 밖을 가리키면 null */
 function inside(base: string, rel: string): string | null {
@@ -39,7 +39,8 @@ function inside(base: string, rel: string): string | null {
  */
 function sourceOf(ctx: ChatCtx, from: string): string | null {
   if (!path.isAbsolute(from)) return inside(ctx.rsc, from)
-  for (const d of [ctx.rsc, ctx.origin.rsc, ...ctx.others.map((o) => o.rsc)]) {
+  // 기획서가 다른 모듈을 적었으면 그 모듈 완성본 리소스도(`chatmodule.ts`)
+  for (const d of [ctx.rsc, ctx.origin.rsc, ...ctx.others.map((o) => o.rsc), ...(ctx.planModule?.dones ?? []).map((o) => o.rsc)]) {
     const hit = inside(d, path.relative(d, path.resolve(from)))
     if (hit) return hit
   }
@@ -83,11 +84,11 @@ function copyAll(ctx: ChatCtx, files: ChatFile[]): { copied: number; failed: str
 }
 
 /** AssetTable 이 가리키는데 호 저장소에 없는 파일 · 스펙 에러 — 둘 다 forge 가 쓴 액티비티를 다시 읽어서 */
-function readBack(forge: Forge, ctx: ChatCtx): { missing: string[]; spec: string[]; unread?: string } {
+function readBack(forge: Forge, ctx: ChatCtx): { missing: string[]; spec: string[]; want: string[]; unread?: string } {
   const c = forge.api.clone(ctx.code, ctx.code)
-  if (!c.ok) return { missing: [], spec: [], unread: `쓴 액티비티를 다시 읽지 못했습니다: ${c.error ?? ''}` }
+  if (!c.ok) return { missing: [], spec: [], want: [], unread: `쓴 액티비티를 다시 읽지 못했습니다: ${c.error ?? ''}` }
   const lost = c.notes.filter((n) => n.includes('못 읽었습니다'))
-  if (lost.length) return { missing: [], spec: [], unread: lost.join(' ') }
+  if (lost.length) return { missing: [], spec: [], want: [], unread: lost.join(' ') }
   // 있는 것과 부르는 것은 「안 쓰는 리소스」(`pubextra.ts`)와 같은 셈이다(`pubfiles.ts`)
   const want = wantOf(forge, c.recipe, ctx.act)
   const have = listPub(ctx.pub)
@@ -107,56 +108,26 @@ function readBack(forge: Forge, ctx: ChatCtx): { missing: string[]; spec: string
     'error' in g
       ? [String(g.error)]
       : g.issues.filter((i) => i.level === 'error' && !i.rule.startsWith('asset-file-')).map((i) => `${i.rule} ${i.path} — ${i.message}`)
-  return { missing, spec }
-}
-
-/**
- * 호 저장소 타입 검사 — 이 학습코드 폴더의 오류 줄.
- * **앱의 실행 파일을 node 로 쓴다**(`view.ts` · `repro.ts` 와 같은 길) — `.cmd` 를 셸로 부르면 PATH 의 node 에 기대고,
- * 오류 글이 CP949 로 깨지고, 시간 초과에 cmd 만 죽어 손주 node 가 남는다
- */
-function tsc(hall: string, code: string): Promise<NonNullable<ChatChecks['tsc']>> {
-  const bin = path.join(hall, 'node_modules', 'vue-tsc', 'bin', 'vue-tsc.js')
-  if (!fs.existsSync(bin)) {
-    return Promise.resolve({ ok: false, ran: false, errors: [], why: '호 저장소에 타입 검사 프로그램(vue-tsc)이 없습니다. 호 저장소에서 yarn 을 먼저 실행하세요.' })
-  }
-  return new Promise((done) => {
-    execFile(
-      process.execPath,
-      [bin, '--noEmit', '-p', 'tsconfig.app.json'],
-      {
-        cwd: hall,
-        timeout: TSC_TIMEOUT,
-        maxBuffer: 16 * 1024 * 1024,
-        windowsHide: true,
-        env: { ...process.env, ELECTRON_RUN_AS_NODE: '1', FORCE_COLOR: '0' }
-      },
-      (error, stdout, stderr) => {
-        const lines = `${stdout ?? ''}\n${stderr ?? ''}`.split(/\r?\n/).filter((l) => /error TS\d+/.test(l))
-        const mine = lines.filter((l) => l.replace(/\\/g, '/').includes(`src/activity/${code}/`))
-        // 오류가 있으면 vue-tsc 는 0 이 아닌 코드로 끝난다 — 오류 줄을 읽었으면 돈 것이다
-        if (!error || lines.length) return done({ ok: mine.length === 0, ran: true, errors: mine })
-        const e = error as { killed?: boolean; code?: number | string }
-        if (e.killed) return done({ ok: false, ran: false, errors: [], why: `타입 검사가 ${TSC_TIMEOUT / 60000}분 안에 끝나지 않았습니다.` })
-        const said = `${stderr ?? ''}`.trim().split(/\r?\n/)[0]?.slice(0, 200) ?? ''
-        done({ ok: false, ran: false, errors: [], why: `타입 검사를 실행하지 못했습니다(종료 코드 ${e.code ?? '알 수 없음'}).${said ? ` ${said}` : ''}` })
-      }
-    )
-  })
+  return { missing, spec, want }
 }
 
 export async function finishChat(forge: Forge, ctx: ChatCtx, files: ChatFile[]): Promise<ChatChecks> {
   const copy = copyAll(ctx, files)
   const back = readBack(forge, ctx)
   const hall = path.resolve(ctx.act, '..', '..', '..')
-  const types = await tsc(hall, ctx.code)
+  const t = await hallTsc(hall, ctx.code)
   return {
-    tsc: types,
+    tsc: { ok: t.ok, ran: t.ran, errors: t.lines, ...(t.why ? { why: t.why } : {}), ...(t.common.length ? { common: t.common } : {}) },
+    at: new Date().toISOString(),
     spec: back.spec,
-    files: { copied: copy.copied, missing: back.missing, failed: copy.failed },
-    ...(back.unread ? { unread: back.unread } : {})
+    // 받았는데 안 쓴 리소스 — 막지 않고 보인다(빠뜨린 이펙트 · 소리를 짚는다)
+    files: { copied: copy.copied, missing: back.missing, failed: copy.failed, unused: back.unread ? [] : unusedRsc(ctx.rsc, ctx.pub, back.want, files, ctx.moduleDir) },
+    ...(back.unread ? { unread: back.unread } : {}),
+    // 학습코드가 폴더와 다르면 학습 기록이 다른 학습코드로 간다 — 막는다(`chatident.ts`)
+    ident: identCheck(ctx.act, ctx.code, ctx.origin.act)
   }
 }
 
-/** 막는 것이 남았나 — 타입 오류(또는 못 돌림) · 다시 못 읽음 · 없는 파일 · 복사 실패 */
-export const blocked = (c: ChatChecks): boolean => !c.tsc?.ok || Boolean(c.unread || c.files?.missing.length || c.files?.failed.length)
+/** 막는 것이 남았나 — 타입 오류(또는 못 돌림) · 다시 못 읽음 · 없는 파일 · 복사 실패 · 학습코드 다름 */
+export const blocked = (c: ChatChecks): boolean =>
+  !c.tsc?.ok || Boolean(c.unread || c.files?.missing.length || c.files?.failed.length) || c.ident?.ok === false

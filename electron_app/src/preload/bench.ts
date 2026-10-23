@@ -8,6 +8,8 @@ import type {
   ChatInfo,
   CommitResult,
   DoneResult,
+  FolderOpen,
+  HallFolder,
   InboxResult,
   SortedInbox,
   Prepare,
@@ -19,7 +21,11 @@ import type {
   LeftoverTrash,
   OriginChoices,
   PubExtra,
-  RscClean,
+  CodeReset,
+  PageNeeds,
+  PlanModule,
+  ShareLook,
+  ShareTake,
   ViewCheck,
   LinkResult
 } from '../shared/forge'
@@ -27,8 +33,10 @@ import { ipcRenderer, webUtils } from 'electron'
 
 export const benchApi = {
   /** 그 학습코드의 리소스 폴더를 만들고 탐색기로 연다 — 누를 때만 만든다 */
-  forgeResourceDir: (code: string): Promise<{ ok: true; dir: string } | { ok: false; error: string }> =>
+  forgeResourceDir: (code: string): Promise<FolderOpen> =>
     ipcRenderer.invoke(IPC.forgeResourceDir, code),
+  /** 그 학습코드의 호 저장소 폴더(액티비티 `src/activity` · 리소스 `public/sparklab`)를 탐색기로 연다 — 없으면 까닭만 온다 */
+  forgeHallFolder: (code: string, kind: HallFolder): Promise<FolderOpen> => ipcRenderer.invoke(IPC.forgeHallFolder, code, kind),
   /** 리소스 화면이 처음 보여 줄 것 — 모듈·원본·리소스 폴더·모자란 것·쓰기 권한 */
   forgePrepare: (code: string): Promise<Prepare> => ipcRenderer.invoke(IPC.forgePrepare, code),
   /**
@@ -53,6 +61,9 @@ export const benchApi = {
   forgeOriginPick: (code: string, origin: string | null): Promise<OriginChoices> =>
     ipcRenderer.invoke(IPC.forgeOriginPick, code, origin),
   forgeLeftoverTrash: (code: string): Promise<LeftoverTrash> => ipcRenderer.invoke(IPC.forgeLeftoverTrash, code),
+  /** 기획서 1쪽 모듈넘버와 배치표 모듈 · 기획서대로 바꾸기(학습코드만 보낸다) */
+  forgePlanModule: (code: string): Promise<PlanModule> => ipcRenderer.invoke(IPC.forgePlanModule, code),
+  forgePlanModuleUse: (code: string): Promise<PlanModule> => ipcRenderer.invoke(IPC.forgePlanModuleUse, code),
   /** 그 화면 **한 장**을 지운다 */
   forgeDropShot: (
     code: string,
@@ -84,7 +95,9 @@ export const benchApi = {
     ipcRenderer.invoke(IPC.forgeSort, drops, overwrite),
   /** 대화로 만들기 (2026-10-08) — 형편 · 새로 시작 · 사람의 답(글 · 붙인 그림) · 멈추기 · 메인이 미는 소식 */
   forgeChatGet: (code: string): Promise<ChatInfo> => ipcRenderer.invoke(IPC.forgeChatGet, code),
-  forgeChatStart: (code: string): Promise<ChatInfo> => ipcRenderer.invoke(IPC.forgeChatStart, code),
+  /** `force` — 남이 끝낸 학습코드를 「그래도 고치기」로 푼 뒤에만 true. 아래 검수 단추도 같다 (2026-10-14) */
+  forgeChatStart: (code: string, force = false): Promise<ChatInfo> => ipcRenderer.invoke(IPC.forgeChatStart, code, force),
+  forgeChatLookSeen: (code: string): Promise<ChatInfo> => ipcRenderer.invoke(IPC.forgeChatLookSeen, code),
   forgeChatReply: (code: string, text: string, images: Uint8Array[]): Promise<ChatInfo> =>
     ipcRenderer.invoke(IPC.forgeChatReply, code, text, images),
   forgeChatStop: (code: string): Promise<ChatInfo> => ipcRenderer.invoke(IPC.forgeChatStop, code),
@@ -107,15 +120,18 @@ export const benchApi = {
   /** 그 서버를 내린다 */
   forgeViewStop: (): Promise<Server> => ipcRenderer.invoke(IPC.forgeViewStop),
   /** 「끝」 — 개발 끝으로 적는다 (M7) */
-  forgeDone: (code: string): Promise<DoneResult> => ipcRenderer.invoke(IPC.forgeDone, code),
-  forgeCommit: (code: string): Promise<CommitResult> => ipcRenderer.invoke(IPC.forgeCommit, code),
-  forgePushMain: (code: string, allow: string[] = []): Promise<CommitResult> => ipcRenderer.invoke(IPC.forgePushMain, code, allow),
+  forgeDone: (code: string, force = false): Promise<DoneResult> => ipcRenderer.invoke(IPC.forgeDone, code, force),
+  forgeCommit: (code: string, force = false): Promise<CommitResult> => ipcRenderer.invoke(IPC.forgeCommit, code, force),
   /** 호 저장소에 있는데 안 쓰는 리소스 · 휴지통으로(메인이 다시 세어 화면에 보인 `shown` 과 겹치는 것만) */
   forgePubExtra: (code: string): Promise<PubExtra> => ipcRenderer.invoke(IPC.forgePubExtra, code),
-  forgePubExtraTrash: (code: string, shown: string[]): Promise<LeftoverTrash> => ipcRenderer.invoke(IPC.forgePubExtraTrash, code, shown),
-  /** 완료 뒤 리소스 폴더 정리(기획서는 남김) · 옮기기(메인이 다시 재어 화면에 보인 `shown` 과 겹치는 것만) */
-  forgeRscCleanPlan: (code: string): Promise<RscClean> => ipcRenderer.invoke(IPC.forgeRscCleanPlan, code),
-  forgeRscClean: (code: string, shown: string[]): Promise<LeftoverTrash> => ipcRenderer.invoke(IPC.forgeRscClean, code, shown),
+  forgePubExtraTrash: (code: string, shown: string[], force = false): Promise<LeftoverTrash> =>
+    ipcRenderer.invoke(IPC.forgePubExtraTrash, code, shown, force),
+  forgeResetPlan: (code: string, force = false): Promise<CodeReset> => ipcRenderer.invoke(IPC.forgeResetPlan, code, force),
+  forgeReset: (code: string, shown: string[], force = false): Promise<LeftoverTrash> => ipcRenderer.invoke(IPC.forgeReset, code, shown, force),
+  forgePageNeeds: (code: string): Promise<PageNeeds> => ipcRenderer.invoke(IPC.forgePageNeeds, code),
+  /** 사내 공유 폴더에서 찾기(쓰지 않음) · 가져오기(메인이 다시 찾아 화면에 보인 `shown` 자리만 넣는다) */
+  forgeShareLook: (code: string, fresh = false): Promise<ShareLook> => ipcRenderer.invoke(IPC.forgeShareLook, code, fresh),
+  forgeShareTake: (code: string, shown: string[]): Promise<ShareTake> => ipcRenderer.invoke(IPC.forgeShareTake, code, shown),
   /**
    * 서버가 뱉는 줄. **끊는 함수를 돌려준다** — 컴포넌트가 사라질 때 안 끊으면 리스너가 쌓여 두 번 그린다.
    *

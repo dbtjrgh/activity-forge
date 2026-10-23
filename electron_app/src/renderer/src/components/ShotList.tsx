@@ -67,7 +67,7 @@ function ShotList({
                   </button>
                 </>
               )}
-              <button className="ghost" disabled={busy} title={`${s.file} 지우기`} onClick={() => onDrop(s.file)}>
+              <button className="ghost" disabled={busy} onClick={() => onDrop(s.file)}>
                 지우기
               </button>
             </span>

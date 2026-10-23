@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { ReproResult, Server, ViewCheck } from '../../../shared/forge'
-import { hoLabel } from '../../../shared/forge'
+import { BUTTON, hoLabel, VIEW_EXITED } from '../../../shared/forge'
+import { TOUR_ANCHOR } from '../lib/anchors'
 import PreviewIssues from './PreviewIssues'
+import ViewLinks from './ViewLinks'
 
 /**
  * 띄워 보기 — 리소스 화면의 마지막 칸 (4단계).
@@ -28,11 +30,19 @@ function ViewPanel({ code, moduleName }: { code: string; moduleName: string }) {
   const [linkNote, setLinkNote] = useState('')
 
   useEffect(() => {
-    const off = window.api.onForgeViewLog((line) => setLog((prev) => [...prev.slice(-120), line]))
+    const off = window.api.onForgeViewLog((line) => {
+      setLog((prev) => [...prev.slice(-120), line])
+      // 뜬 뒤에 죽은 서버는 이 줄로만 알 수 있다 — 안 내리면 「실행 중」에 단추가 막혀 다시 못 띄운다
+      if (line.startsWith(VIEW_EXITED)) {
+        setServer((s) => (s ? { ...s, running: false, port: null, error: s.error ?? '미리보기 서버가 꺼졌습니다.' } : s))
+      }
+    })
     return off
   }, [])
 
   const look = useCallback(async () => {
+    // 다시 재면 지난 「연결」 실패 글은 지운다 — 남기면 그때 못 쓰던 명령 줄이 새 형편 아래에 같이 보인다
+    setLinkNote('')
     setCheck(await window.api.forgeViewCheck(code))
   }, [code])
 
@@ -86,7 +96,7 @@ function ViewPanel({ code, moduleName }: { code: string; moduleName: string }) {
 
   if (!check) {
     return (
-      <section className="card">
+      <section className="card" id={TOUR_ANCHOR.benchView}>
         <h3>미리보기</h3>
         <p className="state">확인 중…</p>
       </section>
@@ -99,14 +109,14 @@ function ViewPanel({ code, moduleName }: { code: string; moduleName: string }) {
   const linkLine = `Set-Location '${check.repo.replace(/[\\/][^\\/]+$/, '')}'; ${check.command}`
 
   return (
-    <section className="card run">
+    <section className="card run" id={TOUR_ANCHOR.benchView}>
       <h3>미리보기</h3>
 
       {check.blocked ? (
         <>
           <p className="state warn">{check.blocked}</p>
           {/* 한 번 눌러 건다 (2026-09-29 사용자 말 — 「딸깍으로」). 명령은 안 될 때만 보인다 */}
-          {(broken.length > 0 || !check.sameMonth) && (
+          {check.command && (broken.length > 0 || !check.sameMonth) && (
             <>
               <p className="row-actions">
                 <button className="go" onClick={() => void link()} disabled={linking} title="연결하면 다른 호의 미리보기 연결은 해제됩니다.">
@@ -125,8 +135,8 @@ function ViewPanel({ code, moduleName }: { code: string; moduleName: string }) {
         </>
       ) : (
         <p className="row-actions">
-          <button className="go" onClick={start} disabled={busy || Boolean(up)} title={up ? undefined : `${hoLabel(check.linkedMonth)}에 연결되어 있습니다. 처음 실행할 때는 몇 초 걸립니다.`}>
-            {busy ? '여는 중…' : up ? '실행 중' : '미리보기'}
+          <button className="go" onClick={start} disabled={busy || Boolean(up)}>
+            {busy ? '여는 중…' : up ? '실행 중' : BUTTON.preview}
           </button>
           {up && (
             <>
@@ -148,26 +158,12 @@ function ViewPanel({ code, moduleName }: { code: string; moduleName: string }) {
       {up && <p className="path mono">{server.url}</p>}
       <PreviewIssues code={code} />
 
-      {/* 정션 넷을 그대로 보여 준다 — 무엇이 안 걸렸는지 짚을 수 있게 */}
-      <details className="files">
-        <summary>
-          미리보기 연결 {check.links.filter((l) => l.ok).length}/{check.links.length}
-          {check.linkedMonth && ` (연결된 호: ${hoLabel(check.linkedMonth)})`}
-        </summary>
-        <ul>
-          {check.links.map((l) => (
-            <li key={l.at}>
-              <span className={`tag ${l.ok ? 'done' : 'error'}`}>{l.ok ? '연결됨' : '없음'}</span>
-              <span className="mono">{l.name}</span>
-              <span className="sub">{l.target || l.at}</span>
-            </li>
-          ))}
-        </ul>
-      </details>
+      {/* 정션 목록 — 서버가 도는 동안 다른 호로 바뀌면 알린다(`ViewLinks.tsx`) */}
+      <ViewLinks code={code} check={check} running={Boolean(up)} />
 
       {/* ─ 재현 검사 ─ 띄워 보기와 짝이다. 눈으로 보는 것과 기계가 보는 것 */}
       <p className="row-actions repro-go">
-        <button className="ghost" onClick={runRepro} disabled={checking || !moduleName} title="원본 값으로 다시 생성해 원본과 같은지 확인합니다. 10초 이상 걸릴 수 있습니다.">
+        <button className="ghost" onClick={runRepro} disabled={checking || !moduleName}>
           {checking ? '재현 검사 중…' : `재현 검사 (${moduleName || '모듈 알 수 없음'})`}
         </button>
       </p>

@@ -1,0 +1,466 @@
+{
+  "specVersion": 1,
+  "module": "N04",
+  "subject": "NU",
+  "title": "사진 찍어 그림책 표지 꾸미기",
+  "summary": "카메라로 아이 사진을 찍고, 그 사진을 그림책 표지에 올려 색칠, 무늬, 스티커로 꾸민 뒤, 마무리 화면에서 선생님을 누르고 평가 항목 셋 가운데 하나를 고릅니다. GameData 뿌리가 배열이고 칸 차례가 곧 화면 차례입니다 — 0번 촬영(cameraPanel), 1번 꾸미기(editorPanel), 2번 마무리(endpageInfo). 1번 panel 이 videoPanel 이면 꾸미기 대신 영상 패널을 띄우는 길이 모듈에 있지만 개발 완료 완성본이 쓴 적은 없습니다.",
+  "reference": {
+    "moduleCommit": "5e7d475ac223f047d49c54e06aa5507b71b0448b",
+    "moduleCommitWhy": "2026-10-21 누리 스펙을 처음 쓰며 모듈 코드와 1호 표본을 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/NU/N04",
+    "activities": [
+      "NUL1M01W2S3"
+    ],
+    "note": "개발 완료 완성본은 1호 NUL1M01W2S3 하나입니다(2026-10-21). 자리 목록 · 필수 여부 · 칸 수는 그 하나로 정한 것이라 넓게 잡지 못했습니다. forge draft 는 배열 뿌리라 파일로 안 남겨서, 초안 출력의 칸 속 자리를 K36 처럼 kind:array 로 옮겨 적었습니다. 완성본 Activity.ts 의 `static sHandle: Activity;` 는 아무도 읽지 않는 줄이라 codegen 에서 뺐습니다(check:spec ④ 가 자기 클래스 이름을 들여올 것으로 봅니다)."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "N04.assetLoad();"
+      ],
+      "onInit": [
+        "await N04.handle.onInit(quizData);",
+        "this.addChild(N04.handle);"
+      ],
+      "onStart": [
+        "await N04.handle.start();",
+        "await N04.handle.play();",
+        "await N04.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "import": {
+      "symbol": "N04",
+      "from": "@/_common/module/NU/N04/N04"
+    }
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "N04.ts 의 _playBGM 이 AudioManager.getSound(\"bgm\") 으로 찾아 바로 loop 를 겁니다 — 없으면 시작하자마자 멈춥니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "camera_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "촬영 순간 효과. component/CameraPanel.ts 가 AssetManager.get(\"camera_ef\") 로 이름을 박아 부릅니다. 완성본 1개가 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "camera",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "촬영 단추. component/CameraPanel.ts 가 camera · camera-click · camera-off · camera-return · camera-return-click 다섯 이름을 박아 부릅니다. 완성본 1개가 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "camera-click",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "촬영 단추를 누른 모양. component/CameraPanel.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "camera-off",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "아직 누를 수 없는 촬영 단추(CameraBtn 의 처음 모양). component/CameraPanel.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "camera-return",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다시 찍기 단추. component/CameraPanel.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "camera-return-click",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "다시 찍기 단추를 누른 모양. component/CameraPanel.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "three",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "촬영 전 3 · 2 · 1 숫자 그림. component/CameraPanel.ts 가 three · two · one 을 박아 부릅니다. 세는 소리(counting1~3-sound)는 모듈 Assets.ts 가 넣습니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "two",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "촬영 전 숫자 2. component/CameraPanel.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "one",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "촬영 전 숫자 1. component/CameraPanel.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "btn_click_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "단추 누르는 소리. 촬영(CameraPanel.ts), 꾸미기(ToolBox.ts, ui/Tool.ts, ui/DepthItem.ts, EndColoringBtn.ts), 마무리(EndPage.ts)가 모두 이름을 박아 틉니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "takePicture_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "셔터 소리. component/CameraPanel.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "camera_guide",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "촬영 화면 지시문. component/CameraPanel.ts 가 N04.handle.playGuide(\"camera_guide\") 로 부르고, 도우미를 누르면 다시 들려줍니다(2026-10-21)."
+      },
+      {
+        "alias": "endBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 화면 배경. component/EndPage.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "endpage_char",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 화면의 선생님. 누르면 평가 항목이 나옵니다. component/EndPage.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "endpage_particle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "평가 항목을 고를 때의 효과. component/EndPage.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "complete_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "마무리 화면의 완료 단추. component/EndPage.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "com_nar15",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "마무리 화면 진입 지시문. component/EndPage.ts 가 playGuide(\"com_nar15\") 로 부릅니다. 모듈이 넣지 않아 액티비티가 넣습니다(2026-10-21)."
+      },
+      {
+        "alias": "com_nar16",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "선생님을 누르면 com_nar16 · com_nar17 · com_nar18 가운데 하나를 고르게 틉니다(component/EndPage.ts choiceOne). 셋 다 있어야 합니다(2026-10-21)."
+      },
+      {
+        "alias": "com_nar17",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "선생님 내레이션 셋 가운데 하나(component/EndPage.ts choiceOne, 2026-10-21)."
+      },
+      {
+        "alias": "com_nar18",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "선생님 내레이션 셋 가운데 하나(component/EndPage.ts choiceOne, 2026-10-21)."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/Editor.ts)만 부릅니다. 1번 칸 panel 이 videoPanel 이면 안 씁니다.",
+        "note": "꾸미기 화면 배경. component/Editor.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "editor_guide",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/Editor.ts)만 부릅니다. 1번 칸 panel 이 videoPanel 이면 그 대신 video_guide 를 부릅니다.",
+        "note": "꾸미기 화면 지시문. component/Editor.ts 가 playGuide(\"editor_guide\") 로 부릅니다(2026-10-21)."
+      },
+      {
+        "alias": "cover",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/BookCover.ts)만 부릅니다.",
+        "note": "꾸밀 그림책 표지. component/BookCover.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "cover-mask-bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/BookCover.ts)만 부릅니다.",
+        "note": "표지 안 꾸미는 자리의 바탕. 색칠과 스티커가 이 자리 안에서만 보입니다. component/BookCover.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "cover-neon",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/Book.ts)만 부릅니다.",
+        "note": "표지 위에 겹치는 그림으로 처음에는 숨어 있습니다. component/Book.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "particle_ef",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/BookCover.ts)만 부릅니다.",
+        "note": "스티커를 붙일 때의 효과. component/BookCover.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "pattern_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/BookCover.ts)만 틉니다.",
+        "note": "무늬를 찍는 소리. component/BookCover.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "drawing-sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/BookCover.ts)만 틉니다.",
+        "note": "색칠하는 소리. component/BookCover.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "wrong",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/BookCover.ts)만 틉니다.",
+        "note": "스티커를 표지 밖에 놓았을 때의 소리. component/BookCover.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "drop-sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/BookCover.ts)만 틉니다.",
+        "note": "스티커를 붙이는 소리. component/BookCover.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "tool-box",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/ToolBox.ts)만 부릅니다.",
+        "note": "꾸미기 도구 상자. component/ToolBox.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "eraser",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/ToolBox.ts)만 부릅니다.",
+        "note": "지우개 도구. component/ToolBox.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "eraser-on",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/ToolBox.ts)만 부릅니다.",
+        "note": "지우개를 고른 모양. component/ToolBox.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "openTool",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/ui/Tool.ts)만 틉니다.",
+        "note": "도구를 펼치는 소리. component/ui/Tool.ts 가 이름을 박아 틉니다(2026-10-21)."
+      },
+      {
+        "alias": "completeBtn",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/EndColoringBtn.ts)만 부릅니다.",
+        "note": "꾸미기를 끝내는 단추. 마무리 화면의 complete_btn 과 다른 그림입니다. component/EndColoringBtn.ts 가 이름을 박아 부릅니다(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "complete",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 화면(component/EndColoringBtn.ts)만 틉니다.",
+        "note": "꾸미기를 끝낼 때의 소리. component/EndColoringBtn.ts 가 이름을 박아 틉니다(2026-10-21)."
+      }
+    ],
+    "providedByModule": {
+      "sound": [
+        "counting1-sound",
+        "counting2-sound",
+        "counting3-sound"
+      ],
+      "note": "촬영 전 3 · 2 · 1 세는 소리는 모듈 Assets.ts 가 /sparklab/common/module/NU/N04/sound 에서 직접 넣습니다. 액티비티 AssetTable 에 넣지 마세요."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "array",
+    "minLength": 3,
+    "minLengthWhy": "칸 차례가 곧 화면 차례입니다. N04.ts onInit 이 quizData[0](촬영) · quizData[1](꾸미기나 영상) · quizData[2](마무리)를 자리로 읽습니다. 완성본 1개가 3칸입니다.",
+    "fields": [],
+    "of": {
+      "key": "",
+      "type": "object",
+      "fields": [
+        {
+          "key": "panel",
+          "type": "string",
+          "optional": true,
+          "desc": "0번 칸은 cameraPanel, 1번 칸은 editorPanel 이나 videoPanel 을 적습니다. 모듈은 1번 칸 값만 읽어 다음 화면을 고릅니다(N04.ts onInit). 완성본은 editorPanel 하나만 씁니다."
+        },
+        {
+          "key": "frameData",
+          "type": "array",
+          "optional": true,
+          "minLength": 0,
+          "desc": "0번 칸. 촬영 화면에만 뜨는 장식 목록입니다. 칸마다 { thumbnail: 그림 별칭, posData: { x, y } } 를 읽습니다(component/ThumnailBox.ts). 사진에는 안 들어갑니다. 완성본은 빈 배열입니다.",
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": []
+          }
+        },
+        {
+          "key": "frame",
+          "type": "object",
+          "optional": true,
+          "desc": "0번 칸. 사진 위에 올라가 꾸미기 화면까지 따라가는 소품입니다(CameraPanel.setFrame). 없으면 소품 없이 찍습니다. guidePose: { texture, position } 를 더 주면 설 자리 실루엣을 촬영 동안만 보입니다.",
+          "fields": [
+            {
+              "key": "texture",
+              "type": "asset:image",
+              "required": true,
+              "desc": "소품 그림"
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "소품 자리(화면 가운데 기준, 그림 가운데)"
+            }
+          ]
+        },
+        {
+          "key": "toolData",
+          "type": "array",
+          "optional": true,
+          "minLength": 3,
+          "desc": "1번 칸(editorPanel). 꾸미기 도구 목록입니다. 모듈은 type 이 color · pattern · sticker 인 것을 찾아 씁니다(component/ToolBox.ts).",
+          "of": {
+            "key": "",
+            "type": "object",
+            "fields": [
+              {
+                "key": "type",
+                "type": "asset:image",
+                "required": true,
+                "desc": "도구 종류 color · pattern · sticker. 같은 이름의 도구 그림과 `-on` · `-off` · `-depth-box` · `-depth-stroke` 그림을 이 이름으로 찾습니다(component/ui/Tool.ts · DepthBox.ts)."
+              },
+              {
+                "key": "box",
+                "type": "asset:image",
+                "required": true,
+                "desc": "도구 상자 그림 별칭. 모듈은 이 값을 읽지 않고 `type-depth-box` 로 찾습니다 — 완성본은 같은 이름을 적어 둡니다."
+              },
+              {
+                "key": "info",
+                "type": "array",
+                "required": true,
+                "minLength": 5,
+                "desc": "도구 안 선택지. 색은 color 배열로 칠할 색을, 무늬와 스티커는 depth 그림을 씁니다.",
+                "of": {
+                  "key": "",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "key": "depth",
+                      "type": "asset:image",
+                      "required": true,
+                      "desc": "선택지 그림. 고른 모양은 `depth-on` 그림입니다(component/ui/DepthItem.ts)."
+                    },
+                    {
+                      "key": "color",
+                      "type": "array",
+                      "optional": true,
+                      "minLength": 1,
+                      "desc": "color 도구만 씁니다. 칠할 색(#RRGGBB) 목록이고 둘 이상이면 무지개처럼 섞입니다.",
+                      "of": {
+                        "key": "",
+                        "type": "string"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "key": "gap",
+                "type": "number",
+                "required": true,
+                "desc": "선택지 사이 세로 간격(px, component/ui/DepthBox.ts)."
+              },
+              {
+                "key": "drag",
+                "type": "bool",
+                "required": true,
+                "desc": "모듈이 지금은 읽지 않습니다. 완성본은 pattern 만 true 입니다."
+              }
+            ]
+          }
+        },
+        {
+          "key": "endpageInfo",
+          "type": "object",
+          "optional": true,
+          "desc": "2번 칸. 마무리 화면 구성입니다(component/EndPage.ts).",
+          "fields": [
+            {
+              "key": "evalInfo",
+              "type": "array",
+              "required": true,
+              "minLength": 3,
+              "desc": "평가 항목 판. 선생님을 누르면 나타나고, 하나를 고르면 효과와 완료 단추가 뜹니다.",
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "img",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "평가 항목 그림"
+                  },
+                  {
+                    "key": "pos",
+                    "type": "point",
+                    "required": true,
+                    "figma": true,
+                    "desc": "평가 항목 자리(화면 가운데 기준)"
+                  },
+                  {
+                    "key": "touchImg",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "고른 뒤의 그림"
+                  },
+                  {
+                    "key": "touchIdle",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "고르기 전 테두리 그림"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "notes": [
+    "카메라를 켜는 활동입니다. component/CameraPanel.ts 가 1920×1080 으로 카메라를 엽니다.",
+    "1번 칸 panel 을 videoPanel 로 두면 모듈은 photoBook 값과 bg2 · replay · video-neon · photo-book · photo-frame 그림, video_guide 소리를 부릅니다. 이 길로 만든 완성본이 없어 이 스펙에는 자리를 적지 않았습니다. 그 길로 만들게 되면 스펙부터 고칩니다."
+  ]
+}

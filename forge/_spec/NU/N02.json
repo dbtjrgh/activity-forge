@@ -1,0 +1,256 @@
+{
+  "specVersion": 1,
+  "module": "N02",
+  "subject": "NU",
+  "title": "동시 듣고 따라 읽기",
+  "summary": "도입 화면에서 도우미 지시문(startNar)이 나오고 선생님 그림을 누르면 도입 내레이션 뒤 다음 단추가 뜹니다. 넘어가면 동시 화면에 제목과 줄들이 글자로 놓이고 지시문(poemStartNar)이 나옵니다. 제목 옆 스피커를 누르면 처음부터 끝까지 낭독하고(연이 바뀌는 자리에서만 쉼), 줄을 누르면 그 줄만 읽습니다. 한 번 이상 낭독이 끝나면 완료 단추가 뜹니다.",
+  "reference": {
+    "moduleCommit": "7ea596c5e15a29f1c2954b0f6aa954068f887bb1",
+    "moduleCommitWhy": "2026-10-21 누리 스펙을 처음 쓰며 모듈 코드와 1호 표본을 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/NU/N02",
+    "activities": [
+      "NUL1M01W3S2"
+    ],
+    "note": "개발 완료 완성본은 1호 NUL1M01W3S2 하나입니다(2026-10-21). 필수 여부와 칸 수는 그 하나로 정한 것입니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "ButtonSound.addAsset();",
+        "ButtonComplete.addAsset();"
+      ],
+      "onInit": [
+        "// 이곳에 플레이 버튼을 입력하기 전에 생성할 코드를 입력하세요",
+        "await N02.handle.init(quizData);",
+        "this.addChild(N02.handle);"
+      ],
+      "onStart": [
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요.",
+        "await N02.handle.start();",
+        "await N02.handle.play();",
+        "await N02.handle.finish();"
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "// 이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "ButtonComplete",
+        "from": "@_common/sparkLib/component/Buttons/ButtonComplete"
+      },
+      {
+        "symbol": "ButtonSound",
+        "from": "@_common/sparkLib/component/Buttons/ButtonSound"
+      },
+      {
+        "symbol": "N02",
+        "from": "@/_common/module/NU/N02/N02"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "next_btn",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "도입 화면의 다음 단추. NextButton.ts 가 AssetManager.get(\"next_btn\") 으로 이름을 박아 부릅니다. 완성본 1개가 가짐(litgate, 2026-10-21)."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "N02.ts start() 가 AudioManager.getSound(\"bgm\") 으로 찾아 바로 loop 를 겁니다 — 없으면 시작하자마자 멈춥니다. 동시 화면으로 넘어가면 끕니다(수정 요청). 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "touchSound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "누르는 소리. N02.ts · Preview.ts 가 이름을 박아 틉니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "startNar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "도입 화면 지시문. N02.ts start() 가 playGuide(\"startNar\") 로 부릅니다 — GameData 로 못 바꾸는 이름입니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "poemStartNar",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "동시 화면 지시문. N02.ts play() 가 playGuide(\"poemStartNar\") 로 부릅니다. 완성본 1개가 가짐(2026-10-21)."
+      },
+      {
+        "alias": "NanumSquareRoundEB",
+        "kind": "font",
+        "fixedAlias": true,
+        "note": "동시 글자는 그림이 아니라 이 글꼴로 그립니다(Poem.ts FONT_FAMILY). 없으면 다른 글꼴로 그려집니다. 완성본 1개가 가짐(2026-10-21)."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "previewData",
+        "type": "object",
+        "required": true,
+        "desc": "도입 화면 구성(Preview.ts).",
+        "fields": [
+          {
+            "key": "bg",
+            "type": "asset:image",
+            "required": true,
+            "desc": "도입 화면 배경"
+          },
+          {
+            "key": "guide",
+            "type": "object",
+            "required": true,
+            "desc": "누르지 않는 도입 그림(선생님)",
+            "fields": [
+              {
+                "key": "img",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림"
+              },
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "자리(화면 가운데 기준, 그림 가운데)"
+              }
+            ]
+          },
+          {
+            "key": "touch",
+            "type": "object",
+            "required": true,
+            "desc": "누를 도입 그림. 누르면 sounds 를 차례로 틉니다.",
+            "fields": [
+              {
+                "key": "img",
+                "type": "asset:image",
+                "required": true,
+                "desc": "그림"
+              },
+              {
+                "key": "position",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "자리(화면 가운데 기준, 그림 가운데)"
+              }
+            ]
+          },
+          {
+            "key": "sounds",
+            "type": "array",
+            "required": true,
+            "minLength": 2,
+            "desc": "누를 그림을 누르면 차례로 트는 도입 내레이션. 다 끝나야 다음 단추가 뜹니다.",
+            "of": {
+              "key": "",
+              "type": "asset:sound"
+            }
+          }
+        ]
+      },
+      {
+        "key": "sceneBg",
+        "type": "asset:image",
+        "required": true,
+        "desc": "동시 화면 배경. **지금 모듈은 이 값을 읽지 않고 흰 바탕을 깝니다**(N02.ts init 의 [임시] 주석 — 시안에 잔디 배경이 없음). 되살리면 이 그림을 씁니다."
+      },
+      {
+        "key": "sceneData",
+        "type": "array",
+        "required": true,
+        "minLength": 2,
+        "desc": "동시 화면에 놓는 장식 그림(해, 그네 같은 것).",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "img",
+              "type": "asset:image",
+              "required": true,
+              "desc": "장식 그림"
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "자리(화면 가운데 기준, 그림 가운데)"
+            }
+          ]
+        }
+      },
+      {
+        "key": "poemData",
+        "type": "array",
+        "required": true,
+        "minLength": 7,
+        "desc": "동시 줄 목록. 배열 차례가 곧 스피커 낭독 차례입니다. 제목(type title) 하나와 줄(type line)들로 이룹니다. 완성본은 제목 1, 줄 6입니다.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "text",
+              "type": "string",
+              "required": true,
+              "desc": "화면에 그릴 글자"
+            },
+            {
+              "key": "sound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "그 줄 낭독 소리"
+            },
+            {
+              "key": "position",
+              "type": "point",
+              "required": true,
+              "figma": true,
+              "desc": "글상자 가운데(화면 가운데 기준). 스피커 단추는 제목 글상자 왼쪽에 저절로 붙습니다."
+            },
+            {
+              "key": "type",
+              "type": "enum",
+              "required": true,
+              "values": [
+                "line",
+                "title"
+              ],
+              "desc": "title 은 80px, line 은 60px 글자입니다(Poem.ts TEXT_STYLE)."
+            },
+            {
+              "key": "group",
+              "type": "number",
+              "required": true,
+              "desc": "이 줄이 속한 연 번호(제목은 0). 낭독 중 연이 바뀌는 자리에만 1.1초 쉽니다(Poem.ts STANZA_GAP_MS)."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "notes": [
+    "낭독 중 스피커를 다시 누르면 멈추고, 그 뒤 누르면 처음부터 읽습니다(수정 요청).",
+    "N01 과 달리 도입 지시문 이름이 GameData 가 아니라 모듈에 박혀 있습니다(startNar · poemStartNar)."
+  ]
+}

@@ -29,6 +29,46 @@
   gap: var(--gap-2);
   flex: 1;
   min-width: 0;
+  /* 좁은 창에서 폴더 단추 밑으로 번지지 않게 — 원본 글이 먼저 줄임표로 줄어든다 */
+  overflow: hidden;
+}
+
+.bench-chips > * {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.bench-chips > .sub {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 머리줄의 폴더 열기 — 세 단추를 한 덩어리로 붙인다(맞닿은 테두리는 한 줄로) */
+.bench-folders {
+  display: inline-flex;
+}
+
+.bench-folders button.ghost {
+  border-radius: 0;
+  margin-left: -1px;
+}
+
+.bench-folders button.ghost:first-child {
+  border-radius: var(--radius-1) 0 0 var(--radius-1);
+  margin-left: 0;
+}
+
+.bench-folders button.ghost:last-child {
+  border-radius: 0 var(--radius-1) var(--radius-1) 0;
+}
+
+/* 누른 단추의 테두리가 옆 단추에 안 가리게 */
+.bench-folders button.ghost:hover,
+.bench-folders button.ghost:focus-visible {
+  position: relative;
+  z-index: 1;
 }
 
 .bench-cols {
@@ -83,6 +123,30 @@
   border-radius: var(--radius-1);
   background: var(--surface-hover);
   vertical-align: middle;
+}
+
+/* 남이 끝낸 학습코드 경고(`OwnerLock`, 2026-10-14) — 머리줄 아래 두 줄. `.state` 의 위아래 8px 를 빼 작업 순서 막대와 붙인다 */
+.owner-lock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-1);
+}
+
+.owner-lock p,
+p.owner-lock {
+  margin: 0;
+}
+
+/* 검수 칸의 「미리보기에서 확인할 것」(`DoneCard`) — 검수 완료 단추 바로 위 */
+.done-look {
+  margin: 0 0 var(--gap-2);
+}
+
+.done-look ul {
+  margin: 4px 0;
+  padding-left: 18px;
+  font-size: var(--font-md);
+  line-height: 1.5;
 }
 
 /* 좁으면 세 칸을 위아래로 — 1100px 밑에서는 세 칸이 다 못 선다.

@@ -5,6 +5,8 @@
   "title": "나무 밟고 달리기 (문장 순서 맞추기)",
   "summary": "캐릭터가 달리며 나무를 밟고 넘어가는 활동. 낱말이 적힌 나무를 문장 순서대로 밟아야 하고, 밟을 때마다 낱말이 불을 켭니다.",
   "reference": {
+    "moduleCommit": "ca3dea54bd8f910283e4ff1fc2973ebdeaf87958",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/E38",
     "activities": [
       "ENL1M02W3S3",
@@ -254,6 +256,25 @@
               "y": 230
             },
             "desc": "낱말 카드 탑의 자리."
+          },
+          {
+            "key": "aniPosition",
+            "type": "point",
+            "required": false,
+            "figma": true,
+            "desc": "캐릭터가 서는 자리. 적으면 이닝마다 이 자리로 돌아온다. 없으면 x 280, 첫 이닝 y 275, 다음 이닝부터는 다리 높이(treesPosition.y)다."
+          },
+          {
+            "key": "botTextY",
+            "type": "number",
+            "required": false,
+            "desc": "다리 위(아래쪽) 나무 낱말의 y. 없으면 0(나무 가운데)."
+          },
+          {
+            "key": "textMaxWidth",
+            "type": "number",
+            "required": false,
+            "desc": "낱말이 이 폭(px)보다 넓으면 폭에 맞게 글자 크기를 36 에서 줄인다. 위 · 아래 나무 둘 다. 없으면 늘 36."
           }
         ],
         "desc": "나무와 카드 탑의 배치."

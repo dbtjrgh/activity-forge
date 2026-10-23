@@ -105,7 +105,7 @@ export function pickRoot(): RootPick {
         ". 설정한 자리는 그대로이고, 이 프로세스만 다른 데를 봅니다.",
     };
   }
-  const set = savedRoot();
+  const set = savedSetting("workRoot");
   if (set) {
     const n = countRepos(set);
     if (n > 0) return { dir: set, from: "설정", repos: n };
@@ -127,14 +127,25 @@ export function pickRoot(): RootPick {
   };
 }
 
+// 공용 모듈 저장소(`sparkon_common`) 자리는 `commonroot.ts` 입니다 (2026-10-23, 이 파일이 200줄을 넘어 뗐습니다).
+
+// 두 경로가 같은 폴더인가 — Windows 는 대소문자와 구분자(`/` · `\`)를 가리지 않습니다.
+// 글자만 견주면 `D:/Work` 와 `D:\work` 가 다른 자리가 됩니다.
+export function samePlace(a: string, b: string): boolean {
+  const norm = (p: string): string => {
+    const r = path.resolve(p);
+    return process.platform === "win32" ? r.toLowerCase() : r;
+  };
+  return norm(a) === norm(b);
+}
+
 // `.user.json` 을 여기서 직접 읽습니다. `user.ts` 를 부르면 서로 물고
-// 돌아갑니다(user.ts 가 repoPath 를 씁니다).
-function savedRoot(): string | null {
+// 돌아갑니다(user.ts 가 repoPath 를 씁니다). 작업 폴더 · 공용 폴더(`commonroot.ts`) 둘이 이 읽기 하나를 씁니다(2026-10-21).
+export function savedSetting(key: "workRoot" | "commonRoot"): string | null {
   try {
-    const j = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, ".user.json"), "utf8")) as {
-      workRoot?: unknown;
-    };
-    const v = typeof j.workRoot === "string" ? j.workRoot.trim() : "";
+    const j = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, ".user.json"), "utf8")) as Record<string, unknown>;
+    const raw = j[key];
+    const v = typeof raw === "string" ? raw.trim() : "";
     return v === "" ? null : v;
   } catch {
     return null;

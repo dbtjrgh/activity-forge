@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BUTTON, type Workspace } from '../../../shared/forge'
+import type { Workspace } from '../../../shared/forge'
 import SuggestInput from './SuggestInput'
 
 /**
@@ -41,7 +41,6 @@ export default function MeRow({
         <SuggestInput label="아이디(이름)" value={dev} suggest={suggest.developer} onChange={setDev} />
         <SuggestInput label="팀" value={team} suggest={suggest.devTeam} onChange={setTeam} />
       </div>
-      <p className="sub">「{BUTTON.done}」 버튼을 누르면 activityInfo.json 파일에 기록됩니다.</p>
     </div>
   )
 }

@@ -5,6 +5,8 @@
   "title": "우주선 낱말 여행 — 맞는 행성을 골라 우주선을 키웁니다",
   "summary": "우주선이 왼쪽에서 출발하고 오른쪽에 행성 둘이 떠 있습니다. 낱말 소리가 나면 그 낱말이 적힌 행성으로 우주선을 보냅니다. 맞으면 행성이 붙으면서 우주선이 한 단계 자라고, 틀리면 부딪혀 터집니다. 이닝 묶음을 다 지나면 다음 묶음으로 넘어갑니다.",
   "reference": {
+    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
+    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
     "module": "sparkon_common/_common/module/EN/CreateWordLv2",
     "activities": [
       "ENL2M01W3S2",
