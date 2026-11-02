@@ -5,8 +5,8 @@
   "title": "문제 보고 정답 고르기 (선지 영역 변경형)",
   "summary": "M27 에서 갈라져 나온 모듈. 이닝마다 캐릭터가 문제를 내고 선지 2~5개 중 하나를 고릅니다. M27 과 다른 점은 세 가지 — 연속 3회 이상 틀리면 선지 전체가 110% 로 두 번 커지고, 이닝 전환 나레이션을 MainCharacter 의 newInning1~3 으로 쓰며, 오답 횟수를 한 곳에서만 셉니다.",
   "reference": {
-    "moduleCommit": "4bf23d3fedc8a6660dbc6a9c7e21872a8db89c07",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글의 줄 번호와 주요 동작(섞기 · 기본값 · 고정 개수 · 박힌 이름 · 등록하는 이름)을 모듈 코드와 대 봤습니다. 모든 문장을 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/MA/M27_2",
     "activities": [
       "MAL1M07W1S2"
@@ -62,7 +62,7 @@
         "alias": "correct_ef",
         "kind": "lottie",
         "fixedAlias": true,
-        "note": "정답 파티클. AnswerPanel.ts:53 이 이 이름으로 직접 찾습니다 — **alias 는 고정**이고 파일 이름만 자유입니다(관례: {학습코드소문자}_correct_ef.json). 빠뜨려도 빌드는 통과하고 정답 이펙트만 조용히 안 나옵니다."
+        "note": "정답 파티클. AnswerPanel.ts:53 이 이 이름으로 직접 찾습니다 — **alias 는 고정**이고 파일 이름만 자유입니다(관례: {학습코드소문자}_correct_ef.json). 빠뜨려도 빌드는 통과하지만, 정답 선지를 누르는 순간 이펙트 재생(AnswerPanel.ts:93)이 오류로 끝나 정답 처리(:98)가 실행되지 않고 이닝이 멈춥니다."
       },
       {
         "alias": "nar01",
@@ -139,7 +139,7 @@
                   "type": "string",
                   "optional": true,
                   "default": "",
-                  "desc": "등장 방향. 빈 문자열이면 미끄러져 들어오지 않고 그 자리에 그냥 섭니다."
+                  "desc": "등장 방향. top · right · left · bottom 을 받습니다(QuizPanel.ts:191-206). 빈 문자열이면 미끄러져 들어오지 않고 그 자리에 그냥 서고, **키를 아예 빼면 top 으로 동작합니다**(:105)."
                 },
                 {
                   "key": "quiz",
@@ -246,7 +246,7 @@
                   "type": "bool",
                   "required": true,
                   "default": false,
-                  "desc": "정답 뒤 선지가 사라질 때 애니를 쓸지. false 면 바뀐 그림을 보여 준 다음 사라집니다."
+                  "desc": "정답을 맞힌 뒤 선지가 닫히는 **차례**입니다(애니를 쓸지가 아닙니다). 키를 빼거나 true 면 선지가 먼저 닫힌 뒤 캐릭터 정답 대사가 나오고, false 면 정답 대사와 문제 닫기가 끝난 뒤에 선지가 닫힙니다 — 그동안 _on 그림이 보입니다(M27_2.ts:147-156)."
                 },
                 {
                   "key": "pos",
@@ -263,7 +263,7 @@
                   "type": "string",
                   "optional": true,
                   "default": "",
-                  "desc": "선지가 나타나는 방향. 빈 문자열이면 그 자리에 그냥 놓입니다."
+                  "desc": "선지가 나타나는 방향. top · right · left · bottom 을 받습니다(AnswerPanel.ts:215-238). 빈 문자열이면 그 자리에 그냥 놓이고, **키를 아예 빼면 bottom 으로 동작합니다**(:200)."
                 },
                 {
                   "key": "bg",
@@ -303,7 +303,7 @@
                         "key": "correct",
                         "type": "bool",
                         "required": true,
-                        "desc": "이 선지가 정답인지. **이닝마다 정확히 하나만 true.**"
+                        "desc": "이 선지가 정답인지. **이닝마다 적어도 하나는 true.** 둘 이상이면 어느 것을 눌러도 이닝이 끝납니다(AnswerPanel.ts:152)."
                       },
                       {
                         "key": "pos",
@@ -315,7 +315,7 @@
                     ],
                     "desc": "선지 하나."
                   },
-                  "desc": "선지 목록. **정답은 정확히 하나**입니다.",
+                  "desc": "선지 목록. **정답은 적어도 하나**입니다.",
                   "minLengthWhy": "고를 것이 하나면 문제가 되지 않습니다. 표본은 3개, 기획서는 2~5개입니다."
                 }
               ],
@@ -334,13 +334,13 @@
       "id": "fixed-alias-registered",
       "level": "error",
       "check": "AssetTable.lottie 에 alias 'correct_ef' 가 있어야 한다.",
-      "why": "AnswerPanel.ts:53 이 이 이름으로 직접 찾습니다. 없으면 빌드는 통과하고 정답 파티클만 안 나옵니다."
+      "why": "AnswerPanel.ts:53 이 이 이름으로 직접 찾습니다. 없으면 빌드는 통과하지만 정답 선지를 누르는 순간 파티클 재생(:93)이 오류로 끝나 정답 처리(:98)가 실행되지 않고 이닝이 멈춥니다."
     },
     {
       "id": "exactly-one-correct",
       "level": "error",
-      "check": "모든 inningData[].answer.items 에서 correct: true 가 정확히 1개.",
-      "why": "모듈이 검사하지 않습니다. 0개면 이닝이 끝나지 않고, 2개 이상이면 앞의 것만 정답으로 칩니다."
+      "check": "모든 inningData[].answer.items 에서 correct: true 가 적어도 1개.",
+      "why": "모듈이 검사하지 않습니다. 0개면 이닝이 끝나지 않고, 2개 이상이면 선지마다 따로 판정하므로(AnswerPanel.ts:152) 어느 것을 눌러도 이닝이 끝납니다."
     },
     {
       "id": "random-needs-pos-table",

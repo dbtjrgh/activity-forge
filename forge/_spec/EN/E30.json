@@ -5,8 +5,8 @@
   "title": "기차 블라인드 (그림자 보고 낱말 찾기)",
   "summary": "기차 칸마다 블라인드가 내려와 있고, 그 안 그림자를 보고 낱말 카드를 골라 맞히는 활동. 정답 칸은 그림자가 정답 낱말이고 나머지는 오답 그림자입니다.",
   "reference": {
-    "moduleCommit": "b9be3c8d5768fae9695e2c51bda9464bbcb04344",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-23) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글의 줄 번호와 주요 동작(섞기 · 기본값 · 고정 개수 · 박힌 이름 · 등록하는 이름)을 모듈 코드와 대 봤습니다. 모든 문장을 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/E30",
     "activities": [
       "ENL2M02W1S1",
@@ -95,7 +95,7 @@
         "alias": "bgm",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "배경음."
+        "note": "배경음. E30.ts:61 getSound(\"bgm\")."
       },
       {
         "alias": "nar02",
@@ -107,19 +107,19 @@
         "alias": "sfx02",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "효과음."
+        "note": "정답 칸을 눌러 블라인드가 올라갈 때 나는 소리. Train.ts:149."
       },
       {
         "alias": "sfx04",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "효과음."
+        "note": "정답 이펙트(correct)와 같이 나는 소리. Train.ts:152."
       },
       {
         "alias": "sfx05",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "효과음."
+        "note": "오답 칸을 눌렀을 때 나는 소리. Train.ts:179."
       }
     ],
     "providedByModule": {

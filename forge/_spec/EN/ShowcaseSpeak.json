@@ -74,31 +74,42 @@
   "assets": {
     "required": [],
     "providedByModule": {
-      "note": "**ShowcaseSpeak 은 무대를 통째로 들고 있습니다.** Assets.ts 가 모니터 틀·단추·이닝 표시·정답 표시·끝맺음 말·배경음·안내 나레이션, 그리고 **화면 속 아이 로티까지** 등록합니다. **액티비티는 낱말 그림과 낱말 소리만 넣습니다.** 회차 AssetTable 에 남아 있는 //{alias:'correct'…} 주석은 **틀에서 딸려 온 것**입니다 — 기존 회차가 모두 주석인 채로 두었고 모듈이 안 찾습니다.",
+      "note": "**ShowcaseSpeak 은 무대를 통째로 들고 있습니다.** Assets.ts 가 모니터 틀·단추·이닝 표시·정답 표시·끝맺음 말·배경음·안내 나레이션, 그리고 **화면 속 아이 로티까지** 등록합니다. **액티비티는 낱말 그림과 낱말 소리만 넣습니다.** 회차 AssetTable 에 남아 있는 //{alias:'correct'…} 주석은 **틀에서 딸려 온 것**입니다 — 기존 회차가 모두 주석인 채로 두었고 모듈이 안 찾습니다.\n\n**목록은 모듈 Assets.ts 의 정확한 이름입니다**(2026-10-26 — 검사가 이름 그대로 대조합니다). 전에 줄여 적어 두었던 설명: image: monitor_frame·_top·_left·_right ; image: check_on·check_off ; image: inning_bg·_cursor·_border·_divide·_gauge ; image: sndBtn_* (스피커 단추 색깔별) ; image: end_awesome 등 끝맺음 말 여섯 ; lottie: L1_M01_W4_S1_cha_idle·_talk·_listen (여자아이) ; lottie: EN_L1_M03_W4_S1_cha_idle·_talk·_listen (남자아이) ; lottie: L1_M01_W4_S1_L_ef_correct·R_ef_correct ; sound: SL_en_com_nar93 (시작 안내) ; sound: SL_en_com_sfx01·sfx02 ; sound: SL_en_quiz_nar01~24",
       "image": [
         "bg",
-        "monitor",
-        "monitor_frame·_top·_left·_right",
+        "monitor_frame",
+        "monitor_frame_top",
+        "monitor_frame_left",
+        "monitor_frame_right",
         "button_bar",
-        "check_on·check_off",
-        "inning_bg·_cursor·_border·_divide·_gauge",
-        "sndBtn_* (스피커 단추 색깔별)",
+        "monitor",
         "correct",
-        "incorrect",
-        "end_awesome 등 끝맺음 말 여섯"
+        "incorrect"
       ],
       "lottie": [
-        "L1_M01_W4_S1_cha_idle·_talk·_listen (여자아이)",
-        "EN_L1_M03_W4_S1_cha_idle·_talk·_listen (남자아이)",
-        "L1_M01_W4_S1_L_ef_correct·R_ef_correct",
-        "L1_M01_W4_S1_screen"
+        "L1_M01_W4_S1_screen",
+        "L1_M01_W4_S1_cha_idle",
+        "L1_M01_W4_S1_cha_listen",
+        "L1_M01_W4_S1_cha_talk",
+        "L1_M01_W4_S1_L_ef_correct",
+        "L1_M01_W4_S1_R_ef_correct",
+        "EN_L1_M03_W4_S1_cha_idle",
+        "EN_L1_M03_W4_S1_cha_listen",
+        "EN_L1_M03_W4_S1_cha_talk"
       ],
       "sound": [
         "bgm",
-        "SL_en_com_nar93 (시작 안내)",
+        "SL_en_com_nar93",
         "SL_en_com_nar94",
-        "SL_en_com_sfx01·sfx02",
-        "SL_en_quiz_nar01~24"
+        "SL_en_com_nar22",
+        "SL_en_com_nar23",
+        "SL_en_com_nar95",
+        "SL_en_com_nar96",
+        "SL_en_com_sfx01",
+        "SL_en_com_sfx02"
+      ],
+      "font": [
+        "GangwonEduPower"
       ]
     }
   },

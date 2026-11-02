@@ -5,8 +5,8 @@
   "title": "정리 문제 8유형 (문항 유형별 선지 고르기)",
   "summary": "회차를 마무리하는 정리수학 문제집. 문항 유형이 여덟 개(type1_1 · type1_2 · type1_3 · type2 · type3_1 · type3_2 · type3_3 · type4)이고, 이닝마다 그중 하나를 골라 문제·선지·스피커 버튼을 배치합니다. 이닝을 다 풀면 엔딩 연출이 나옵니다.",
   "reference": {
-    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "17f07a9eff11e5face9cf7719656e3845beb6c1a",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/MA/M01",
     "activities": [
       "MAL1M01W4S3",
@@ -19,7 +19,9 @@
   },
   "variantKey": {
     "path": "settings.typeList[]",
-    "ignore": ["Ending"],
+    "ignore": [
+      "Ending"
+    ],
     "note": "이닝마다 문항 유형을 고릅니다. typeList 의 이름마다 모듈 안 클래스(type1_1.ts, type2.ts 같은 파일)가 따로 있고, 유형마다 화면 짜임과 리소스(체크박스, 스피커 단추, 숫자 그림 같은 것)가 다릅니다.",
     "why": "InningManager.ts:29~41 typeMap 이 이름을 클래스로 잇고 :92~101 이 typeList 차례대로 만듭니다. 완성본 21개(2026-10-13)가 쓴 유형 묶음이 다릅니다 — type3_1 20 · type1_1 11 · type1_3 7 · type1_2 5 · type4 3 · type3_2 2 · type2 1, type3_3 은 0(MAL3M01W4S3 에 주석으로만). inningData[].type 이 아니라 typeList 를 보는 까닭 — 실제로 클래스를 고르는 것이 typeList[index] 이고, inningData[].type 은 대소문자가 섞였고(Type1_3) MAL2M05W4S3 은 index 와 어긋납니다. Ending 은 모든 완성본에 있어 뺍니다."
   },
@@ -123,9 +125,9 @@
       },
       {
         "alias": "elecWave",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "전기 물결 연출. 자리·크기는 positions.wavePos."
+        "note": "전기 물결 연출. 자리·크기는 positions.wavePos — 로티입니다(Background.ts:64 LottieSprite json)."
       },
       {
         "alias": "bgm",
@@ -171,7 +173,7 @@
       }
     ],
     "providedByModule": {
-      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset.ts 가 없습니다. 아래 것들을 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 코드에 박힌 것** — bg · bg2 · frame · wing · lever · elecWave · checkBox · mark.\n\n**이름을 조합해 찾는 것** (required 에는 고정 이름만 적을 수 있어 여기에 규칙을 둡니다)\n- `btn{answerNum}_{선지번호}` — 선지 버튼 기본 그림 (ButtonBase.ts:42)\n- `btn_select{answerNum}` · `btn_wrong{answerNum}` · `btn_correct{answerNum}` — 선지 버튼의 선택·오답·정답 테두리. **없으면 모듈이 그립니다**(2026-10-13, ButtonBase.ts `OUTLINE`) — 버튼보다 사방 10px 크고, 선 10px, 바깥 모서리 반지름 40, 안은 비우고, 주황 FFA600 · 빨강 FF5757 · 파랑 0084FF. 완성본 테두리 그림 거의 전부와 9호 figma 가 이 꼴이라 **figma 테두리가 이 꼴이면 그림을 받지 말고 AssetTable 에서 뺍니다.** 꼴이 다를 때(테두리에 바탕까지 칠한 판 등)만 그림을 넣습니다. 앱이 앞 호에서 가져온 `btn_select.png` 등은 앞 호 버튼 크기(270x220 · 300x280)라 새 버튼 크기와 다르면 쓰지 않습니다\n- `exam{answerNum}` — 문제(예제) 그림\n- `spkBtn{이닝번호}_{버튼번호}` — 문항 안에 놓이는 스피커 버튼\n- `{mStudy}_spk` · `{mStudy}_spkPress` — 과목 스피커 버튼. mStudy 가 MA 이므로 **MA_spk · MA_spkPress**\n\n도우미 캐릭터 음원은 MainCharacter 가 과목별로 물고 있어 등록하지 않습니다.\n\n`checkBox` · `mark` 은 **체크박스를 쓰는 차시에만** 필요합니다 — 표본 다섯 중 MAL1M01W4S3 하나만 등록해 두었습니다. inningData[].isCheckBox 를 false 로 두면 만들지 않으므로, 모든 차시에 있어야 하는 것이 아니라 required 목록에서는 뺐습니다."
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset.ts 가 없습니다. 아래 것들을 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 코드에 박힌 것** — bg · bg2 · frame · wing · lever · elecWave · checkBox · mark.\n\n**이름을 조합해 찾는 것** (required 에는 고정 이름만 적을 수 있어 여기에 규칙을 둡니다)\n- `btn{answerNum}_{선지번호}` — 선지 버튼 기본 그림 (ButtonBase.ts:47)\n- `btn_select{answerNum}` · `btn_wrong{answerNum}` · `btn_correct{answerNum}` — 선지 버튼의 선택·오답·정답 테두리. **없으면 모듈이 그립니다**(2026-10-13, ButtonBase.ts `OUTLINE`) — 버튼보다 사방 10px 크고, 선 10px, 바깥 모서리 반지름 40, 안은 비우고, 주황 FFA600 · 빨강 FF5757 · 파랑 0084FF. 완성본 테두리 그림 거의 전부와 9호 figma 가 이 꼴이라 **figma 테두리가 이 꼴이면 그림을 받지 말고 AssetTable 에서 뺍니다.** 꼴이 다를 때(테두리에 바탕까지 칠한 판 등)만 그림을 넣습니다. 앱이 앞 호에서 가져온 `btn_select.png` 등은 앞 호 버튼 크기(270x220 · 300x280)라 새 버튼 크기와 다르면 쓰지 않습니다\n- `exam{answerNum}` — 문제(예제) 그림\n- `spkBtn{answerNum}_{버튼번호}` — 문항 안에 놓이는 스피커 버튼(ButtonBase.ts:104). 앞 번호는 이닝 번호가 아니라 answerNum 입니다(ButtonBase 의 inningNum 인자가 answerNum, type1_1.ts:49)\n- `btn{answerNum}` — isSpk 와 isSpkBtn 이 둘 다 true 인 이닝은 선지별 그림 대신 이 한 장을 씁니다(ButtonBase.ts:95)\n- `{mStudy}_spk` · `{mStudy}_spkPress` — 과목 스피커 버튼. mStudy 가 MA 이므로 **MA_spk · MA_spkPress**\n\n도우미 캐릭터 음원은 MainCharacter 가 과목별로 물고 있어 등록하지 않습니다.\n\n`checkBox` · `mark` 은 **체크박스를 쓰는 차시에만** 필요합니다 — 표본 다섯 중 MAL1M01W4S3 하나만 등록해 두었습니다. inningData[].isCheckBox 를 false 로 두면 만들지 않으므로, 모든 차시에 있어야 하는 것이 아니라 required 목록에서는 뺐습니다."
     }
   },
   "gameData": {
@@ -238,29 +240,32 @@
           {
             "key": "isTouchSound",
             "type": "bool",
-            "required": true,
+            "required": false,
             "default": true,
-            "desc": "터치 효과음(sound.touch)을 낼지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 터치 효과음(sound.touch)을 낼지.",
+            "optional": true
           },
           {
             "key": "isSfxSound",
             "type": "bool",
-            "required": true,
+            "required": false,
             "default": true,
-            "desc": "효과음 전체를 켤지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 효과음 전체를 켤지.",
+            "optional": true
           },
           {
             "key": "isEndingShow",
             "type": "bool",
-            "required": true,
+            "required": false,
             "default": true,
-            "desc": "엔딩 연출(Ending.ts)을 보여 줄지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 엔딩 연출(Ending.ts)을 보여 줄지.",
+            "optional": true
           },
           {
             "key": "isShowLog",
             "type": "bool",
             "optional": true,
-            "desc": "**디버그용 로그 스위치입니다. 양산에서는 false 로 둡니다.** true 로 넘기면 콘솔이 시끄러워집니다."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). **디버그용 로그 스위치입니다. 양산에서는 false 로 둡니다.** true 로 넘기면 콘솔이 시끄러워집니다."
           },
           {
             "key": "mStudy",
@@ -276,37 +281,37 @@
             "key": "isCorrectSound",
             "type": "bool",
             "optional": true,
-            "desc": "정답 효과음(sound.correct)을 낼지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 정답 효과음(sound.correct)을 낼지."
           },
           {
             "key": "isInningCompleteActivation",
             "type": "bool",
             "optional": true,
-            "desc": "이닝을 마칠 때 완료 연출을 켤지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝을 마칠 때 완료 연출을 켤지."
           },
           {
             "key": "isCompleteActivation",
             "type": "bool",
             "optional": true,
-            "desc": "학습 전체를 마칠 때 완료 연출을 켤지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 학습 전체를 마칠 때 완료 연출을 켤지."
           },
           {
             "key": "isAffordanceTimer",
             "type": "bool",
             "optional": true,
-            "desc": "일정 시간 안 누르면 어포던스를 띄울지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 일정 시간 안 누르면 어포던스를 띄울지."
           },
           {
             "key": "isNarrationSound",
             "type": "bool",
             "optional": true,
-            "desc": "나레이션을 재생할지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 나레이션을 재생할지."
           },
           {
             "key": "isMainCharacterSound",
             "type": "bool",
             "optional": true,
-            "desc": "도우미 캐릭터 음원을 재생할지."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 도우미 캐릭터 음원을 재생할지."
           }
         ],
         "desc": "활동 전체 스위치와 이닝 구성."
@@ -319,13 +324,13 @@
           {
             "key": "framePos",
             "type": "point",
-            "required": true,
-            "figma": true,
+            "required": false,
             "default": {
               "x": 224,
               "y": 22
             },
-            "desc": "문제 틀(frame) 자리."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 문제 틀(frame) 자리.",
+            "optional": true
           },
           {
             "key": "wing",
@@ -341,24 +346,24 @@
           {
             "key": "frameCover",
             "type": "point",
-            "required": true,
-            "figma": true,
+            "required": false,
             "default": {
               "x": 224,
               "y": 112
             },
-            "desc": "틀 위 덮개 자리."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 틀 위 덮개 자리.",
+            "optional": true
           },
           {
             "key": "dotBase",
             "type": "point",
-            "required": true,
-            "figma": true,
+            "required": false,
             "default": {
               "x": 700,
               "y": 77
             },
-            "desc": "점선 기준 자리."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 점선 기준 자리.",
+            "optional": true
           },
           {
             "key": "leverPos",
@@ -374,13 +379,13 @@
           {
             "key": "coverPos",
             "type": "point",
-            "required": true,
-            "figma": true,
+            "required": false,
             "default": {
               "x": 1515,
               "y": 179
             },
-            "desc": "덮개 자리."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 덮개 자리.",
+            "optional": true
           },
           {
             "key": "markPos",
@@ -396,7 +401,7 @@
           {
             "key": "basePos",
             "type": "array",
-            "required": true,
+            "required": false,
             "minLength": 1,
             "of": {
               "key": "",
@@ -417,8 +422,9 @@
               ],
               "desc": "칸 하나."
             },
-            "desc": "선지 버튼이 기본으로 놓이는 자리들.",
-            "minLengthWhy": "선지 수만큼 필요합니다. 초안의 5 는 표본 값입니다."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 선지 버튼이 기본으로 놓이는 자리들.",
+            "minLengthWhy": "선지 수만큼 필요합니다. 초안의 5 는 표본 값입니다.",
+            "optional": true
           },
           {
             "key": "type1_1_btnPos",
@@ -516,7 +522,7 @@
               },
               "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
             },
-            "desc": "type1 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). type1 유형의 선지 번호 동그라미 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
             "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
           },
           {
@@ -1157,7 +1163,7 @@
               },
               "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
             },
-            "desc": "type3_2 유형의 글상자 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). type3_2 유형의 글상자 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
             "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
           },
           {
@@ -1283,7 +1289,7 @@
               },
               "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
             },
-            "desc": "type3_3 유형의 글상자 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). type3_3 유형의 글상자 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
             "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
           },
           {
@@ -1378,7 +1384,7 @@
               },
               "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
             },
-            "desc": "type4 유형의 체크박스 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 체크 상자는 단추 안 고정 자리(x 60)에 그립니다(ButtonBase.ts:117-127). type4 유형의 체크박스 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
             "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
           },
           {
@@ -1407,7 +1413,7 @@
               ],
               "desc": "칸 하나."
             },
-            "desc": "type4 유형의 체크 표시 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 체크 표시는 체크 상자 안에 붙입니다(ButtonBase.ts:127). type4 유형의 체크 표시 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
             "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
           },
           {
@@ -1442,7 +1448,7 @@
               },
               "desc": "칸 하나. 안쪽 칸의 뜻은 바깥 배열 설명을 보세요."
             },
-            "desc": "type4 유형의 스피커 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). type4 는 스피커 단추를 만들지 않습니다(type4.ts:34 가 주석). 스피커 자리는 `${type}_spkPos` 로 type1_1 · type1_2 · type2 만 읽습니다(SpkButton.ts:41). type4 유형의 스피커 버튼 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값). 안쪽 칸은 선지·버튼 번호입니다.",
             "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
           },
           {
@@ -1540,7 +1546,7 @@
               ],
               "desc": "칸 하나."
             },
-            "desc": "type4 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). type4 유형의 문제(예제) 그림 자리. **바깥 첨자가 layoutType** 입니다 — SpkButton.ts:53 이 positions[키][layoutType] 으로 꺼내므로, inningData[].layoutType 이 가리키는 칸이 없으면 조용히 {x:0, y:0} 으로 떨어집니다(|| 기본값).",
             "minLengthWhy": "layoutType 값이 가리킬 수 있는 만큼(가로형·세로형이면 2) 필요합니다."
           },
           {
@@ -1990,13 +1996,13 @@
                   "key": "isSpkBtn",
                   "type": "bool",
                   "required": true,
-                  "desc": "문항 안 스피커 버튼(spkBtn{이닝}_{번호})을 둘지."
+                  "desc": "문항 안 스피커 버튼(spkBtn{answerNum}_{번호})을 둘지."
                 },
                 {
                   "key": "answerNum",
                   "type": "number",
                   "optional": true,
-                  "desc": "**리소스 이름에 들어가는 문항 번호.** btn{answerNum}_{선지} · btn_select{answerNum} · btn_wrong{answerNum} · btn_correct{answerNum} · exam{answerNum} 을 이 값으로 조합하고, 컨테이너 이름도 answer{answerNum}Container 가 됩니다(TypeBase.ts:34). **정답이 몇 번인지를 뜻하는 값이 아닙니다.**"
+                  "desc": "**리소스 이름에 들어가는 문항 번호.** btn{answerNum}_{선지} · btn_select{answerNum} · btn_wrong{answerNum} · btn_correct{answerNum} · exam{answerNum} 을 이 값으로 조합하고, 컨테이너 이름도 answer{answerNum}Container 가 됩니다(TypeBase.ts:34). isSpk 와 isSpkBtn 이 둘 다 참인 이닝은 선지 버튼 그림이 접미사 없는 btn{answerNum} 한 장입니다(ButtonBase.ts:35 · :94~95). 테두리 셋(btn_select · btn_wrong · btn_correct{answerNum})은 AssetTable 에 없으면 모듈이 그 버튼 그림 둘레에 그립니다(ButtonBase.ts:67 · :73~76, 꼴은 assets.providedByModule.note). **정답이 몇 번인지를 뜻하는 값이 아닙니다.**"
                 },
                 {
                   "key": "correctNum",
@@ -2020,7 +2026,7 @@
                   "key": "isCheckBox",
                   "type": "bool",
                   "optional": true,
-                  "desc": "체크박스를 둘지. **없으면 기본 true 이고, 명시적으로 false 일 때만 만들지 않습니다**(ButtonBase.ts:32). 키를 지우는 것과 false 를 적는 것이 다릅니다."
+                  "desc": "체크박스를 둘지. **없으면 기본 true 이고, 명시적으로 false 일 때만 만들지 않습니다**(ButtonBase.ts:37). 키를 지우는 것과 false 를 적는 것이 다릅니다."
                 }
               ],
               "desc": "칸 하나."
@@ -2083,12 +2089,13 @@
               {
                 "key": "enterance",
                 "type": "enum",
-                "required": true,
+                "required": false,
                 "values": [
                   "nar3"
                 ],
                 "default": "nar3",
-                "desc": "학습 진입 지문. (철자가 enterance 입니다 — entrance 가 아닙니다.)"
+                "desc": "**모듈이 읽지 않습니다**(모듈은 narration.MA 의 clear · wrong · wrong2 만 읽습니다, TypeBase.ts:117 · 137 · 173). 완성본이 관례로 적어 둔 값입니다. 학습 진입 지문. (철자가 enterance 입니다 — entrance 가 아닙니다.)",
+                "optional": true
               },
               {
                 "key": "clear",
@@ -2132,34 +2139,42 @@
               {
                 "key": "guide",
                 "type": "array",
-                "required": true,
+                "required": false,
                 "minLength": 1,
                 "of": {
                   "key": "",
                   "type": "asset:sound",
-                  "desc": "alias 하나. AssetTable 에 같은 이름이 있어야 합니다."
+                  "desc": "alias 하나. AssetTable 에 같은 이름이 있어야 합니다.",
+                  "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
                 },
-                "desc": "문항 안내 음원 목록.",
-                "minLengthWhy": "하나는 있어야 합니다."
+                "desc": "**모듈이 읽지 않습니다**(모듈은 narration.MA 의 clear · wrong · wrong2 만 읽습니다, TypeBase.ts:117 · 137 · 173). 완성본이 관례로 적어 둔 값입니다. 문항 안내 음원 목록.",
+                "minLengthWhy": "하나는 있어야 합니다.",
+                "optional": true
               },
               {
                 "key": "hint",
                 "type": "asset:sound",
-                "required": true,
+                "required": false,
                 "default": "com1",
-                "desc": "힌트 음원. settings.showHintCount 만큼 들려줍니다."
+                "desc": "**모듈이 읽지 않습니다**(모듈은 narration.MA 의 clear · wrong · wrong2 만 읽습니다, TypeBase.ts:117 · 137 · 173). 완성본이 관례로 적어 둔 값입니다. 힌트 음원. settings.showHintCount 만큼 들려줍니다.",
+                "optional": true,
+                "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
               },
               {
                 "key": "answer1",
                 "type": "asset:sound",
                 "optional": true,
-                "desc": "정답 풀이 음원 1. **표본 MAL1M01W4S3 은 이 alias 가 AssetTable 에 주석으로만 있습니다** — 검사기가 「아는 결함」으로 잡아 두고 있는 자리입니다."
+                "desc": "**모듈이 읽지 않습니다**(모듈은 narration.MA 의 clear · wrong · wrong2 만 읽습니다, TypeBase.ts:117 · 137 · 173). 완성본이 관례로 적어 둔 값입니다. 정답 풀이 음원 1.",
+                "required": false,
+                "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
               },
               {
                 "key": "answer3",
                 "type": "asset:sound",
                 "optional": true,
-                "desc": "정답 풀이 음원 3."
+                "desc": "**모듈이 읽지 않습니다**(모듈은 narration.MA 의 clear · wrong · wrong2 만 읽습니다, TypeBase.ts:117 · 137 · 173). 완성본이 관례로 적어 둔 값입니다. 정답 풀이 음원 3.",
+                "required": false,
+                "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
               }
             ],
             "desc": "수학 나레이션. settings.mStudy 와 같은 이름이어야 찾습니다."
@@ -2185,7 +2200,7 @@
     {
       "id": "answer-num-aliases",
       "level": "error",
-      "check": "이닝마다 btn{answerNum}_{선지번호} · exam{answerNum} 이 AssetTable 에 있어야 한다. 테두리 셋(btn_select · btn_wrong · btn_correct{answerNum})은 없으면 모듈이 그리므로 없어도 된다.",
+      "check": "이닝마다 btn{answerNum}_{선지번호} · exam{answerNum} 이 AssetTable 에 있어야 한다(isSpk 와 isSpkBtn 이 둘 다 true 인 이닝은 btn{answerNum} 한 장과 spkBtn{answerNum}_{버튼번호}). 테두리 셋(btn_select · btn_wrong · btn_correct{answerNum})은 없으면 모듈이 그리므로 없어도 된다.",
       "why": "**answerNum 은 정답 번호가 아니라 리소스 이름에 들어가는 문항 번호입니다.** 버튼이나 문제 그림이 빠지면 조용히 사라집니다. 테두리는 2026-10-13 부터 그림이 없으면 ButtonBase 가 완성본과 같은 꼴로 그립니다(그린 것과 7호 그림을 픽셀로 견줘 크기 같음 · 색 차 0)."
     },
     {
@@ -2198,7 +2213,7 @@
       "id": "checkbox-key-tri-state",
       "level": "warn",
       "check": "체크박스를 없애려면 isCheckBox 에 false 를 명시한다 — 키를 지우면 켜집니다.",
-      "why": "ButtonBase.ts:32 가 `!== false` 로 봅니다. 키가 없으면 기본 true 입니다."
+      "why": "ButtonBase.ts:37 가 `!== false` 로 봅니다. 키가 없으면 기본 true 입니다."
     },
     {
       "id": "fixed-alias-registered",

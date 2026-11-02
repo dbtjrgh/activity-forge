@@ -5,8 +5,8 @@
   "title": "카드 뒤집어 짝 맞추기",
   "summary": "뒤집힌 카드들 중 두 장을 골라 같은 그림이면 짝을 맞추는 활동. 카드 종류는 모듈이 미리 정해 둔 사전(car · robot · apple … 24가지)에서 고릅니다.",
   "reference": {
-    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "0f578e8b712d69404943eba5807e5357baa4ec58",
+    "moduleCommitWhy": "2026-10-26 모듈이 끝 판정을 모든 이닝의 짝 수 합으로 고쳐, inningData 설명을 바꾸고 「이닝은 정확히 둘」 규칙을 지웠습니다. 줄 번호도 맞췄습니다.",
     "module": "sparkon_common/_common/module/MA/M42",
     "activities": [
       "MAL1M03W2S2",
@@ -151,20 +151,21 @@
               {
                 "key": "focus",
                 "type": "enum",
-                "required": true,
+                "required": false,
                 "values": [
                   "left",
                   "right"
                 ],
-                "desc": "카드가 뒤집힐 때 어느 쪽 앞면을 쓸지 — left 또는 right. cardAliasInfo[종류].front 의 두 그림 중 하나를 고릅니다."
+                "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · 액티비티 코드에 이 값을 읽는 곳이 없습니다). 앞면은 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227). 카드가 뒤집힐 때 어느 쪽 앞면을 쓸지 — left 또는 right. cardAliasInfo[종류].front 의 두 그림 중 하나를 고릅니다.",
+                "optional": true
               }
             ],
             "desc": "칸 하나."
           },
-          "desc": "그 이닝의 카드 자리들.",
+          "desc": "카드 6장의 자리 한 묶음. 모듈이 카드를 늘 6장 깔므로(CardManager.ts:223) 6칸입니다.",
           "minLengthWhy": "짝 맞추기라 **짝수여야 합니다.**"
         },
-        "desc": "**카드 자리표 — [이닝][카드 번호]** 두 겹 배열입니다. 칸 수가 그 이닝에 깔 카드 수입니다.",
+        "desc": "**카드 자리 묶음 목록**입니다. 묶음 하나가 카드 6장의 자리이고, 시작할 때 묶음 차례를 섞어 이닝마다 하나씩 꺼내 씁니다 — 이닝 번호와 짝지어지지 않습니다(CardManager.ts:144-146 · 273-278). 묶음이 모자라면 다시 섞어 씁니다.",
         "minLengthWhy": "이닝 수만큼 필요합니다."
       },
       {
@@ -201,7 +202,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -267,7 +268,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -333,7 +334,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -399,7 +400,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -465,7 +466,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -531,7 +532,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -597,7 +598,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -663,7 +664,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -729,7 +730,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -795,7 +796,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -861,7 +862,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -927,7 +928,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -993,7 +994,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1059,7 +1060,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1125,7 +1126,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1191,7 +1192,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1257,7 +1258,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1323,7 +1324,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1389,7 +1390,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1455,7 +1456,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1521,7 +1522,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1587,7 +1588,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1653,7 +1654,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1719,7 +1720,7 @@
                     "desc": "오른쪽 앞면 그림."
                   }
                 ],
-                "desc": "카드 앞면 두 벌 — cardPos[].focus 가 둘 중 하나를 고릅니다."
+                "desc": "카드 앞면 두 벌 — 한 종류의 두 장 가운데 먼저 깔리는 카드가 left, 나중 카드가 right 를 씁니다(CardManager.ts:224-227)."
               },
               {
                 "key": "correctFront",
@@ -1778,7 +1779,7 @@
                 "type": "string",
                 "desc": "종류 이름 하나(car · apple 등)."
               },
-              "desc": "그 이닝에 깔 카드 종류 이름들. **cardAliasInfo 의 열쇠 중에서 고릅니다.** 짝 맞추기라 같은 종류가 두 장씩 필요합니다.",
+              "desc": "그 이닝에 깔 카드 종류 이름들. **cardAliasInfo 의 열쇠 중에서 고릅니다.** **종류마다 한 번만 적습니다** — 모듈이 목록을 두 벌로 늘려 짝을 만듭니다(CardManager.ts:211). 카드는 늘 6장이라 이닝마다 **정확히 서로 다른 3종류**입니다.",
               "minLengthWhy": "종류가 하나는 있어야 합니다."
             },
             {
@@ -1790,7 +1791,7 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "이닝 목록. **cardPos 의 칸 수와 같아야 합니다.**",
+        "desc": "이닝 목록. 끝났는지를 모든 이닝의 quizWord 수 합으로 셉니다(AnswerPanel.ts:23-25 totalPairs). 완성본 4개는 다 두 이닝입니다.",
         "minLengthWhy": "이닝이 하나는 있어야 합니다."
       }
     ]
@@ -1805,20 +1806,8 @@
     {
       "id": "card-count-even",
       "level": "error",
-      "check": "cardPos[이닝] 의 자리 수가 짝수여야 하고, quizWord 종류 수 × 2 와 같아야 한다.",
-      "why": "짝 맞추기입니다. 홀수면 짝이 없는 카드가 남아 **이닝이 끝나지 않습니다.**"
-    },
-    {
-      "id": "inning-arrays-match",
-      "level": "error",
-      "check": "cardPos 의 칸 수와 inningData 의 칸 수가 같아야 한다.",
-      "why": "이닝 번호를 첨자로 씁니다. 어긋나면 그 이닝에서 카드 자리를 못 찾습니다."
-    },
-    {
-      "id": "focus-picks-front",
-      "level": "warn",
-      "check": "cardPos[].focus 는 left 또는 right 다.",
-      "why": "cardAliasInfo[종류].front 의 두 그림 중 하나를 고릅니다. 다른 값이면 앞면이 안 보입니다."
+      "check": "inningData[].quizWord 는 서로 다른 종류 3개이고, cardPos 의 묶음마다 자리가 6개여야 한다.",
+      "why": "모듈이 quizWord 를 두 벌로 늘려 카드를 늘 6장 깝니다(CardManager.ts:211 · 223). 종류가 셋보다 적으면 없는 카드를 찾다 오류가 나고, 많으면 짝이 빠진 카드가 남아 **이닝이 끝나지 않습니다.**"
     },
     {
       "id": "coordinates-may-be-expr",
@@ -1836,7 +1825,7 @@
       "id": "eop-not-called",
       "level": "warn",
       "check": "onStart 에 eop 호출이 없다 — 표본 그대로 둔다.",
-      "why": "표본 훅에 eop 가 없습니다. 임의로 넣으면 화면이 겹칩니다."
+      "why": "모듈이 끝에 eop 를 부릅니다(M42.ts:117). 그래서 표본 훅에 eop 가 없습니다. 임의로 넣으면 화면이 겹칩니다."
     }
   ],
   "notes": [

@@ -8,13 +8,16 @@
 //   가  스펙 항목이 0개(`unused` 아님)인데 스펙이 담는 export 에 값이 있다
 //   나  `unused` 인데 스펙이 담는 export 에 값이 있다
 //   다  액티비티가 GameData 에서 부르는 export 가운데 값이 있는 것을 스펙이 안 담는다(`codegen.gameDataExport` 가 아니다)
+//   라  `gameData.derived` 에 적은 export 가 완성본에서 그 길로 뽑은 것과 다르다 (2026-10-26, E28 baseAnyBlock)
 // 값이 있는데 아무도 안 부르는 export(ExploreMakeLv2 `quizData2`)는 걸지 않습니다 — 만들어도 빠질 것이 없습니다.
+// `derived` 에 적은 것은 다에서 빼되 라로 잽니다 — 적기만 하면 넘어가는 문이 되면 K36 같은 빠짐을 다시 못 봅니다.
 
 import fs from "node:fs";
 import path from "node:path";
 import { chalk } from "@/gen/color";
 import { loadSpec } from "@/gen/spec";
 import { findUsers, listModules, readExports } from "@/gen/survey";
+import { deriveExports, sameMembers } from "@/gen/gdexports";
 import { ok } from "./checkSpecCount";
 
 const empty = (v: unknown): boolean =>
@@ -64,8 +67,12 @@ export function checkFill(): void {
       const full = !empty(ex.get(root));
       if (g.kind !== "unused" && fields === 0 && full) hits.push(`${u.code}: 항목이 0개인데 ${root} 에 값이 있습니다`);
       else if (g.kind === "unused" && full) hits.push(`${u.code}: unused 인데 ${root} 에 값이 있습니다`);
-      const missed = [...importedFrom(u.dir)].filter((n) => n !== root && ex.has(n) && !empty(ex.get(n)));
+      const derived = deriveExports(spec, ex.get(root));
+      const missed = [...importedFrom(u.dir)].filter((n) => n !== root && !derived.has(n) && ex.has(n) && !empty(ex.get(n)));
       if (missed.length) hits.push(`${u.code}: 액티비티가 부르는 ${missed.join(", ")} 를 스펙이 안 담습니다(스펙은 ${root})`);
+      for (const [name, want] of derived) {
+        if (!sameMembers(ex.get(name), want)) hits.push(`${u.code}: ${name} 가 스펙 gameData.derived 의 길로 뽑은 값과 다릅니다`);
+      }
     }
     if (hits.length) bad.push(`${row.subject}/${row.module} — ${hits[0]}` + (hits.length > 1 ? ` (외 ${hits.length - 1}건)` : ""));
   }

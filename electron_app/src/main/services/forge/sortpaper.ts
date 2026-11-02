@@ -9,7 +9,8 @@
  *               넣고 작업대의 「기획서대로 바꾸기」를 가리킨다(2026-10-14 — 전에는 안 넣어서 작업대가 견줄 기획서가 없었다)
  *   EN 기획서   `영어 Level 1_01주_Word Spark` — 호 · S 가 없는 공용 기획서라 **공용 자리에 한 번만** 둔다(여쭐 것 7).
  *               학습코드 폴더로 가져가는 것은 만들 때다(`pullCommonPlans`) — AI 는 리소스 폴더 밖을 못 읽는다
- *   KO 기획서   제목 꼴을 아직 모른다 — 묻는다
+ *   KO 기획서   「개발자 전달」 PDF 1쪽 머리 `Lv3_08호 S3` 와 파일 이름의 `9호(M08)_1주`(`section.ts` koPlanCode) — 둘이 안 맞으면 묻는다
+ *   NU 기획서   본 적이 없다(공유 폴더 `99. 누리과정/01. 기획` 이 비었다) — 묻는다
  *
  * Electron 을 import 하지 않는다(services 규칙). 1쪽 글은 poppler `pdftotext`(`poppler.ts`), 줄이기는 `imgsize.ts` 의 도구.
  */
@@ -25,7 +26,7 @@ import { fillFromPlan, moduleOnPage } from './layoutfill'
 import { layoutModuleOf, planVsLayout } from './planmodule'
 import { pageText } from './poppler'
 import type { Forge } from './runtime'
-import { frameCode, planCode } from './section'
+import { frameCode, koPlanCode, planCode } from './section'
 import { putShot } from './shot'
 
 const PICTURE = /\.(png|jpe?g|webp)$/i
@@ -54,13 +55,15 @@ async function routePlan(forge: Forge, file: string, overwrite: boolean): Promis
   const t = read.text
   const bytes = fs.readFileSync(file)
 
-  const code = planCode(t)
+  const ma = planCode(t)
+  const code = ma ?? koPlanCode(t, path.basename(file))
   if (code) {
     // 호 이름 세 벌 — 학습코드의 M07 · 제목의 `07호` · `7호`. 하나라도 다르면 어느 호 것인지 모른다.
-    // 9호 기획서는 제목이 실제 호(`09호(M08)`)라 M 번호만 보면 9호 MA 기획서가 다 여기서 돌아섰다(2026-10-14) — 둘 다 받는다
+    // 9호 기획서는 제목이 실제 호(`09호(M08)`)라 M 번호만 보면 9호 MA 기획서가 다 여기서 돌아섰다(2026-10-14) — 둘 다 받는다.
+    // 국어는 `koPlanCode` 가 1쪽 머리와 파일 이름의 호를 이미 맞춰 봤다 — 본문에 「기존 2호 재사용」처럼 다른 호가 나온다
     const m = code.slice(5, 7)
     const ho = new Set([Number(m), HO_OF[m]?.order])
-    const hos = [...t.matchAll(/(\d{1,2})\s*호/g)].map((x) => Number(x[1]))
+    const hos = ma ? [...t.matchAll(/(\d{1,2})\s*호/g)].map((x) => Number(x[1])) : []
     if (hos.some((h) => !ho.has(h))) {
       return hold(file, `제목의 호(${[...new Set(hos)].join(', ')}호)가 ${code} 학습코드와 달라 넣지 않았습니다.`)
     }
@@ -90,7 +93,8 @@ async function routePlan(forge: Forge, file: string, overwrite: boolean): Promis
     const act = en[3].trim().replace(/[\\/:*?"<>|]/g, '')
     const name = `EN_L${en[1]}_W${en[2].padStart(2, '0')}_${act}.pdf`
     const at = path.join(root, '_plan', name)
-    if (same(at, bytes)) return { placed: { code: '', kind: 'plan', file: `_plan/${name}`, note: `공용 기획서 ${name} 파일이 이미 있습니다.` } }
+    // 이미 있으면 `file` 을 비운다 — 학습코드 기획서(위 `twin`)와 같이 「새로 넣은 것은 없음」의 표시다(`sortplan.ts` 가 센다)
+    if (same(at, bytes)) return { placed: { code: '', kind: 'plan', file: '', note: `공용 기획서 ${name} 파일이 이미 있습니다.` } }
     if (fs.existsSync(at)) {
       if (!overwrite) return hold(file, `내용이 다른 ${name} 파일이 이미 있습니다. 버전을 확인하고 「덮어쓰기」를 누르세요.`)
       await toTrash(at)

@@ -1,0 +1,422 @@
+{
+  "specVersion": 1,
+  "module": "E28",
+  "subject": "EN",
+  "title": "빙하 건너기 문장 만들기 — 문장 차례대로 낱말 블록을 밟아 펭귄을 건너보냅니다",
+  "summary": "이닝마다 문장 소리가 나오고 왼쪽 표지판에 장면 그림이 뜹니다. 아래로 얼음 블록이 줄지어 놓여 있고, 줄마다 맞는 낱말 블록이 하나 있습니다. 문장 차례대로 맞는 블록을 누르면 펭귄이 뛰어올라 낱말을 읽고, 위 문장판에 그 낱말까지 글자가 드러납니다. 틀린 블록을 누르면 펭귄이 물에 빠지고 블록이 깨지며 문장을 다시 들려줍니다(두 번째 틀리면 문장 글자를 흐리게 보여 줍니다). 마지막 줄을 지나면 빙하 끝 판에 도착해 문장을 한 번 더 읽습니다. 이닝 차례도, 줄 안의 블록 자리도 열 때마다 섞입니다.",
+  "reference": {
+    "moduleCommit": "c36c39677e71d33a12f22fb10304fa5796896f64",
+    "moduleCommitWhy": "2026-10-26 모듈 코드와 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/EN/E28",
+    "activities": [
+      "ENL3M01W3S3",
+      "ENL3M04W3S3",
+      "ENL3M05W3S3",
+      "ENL3M11W4S2"
+    ]
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "// CreateSentenceLv3.addAsset();"
+      ],
+      "onInit": [
+        "// 진입시 성취율 업로드",
+        "SparkApp.cms.updateCompleteProgress(0.3);",
+        "GameMap.handle.init(quizData, baseAnyBlock);",
+        "// this.mBoard.init();",
+        "// this.mBoard.mSpeaker.visible = false;",
+        "this.addChild(GameMap.handle);",
+        "// this.addChild(this.mBoard);"
+      ],
+      "onStart": [
+        "// const bgm = AudioManager.getSound(\"bgm\");",
+        "// bgm.loop(true);",
+        "// bgm.volume(0.5);",
+        "// bgm.play();",
+        "// GameMap.handle.startBgm();",
+        "// await SparkApp.mainMenu.mainCharacter.guide(\"nar02\");",
+        "// SparkApp.mainMenu.inningDisplay.setInningCount(quizData.length);",
+        "// SparkApp.mainMenu.inningDisplay.show();",
+        "await GameMap.handle.start(quizData);",
+        "await GameMap.handle.play(quizData);",
+        "await SparkApp.eop.show((GameMap.handle.totalPercent / quizData.length) * 0.01);",
+        "// 이곳에 플레이 버튼을 입력하고 난 이후의 코드를 입력하세요."
+      ],
+      "onEnd": [
+        "// 이곳에 액티비티 종료시의 코드를 입력하세요"
+      ],
+      "onUpdate": [
+        "//  이곳에 액티비티 Loop Step의 코드를 입력하세요."
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "baseAnyBlock",
+        "from": "./GameData"
+      },
+      {
+        "symbol": "GameMap",
+        "from": "@_common/module/EN/E28/GameMap"
+      }
+    ]
+  },
+  "assets": {
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "물속 배경. GameMap.ts:101 하드코딩."
+      },
+      {
+        "alias": "glacierBg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "빙하 끝 도착지. GlacierBg.ts:18."
+      },
+      {
+        "alias": "sentenceBoard",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "위 문장판. Board.ts:84."
+      },
+      {
+        "alias": "speakerbg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "문장판 스피커 단추 바탕. Board.ts:14."
+      },
+      {
+        "alias": "speakericon",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "스피커 아이콘. Board.ts:15."
+      },
+      {
+        "alias": "correctFish",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "맞혔을 때 펭귄이 무는 물고기. Penguin.ts:68."
+      },
+      {
+        "alias": "water",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "블록 아래 물결. GlacierBlock.ts:95."
+      },
+      {
+        "alias": "glacier_block1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "얼음 블록 셋 가운데 하나를 블록마다 무작위로 고릅니다(GlacierBlock.ts:12·93)."
+      },
+      {
+        "alias": "glacier_block2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "glacier_block3",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "block_eff_fail01",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "블록이 깨지는 로티. 블록 그림 번호와 짝을 지어 고릅니다(GlacierBlock.ts:13·39 — block1 은 fail03, block3 은 fail01)."
+      },
+      {
+        "alias": "block_eff_fail02",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "block_eff_fail03",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "block_eff_waterFail",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "블록이 깨질 때 물보라. GlacierBlock.ts:45."
+      },
+      {
+        "alias": "fish01",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "배경에 헤엄치는 물고기(두 마리). GameMap.ts:219."
+      },
+      {
+        "alias": "fish02",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "배경에 헤엄치는 물고기(세 마리). GameMap.ts:230."
+      },
+      {
+        "alias": "basket",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "도착지 판 움직임. GlacierBg.ts:12."
+      },
+      {
+        "alias": "speacker",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "스피커가 소리 내는 동안의 움직임. Board.ts:17 — 철자가 speacker 입니다."
+      },
+      {
+        "alias": "correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 효과. Penguin.ts:199."
+      },
+      {
+        "alias": "pengJump",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "펭귄 뛰기. Penguin.ts:25."
+      },
+      {
+        "alias": "pengFail",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "펭귄 물에 빠지기. Penguin.ts:32."
+      },
+      {
+        "alias": "pengSuccess",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "도착했을 때 펭귄. Penguin.ts:38."
+      },
+      {
+        "alias": "pengIdle1",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "서 있는 펭귄. Penguin.ts:45."
+      },
+      {
+        "alias": "pengCorrect",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "맞혔을 때 펭귄. Penguin.ts:52."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음. GameMap.ts:94 가 getSound(\"bgm\") 으로 찾아 소리 크기 0.5 로 되풀이합니다."
+      },
+      {
+        "alias": "nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작 안내. GameMap.ts:255 guide(\"nar02\")."
+      },
+      {
+        "alias": "sound_nar10",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "두 번째 이닝부터 이닝 시작 안내. nar10~12 가운데 하나를 무작위로 고릅니다(Board.ts:52·112)."
+      },
+      {
+        "alias": "sound_nar11",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "sound_nar12",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "sound_jump1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "펭귄이 뛸 때. jump1~3 가운데 하나를 무작위로 고릅니다(Penguin.ts:11·116)."
+      },
+      {
+        "alias": "sound_jump2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "sound_jump3",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "위와 같은 무리."
+      },
+      {
+        "alias": "sound_jump_fail",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀린 블록에 뛰었을 때. Penguin.ts:162."
+      },
+      {
+        "alias": "sound_water",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "물에 빠질 때. Penguin.ts:163."
+      },
+      {
+        "alias": "sound_correct_word",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞는 블록을 밟았을 때. GlacierBlock.ts:137."
+      },
+      {
+        "alias": "sound_inning_finish",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "도착했을 때 효과음. GameMap.ts:196."
+      },
+      {
+        "alias": "sound_EndInning",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "도착했을 때 칭찬. GameMap.ts:199."
+      }
+    ],
+    "providedByModule": {
+      "note": "**이 모듈에는 리소스를 등록하는 곳이 없습니다**(Assets.ts 가 빈 파일). 배경, 블록, 펭귄, 효과, 나레이션까지 전부 회차 AssetTable 이 넣고, 위 이름들은 모듈에 박혀 있어 바꿀 수 없습니다. 완성본 넷이 함께 넣는 penguin · brokenBlock · pengIdle2 는 모듈이 읽지 않습니다."
+    }
+  },
+  "gameData": {
+    "root": "quizData",
+    "kind": "array",
+    "minLength": 2,
+    "minLengthWhy": "문장 하나가 이닝 하나입니다. 이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 4개는 5~6개입니다.",
+    "note": "**GameData 는 quizData 와 baseAnyBlock 둘을 내보냅니다**(baseAnyBlock 이 앞). 액티비티가 GameMap.handle.init(quizData, baseAnyBlock) 으로 둘 다 넘깁니다. 본문은 quizData 이고 baseAnyBlock 은 아래 derived 대로 뽑습니다. 줄 하나에 블록이 최대 셋이라 이닝마다 그 문장에 없는 낱말이 둘 이상 남아야 합니다(기존 4개는 11개 이상).",
+    "derived": [
+      {
+        "name": "baseAnyBlock",
+        "unionOf": "[].info.answerBlock[]",
+        "note": "틀린 블록에 얹을 낱말 그림 목록. 모듈이 섞어 쓰고 그 이닝 문장에 든 낱말은 빼고 고릅니다(GlacierBlock.ts:210). 기존 4개 모두 모든 이닝 answerBlock 을 겹치지 않게 모은 것과 같습니다(차례만 다름)."
+      }
+    ],
+    "fields": [],
+    "of": {
+      "key": "",
+      "type": "object",
+      "fields": [
+        {
+          "key": "boardWidthMask",
+          "type": "array",
+          "required": true,
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "number"
+          },
+          "desc": "맞는 블록을 누를 때마다 위 문장판에서 문장 글자(answerSentence)를 왼쪽부터 드러내는 너비(px). **n번째 값이 n번째 낱말까지 보이는 너비**입니다(Board.ts:144 setMaskWithIDX). 커지는 차례이고 마지막 값은 문장 그림 너비쯤입니다. 화면 좌표가 아니라 **문장 그림에서 재는 값**입니다.",
+          "minLengthWhy": "answerBlock · map 과 같은 수여야 합니다. 기존 4개는 4~7개입니다."
+        },
+        {
+          "key": "info",
+          "type": "object",
+          "required": true,
+          "desc": "그 이닝 문장의 그림과 소리.",
+          "fields": [
+            {
+              "key": "answerBlock",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "asset:image"
+              },
+              "desc": "맞는 블록에 얹히는 낱말 그림을 **문장 차례대로**. i번째 낱말이 map 의 i번째 줄 정답 블록에 얹힙니다(GlacierBlock.ts:215). 1호는 끝에 마침표 그림(period)까지 블록으로 둡니다.",
+              "minLengthWhy": "map · boardWidthMask 와 같은 수여야 합니다. 기존 4개는 4~7개입니다."
+            },
+            {
+              "key": "answerWordSound",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "of": {
+                "key": "",
+                "type": "asset:sound"
+              },
+              "desc": "맞는 블록을 밟을 때마다 차례대로 읽는 낱말 소리(GlacierBlock.ts:140 이 맞힌 수로 고릅니다). 보통 answerBlock 과 같은 수이고, 끝이 마침표 그림이면 하나 적습니다(1호). 같은 낱말이 다시 나오면 같은 소리를 다시 적습니다.",
+              "minLengthWhy": "answerBlock 수와 같거나 마침표만큼 하나 적습니다."
+            },
+            {
+              "key": "answerSentenceSound",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "문장 전체 읽기. 이닝 시작, 스피커와 표지판을 누를 때, 틀렸을 때, 도착했을 때 납니다."
+            },
+            {
+              "key": "answerSentence",
+              "type": "asset:image",
+              "required": true,
+              "desc": "위 문장판에 뜨는 문장 글자 그림. 맞힐 때마다 boardWidthMask 만큼 드러나고, 두 번째 틀리면 흐리게 통째로 보입니다(Board.ts:103·104)."
+            },
+            {
+              "key": "answerBasket",
+              "type": "asset:image",
+              "required": true,
+              "desc": "빙하 끝 도착지 판에 뜨는 그림(GlacierBg.ts:31). 관례상 end_board_* 입니다."
+            },
+            {
+              "key": "answerSign",
+              "type": "asset:image",
+              "required": true,
+              "desc": "시작 자리 왼쪽 표지판의 장면 그림(EnterBoard.ts:19). 누르면 문장 소리가 납니다. 관례상 *ImgBoard 나 board_* 입니다."
+            }
+          ]
+        },
+        {
+          "key": "map",
+          "type": "array",
+          "required": true,
+          "minLength": 2,
+          "of": {
+            "key": "",
+            "type": "array",
+            "minLength": 2,
+            "of": {
+              "key": "",
+              "type": "bool"
+            }
+          },
+          "desc": "얼음 블록 줄. 줄 하나가 낱말 하나이고 **줄마다 true 가 하나**(맞는 블록)입니다. false 자리는 baseAnyBlock 에서 그 문장에 없는 낱말로 채웁니다. 줄 안 블록 자리는 열 때마다 섞입니다(GlacierBlock.ts:207). 기존 4개는 블록 수를 3, 2, 3, 2 … 로 번갈아 둡니다.",
+          "minLengthWhy": "answerBlock · boardWidthMask 와 같은 수여야 합니다. 기존 4개는 4~7개입니다."
+        }
+      ]
+    }
+  },
+  "relations": [
+    {
+      "id": "rows-match-words",
+      "kind": "sameCount",
+      "each": "[]",
+      "picks": [
+        "info.answerBlock",
+        "map",
+        "boardWidthMask"
+      ],
+      "note": "이닝마다 answerBlock · map · boardWidthMask 칸 수가 다 같아야 한다.",
+      "why": "GlacierBlock.ts:215 이 i번째 줄 정답 블록에 answerBlock[i] 를 얹고, GameMap.ts:135 이 맞힌 수가 map 줄 수와 같아야 이닝을 끝내며, Board.ts:144 이 맞힌 수 번째 boardWidthMask 로 문장을 드러냅니다. 어긋나면 블록 그림이 비거나 문장이 덜 드러난 채 넘어갑니다."
+    }
+  ]
+}

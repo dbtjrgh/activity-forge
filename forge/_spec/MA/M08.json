@@ -5,8 +5,8 @@
   "title": "양쪽 세어 수 만들기 (버튼으로 답 입력)",
   "summary": "화면 왼쪽과 오른쪽에 물건이 놓이고, 각각 몇 개인지 세어 아래 숫자 버튼으로 답을 입력하는 활동. 이닝마다 두 수(num1 · num2)가 정답입니다.",
   "reference": {
-    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글 전체를 모듈 코드와 한 줄씩 대 봤습니다(근거 줄을 다시 확인한 것만 적용). 뜻이 틀린 설명, 안 읽는 값, 고정 개수, 모듈이 실제로 등록하는 이름, 줄 번호를 바로잡았습니다.",
     "module": "sparkon_common/_common/module/MA/M08",
     "activities": [
       "MAL1M01W2S2"
@@ -73,7 +73,7 @@
         "alias": "checkBg",
         "kind": "image",
         "fixedAlias": true,
-        "note": "체크 영역 배경. 자리는 checkBoxLayout."
+        "note": "엔딩 위치를 맞춰 보던 그림입니다. 마무리 때 투명(alpha 0)으로 마무리 화면 왼쪽 위에 놓일 뿐 보이지 않고, checkBoxLayout 은 쓰지 않습니다(InningManager.ts:397-403)."
       },
       {
         "alias": "answer_box",
@@ -83,15 +83,15 @@
       },
       {
         "alias": "bubble",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "말풍선 그림. **같은 이름의 효과음도 따로 필요합니다.**"
+        "note": "말풍선 그림. **같은 이름의 효과음도 따로 필요합니다.** — 로티입니다(BubbleAni.ts:21 LottieSprite json)."
       },
       {
         "alias": "side_bubble",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "옆 말풍선 그림."
+        "note": "옆 말풍선 그림 — 로티입니다(BubbleAni.ts:38 LottieSprite json)."
       },
       {
         "alias": "bgm",
@@ -104,10 +104,22 @@
         "kind": "sound",
         "fixedAlias": true,
         "note": "말풍선 효과음. AudioManager.getSound(\"bubble\") — **그림 bubble 과 이름이 같고 갈래만 다릅니다.** 그림만 넣고 소리를 빠뜨리기 쉽습니다."
+      },
+      {
+        "alias": "correct",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞힌 칸 효과음. AnswerCheck.ts:54 · 65 가 playSfx('correct') 로 이름을 박아 부릅니다. 없으면 소리만 빠집니다."
+      },
+      {
+        "alias": "wrong",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀린 입력 효과음. ButtonManager.ts:158 이 playSfx('wrong') 로 이름을 박아 부릅니다. 없으면 소리만 빠집니다."
       }
     ],
     "providedByModule": {
-      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset 파일이 없습니다. 아래를 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 고정된 것** — 그림 `bg` · `bg2` · `inningBg` · `endingBg` · `checkBg` · `answer_box` · `bubble` · `side_bubble` · 음원 `bgm`(액티비티 onStart 가 직접 켭니다) · `bubble`(효과음. **같은 이름의 그림과 갈래만 다릅니다**)\n\n**번호로 조합하는 것** (모두 코드가 문자열로 만듭니다)\n- `num{n}_n` · `num{n}_p` — 숫자 버튼 기본·눌린 상태. **n 은 1 부터**\n- `exam_{n}` — 예제 그림. **1 부터**\n- `answer_num{n}` — 정답 자리에 찍히는 숫자 그림. n 은 그 이닝의 num1 · num2 값 자체입니다\n- `objLeft_{n}` · `objRight_{n}` — 좌·우 물건 그림. **0 부터**(코드가 `i - 1`)\n- `obj_{이닝}_{갈래}_{개수}` — 이닝·갈래별 물건 그림\n- `eop_{n}` — 마무리 그림. **0 부터**"
+      "note": "**이 모듈은 자기 리소스를 등록하지 않습니다** — Asset 파일이 없습니다. 아래를 전부 액티비티 AssetTable 에 넣어야 합니다.\n\n**이름이 고정된 것** — 그림 `bg` · `bg2` · `inningBg` · `endingBg` · `checkBg` · `answer_box` · `bubble` · `side_bubble` · 음원 `bgm`(액티비티 onStart 가 직접 켭니다) · `bubble`(효과음. **같은 이름의 그림과 갈래만 다릅니다**) · `correct`(맞힌 칸 효과음, AnswerCheck.ts:54 · 65) · `wrong`(틀린 입력 효과음, ButtonManager.ts:158)\n\n**번호로 조합하는 것** (모두 코드가 문자열로 만듭니다)\n- `num{n}_n` · `num{n}_p` — 숫자 버튼 기본·눌린 상태. **n 은 1 부터 10 까지 열 개가 모두 필요합니다**\n- `exam_{n}` — 예제 그림. **1 부터 8 까지 여덟 장이 모두 필요합니다**\n- `answer_num{n}` — 정답 자리에 찍히는 숫자 그림. n 은 그 이닝의 num1 · num2 값 자체입니다\n- `objLeft_{n}` · `objRight_{n}` — 좌·우 물건 그림. **0 부터 3 까지 이닝마다 한 장씩**(코드가 `i - 1`)\n- `obj_{이닝}_{갈래}_{개수}` — 이닝·갈래별 물건 그림\n- `eop_{n}` — 마무리 그림. **0 부터 7 까지 여덟 장**\n- `num{n}` — 숫자 읽는 소리. **1 부터 10 까지.** 버튼 · 물건을 누를 때와 정답 칸을 맞힐 때 읽습니다\n- `endNum_{n}` — 마무리에서 그림 종류마다 읽는 소리. **1 부터 8 까지**"
     }
   },
   "gameData": {
@@ -117,19 +129,19 @@
         "key": "inningCount",
         "type": "number",
         "required": true,
-        "desc": "시작 이닝 번호. 이닝은 1 부터 셉니다."
+        "desc": "학습 이닝 수(마무리 이닝 제외)입니다. 이닝 표시와 진행률이 이 수로 이닝을 셉니다(SetContent.ts:31-35). 이 모듈은 학습 4이닝으로 고정이라 4 로 둡니다 — 시작 이닝은 늘 1 입니다."
       },
       {
         "key": "maxInning",
         "type": "number",
         "required": true,
-        "desc": "이닝 수. **answerData 배열의 칸 수와 같아야 합니다.**"
+        "desc": "마무리 이닝을 포함한 이닝 수입니다. **answerData 칸 수보다 1 큰 값**, 곧 학습 4이닝에 마무리 1이닝을 더한 5 입니다 — 코드가 학습 이닝을 `inningNum < maxInning` 으로 가립니다(ExamManager.ts:70)."
       },
       {
         "key": "answerData",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 4,
         "of": {
           "key": "",
           "type": "object",
@@ -150,20 +162,20 @@
           "desc": "칸 하나."
         },
         "desc": "이닝마다의 정답 두 수. **코드가 `answerData[이닝 - 1]` 로 찾습니다**(AnswerCheck.ts:40) — 이닝은 1 부터인데 첨자는 0 부터입니다.",
-        "minLengthWhy": "maxInning 만큼 필요합니다."
+        "minLengthWhy": "학습 이닝 수(maxInning - 1)만큼, 곧 4칸이 필요합니다 — 코드가 학습 4이닝을 고정으로 만들며(InningManager.ts:152) 모자라면 이 칸을 읽다 멈춥니다."
       },
       {
         "key": "examIndex",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 4,
         "of": {
           "key": "",
           "type": "number",
           "desc": "예제 시작 번호."
         },
-        "desc": "이닝마다 예제 그림을 몇 번부터 보여 줄지. `examIndex[이닝 - 1]` 로 찾고(ExamManager.ts:73) 그 값으로 `exam_{n}` 을 조합합니다.",
-        "minLengthWhy": "maxInning 만큼 필요합니다."
+        "desc": "이닝마다 보여 줄 예제 그림 두 장의 시작 첨자(0 부터)입니다. `examIndex[이닝 - 1]` 로 찾고(ExamManager.ts:73) 값이 k 면 `exam_{k + 1}` · `exam_{k + 2}` 두 장을 `examLayout[k]` · `examLayout[k + 1]` 자리에 보입니다. 마무리 이닝에는 안 보입니다.",
+        "minLengthWhy": "학습 이닝 수(maxInning - 1)만큼, 곧 4칸이 필요합니다 — 코드가 학습 4이닝을 고정으로 만들며(InningManager.ts:152) 모자라면 이 칸을 읽다 멈춥니다."
       },
       {
         "key": "fieldLayout",
@@ -176,7 +188,7 @@
         "key": "inningLeft_Layout",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 4,
         "of": {
           "key": "",
           "type": "array",
@@ -204,13 +216,13 @@
           "minLengthWhy": "그 이닝에 놓을 물건 수만큼 필요합니다."
         },
         "desc": "왼쪽 물건 자리표. **두 겹 배열 — [이닝][물건 번호]** 입니다. 이닝마다 놓는 개수가 달라 안쪽 길이도 다릅니다.",
-        "minLengthWhy": "maxInning 만큼 필요합니다."
+        "minLengthWhy": "학습 이닝 수(maxInning - 1)만큼, 곧 4칸이 필요합니다 — 코드가 학습 4이닝을 고정으로 만들며(InningManager.ts:152) 모자라면 이 칸을 읽다 멈춥니다."
       },
       {
         "key": "inningRight_Layout",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 4,
         "of": {
           "key": "",
           "type": "array",
@@ -238,13 +250,13 @@
           "minLengthWhy": "그 이닝에 놓을 물건 수만큼 필요합니다."
         },
         "desc": "오른쪽 물건 자리표. **두 겹 배열 — [이닝][물건 번호]** 입니다. 이닝마다 놓는 개수가 달라 안쪽 길이도 다릅니다.",
-        "minLengthWhy": "maxInning 만큼 필요합니다."
+        "minLengthWhy": "학습 이닝 수(maxInning - 1)만큼, 곧 4칸이 필요합니다 — 코드가 학습 4이닝을 고정으로 만들며(InningManager.ts:152) 모자라면 이 칸을 읽다 멈춥니다."
       },
       {
         "key": "examLayout",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 8,
         "of": {
           "key": "",
           "type": "object",
@@ -264,13 +276,13 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "예제 그림 자리들.",
-        "minLengthWhy": "쓰는 개수만큼 적습니다."
+        "desc": "예제 그림 **여덟 장**의 자리입니다. `exam_{n}` 은 `examLayout[n - 1]` 에 놓이고 여덟 칸이 다 있어야 합니다(ExamManager.ts:20-24). 이닝마다 그중 두 칸(examIndex 가 고른 것)이 보입니다.",
+        "minLengthWhy": "예제 그림이 여덟 장 고정입니다(ExamManager.ts:20). 모자라면 그 칸을 읽다 멈춥니다."
       },
       {
         "key": "checkBoxLayout",
         "type": "array",
-        "required": true,
+        "required": false,
         "minLength": 1,
         "of": {
           "key": "",
@@ -291,14 +303,15 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "체크 영역 자리들.",
-        "minLengthWhy": "쓰는 개수만큼 적습니다."
+        "desc": "**모듈이 읽지 않습니다**(모듈 폴더와 액티비티 훅에 이 이름이 없습니다). 체크 영역 자리들.",
+        "minLengthWhy": "쓰는 개수만큼 적습니다.",
+        "optional": true
       },
       {
         "key": "AnswerLayout",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 2,
         "of": {
           "key": "",
           "type": "object",
@@ -318,13 +331,13 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "정답 칸 자리들. (열쇠 첫 글자가 대문자입니다 — 다른 것들과 다릅니다.)",
-        "minLengthWhy": "쓰는 개수만큼 적습니다."
+        "desc": "정답 칸 **두 개**(왼쪽, 오른쪽)의 자리입니다(ButtonManager.ts:78-91). 맞힌 뒤 `answer_num{n}` 숫자 그림도 같은 자리에 찍힙니다. (열쇠 첫 글자가 대문자입니다 — 다른 것들과 다릅니다.)",
+        "minLengthWhy": "정답 칸이 두 개 고정입니다(ButtonManager.ts:78-91). 모자라면 그 칸을 읽다 멈춥니다."
       },
       {
         "key": "buttonslayouts",
         "type": "array",
-        "required": true,
+        "required": false,
         "minLength": 1,
         "of": {
           "key": "",
@@ -346,14 +359,15 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "숫자 버튼 자리들. (열쇠가 buttonslayouts — s 가 둘 붙어 있습니다.)",
-        "minLengthWhy": "쓰는 개수만큼 적습니다."
+        "desc": "**모듈이 읽지 않습니다**(모듈 폴더와 액티비티 훅에 이 이름이 없습니다). 숫자 버튼 자리들. (열쇠가 buttonslayouts — s 가 둘 붙어 있습니다.)",
+        "minLengthWhy": "쓰는 개수만큼 적습니다.",
+        "optional": true
       },
       {
         "key": "pressedBtnLayout",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 10,
         "of": {
           "key": "",
           "type": "object",
@@ -374,14 +388,14 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "눌린 숫자 버튼 자리들. buttonslayouts 와 같은 개수·차례로 둡니다.",
-        "minLengthWhy": "쓰는 개수만큼 적습니다."
+        "desc": "숫자 버튼 **열 개**의 자리입니다(ButtonManager.ts:41-46). 기본 그림과 눌린 그림을 담은 버튼이 이 자리에 놓이고 눌린 그림은 코드가 y 를 15 더 내려 그립니다(NumberButton.ts:13). buttonslayouts 는 읽지 않습니다.",
+        "minLengthWhy": "숫자 버튼이 열 개 고정입니다(ButtonManager.ts:41). 모자라면 그 칸을 읽다 멈춥니다."
       },
       {
         "key": "ending_obj_Layout",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 8,
         "of": {
           "key": "",
           "type": "array",
@@ -406,16 +420,16 @@
             "desc": "칸 하나."
           },
           "desc": "그 이닝의 자리들.",
-          "minLengthWhy": "그 이닝의 마무리 그림 수만큼 필요합니다."
+          "minLengthWhy": "그 종류의 마무리 그림이 놓일 개수만큼 필요합니다."
         },
-        "desc": "마무리 화면 그림 자리표. **두 겹 배열 — [이닝][그림 번호]** 입니다. 그림은 `eop_{번호}`(0 부터)로 찾습니다.",
-        "minLengthWhy": "maxInning 만큼 필요합니다."
+        "desc": "마무리 화면 그림 자리표. **두 겹 배열 — [그림 종류][자리 번호]** 입니다(이닝이 아닙니다). 종류는 8개 고정이고, 종류 i 의 그림 `eop_{i - 1}` 을 그 종류의 자리마다 하나씩 놓은 뒤 `endNum_{i}` 소리를 읽습니다(InningManager.ts:419-427 · 462-463).",
+        "minLengthWhy": "8칸(마무리 그림 종류 수)이 필요합니다. 코드가 1~8 번 종류를 고정으로 돌며(InningManager.ts:419) 모자라면 이 칸을 읽다 멈춥니다."
       },
       {
         "key": "bubbleAniLayout",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 2,
         "of": {
           "key": "",
           "type": "object",
@@ -435,14 +449,14 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "말풍선 애니 자리들.",
-        "minLengthWhy": "쓰는 개수만큼 적습니다."
+        "desc": "말풍선 애니 **두 개**의 자리입니다. 코드가 각 칸에 x 240 · y 200 을 더한 곳을 말풍선 가운데로 삼습니다(BubbleAni.ts:19-29).",
+        "minLengthWhy": "말풍선이 두 개 고정입니다(BubbleAni.ts:19-29). 모자라면 그 칸을 읽다 멈춥니다."
       },
       {
         "key": "sideBubbleAniLayout",
         "type": "array",
         "required": true,
-        "minLength": 1,
+        "minLength": 2,
         "of": {
           "key": "",
           "type": "object",
@@ -462,8 +476,8 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "옆 말풍선 애니 자리들.",
-        "minLengthWhy": "쓰는 개수만큼 적습니다."
+        "desc": "옆 말풍선 애니 **두 개**의 자리입니다. 코드가 x 에 700 과 말풍선 너비의 절반을, y 에 540 을 더해 가운데를 잡습니다(BubbleAni.ts:36-46).",
+        "minLengthWhy": "옆 말풍선이 두 개 고정입니다(BubbleAni.ts:36-46). 모자라면 그 칸을 읽다 멈춥니다."
       },
       {
         "key": "animation",
@@ -602,15 +616,16 @@
               {
                 "key": "wrong2",
                 "type": "array",
-                "required": true,
+                "required": false,
                 "minLength": 1,
                 "of": {
                   "key": "",
                   "type": "string",
                   "desc": "음원 alias 하나."
                 },
-                "desc": "거듭 틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
-                "minLengthWhy": "하나는 있어야 그 반응이 납니다."
+                "desc": "**모듈이 읽지 않습니다**(모듈 폴더와 액티비티 훅에 이 이름이 없습니다). 모듈이 읽는 나레이션은 narration.MA 의 wrong · correct · clear · guide · enterance 입니다(ButtonManager.ts:159 · 266 · 274, InningManager.ts:388, SetContent.ts:46). 거듭 틀렸을 때 읽는 음원 목록. 여럿 적으면 그중에서 골라 씁니다.",
+                "minLengthWhy": "하나는 있어야 그 반응이 납니다.",
+                "optional": true
               },
               {
                 "key": "guide",
@@ -628,8 +643,9 @@
               {
                 "key": "hint",
                 "type": "string",
-                "required": true,
-                "desc": "힌트 음원. **타입이 string 이지만 음원 alias 입니다.**"
+                "required": false,
+                "desc": "**모듈이 읽지 않습니다**(모듈 폴더와 액티비티 훅에 이 이름이 없습니다). 모듈이 읽는 나레이션은 narration.MA 의 wrong · correct · clear · guide · enterance 입니다(ButtonManager.ts:159 · 266 · 274, InningManager.ts:388, SetContent.ts:46). 힌트 음원. **타입이 string 이지만 음원 alias 입니다.**",
+                "optional": true
               }
             ],
             "desc": "수학 나레이션."
@@ -643,25 +659,25 @@
     {
       "id": "inning-index-off-by-one",
       "level": "error",
-      "check": "answerData · examIndex · inningLeft_Layout · inningRight_Layout · ending_obj_Layout 의 칸 수가 maxInning 만큼 있어야 한다.",
+      "check": "answerData · examIndex · inningLeft_Layout · inningRight_Layout 은 학습 이닝 수(maxInning - 1, 4칸)만큼, ending_obj_Layout 은 마무리 그림 종류 수(8칸)만큼 있어야 한다.",
       "why": "코드가 `[이닝 - 1]` 로 찾습니다 — 이닝은 1 부터, 첨자는 0 부터입니다. 모자라면 그 이닝에서 undefined 를 읽어 **물건도 정답도 없는 빈 화면**이 됩니다."
     },
     {
       "id": "layout-covers-count",
       "level": "error",
-      "check": "inningLeft_Layout[i] 의 자리 수가 answerData[i].num1 이상, inningRight_Layout[i] 는 num2 이상이어야 한다.",
-      "why": "InningManager 가 정답 개수만큼 물건을 놓습니다(InningManager.ts:494~495). 자리가 모자라면 마지막 물건이 화면 밖으로 갑니다 — **세어서 답을 맞힐 수 없습니다.**"
+      "check": "inningLeft_Layout[i] 의 자리 수가 answerData[i].num1 과, inningRight_Layout[i] 는 num2 와 같아야 한다.",
+      "why": "InningManager 가 자리 하나마다 물건 하나를 놓고(InningManager.ts:160 · 191), 눌러서 세는 수는 정답 수에서 멈춥니다(:494-495 · 519-520). 자리 수가 정답 수와 다르면 화면의 물건 수와 세어 나오는 수가 어긋나 — **세어서 답을 맞힐 수 없습니다.**"
     },
     {
       "id": "answer-num-alias",
       "level": "error",
       "check": "쓰이는 모든 num1 · num2 값에 대해 `answer_num{값}` 그림이 있어야 한다.",
-      "why": "ButtonManager.ts:224·244 가 정답 수로 alias 를 조합합니다. 없으면 정답 칸이 비어 보입니다."
+      "why": "ButtonManager.ts:224-225 · 244-245 가 정답 수로 alias 를 조합합니다. 없으면 정답 칸이 비어 보입니다."
     },
     {
       "id": "number-button-pairs",
       "level": "error",
-      "check": "숫자 버튼마다 `num{n}_n` 과 `num{n}_p` 두 장이 다 있어야 하고, buttonslayouts 와 pressedBtnLayout 의 자리 수가 같아야 한다.",
+      "check": "숫자 버튼마다 `num{n}_n` 과 `num{n}_p` 두 장이 다 있어야 하고(n 은 1 부터 10 까지 열 개 고정), pressedBtnLayout 에 열 칸의 자리가 있어야 한다.",
       "why": "기본·눌린 상태를 따로 그립니다. 한쪽이 없으면 누르는 순간 버튼이 사라집니다."
     },
     {
@@ -679,8 +695,8 @@
     {
       "id": "odd-key-names",
       "level": "warn",
-      "check": "열쇠 이름을 그대로 적는다 — AnswerLayout(대문자 A) · buttonslayouts(s 둘) · autoPlay(대문자 P) · enterance.",
-      "why": "다른 모듈과 규칙이 다릅니다. 「고쳐 적으면」 코드가 못 찾아 기본값으로 떨어집니다."
+      "check": "열쇠 이름을 그대로 적는다 — AnswerLayout(대문자 A) · autoPlay(대문자 P) · enterance.",
+      "why": "다른 모듈과 규칙이 다릅니다. 「고쳐 적으면」 코드가 못 찾아 undefined 를 읽습니다 — AnswerLayout 은 정답 칸을 만들다 멈춥니다(ButtonManager.ts:80-81)."
     },
     {
       "id": "sound-table-empty",

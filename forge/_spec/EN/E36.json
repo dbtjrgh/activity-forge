@@ -5,8 +5,8 @@
   "title": "크레인으로 공 집기 (낱말 듣고 고르기)",
   "summary": "아래 늘어선 공 중에서 문제에 맞는 것을 크레인으로 집어 파이프에 넣는 활동. 좌우 버튼으로 크레인을 옮기고 집기 버튼으로 내립니다.",
   "reference": {
-    "moduleCommit": "af5bb32e960ec5093d382ab6ba228c6062b414cf",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "0329e7be9d8b9c75a049de700ec33dfb1b5831d3",
+    "moduleCommitWhy": "2026-10-26 모듈이 진행률과 끝 화면 점수를 배열로 나눠 NaN 이던 것을 set.length 로 고쳤습니다. 스펙 글은 바뀔 것이 없습니다.",
     "module": "sparkon_common/_common/module/EN/E36",
     "activities": [
       "ENL2M02W3S2",
@@ -90,9 +90,9 @@
       },
       {
         "alias": "crane_fail",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "집기 실패한 집게 모양."
+        "note": "집기 실패한 집게 모양 — 로티입니다(component/Crane.ts:21 LottieSprite json)."
       },
       {
         "alias": "grab_btn",
@@ -146,7 +146,7 @@
         "alias": "questionBoard",
         "kind": "image",
         "fixedAlias": true,
-        "note": "문제 판. GameData 의 questionBoard.texture 가 기본·강조 그림을 가리킵니다."
+        "note": "문제 판. 모듈이 이 이름으로 판을 그리고(QuestionBoard.ts:19) 그 위에 set[].word 를 글자로 씁니다(:46). GameData 의 set[].questionBoard 는 읽지 않습니다."
       },
       {
         "alias": "correct_ef",
@@ -200,7 +200,7 @@
         "alias": "bg",
         "kind": "image",
         "fixedAlias": true,
-        "note": "모듈 E36.ts 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
+        "note": "모듈 E36.ts:45 가 AssetManager.get(\"bg\") 로 이름을 박아 부른다. 모듈 Asset.ts 도 bg 를 등록해 둔다. 완성본 4개 다 가짐(litgate, 2026-09-29)."
       }
     ],
     "providedByModule": {
@@ -223,7 +223,7 @@
               "key": "word",
               "type": "string",
               "required": true,
-              "desc": "그 이닝의 정답 낱말. **아래 optionBall.balls[].name 과 이 값으로 짝을 찾습니다** — 글자까지 같아야 합니다."
+              "desc": "그 이닝의 정답 낱말. **문제 판에 이 글자를 그대로 씁니다**(QuestionBoard.ts:46). **아래 optionBall.balls[].name 과 이 값으로 짝을 찾습니다** — 글자까지 같아야 합니다."
             },
             {
               "key": "popup",
@@ -240,7 +240,7 @@
             {
               "key": "questionBoard",
               "type": "object",
-              "required": true,
+              "required": false,
               "fields": [
                 {
                   "key": "texture",
@@ -251,24 +251,27 @@
                       "key": "basic",
                       "type": "asset:image",
                       "required": true,
-                      "desc": "기본 그림."
+                      "desc": "기본 그림.",
+                      "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
                     },
                     {
                       "key": "on",
                       "type": "asset:image",
                       "required": true,
-                      "desc": "강조(정답 표시) 그림."
+                      "desc": "강조(정답 표시) 그림.",
+                      "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
                     }
                   ],
                   "desc": "문제 판 그림 두 벌."
                 }
               ],
-              "desc": "그 이닝의 문제 판 그림."
+              "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · 액티비티 코드에 이 값을 읽는 곳이 없습니다). 문제 판은 늘 이름 박힌 questionBoard 그림이고 그 위에 set[].word 를 글자로 씁니다(QuestionBoard.ts:19 · 46). 그 이닝의 문제 판 그림.",
+              "optional": true
             },
             {
               "key": "option",
               "type": "object",
-              "required": true,
+              "required": false,
               "fields": [
                 {
                   "key": "name",
@@ -285,7 +288,8 @@
                       "key": "basic",
                       "type": "asset:image",
                       "required": true,
-                      "desc": "기본 그림."
+                      "desc": "기본 그림.",
+                      "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
                     },
                     {
                       "key": "on",
@@ -300,15 +304,17 @@
                   "key": "sound",
                   "type": "asset:sound",
                   "required": true,
-                  "desc": "정답 공의 낱말 음원."
+                  "desc": "정답 공의 낱말 음원.",
+                  "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
                 }
               ],
-              "desc": "그 이닝의 정답 공 정보."
+              "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · 액티비티 코드에 이 값을 읽는 곳이 없습니다). 정답 공은 optionBall.balls 에서 name 이 set[].word 와 같은 것을 찾아 씁니다(Machine.ts:334). 그 이닝의 정답 공 정보.",
+              "optional": true
             }
           ],
           "desc": "칸 하나."
         },
-        "desc": "이닝 목록. **칸 수가 곧 이닝 수입니다.** 적은 차례대로 진행합니다.",
+        "desc": "이닝 목록. **칸 수가 곧 이닝 수입니다.** **시작할 때 섞습니다**(E36.ts:79) — 적은 차례대로 진행하지 않습니다.",
         "minLengthWhy": "이닝이 하나는 있어야 합니다."
       },
       {
@@ -319,9 +325,10 @@
           {
             "key": "set",
             "type": "number",
-            "required": true,
+            "required": false,
             "default": 3,
-            "desc": "한 화면에 늘어놓을 공 개수."
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · 액티비티 코드에 이 값을 읽는 곳이 없습니다). 공은 늘 3개입니다 — 정답 공과 나머지에서 무작위 둘(Machine.ts:153-161 · 333-339). 한 화면에 늘어놓을 공 개수.",
+            "optional": true
           },
           {
             "key": "gap",
@@ -374,7 +381,7 @@
               ],
               "desc": "칸 하나."
             },
-            "desc": "고를 수 있는 공 목록. **`name` 으로 set[].word 와 짝지어집니다.**",
+            "desc": "고를 수 있는 공 목록. 이닝마다 정답 공 하나와 나머지에서 무작위로 고른 둘, **모두 3개**가 섞여 뜹니다(Machine.ts:333-339). **`name` 으로 set[].word 와 짝지어집니다.**",
             "minLengthWhy": "고를 것이 둘은 있어야 문제가 됩니다."
           },
           {
@@ -401,7 +408,7 @@
               ],
               "desc": "칸 하나."
             },
-            "desc": "공이 놓이는 자리들. **optionBall.set 개수만큼 필요합니다.**",
+            "desc": "공이 놓이는 자리들. **[0]~[2] 세 자리만 씁니다** — 공은 늘 3개이고, 가운데 · 양옆 차례로 놓입니다(Machine.ts:154-161).",
             "minLengthWhy": "set 개수만큼 필요합니다."
           }
         ],
@@ -419,8 +426,8 @@
     {
       "id": "position-covers-set",
       "level": "error",
-      "check": "optionBall.position 의 자리 수가 optionBall.set 개수보다 적지 않아야 한다.",
-      "why": "공을 자리표에서 하나씩 꺼내 놓습니다. 모자라면 뒤쪽 공이 undefined 자리로 갑니다."
+      "check": "optionBall.position 에 자리가 적어도 3개 있어야 한다.",
+      "why": "공은 늘 3개이고 position[0]~[2] 를 씁니다(Machine.ts:155). 모자라면 그 공이 undefined 자리로 갑니다."
     },
     {
       "id": "balls-cover-words",

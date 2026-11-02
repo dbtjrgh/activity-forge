@@ -22,13 +22,14 @@
  * `dirForKind` 를 부릅니다. 여기서 확장자 표를 다시 적지 않습니다.
  */
 
-import { existsSync, readdirSync, rmSync, rmdirSync } from 'node:fs'
+import { copyFileSync, existsSync, readdirSync, rmSync, rmdirSync } from 'node:fs'
 import { basename, isAbsolute, join } from 'node:path'
 import type { InboxResult } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import { loadForge, type Forge } from './runtime'
 import { mark } from './measure'
-import { blank, gather, put, summary, type Found, type Planned } from './rsccopy'
+import { toTrash } from '../../lib/trash'
+import { blank, counted, gather, put, summary, type Found, type Planned } from './rsccopy'
 import { destOf } from './rscplace'
 
 /**
@@ -73,10 +74,30 @@ export async function takeInbox(
     else plan.push({ ...one, to: where.to })
   }
 
-  // ─ ③ 복사하고 양쪽 크기를 견준다 ─
-  put(dir, plan, overwrite, out)
+  // ─ ③ 복사하고 양쪽 크기를 견준다. 덮어쓰기면 이름은 같고 내용이 다른 것을 기존 파일은 휴지통으로 보내고 바꾼다 ─
+  put(dir, plan, false, out)
+  if (overwrite) await replaceClashes(dir, out)
   out.note = summary(out, overwrite)
   return out
+}
+
+/**
+ * 「덮어쓰기」면 `clash` 의 기존 파일을 **휴지통으로 보내고** 바꾼다 (2026-10-26) — 전에는 바로 덮어 되돌릴 길이 없었다(저장소 규칙 7).
+ * 휴지통을 못 쓰면(Node 로만 돌 때) 안 바꾸고 `failed` 에 까닭을 담는다. 호 저장소로 따라 보내기는 git 이 되돌리므로 여태대로 `put` 이 덮는다
+ */
+async function replaceClashes(dir: string, out: InboxResult): Promise<void> {
+  const clashes = out.clash
+  out.clash = []
+  for (const c of clashes) {
+    const to = join(dir, ...c.rel.split('/'))
+    try {
+      await toTrash(to)
+      copyFileSync(c.from, to)
+      counted(to, { from: c.from, rel: c.rel, to: c.rel, bytes: c.theirs }, out)
+    } catch (error) {
+      out.failed.push({ name: c.rel, from: c.from, why: toMessage(error) })
+    }
+  }
 }
 
 /**

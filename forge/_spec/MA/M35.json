@@ -5,8 +5,8 @@
   "title": "자로 재기 (길이 비교)",
   "summary": "화면에 놓인 것들 중 하나를 자로 재는 활동. 자를 끌어 정답 길이(correctHeight 또는 correctWidth)에 닿으면 맞은 것으로 처리됩니다. 이닝마다 세로로 재는 문제와 가로로 재는 문제가 갈립니다.",
   "reference": {
-    "moduleCommit": "63269068818970c4f6e7428e629dd5ac7d2de52c",
-    "moduleCommitWhy": "2026-10-14 모듈 코드와 맞춰 봤습니다 — bgfront 칸은 꼭 있어야 합니다(PlayStage.ts).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 모듈 코드와 맞춰 봤습니다 — 0ccda63 · a818806 의 quizData.startGuide 를 항목으로 더했습니다(cd95106 은 BGM 페이드만).",
     "module": "sparkon_common/_common/module/MA/M35",
     "activities": [
       "MAL1M05W3S3",
@@ -74,11 +74,12 @@
         "alias": "nar01",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "학습 시작 지문. mainCharacter.guide(\"nar01\") 로 이름이 박혀 있습니다 — 모듈이 물고 있는 SL_ma_m35_guide_nar01 과 다른 이름입니다. 1이닝 mon.sound 가 nar01 이면 이 지문은 건너뜁니다."
+        "note": "학습 시작 지문. quizData.startGuide 가 없으면 mainCharacter.guide(\"nar01\") 로 이름이 박혀 있습니다 — 모듈이 물고 있는 SL_ma_m35_guide_nar01 과 다른 이름입니다. 1이닝 mon.sound 가 nar01 이면 이 지문은 건너뜁니다.",
+        "aliasMayBeOff": "quizData.startGuide 를 적은 판은 모듈이 nar01 을 시작 지문으로 부르지 않습니다(M35.ts play). 이닝 몬스터가 nar01 을 쓰면 그때는 mon.sound 로 필요합니다."
       }
     ],
     "providedByModule": {
-      "note": "M35.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M35 에 있습니다(별도 repo).\n\n**모듈이 등록하지 않는데 코드가 이름으로 찾는 것**\n- 자 — `ruler` · `rulerhand`. **이 둘이 활동의 핵심 도구인데 모듈 리소스에 없습니다.**\n- 도우미 애니 — `{Bmon|Pmon|Rmon}_idle` · `_talk`. 여섯 이름을 다 참조하니 쓰는 색은 반드시 등록해야 합니다.\n- 지문 — `nar01`(mainCharacter.guide). 모듈이 물고 있는 SL_ma_m35_guide_nar01~04 와 **다른 이름**입니다.\n- 배경 — GameData 의 bg_alias 가 가리킵니다.",
+      "note": "M35.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M35 에 있습니다(별도 repo).\n\n**모듈이 등록하지 않는데 코드가 이름으로 찾는 것**\n- 자 — `ruler` · `rulerhand`. **이 둘이 활동의 핵심 도구인데 모듈 리소스에 없습니다.**\n- 도우미 애니 — `{Bmon|Pmon|Rmon}_idle` · `_talk`. 여섯 이름을 다 참조하니 쓰는 색은 반드시 등록해야 합니다.\n- 지문 — `nar01`(mainCharacter.guide, quizData.startGuide 가 없을 때). 모듈이 물고 있는 SL_ma_m35_guide_nar01~04 와 **다른 이름**입니다.\n- 배경 — GameData 의 bg_alias 가 가리킵니다.",
       "image": [
         "inningbar_bg",
         "inning_off",
@@ -188,7 +189,7 @@
                   "key": "sound",
                   "type": "asset:sound",
                   "required": true,
-                  "desc": "이닝을 시작할 때 도우미 캐릭터가 읽는 음원(Monster.ts intro). **1이닝이 nar01 이면 모듈이 시작 지문(nar01)을 건너뜁니다**(M35.ts play) — 같은 말이 연달아 두 번 나오지 않게. 길이 재기 완성본은 nar01 이 시작 지문, 몬스터는 nar02 부터이고, 9호 막대그래프는 기획서가 nar01 을 「이닝 시작 내레이션(전 이닝 공통)」으로 둡니다."
+                  "desc": "이닝을 시작할 때 도우미 캐릭터가 읽는 음원(Monster.ts intro). **1이닝이 nar01 이면 모듈이 시작 지문(nar01)을 건너뜁니다**(M35.ts play) — 같은 말이 연달아 두 번 나오지 않게. quizData.startGuide 를 적었으면 건너뛰지 않고 그 소리를 먼저 읽습니다. 길이 재기 완성본은 nar01 이 시작 지문, 몬스터는 nar02 부터이고, 9호 막대그래프는 기획서가 nar01 을 「이닝 시작 내레이션(전 이닝 공통)」으로 둡니다."
                 },
                 {
                   "key": "answersound",
@@ -359,6 +360,12 @@
         "optional": true,
         "default": false,
         "desc": "활동2(정답 고르기)에서 막대(자)를 눌러도 그 막대의 대상(rulerInfo[].target)을 누른 것으로 봅니다(RulerGroup.ts linkTouch → ObjectGroup.ts tap). 손잡이는 끌기 판정이 걸려 있어 막대만 받습니다. **막대그래프 활동이면 true** — 기획서는 「요소 터치」라 이름표만으로 읽히지만 아이는 가장 긴 막대를 누릅니다. 없으면 대상(이름표)만 받습니다."
+      },
+      {
+        "key": "startGuide",
+        "type": "asset:sound",
+        "optional": true,
+        "desc": "첫 진입 때 도우미 캐릭터(mainCharacter)가 처음 읽는 지문. 적으면 nar01 대신 이 소리를 읽고, 1이닝 mon.sound 가 nar01 이어도 건너뛰지 않습니다(M35.ts play, 2026-10-23). 없으면 nar01 을 읽고, 1이닝 몬스터가 nar01 이면 건너뜁니다. **9호 MAL2M08W1S3 은 'nar00'** — 첫 대사는 몬스터가 아니라 가이드 캐릭터라서(QA #188) 도우미가 nar00, 이닝마다 몬스터가 nar01 을 읽습니다."
       }
     ]
   },
@@ -396,8 +403,8 @@
     {
       "id": "start-nar-name",
       "level": "error",
-      "check": "학습 시작 지문 alias 는 nar01 이다.",
-      "why": "mainCharacter.guide(\"nar01\") 로 박혀 있습니다. 모듈이 물고 있는 SL_ma_m35_guide_nar01 을 그것이라고 생각하면 무음으로 시작합니다."
+      "check": "학습 시작 지문 alias 는 nar01 이다. quizData.startGuide 를 적었으면 그 이름이다.",
+      "why": "startGuide 가 없으면 mainCharacter.guide(\"nar01\") 로 박혀 있습니다. 모듈이 물고 있는 SL_ma_m35_guide_nar01 을 그것이라고 생각하면 무음으로 시작합니다."
     },
     {
       "id": "object-name-enum",
@@ -410,7 +417,7 @@
     "eop 는 액티비티 onStart 가 부릅니다(SparkApp.eop.show()). 모듈은 부르지 않습니다.",
     "8호에는 이 모듈을 쓰는 자리가 없습니다. 9호는 MAL2M08W1S3 한 칸입니다(대주제 「표와 막대그래프」).",
     "**막대그래프 활동은 quizData.lineEffect: false 를 적습니다** — 줄자 정답 때 노란 점선 파티클을 뺍니다(기획 메모 2026-10-06, M35 막대그래프 활동 공통). 9호 MAL2M08W1S3 은 대주제가 「표와 막대그래프」입니다 — 기획서에서 막대그래프 활동인지 보고 적습니다.",
-    "**막대그래프 활동(MAL2M08W1S3)** — 막대마다 rulerInfo[].ruler 로 자 그림, rulerInfo[].line 은 적지 않음, quizData.lineEffect: false, 막대 성공은 quizData.rulerEffect(새 파티클), 활동2 정답은 quizData.correctEffect(새 판), 막대를 눌러도 고르게 quizData.barTouch: true, 도우미 자리는 mon.pos · mon.chatPos(figma), correctHeight 는 손잡이 가로대 가운데가 눈금선에 오게, 이닝마다 몬스터가 nar01 로 시작(시작 지문은 모듈이 건너뜀). 이 항목이 모두 없으면 길이 재기 완성본과 같은 동작입니다."
+    "**막대그래프 활동(MAL2M08W1S3)** — 막대마다 rulerInfo[].ruler 로 자 그림, rulerInfo[].line 은 적지 않음, quizData.lineEffect: false, 막대 성공은 quizData.rulerEffect(새 파티클), 활동2 정답은 quizData.correctEffect(새 판), 막대를 눌러도 고르게 quizData.barTouch: true, 도우미 자리는 mon.pos · mon.chatPos(figma), correctHeight 는 손잡이 가로대 가운데가 눈금선에 오게, 첫 진입 도우미는 quizData.startGuide: 'nar00'(QA #188, 2026-10-23), 이닝마다 몬스터가 nar01 로 시작. 이 항목이 모두 없으면 길이 재기 완성본과 같은 동작입니다."
   ],
   "relations": [
     {

@@ -5,8 +5,8 @@
   "title": "이젤에 그리기 (대칭선 보고 그리기)",
   "summary": "이젤에 종이가 올라오고, 색연필과 굵기를 골라 그림을 그리는 활동. 종이마다 대칭선(가로·세로·대각)이 안내로 깔립니다. 완료 버튼을 누르면 그린 것이 포트폴리오로 저장됩니다.",
   "reference": {
-    "moduleCommit": "2f8988b43259e50c757081bf6ffd5ba160e6da93",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글의 줄 번호와 주요 동작(섞기 · 기본값 · 고정 개수 · 박힌 이름 · 등록하는 이름)을 모듈 코드와 대 봤습니다. 모든 문장을 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/MA/M29",
     "activities": [
       "MAL1M03W2S1",
@@ -126,9 +126,14 @@
     "fields": [
       {
         "key": "mon",
-        "type": "string",
+        "type": "enum",
         "required": true,
-        "desc": "도우미 캐릭터 색. Bmon(파랑) · Pmon(보라) · Rmon(빨강) 중 하나이고, **애니 alias 를 `{이 값}_idle` · `_talk` · `_end` 로 조합합니다**(M29.ts:55 가 PlayStage 로 넘깁니다). 세 애니를 그 이름으로 등록해야 합니다."
+        "desc": "도우미 캐릭터 색. Bmon(파랑) · Pmon(보라) · Rmon(빨강) 중 하나이고, **애니 alias 를 `{이 값}_idle` · `_talk` · `_end` 로 조합합니다**(M29.ts:55 가 PlayStage 로 넘기고 compo/Monster.ts:24-45 가 셋 가운데 하나로 가릅니다 — 다른 값이면 도우미가 안 나옵니다). 세 애니를 그 이름으로 등록해야 합니다.",
+        "values": [
+          "Bmon",
+          "Pmon",
+          "Rmon"
+        ]
       },
       {
         "key": "paper",
@@ -176,7 +181,7 @@
             {
               "key": "size",
               "type": "object",
-              "required": true,
+              "required": false,
               "fields": [
                 {
                   "key": "width",
@@ -207,13 +212,14 @@
                   "desc": "자리 y."
                 }
               ],
-              "desc": "종이 크기와 마스크 자리."
+              "desc": "**모듈이 읽지 않습니다**(모듈 폴더와 액티비티 훅에 이 이름이 없습니다). 종이 크기와 마스크 자리.",
+              "optional": true
             },
             {
               "key": "rotation",
               "type": "string",
               "required": true,
-              "desc": "종이를 기울이는 각(라디안). Easel.ts:77 이 DrawPanel 의 `rotaition` 세터에 넣습니다 — **세터 이름이 오타지만 부르는 쪽도 같은 오타라 동작은 합니다**(get 은 rotation, set 은 rotaition 인 비대칭 접근자). 값이 계산식이면 `{\"__expr\": \"Math.PI / 4\"}` 꼴로 적습니다."
+              "desc": "**대칭으로 따라 그려지는 선의 각**(라디안)입니다 — 종이를 기울이지 않습니다. 그린 선을 좌우로 뒤집은 뒤 이 각만큼 돌려 반대쪽에 다시 그립니다(DrawPanel.ts:171-174 · 240-243). 그래서 line 과 짝을 맞춥니다 — 완성본은 vertical-line 에 `Math.PI / 180`, horizontal-line 에 `(Math.PI / 180) * 180`, diagonal-line 에 `(Math.PI / 180) * 90` 을 씁니다. Easel.ts:77 이 DrawPanel 의 `rotaition` 세터에 넣습니다 — **세터 이름이 오타지만 부르는 쪽도 같은 오타라 동작은 합니다**(get 은 rotation, set 은 rotaition 인 비대칭 접근자). 값이 계산식이면 `{\"__expr\": \"Math.PI / 4\"}` 꼴로 적습니다."
             }
           ],
           "desc": "칸 하나."
@@ -309,12 +315,6 @@
       "why": "Asset.ts 에 그 줄이 주석 처리돼 있어 모듈이 등록하지 않습니다 — 굵기 아이콘 하나가 빈칸으로 남습니다."
     },
     {
-      "id": "mon-anim-registered",
-      "level": "error",
-      "check": "quizData.mon 값에 맞춰 {mon}_idle · {mon}_talk · {mon}_end 세 애니를 등록해야 한다.",
-      "why": "alias 를 색 이름으로 조합하는데 모듈이 등록해 주지는 않습니다. 없으면 도우미가 안 보입니다."
-    },
-    {
       "id": "button-assets-loaded",
       "level": "error",
       "check": "onLoad 에 ButtonNext.addAsset() 과 ButtonComplete.addAsset() 이 있어야 한다.",
@@ -337,5 +337,55 @@
     "그린 결과는 완료 버튼에서 포트폴리오로 저장됩니다. 종이·마스크 크기를 바꾸면 저장 결과도 같이 확인해야 합니다.",
     "DrawPanel 의 세터 이름이 `rotaition` 으로 오타지만 부르는 쪽(Easel.ts:77)도 같은 이름이라 동작합니다. 고치려면 두 곳을 같이 고쳐야 하니 개발과 협의하세요.",
     "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ],
+  "relations": [
+    {
+      "id": "mon-anim-registered#bmon",
+      "kind": "hasAlias",
+      "when": {
+        "pick": "mon",
+        "is": "Bmon"
+      },
+      "names": [
+        "Bmon_idle",
+        "Bmon_talk",
+        "Bmon_end"
+      ],
+      "as": "lottie",
+      "note": "quizData.mon 값에 맞춰 {mon}_idle · {mon}_talk · {mon}_end 세 애니를 등록해야 한다.",
+      "why": "alias 를 색 이름으로 조합하는데 모듈이 등록해 주지는 않습니다. 없으면 도우미가 안 보입니다."
+    },
+    {
+      "id": "mon-anim-registered#pmon",
+      "kind": "hasAlias",
+      "when": {
+        "pick": "mon",
+        "is": "Pmon"
+      },
+      "names": [
+        "Pmon_idle",
+        "Pmon_talk",
+        "Pmon_end"
+      ],
+      "as": "lottie",
+      "note": "quizData.mon 값에 맞춰 {mon}_idle · {mon}_talk · {mon}_end 세 애니를 등록해야 한다.",
+      "why": "alias 를 색 이름으로 조합하는데 모듈이 등록해 주지는 않습니다. 없으면 도우미가 안 보입니다."
+    },
+    {
+      "id": "mon-anim-registered#rmon",
+      "kind": "hasAlias",
+      "when": {
+        "pick": "mon",
+        "is": "Rmon"
+      },
+      "names": [
+        "Rmon_idle",
+        "Rmon_talk",
+        "Rmon_end"
+      ],
+      "as": "lottie",
+      "note": "quizData.mon 값에 맞춰 {mon}_idle · {mon}_talk · {mon}_end 세 애니를 등록해야 한다.",
+      "why": "alias 를 색 이름으로 조합하는데 모듈이 등록해 주지는 않습니다. 없으면 도우미가 안 보입니다."
+    }
   ]
 }

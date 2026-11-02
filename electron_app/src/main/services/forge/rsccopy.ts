@@ -132,7 +132,7 @@ function ready(to: string, one: Planned, overwrite: boolean, out: InboxResult): 
  * 넣은 뒤 **양쪽에서 센다** (CLAUDE.md 7번). 반쯤 쓰인 파일은 브라우저에서
  * 깨진 그림으로만 드러나고, 그때는 어디서 깨졌는지 알 길이 없다.
  */
-function counted(to: string, one: Planned, out: InboxResult): void {
+export function counted(to: string, one: Planned, out: InboxResult): void {
   const wrote = statSync(to).size
   if (wrote !== one.bytes) {
     out.failed.push({

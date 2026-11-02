@@ -7,7 +7,7 @@ import FolderTree from './components/FolderTree'
 import Bench from './components/bench/Bench'
 import DevCodeBar from './components/DevCodeBar'
 import ErrorGuard from './components/ErrorGuard'
-import RscSort from './components/RscSort'
+import PlanSort from './components/PlanSort'
 import BoardTop from './components/board/BoardTop'
 import Features from './components/Features'
 import Manage from './components/manage/Manage'
@@ -163,9 +163,9 @@ function App() {
               </ErrorGuard>
             ) : (
               <>
-                {/* 놓는 자리는 진행판 결과 바깥에 둔다 — 까닭은 `RscSort.tsx` 머리말 */}
+                {/* 기획서 놓는 칸은 진행판 결과 바깥에 둔다 — 까닭은 `PlanSort.tsx` 머리말 */}
                 <BoardTop />
-                <RscSort onDone={refresh} />
+                <PlanSort onDone={refresh} />
                 {result ? (
                   <Board result={result} onForge={setForgeCode} onChanged={refresh} />
                 ) : selected ? (

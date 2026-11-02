@@ -39,37 +39,76 @@
   color: var(--accent);
 }
 
-.guide-progress {
-  display: flex;
-  align-items: center;
-  gap: var(--gap-3);
+/* 맨 위 「할 일」 (2026-10-28) — 할 일마다 한 줄, 다 하면 테두리가 초록 */
+.guide-todo {
+  border: 1px solid var(--warn);
+  border-radius: var(--radius-1);
+  padding: var(--gap-2) var(--gap-3);
   font-size: var(--font-sm);
+}
+
+.guide-todo.done {
+  border-color: var(--ok);
+}
+
+.guide-verdict {
+  margin: 0 0 var(--gap-2);
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--warn);
+}
+
+.guide-todo.done .guide-verdict {
+  color: var(--ok);
+}
+
+.guide-verdict:last-child {
+  margin-bottom: 0;
+}
+
+.guide-todo ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-1);
+}
+
+.guide-todo li {
+  display: flex;
+  gap: var(--gap-2);
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.guide-todo li b {
+  color: var(--fg);
+}
+
+.guide-todo-mark {
+  flex: none;
+  width: 1em;
+  text-align: center;
+}
+
+.guide-todo li.left .guide-todo-mark {
+  color: var(--warn);
+}
+
+.guide-todo li.done .guide-todo-mark,
+.guide-todo li.guess .guide-todo-mark {
+  color: var(--ok);
+}
+
+.guide-todo-note {
+  margin: var(--gap-2) 0 0;
   color: var(--muted);
 }
 
-.guide-progress b {
-  color: var(--fg);
-  font-size: var(--font-lg);
-}
-
-.guide-bar {
-  flex: 1;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--surface-hover);
-  overflow: hidden;
-}
-
-.guide-bar i {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), var(--ok));
-  transition: width 0.4s ease;
-}
-
-.guide-bar.full i {
-  background: var(--ok);
+.guide-todo details p {
+  margin: var(--gap-1) 0 0;
+  word-break: break-all;
 }
 
 .guide-tools {

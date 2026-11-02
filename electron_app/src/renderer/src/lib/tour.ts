@@ -51,7 +51,7 @@ export const TOUR_STEPS: TourStep[] = [
   { screen: 'board', title: BUTTON.tour, text: '둘러보는 동안에는 아무것도 만들거나 올리지 않습니다. 받을 리소스 창과 미리보기 창은 닫고 보세요.' },
   { screen: 'board', anchor: TOUR_ANCHOR.sideBoards, title: '호 목록', text: '누르면 그 호의 진행판이 열립니다.' },
   { screen: 'board', anchor: TOUR_ANCHOR.boardTiles, title: '학습코드', text: '색이 상태를 나타냅니다. 누르면 작업대가 열립니다.' },
-  { screen: 'board', anchor: TOUR_ANCHOR.boardDrop, title: '놓는 자리', text: '기획서, figma 화면, 학습코드 폴더를 놓으면 학습코드별로 나눠 넣습니다.' },
+  { screen: 'board', anchor: TOUR_ANCHOR.boardDrop, title: '기획서 놓는 칸', text: '기획서 PDF를 놓으면 1쪽을 읽어 학습코드마다 나눠 넣습니다. 리소스와 figma 화면은 작업대에 넣습니다.' },
   { screen: 'board', anchor: TOUR_ANCHOR.boardNow, optional: true, title: TITLE.now, text: '지금 할 수 있는 학습코드를 모아 보여 줍니다.' },
   { screen: 'bench', anchor: TOUR_ANCHOR.benchOrder, title: '작업 순서 막대', text: '지금 할 단계를 강조합니다. 누르면 그 영역으로 이동합니다.' },
   { screen: 'bench', anchor: TARGET.need, title: '리소스', text: `기획서에 적혔는데 없는 소리를 보여 줍니다. 「${BUTTON.guide}」를 누르면 figma 옆에 띄울 창이 열립니다.` },

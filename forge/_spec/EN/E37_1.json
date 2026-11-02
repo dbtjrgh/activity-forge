@@ -5,8 +5,8 @@
   "title": "글자 꼬치 굽기 — 주문받은 낱말을 글자 꼬치로 꿰어 굽습니다",
   "summary": "주문판이 내려와 오늘 만들 낱말을 알려 줍니다. 화면이 바뀌면 글자 조각들이 쟁반에 놓이고, 낱말 차례대로 조각을 꿰어 꼬치를 만듭니다. 다 꿰면 불판에 올려 굽고 종이 울리면 완성입니다. 틀린 조각을 꿰면 튕겨 나옵니다. 이닝 차례는 열 때마다 섞입니다.",
   "reference": {
-    "moduleCommit": "6c569ec99cf6dba9c9379f49a29893b79076507e",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "e2f73478d40a9082c7b255cd9bf6dcb31501f54d",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/E37_1",
     "activities": [
       "ENL3M01W3S2",
@@ -135,9 +135,9 @@
       },
       {
         "alias": "bell",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "다 구워졌다고 알리는 종."
+        "note": "다 구워졌다고 알리는 종 — 로티입니다(Order.ts:72 LottieSprite json)."
       },
       {
         "alias": "bell_sound",
@@ -228,6 +228,126 @@
         "kind": "sound",
         "fixedAlias": true,
         "note": "위와 같은 무리."
+      },
+      {
+        "alias": "nar3",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "주문을 받을 때 도우미가 고르는 말 셋 가운데 하나입니다(Order.ts:126)."
+      },
+      {
+        "alias": "nar4",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "주문을 받을 때 도우미가 고르는 말 셋 가운데 하나입니다(Order.ts:126)."
+      },
+      {
+        "alias": "nar5",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "주문을 받을 때 도우미가 고르는 말 셋 가운데 하나입니다(Order.ts:126)."
+      },
+      {
+        "alias": "source1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각 그림. 조각마다 1~8 가운데 하나를 고릅니다(SourceWord.ts:44, SourceWords.ts:78)."
+      },
+      {
+        "alias": "source2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각 그림. 조각마다 1~8 가운데 하나를 고릅니다(SourceWord.ts:44, SourceWords.ts:78)."
+      },
+      {
+        "alias": "source3",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각 그림. 조각마다 1~8 가운데 하나를 고릅니다(SourceWord.ts:44, SourceWords.ts:78)."
+      },
+      {
+        "alias": "source4",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각 그림. 조각마다 1~8 가운데 하나를 고릅니다(SourceWord.ts:44, SourceWords.ts:78)."
+      },
+      {
+        "alias": "source5",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각 그림. 조각마다 1~8 가운데 하나를 고릅니다(SourceWord.ts:44, SourceWords.ts:78)."
+      },
+      {
+        "alias": "source6",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각 그림. 조각마다 1~8 가운데 하나를 고릅니다(SourceWord.ts:44, SourceWords.ts:78)."
+      },
+      {
+        "alias": "source7",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각 그림. 조각마다 1~8 가운데 하나를 고릅니다(SourceWord.ts:44, SourceWords.ts:78)."
+      },
+      {
+        "alias": "source8",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "글자 조각 그림. 조각마다 1~8 가운데 하나를 고릅니다(SourceWord.ts:44, SourceWords.ts:78)."
+      },
+      {
+        "alias": "grilled_source1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "구운 글자 조각 그림(SourceWord.ts:50, SourceWords.ts:207)."
+      },
+      {
+        "alias": "grilled_source2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "구운 글자 조각 그림(SourceWord.ts:50, SourceWords.ts:207)."
+      },
+      {
+        "alias": "grilled_source3",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "구운 글자 조각 그림(SourceWord.ts:50, SourceWords.ts:207)."
+      },
+      {
+        "alias": "grilled_source4",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "구운 글자 조각 그림(SourceWord.ts:50, SourceWords.ts:207)."
+      },
+      {
+        "alias": "grilled_source5",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "구운 글자 조각 그림(SourceWord.ts:50, SourceWords.ts:207)."
+      },
+      {
+        "alias": "grilled_source6",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "구운 글자 조각 그림(SourceWord.ts:50, SourceWords.ts:207)."
+      },
+      {
+        "alias": "grilled_source7",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "구운 글자 조각 그림(SourceWord.ts:50, SourceWords.ts:207)."
+      },
+      {
+        "alias": "grilled_source8",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "구운 글자 조각 그림(SourceWord.ts:50, SourceWords.ts:207)."
+      },
+      {
+        "alias": "GangwonEduPower",
+        "kind": "font",
+        "fixedAlias": true,
+        "note": "글자를 그리는 글꼴(AnswerWord.ts:40 · Skewer.ts:27 · 74 · SourceWord.ts:58)."
       }
     ],
     "providedByModule": {
@@ -255,7 +375,7 @@
                   "key": "text",
                   "type": "string",
                   "required": true,
-                  "desc": "주문판에 적힐 낱말 글자."
+                  "desc": "주문판에 적힐 낱말 글자. **이 글자에 _sound 를 붙인 이름의 소리를 찾아 읽습니다**(CreateWord.ts:189 `${board.text}_sound`) — 그 이름의 소리를 AssetTable 에 넣어야 합니다."
                 },
                 {
                   "key": "alias",
@@ -290,7 +410,7 @@
           "desc": "칸 하나."
         },
         "desc": "낱말 하나가 이닝 하나입니다. **차례는 열 때마다 섞입니다** — E37_1.ts:52.",
-        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 4개는 5개씩입니다."
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다."
       },
       {
         "key": "sourcePos",
@@ -502,8 +622,8 @@
     {
       "id": "word-length-in-sourcepos",
       "level": "error",
-      "check": "source.text 글자 수가 3~9 여야 한다.",
-      "why": "sourcePos 가 3~9 에 대한 자리만 들고 있습니다. 두 자면 자리표가 undefined 라 조각이 (0,0) 에 겹칩니다."
+      "check": "source.text 에서 겹치는 글자를 뺀 글자 수가 3~8 이어야 한다.",
+      "why": "조각 그림이 source1~8 여덟 장뿐이라(SourceWords.ts:78) 겹침 뺀 글자가 아홉이면 아홉째 조각은 없는 그림(source\"undefined\")을 부릅니다. 자리표 sourcePos 도 겹침 뺀 글자 수를 열쇠로 찾습니다(SourceWords.ts:74-76)."
     },
     {
       "id": "source-text-no-space",

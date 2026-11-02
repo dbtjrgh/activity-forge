@@ -17,7 +17,7 @@ import { pageNeedsOf } from '../services/forge/chatpages'
 import { hallFolder } from '../services/forge/hallfolder'
 import { takeInbox } from '../services/forge/inbox'
 import { planModuleFor, usePlanModule } from '../services/forge/planmodule'
-import { sortInbox } from '../services/forge/sort'
+import { sortPlans } from '../services/forge/sortplan'
 import { prepare } from '../services/forge/prepare'
 import { shareLook, shareTake } from '../services/forge/sharefetch'
 import { makeRscDir } from '../services/forge/workspace'
@@ -88,10 +88,9 @@ export function registerResourceIpc(): void {
   )
 
   /**
-   * **차시를 안 정하고 통째로 놓는다** (2026-09-16).
+   * **진행판에 기획서를 놓는다** (2026-09-16, 2026-10-26 부터 기획서 PDF 만).
    *
-   * 놓는 자리를 한 곳으로 하자는 결정을 잇는 자리다. 위와 같은 검사를 하되
-   * 학습코드를 안 받는다 — 어느 차시인지는 `sort.ts` 가 가린다.
+   * 위와 같은 검사를 하되 학습코드를 안 받는다 — 어느 학습코드 것인지는 `sortplan.ts` 가 1쪽을 읽어 가린다.
    */
   ipcMain.handle(
     IPC.forgeSort,
@@ -102,7 +101,7 @@ export function registerResourceIpc(): void {
       }
       const paths = drops.map((d) => String(d ?? '')).filter((d) => d && isAbsolute(d))
       if (!paths.length) return Promise.resolve(badSort('넣은 파일의 경로를 읽지 못했습니다.'))
-      return sortInbox(paths, overwrite === true)
+      return sortPlans(paths, overwrite === true)
     }
   )
 

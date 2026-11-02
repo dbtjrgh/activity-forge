@@ -4,11 +4,13 @@ import CopyButton from '../CopyButton'
 import { Counts, GuideRows, GuideTiles, isDone } from './GuideTiles'
 import GuideMine from './GuideMine'
 import GuideOrigin from './GuideOrigin'
+import GuideTodo from './GuideTodo'
 import GuideVoice from './GuideVoice'
 import GuideZoom from './GuideZoom'
 import PageNeeds from '../bench/PageNeeds'
 import PlanModuleNotice from '../bench/PlanModuleNotice'
 import ShareFetch from '../ShareFetch'
+import { planCounts, wantOf } from '../../lib/guidetodo'
 import './guide.css'
 
 /**
@@ -24,9 +26,13 @@ const POLL_MS = 4000
 /** figma 에서 내보내는 것 — 그림뿐. 영상 · 소리 · 로티는 따로 받는다(영상은 AssetTable 이 그림에 올려도 figma 에 없다) */
 const FIGMA = new Set(['image'])
 
-/** 디자인 쪽에 보낼 글 — 아직 안 온 것만 */
+/** 디자인 쪽에 보낼 글 — 아직 안 온 것만. 기획서로 센 소리는 원본 이름 대신 기획서에 적혔는데 없는 이름을 */
 const listText = (g: RscGuide, left: GuideItem[]): string =>
-  [`${g.code} 받을 리소스 (원본 ${g.origin})`, ...left.map((i) => `- ${i.name}${i.w ? ` (${i.w}×${i.h})` : ''}`)].join('\n')
+  [
+    `${g.code} 받을 리소스 (원본 ${g.origin})`,
+    ...left.map((i) => `- ${i.name}${i.w ? ` (${i.w}×${i.h})` : ''}`),
+    ...(planCounts(g) ? g.plan.missing.map((n) => `- ${n}`) : [])
+  ].join('\n')
 
 function GuideWindow({ code }: { code: string }) {
   const [data, setData] = useState<RscGuide | null>(null)
@@ -68,14 +74,14 @@ function GuideWindow({ code }: { code: string }) {
 
   const pin = (): void => void window.api.guideTop(!top).then(setTop)
 
-  const want = data?.items.filter((i) => i.state !== 'auto') ?? []
-  const got = want.filter(isDone).length
+  // 기획서로 센 소리의 원본 이름은 이 학습코드 이름이 될 수 없어 목록에서 뺀다 — 없는 이름은 맨 위 「할 일」이 보인다
+  const want = data ? wantOf(data) : []
   const left = want.filter((i) => !isDone(i))
   const auto = data?.items.filter((i) => i.state === 'auto') ?? []
   const shown = view === 'left' ? left : want
   const figma = shown.filter((i) => FIGMA.has(i.kind))
   const other = shown.filter((i) => !FIGMA.has(i.kind))
-  const pct = want.length ? Math.round((got / want.length) * 100) : 0
+  const copy = data && (left.length > 0 || (planCounts(data) && data.plan.missing.length > 0))
 
   return (
     <div className="guide">
@@ -94,14 +100,7 @@ function GuideWindow({ code }: { code: string }) {
         {data?.module && <GuideOrigin code={code} origin={data.origin} note={data.originNote} onChanged={read} />}
         {data && !data.error && (
           <>
-            <div className="guide-progress">
-              <div className={`guide-bar${want.length && got === want.length ? ' full' : ''}`}>
-                <i style={{ width: `${pct}%` }} />
-              </div>
-              <span>
-                남은 항목 <b>{left.length}</b>개 (받음 {got}/{want.length})
-              </span>
-            </div>
+            <GuideTodo data={data} />
             <div className="guide-tools">
               <div className="guide-seg">
                 <button className={view === 'left' ? 'on' : ''} onClick={() => setView('left')}>
@@ -115,7 +114,7 @@ function GuideWindow({ code }: { code: string }) {
                 </button>
               </div>
               <span className="guide-grow" />
-              {left.length > 0 && <CopyButton text={listText(data, left)}>목록 복사</CopyButton>}
+              {copy && <CopyButton text={listText(data, left)}>목록 복사</CopyButton>}
               {data.exists && (
                 <button className="ghost" onClick={() => void window.api.openPath(data.dir)}>
                   폴더 열기

@@ -5,8 +5,8 @@
   "title": "낱말 카드 고르기 — 그림을 눌러 소리를 듣고 맞는 카드를 고릅니다",
   "summary": "한 이닝마다 그림 하나와 낱말 하나가 나옵니다. 그림을 누르면 그림이 바뀌면서 낱말 소리가 나고, 다 들으면 화면이 어두워지며 뒤집힌 카드 두 장이 올라옵니다. 스피커를 눌러 낱말을 다시 들을 수 있고, 맞는 카드를 고르면 카드가 뒤집혀 그림이 드러나고 도우미가 칭찬합니다. 틀리면 카드가 흔들리고 다시 고를 수 있습니다. 맞히면 왼쪽에 문제 그림, 오른쪽에 정답 그림이 나란히 놓인 결과 화면이 되고 다음 이닝으로 넘어갑니다.",
   "reference": {
-    "moduleCommit": "3cafe47023033202a173bd0def8972fe73623f5f",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글의 줄 번호와 주요 동작(섞기 · 기본값 · 고정 개수 · 박힌 이름 · 등록하는 이름)을 모듈 코드와 대 봤습니다. 모든 문장을 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/ExploreQuiz",
     "activities": [
       "ENL1M01W2S2",
@@ -54,7 +54,7 @@
         "alias": "bg",
         "kind": "image",
         "fixedAlias": true,
-        "note": "화면 전체 배경. ExploreQuiz.ts:52 하드코딩. 이닝마다 바뀌는 inning[].bg 와 다릅니다 — 그 뒤에 늘 깔리는 바탕입니다."
+        "note": "화면 전체 배경. ExploreQuiz.ts:53 하드코딩. 이닝마다 바뀌는 inning[].bg 와 다릅니다 — 그 뒤에 늘 깔리는 바탕입니다."
       },
       {
         "alias": "speaker01",
@@ -66,7 +66,7 @@
         "alias": "speaker02",
         "kind": "image",
         "fixedAlias": true,
-        "note": "카드 쪽 스피커 단추 그림. AnswerPanel.ts:121·190."
+        "note": "카드 쪽 스피커 단추 그림. AnswerPanel.ts:121·189."
       },
       {
         "alias": "spk_idle",
@@ -96,7 +96,7 @@
         "alias": "bgm",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "배경음. ExploreQuiz.ts:63 getSound(\"bgm\"). 소리 크기 0.5 로 되풀이합니다."
+        "note": "배경음. ExploreQuiz.ts:61 getSound(\"bgm\"). 소리 크기 0.5 로 되풀이합니다."
       },
       {
         "alias": "SL_en_com_nar72",
@@ -190,7 +190,7 @@
               "key": "bg",
               "type": "asset:image",
               "required": true,
-              "desc": "이 이닝의 배경 그림. PageView.ts:78 이 이닝이 바뀔 때마다 갈아 끼웁니다. 그림자 효과가 자동으로 붙습니다."
+              "desc": "이 이닝의 배경 그림. PageView.ts:87 이 이닝이 바뀔 때마다 갈아 끼웁니다. 그림자 효과가 자동으로 붙습니다."
             },
             {
               "key": "quiz",
@@ -254,7 +254,7 @@
                       "key": "fromFigma",
                       "type": "bool",
                       "optional": true,
-                      "desc": "켜면 x·y 에 figma 의 왼쪽·상단을 그대로 적습니다. 크기는 안 적습니다. 이닝마다 따로. (QuizPanel.ts:70)"
+                      "desc": "켜면 x·y 에 figma 의 왼쪽·상단을 그대로 적습니다. 크기는 안 적습니다. 이닝마다 따로. (QuizPanel.ts:160)"
                     }
                   ],
                   "desc": "문제 그림 자리. 그림 한가운데가 기준점입니다."
@@ -297,7 +297,7 @@
                   "key": "answerCardBG",
                   "type": "asset:image",
                   "required": true,
-                  "desc": "카드 **뒷면** 그림. 두 장이 같은 뒷면을 씁니다 — AnswerPanel.ts:205·209 가 한 값을 둘 다에 넘깁니다."
+                  "desc": "카드 **뒷면** 그림. 두 장이 같은 뒷면을 씁니다 — AnswerPanel.ts:202·207 가 한 값을 둘 다에 넘깁니다."
                 },
                 {
                   "key": "answerCardIndex",
@@ -309,7 +309,7 @@
                   "key": "wrongAnswerCardIndex",
                   "type": "string",
                   "optional": true,
-                  "desc": "틀린 카드. 비워 두면 **cards 에서 정답을 뺀 나머지 중 하나를 무작위로** 뽑습니다(AnswerPanel.ts:211-224). 기존 7개는 다 손으로 적어 두었습니다 — 뜻이 너무 가까운 낱말이 짝으로 나오면 문제가 안 되기 때문입니다."
+                  "desc": "틀린 카드. 비워 두면 **cards 에서 정답을 뺀 나머지 중 하나를 무작위로** 뽑습니다(AnswerPanel.ts:211-222). 기존 7개는 다 손으로 적어 두었습니다 — 뜻이 너무 가까운 낱말이 짝으로 나오면 문제가 안 되기 때문입니다."
                 }
               ],
               "desc": "아래에서 올라오는 카드 두 장."
@@ -401,6 +401,12 @@
                   "optional": true,
                   "figma": true,
                   "desc": "왼쪽 문제 그림 자리. 안 적으면 모듈이 잡은 자리에 둡니다."
+                },
+                {
+                  "key": "leftBg",
+                  "type": "asset:image",
+                  "optional": true,
+                  "desc": "**모듈은 읽지 않습니다.** 정답 공개 뒤 배경 왼쪽을 바꿔 끼우는 그림으로, 액티비티 Activity.ts 가 직접 읽을 때만 쓰입니다(ENL1M08W2S2 Activity.ts:53-57). 그런 훅이 없으면 넣지 않습니다."
                 }
               ],
               "desc": "맞힌 뒤 나오는 화면 — 왼쪽에 문제, 오른쪽에 정답."

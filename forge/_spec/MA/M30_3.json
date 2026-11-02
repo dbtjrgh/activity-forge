@@ -5,8 +5,8 @@
   "title": "썸네일 골라서 꾸미기",
   "summary": "썸네일 3~10개 중 하나를 골라 사진을 찍고, 그 사진을 꾸미기 보드에 올려 색연필·롤러·스티커로 꾸민 뒤 포트폴리오에 저장하는 모듈. M30 에서 갈라 만들었습니다.",
   "reference": {
-    "moduleCommit": "48034afb310a40c7dc593d2f99b0d3d23d6587c5",
-    "moduleCommitWhy": "2026-10-14 neonOffset · doneGuide 를 받게 모듈(48034af)과 스펙을 같이 고치며 맞춰 봄. 9-29 커밋 둘(c457863 BGM 페이드 · 5c3fab8 완료 버튼 자리)은 GameData 항목에 닿지 않음",
+    "moduleCommit": "0ccda63dc63d8433b6e906327c4981f3f767a640",
+    "moduleCommitWhy": "2026-10-14 neonOffset · doneGuide 를 받게 모듈(48034af)과 스펙을 같이 고치며 맞춰 봄. 9-29 커밋 둘(c457863 BGM 페이드 · 5c3fab8 완료 버튼 자리)은 GameData 항목에 닿지 않음. 2026-10-26 0ccda63(Book.ts:135-136 네온 깜빡임 전에 트윈을 끊고 alpha 1 로 되돌림, QA #185)을 맞춰 봄 — GameData · 리소스 이름에 닿지 않음",
     "module": "sparkon_common/_common/module/MA/M30_3",
     "activities": [
       "MAL1M07W4S1",
@@ -42,7 +42,52 @@
   },
   "assets": {
     "providedByModule": {
-      "note": "M30_3.assetLoad() 가 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 같은 alias 를 두 번 addAsset 하면 PixiJS 가 「[Resolver] already has key … overwriting」 경고를 내고 나중 것으로 덮습니다. 도우미 캐릭터 음원은 MainCharacter 가 과목별로 이미 물고 있으니 이것도 다시 등록하지 않습니다."
+      "note": "M30_3.assetLoad() 가 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 같은 alias 를 두 번 addAsset 하면 PixiJS 가 「[Resolver] already has key … overwriting」 경고를 내고 나중 것으로 덮습니다. 도우미 캐릭터 음원은 MainCharacter 가 과목별로 이미 물고 있으니 이것도 다시 등록하지 않습니다. 완성본 다섯은 모두 editor_guide 를 자기 AssetTable 에도 넣어 모듈 것을 덮습니다(학습코드마다 안내 음원이 다릅니다).",
+      "image": [
+        "thumbnail-box",
+        "main_next_btn_n",
+        "main_next_btn_p",
+        "tool-box",
+        "color",
+        "roller",
+        "sticker",
+        "eraser",
+        "color-on",
+        "roller-on",
+        "sticker-on",
+        "eraser-on",
+        "color-off",
+        "roller-off",
+        "sticker-off",
+        "eraser-off",
+        "color-depth-box",
+        "roller-depth-box",
+        "sticker-depth-box",
+        "rainbow",
+        "red",
+        "yellow",
+        "green",
+        "blue",
+        "rainbow-on",
+        "red-on",
+        "yellow-on",
+        "green-on",
+        "blue-on",
+        "roller-cursor"
+      ],
+      "sound": [
+        "bgm",
+        "btn_click_sound",
+        "select_sound",
+        "drop-sound",
+        "openTool",
+        "pattern_sound",
+        "drawing-sound",
+        "editor_guide"
+      ],
+      "lottie": [
+        "particle_ef"
+      ]
     },
     "required": [
       {

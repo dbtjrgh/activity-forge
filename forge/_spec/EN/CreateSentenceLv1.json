@@ -2,11 +2,11 @@
   "specVersion": 1,
   "module": "CreateSentenceLv1",
   "subject": "EN",
-  "title": "문장 기차 만들기 — 흩어진 낱말을 차례대로 눌러 문장을 잇습니다",
-  "summary": "놀이공원 배경에 아이 셋이 서 있고 각자 낱말을 하나씩 들고 있습니다. 위쪽 칠판에 그림이 뜨고 스피커를 누르면 문장을 읽어 줍니다. 문장 차례대로 아이를 누르면 그 낱말이 아래 기차 칸에 실립니다. 세 칸을 다 채우면 기차가 달려 나가고 롤러코스터가 지나갑니다. 잘못 누르면 그 아이가 아쉬워하는 몸짓을 하고 다시 고릅니다. 이닝은 열 때마다 섞입니다.",
+  "title": "문장 기차 만들기 — 낱말을 든 아이를 같은 낱말이 적힌 기차 칸으로 끌어다 놓습니다",
+  "summary": "놀이공원 배경에 아이 셋이 서 있고 저마다 말풍선에 낱말을 하나씩 들고 있습니다. 아래 기차 세 칸에는 문장 낱말이 흐린 글자로 차례대로 적혀 있고, 왼쪽 그림과 스피커를 누르면 문장을 읽으며 칸 글자를 하나씩 빛냅니다. 아이를 끌어다 같은 낱말이 적힌 칸에 놓으면 그 칸에 올라탑니다. 끄는 차례는 따지지 않습니다. 기차 밖이나 다른 칸에 놓으면 아이가 제자리로 돌아가 아쉬워하는 몸짓을 합니다. 세 칸을 다 채우면 문장을 한 번 더 읽고 기차가 달려 나간 뒤 롤러코스터가 지나갑니다. 이닝 차례는 열 때마다 섞입니다.",
   "reference": {
-    "moduleCommit": "7c06726ff149d335cd4be1be1318e283151671a1",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "6b46440ec90995b75268540852db36586997bcaa",
+    "moduleCommitWhy": "2026-10-26 모듈이 BGM 을 한 곳(CreateSentenceLv1._playBGM, bgm · 0.5)에서 틀고 끝날 때 줄이게 고쳐, 결함 규칙 module-plays-wrong-bgm-alias 를 지우고 bgm 메모와 GameMap.ts 줄 번호를 맞췄습니다.",
     "module": "sparkon_common/_common/module/EN/CreateSentenceLv1",
     "activities": [
       "ENL1M01W3S3",
@@ -52,69 +52,118 @@
         "alias": "bg",
         "kind": "image",
         "fixedAlias": true,
-        "note": "놀이공원 배경. GameMap.ts:51 하드코딩."
+        "note": "놀이공원 배경. GameMap.ts:52 가 이 이름으로 부릅니다."
       },
       {
         "alias": "bgm",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "배경음. GameMap.ts:66 이 getSound(\"bgm\") 으로 찾아 소리 크기 0.5 로 되풀이합니다."
+        "note": "배경음. CreateSentenceLv1.ts:60 이 getSound(\"bgm\") 으로 찾아 소리 크기 0.5 로 되풀이하고, 끝날 때 2초에 걸쳐 줄여 끕니다(:68-74). 모듈이 이 이름으로만 찾습니다."
       },
       {
         "alias": "nar02",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "시작할 때 도우미가 하는 안내. GameMap.ts:71 이 guide(\"nar02\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.**"
+        "note": "시작할 때 도우미가 하는 안내. GameMap.ts:67 이 guide(\"nar02\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.**"
       },
       {
         "alias": "speechBubble",
         "kind": "image",
         "fixedAlias": true,
-        "note": "아이 머리 위에 뜨는 말풍선. 낱말이 그 안에 들어갑니다."
+        "note": "아이 머리 위에 뜨는 말풍선. 낱말이 그 안에 들어갑니다. Character.ts:132 가 이 이름으로 부릅니다."
       },
       {
         "alias": "rollerCoaster",
         "kind": "lottie",
         "fixedAlias": true,
-        "note": "뒤로 지나가는 롤러코스터. GameMap.ts 의 initBackGroundAni 가 이 이름으로 찾습니다."
+        "note": "세 칸을 다 채운 뒤 뒤로 지나가는 롤러코스터. GameMap.ts:115 의 initBackGroundAni 가 이 이름으로 찾고 :97 이 틉니다."
       },
       {
         "alias": "particle",
         "kind": "lottie",
         "fixedAlias": true,
-        "note": "맞혔을 때 튀는 알갱이."
+        "note": "맞는 칸에 놓았을 때 그 칸에서 튀는 알갱이. Train.ts:58 이 이 이름으로 부르고 Train.ts:96~101 이 sfx02 와 같이 틉니다(Character.ts:225)."
       },
       {
         "alias": "soundRollerCoaster",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "롤러코스터가 지나가는 소리. GameMap.ts:100. **끝날 때까지 기다립니다** — 길면 그만큼 다음 이닝이 늦어집니다."
+        "note": "롤러코스터가 지나가는 소리. GameMap.ts:99. **끝날 때까지 기다립니다** — 길면 그만큼 다음 이닝이 늦어집니다."
       },
       {
         "alias": "soundScream",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "롤러코스터 탄 아이들 소리. GameMap.ts:99."
+        "note": "롤러코스터 탄 아이들 소리. GameMap.ts:98 가 기다리지 않고 틉니다."
+      },
+      {
+        "alias": "sfx01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "아이를 잡아 끌기 시작하는 순간(누를 때마다) 나는 소리입니다. Character.ts:18~20 이 pointerdown 마다 AudioManager.play(\"sfx01\") 로 이름을 박아 부릅니다. Assets.ts 가 아무것도 등록하지 않으므로 액티비티 AssetTable 이 넣어야 합니다. 없으면 AudioManager.ts:106 이 없는 이름을 건너뛰어 오류 없이 소리만 안 납니다. 개발 완료 셋이 다 SL_en_com_sfx01.mp3 를 학습코드 sounds 폴더에 두고 이 이름으로 넣습니다."
       },
       {
         "alias": "sfx02",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "낱말을 기차에 실을 때."
+        "note": "맞는 칸에 놓았을 때 알갱이 로티와 같이 나는 소리입니다. Train.ts:98 이 이 이름으로 부릅니다(Character.ts:225 의 정답 연출)."
       },
       {
         "alias": "sfx05",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "맞혔을 때."
+        "note": "잘못 놓았을 때(기차 밖이거나 다른 칸) 아이가 아쉬워하는 몸짓과 같이 나는 소리입니다. Character.ts:245 가 _wrongAnwerDirecting 안에서 이 이름으로 부릅니다."
+      },
+      {
+        "alias": "train01",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "기차 칸 그림. train01 · train02 · train03 은 Train.ts:114 의 trainArray 에 이름이 박혀 있고, 이닝마다 섞어(:122) 칸 i 에 i 번째 이름을 Train.ts:35 의 AssetManager.get 으로 씁니다. 그림이 셋뿐이라 칸도 셋까지입니다."
+      },
+      {
+        "alias": "train02",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "기차 칸 그림. train01 의 설명과 같습니다(Train.ts:114)."
+      },
+      {
+        "alias": "train03",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "기차 칸 그림. train01 의 설명과 같습니다(Train.ts:114)."
+      },
+      {
+        "alias": "comNar10",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "두 번째 이닝부터 이닝을 시작할 때 도우미가 하는 말. GameMap.ts:21 의 inningSoundArray(comNar10 · comNar11 · comNar12) 가운데 하나를 GameMap.ts:83 이 고르고 mainCharacter.correct 가 AudioManager.playAsync 로 틉니다(MainCharacter.ts:507). sparkLib 은 이 이름을 등록하지 않아 액티비티 AssetTable 이 넣어야 합니다. 없으면 오류 없이 소리만 안 납니다."
+      },
+      {
+        "alias": "comNar11",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "comNar10 의 설명과 같습니다(GameMap.ts:21 · :83)."
+      },
+      {
+        "alias": "comNar12",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "comNar10 의 설명과 같습니다(GameMap.ts:21 · :83)."
+      },
+      {
+        "alias": "GangwonEduPower",
+        "kind": "font",
+        "fixedAlias": true,
+        "note": "말풍선 낱말(Character.ts:139)과 기차 칸 글자(Train.ts:45)를 이 글꼴 이름으로 그립니다. 모듈과 sparkLib 은 이 글꼴을 넣지 않습니다. pixi 는 글꼴 이름을 alias 가 아니라 파일 이름에서 얻으므로(pixi.js loadWebFont.mjs:70) 파일도 GangwonEduPower.otf 여야 합니다. 개발 완료 셋이 다 이 이름과 파일로 넣습니다."
       }
     ],
     "providedByModule": {
-      "note": "**CreateSentenceLv1 은 아무것도 안 넣습니다.** Assets.ts 가 통째로 주석이라 addAsset() 은 ButtonSound(스피커 단추)만 등록합니다. 배경·아이 로티·기차·칠판·소리를 전부 액티비티가 넣어야 합니다. 칭찬·오답·새 이닝 나레이션(comNar01~12)은 공용 도우미가 들고 있습니다.",
-      "sound": [
-        "comNar01~03 (칭찬)",
-        "comNar07~09 (오답)",
-        "comNar10~12 (새 이닝)"
+      "note": "**CreateSentenceLv1 은 자기 리소스를 등록하지 않습니다.** Assets.ts 의 목록이 다 주석이라 addAsset() 은 ButtonSound.addAsset() 으로 스피커 단추 그림 둘만 넣습니다(CreateSentenceLv1.ts:22, ButtonSound.ts:20~21). 배경 · 아이 로티 · 기차 · 그림 · 소리 · 글꼴은 전부 액티비티가 넣어야 합니다. 도우미 말 comNar 도 sparkLib 이 넣지 않습니다 — 모듈이 실제로 부르는 것은 comNar10~12 뿐이고(assets.required), GameMap.ts:19~20 의 comNar01~03 · comNar07~09 는 부르는 줄(Character.ts:237 · :249)이 주석이라 나지 않습니다. 개발 완료 셋은 그래도 넣어 둡니다.",
+      "image": [
+        "SoundBTN_normal"
+      ],
+      "lottie": [
+        "speaker"
       ]
     }
   },
@@ -146,13 +195,13 @@
                   "type": "number",
                   "required": true,
                   "default": -87,
-                  "desc": "세로 자리. 기존 3개가 다 -87 입니다."
+                  "desc": "세로 자리. 위 설명대로 두 번 쓰이는 값입니다. 개발 완료 셋이 다 -87 입니다."
                 }
               ],
               "desc": "칸 하나."
             },
-            "desc": "아이가 설 자리. Character.ts:96·125 가 차례대로 꺼내 씁니다. 화면 한가운데가 (0,0) 입니다.",
-            "minLengthWhy": "GameMap.ts:92 가 정답 3개를 세고서야 이닝을 끝냅니다 — 셋보다 적으면 그 이닝이 안 끝나고 멈춥니다."
+            "desc": "아이가 설 자리. 칸 i 에 i 번째 아이가 섭니다(Character.ts:99~100 · :127~130). x 는 화면 한가운데가 0 인 가로 자리입니다. **y 는 두 번 쓰입니다** — 아이 자리(:127~130)에 한 번, 그 안의 로티 뿌리(:185)에 또 한 번 들어가고, pivot(:120)이 로티 높이의 1/4 만큼 더 내립니다. 그래서 figma 의 세로 자리를 그대로 넣으면 안 맞습니다. 정답 칸에 놓으면 그 칸 기준(:296~297)으로, 잘못 놓으면 이 자리로(:301) 돌아갑니다.",
+            "minLengthWhy": "GameMap.ts:92 이 정답 3개를 세고서야 이닝을 끝냅니다 — 셋보다 적으면 그 이닝이 안 끝나고 멈춥니다."
           },
           {
             "key": "trainPosInfo",
@@ -179,11 +228,11 @@
               ],
               "desc": "칸 하나."
             },
-            "desc": "기차 칸이 설 자리. Train.ts:38. 아이 자리와 개수가 같아야 합니다.",
-            "minLengthWhy": "낱말 하나에 기차 칸 하나입니다."
+            "desc": "기차 칸이 설 자리. 칸 i 가 trainPosInfo[i] 에 섭니다(Train.ts:37~40). 화면 한가운데가 (0,0) 입니다. 칸 글자는 word[i] 입니다. 아이 자리와 개수가 같아야 합니다.",
+            "minLengthWhy": "낱말 하나에 기차 칸 하나입니다(Train.ts:124)."
           }
         ],
-        "desc": "아이와 기차 칸이 설 자리. **칸 수가 곧 낱말 수**입니다 — 기존 3개가 다 셋입니다."
+        "desc": "아이와 기차 칸이 설 자리. 아이 수는 shuffleWord 칸 수가(Character.ts:315), 기차 칸 수는 word 칸 수가(Train.ts:124) 정하고 여기는 그만큼 자리가 있으면 됩니다. 남는 칸은 읽지 않습니다. 개발 완료 셋이 다 셋입니다."
       },
       {
         "key": "aniInfo",
@@ -198,30 +247,30 @@
               "key": "idleAni",
               "type": "asset:lottie",
               "required": true,
-              "desc": "가만히 서 있을 때."
+              "desc": "가만히 서 있을 때. 되풀이합니다(Character.ts:103~107)."
             },
             {
               "key": "correctAni",
               "type": "asset:lottie",
               "required": true,
-              "desc": "제 차례에 눌렸을 때."
+              "desc": "맞는 칸에 놓였을 때 한 번 틉니다(Character.ts:227~229)."
             },
             {
               "key": "incorrectAni",
               "type": "asset:lottie",
               "required": true,
-              "desc": "차례가 아닌데 눌렸을 때."
+              "desc": "기차 밖이나 다른 칸에 놓였을 때 한 번 틉니다(Character.ts:243~246)."
             },
             {
               "key": "trainAni",
               "type": "asset:lottie",
               "required": true,
-              "desc": "그 아이가 기차에 탄 모습."
+              "desc": "그 아이가 기차에 탄 모습. correctAni 다음에 한 번 틀고 다시 idleAni 로 돌아갑니다(Character.ts:230~234). 개발 완료 셋은 ch{n}_train.json 로티를 넣습니다."
             }
           ],
           "desc": "칸 하나."
         },
-        "desc": "나올 수 있는 아이들. **이닝마다 섞어서 앞에서부터 골라 씁니다**(Character.ts:311) — 다섯을 넣어 두면 이닝마다 다른 셋이 나옵니다.",
+        "desc": "나올 수 있는 아이들. **이닝마다 섞어서 앞에서부터 골라 씁니다**(Character.ts:314 · :104~117) — 다섯을 넣어 두면 이닝마다 다른 셋이 나옵니다.",
         "minLengthWhy": "한 이닝에 셋이 서므로 그만큼은 있어야 합니다. 기존 3개는 다섯을 넣어 두고 섞어 씁니다."
       },
       {
@@ -243,7 +292,7 @@
                 "type": "string",
                 "desc": "낱말 글자. 그림이 아니라 글자 그대로입니다."
               },
-              "desc": "아이들이 들고 설 낱말. **이것도 섞입니다**(Character.ts:309) — 그래서 word 와 같은 글자를 넣어도 화면에는 뒤섞여 나옵니다. 칸 수가 아이 수를 정합니다."
+              "desc": "아이들이 말풍선에 들고 설 낱말. **이것도 섞입니다**(Character.ts:312) — 그래서 word 와 같은 글자를 넣어도 화면에는 뒤섞여 나옵니다. 칸 수만큼 아이가 섭니다(Character.ts:315). 글자가 10자 이상이면 작게 씁니다(Character.ts:140)."
             },
             {
               "key": "word",
@@ -255,19 +304,19 @@
                 "type": "string",
                 "desc": "낱말 글자."
               },
-              "desc": "**맞는 차례**의 낱말. 이 차례대로 눌러야 정답입니다(Train.ts:124). shuffleWord 와 같은 낱말을 문장 차례로 적습니다."
+              "desc": "기차 칸에 적히는 문장 낱말. word[i] 가 칸 i(trainPosInfo[i])에 흐린 글자로 찍힙니다(Train.ts:42 · :55). 칸 수만큼 기차 칸이 섭니다(Train.ts:124). 아이를 놓은 칸의 글자가 그 아이 낱말과 같으면 정답입니다(Character.ts:204). **끄는 차례는 따지지 않습니다** — 문장 차례는 칸 자리로만 드러납니다. 글자가 8자 이상이면 작게 씁니다(Train.ts:46)."
             },
             {
               "key": "boardImg",
               "type": "asset:image",
               "required": true,
-              "desc": "위 칠판에 뜨는 그림. Board.ts:32."
+              "desc": "왼쪽(-471, -121) 그림 자리에 뜨는 그림(Board.ts:32 · :34). 누르면 스피커처럼 문장을 읽으며 칸 글자를 빛냅니다(Board.ts:13~24)."
             },
             {
               "key": "sentenceSound",
               "type": "asset:sound",
               "required": true,
-              "desc": "스피커를 누르면 나오는 문장 전체 읽기. Board.ts:54."
+              "desc": "문장 전체 읽기. 스피커 단추에 이 소리를 넣습니다(Board.ts:60). 기차가 들어온 뒤(Train.ts:134) · 세 칸을 다 채운 뒤(Train.ts:145) · 스피커와 그림을 누를 때 · 한 이닝에서 다른 칸에 세 번째 · 다섯 번째 … 로 잘못 놓았을 때(Character.ts:207~209 · :253~258) 틉니다."
             },
             {
               "key": "sentenceDelay",
@@ -277,9 +326,9 @@
               "of": {
                 "key": "",
                 "type": "number",
-                "desc": "그 낱말 뒤에 쉬는 시간(밀리초)."
+                "desc": "그 칸 글자를 빛내는 시간(밀리초)."
               },
-              "desc": "낱말 사이 뜸(밀리초). Board.ts:65 와 Train.ts:139·148 이 낱말마다 이만큼 쉬었다 넘어갑니다. **낱말 수와 칸 수가 같아야 합니다** — 기존 3개가 [500, 500, 700] 입니다."
+              "desc": "문장을 읽는 동안 칸 i 글자를 빛내는 시간(밀리초). Board.ts:20 · :71, Train.ts:139 · :148, Character.ts:261 이 문장 소리를 틀어 두고 칸마다 이만큼 빛낸 뒤 다음 칸으로 넘어갑니다 — 문장 읽기에 맞춥니다. **낱말 수와 칸 수가 같아야 합니다.** ENL1M04W3S3 · ENL1M06W3S3 은 [500, 500, 700], ENL1M01W3S3 은 이닝마다 다릅니다."
             },
             {
               "key": "sound",
@@ -291,13 +340,13 @@
                 "type": "asset:sound",
                 "desc": "그 낱말을 읽는 소리."
               },
-              "desc": "낱말 하나하나를 읽는 소리. **차례가 word 와 같아야 합니다.**"
+              "desc": "낱말 하나하나를 읽는 소리. sound[i] 는 칸 i 의 소리입니다 — 그 칸을 누를 때(Train.ts:20)와 그 칸에 맞게 놓았을 때(Character.ts:226) 납니다. **차례가 word 와 같아야 합니다.**"
             }
           ],
           "desc": "칸 하나."
         },
-        "desc": "이닝 하나가 문장 하나입니다. **차례는 열 때마다 섞입니다** — GameMap.ts:76 이 shuffleArray 를 그대로 부릅니다. 앞뒤가 이어지는 문장은 넣지 마세요.",
-        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 기존 3개는 5~6개입니다."
+        "desc": "이닝 하나가 문장 하나입니다. **차례는 열 때마다 섞입니다** — GameMap.ts:73 이 shuffleArray 를 그대로 부릅니다. 앞뒤가 이어지는 문장은 넣지 마세요.",
+        "minLengthWhy": "이닝 표시가 붙는 활동이라 하나뿐이면 의미가 없습니다. 개발 완료 셋은 4~6개입니다."
       }
     ]
   },
@@ -305,32 +354,20 @@
     {
       "id": "fixed-alias-registered",
       "level": "error",
-      "check": "bg · bgm · nar02 · speechBubble · rollerCoaster · particle · soundRollerCoaster · soundScream · sfx02 · sfx05 가 AssetTable 에 있어야 한다.",
-      "why": "Assets.ts 가 통째로 주석이라 모듈이 아무것도 안 넣습니다. 스피커 단추만 ButtonSound 가 넣습니다."
-    },
-    {
-      "id": "word-count-three",
-      "level": "error",
-      "check": "iningInfo[] 의 shuffleWord · word · sound · sentenceDelay 가 다 같은 칸 수이고, characterPosInfo · trainPosInfo 칸 수와도 같아야 한다.",
-      "why": "GameMap.ts:92 가 **정답 3개**를 세고서야 이닝을 끝냅니다. 낱말이 둘이면 세 번째를 맞힐 수가 없어 **그 이닝에서 영영 멈춥니다** — 터지지 않고 화면이 그대로 서 있습니다."
+      "check": "bg · bgm · nar02 · speechBubble · rollerCoaster · particle · soundRollerCoaster · soundScream · sfx01 · sfx02 · sfx05 · train01~03 · comNar10~12 · 글꼴 GangwonEduPower 가 AssetTable 에 있어야 한다.",
+      "why": "Assets.ts 의 목록이 다 주석이라 모듈이 아무것도 안 넣습니다. 스피커 단추만 ButtonSound 가 넣습니다."
     },
     {
       "id": "word-matches-shuffleword",
       "level": "error",
       "check": "word 와 shuffleWord 가 같은 낱말을 담아야 한다.",
-      "why": "화면에 서는 것은 shuffleWord 고 맞는 차례를 재는 것은 word 입니다. 한쪽에만 있는 낱말은 눌러도 맞을 수가 없습니다."
+      "why": "아이 낱말은 shuffleWord 에서, 칸 글자는 word 에서 옵니다. 놓은 칸의 글자와 아이 낱말이 같아야 정답이라(Character.ts:204), 한쪽에만 있는 낱말은 어디에 놓아도 맞을 수가 없고 그 이닝이 끝나지 않습니다(GameMap.ts:92)."
     },
     {
       "id": "inninginfo-shuffled",
       "level": "warn",
       "check": "iningInfo 의 차례에 뜻이 있으면 안 된다.",
-      "why": "GameMap.ts:76 이 shuffleArray(iningInfo) 를 그대로 부릅니다. **끄는 값이 없습니다.**"
-    },
-    {
-      "id": "module-plays-wrong-bgm-alias",
-      "level": "warn",
-      "check": "CreateSentenceLv1.ts:59 가 bgm2 를 찾는 것을 알고 있어야 한다.",
-      "why": "⚠️ **모듈 결함입니다.** 배경음을 켜는 데가 둘인데, GameMap.ts:66 은 bgm 을 찾아 제대로 틀고 CreateSentenceLv1.ts:59 는 **bgm2** 를 찾아 빈손으로 돌아옵니다. 회차 셋이 다 bgm 만 넣고 있어서, 그 빈손 때문에 **끝날 때 fadeout 이 안 걸립니다** — 활동이 끝나도 배경음이 그대로 흐릅니다. PlaySparkLv2M2 에서 고친 것과 같은 갈래입니다."
+      "why": "GameMap.ts:73 이 shuffleArray(iningInfo) 를 그대로 부릅니다. **끄는 값이 없습니다.**"
     },
     {
       "id": "alias-exists-in-assettable",
@@ -341,6 +378,30 @@
       "id": "unknown-field",
       "level": "warn",
       "check": "이 스펙에 없는 키가 GameData 에 있으면 경고."
+    }
+  ],
+  "relations": [
+    {
+      "id": "word-count-three",
+      "kind": "count",
+      "pick": "iningInfo[].word",
+      "min": 3,
+      "max": 3,
+      "note": "iningInfo[].word 가 딱 셋이어야 한다.",
+      "why": "GameMap.ts:92 이 **정답 3개**를 세고서야 이닝을 끝냅니다. 낱말이 둘이면 세 번째를 맞힐 수가 없어 **그 이닝에서 영영 멈춥니다** — 터지지 않고 화면이 그대로 서 있습니다. 넷이면 기차 칸 그림이 셋뿐이라(Train.ts:114) 넷째 칸 그림이 없고, 셋을 맞히면 넷째를 두고 이닝이 끝납니다."
+    },
+    {
+      "id": "word-count-three#same",
+      "kind": "sameCount",
+      "each": "iningInfo",
+      "picks": [
+        "word",
+        "shuffleWord",
+        "sound",
+        "sentenceDelay"
+      ],
+      "note": "iningInfo[] 의 word · shuffleWord · sound · sentenceDelay 칸 수가 다 같아야 한다.",
+      "why": "shuffleWord 칸 수만큼 아이가 서고(Character.ts:315) word 칸 수만큼 기차 칸이 섭니다(Train.ts:124). sound[i] 와 sentenceDelay[i] 는 칸 i 의 낱말 소리와 빛내는 시간입니다(Train.ts:20 · :139). 칸 수가 다르면 놓을 칸이 없는 아이가 생겨 이닝이 안 끝나거나, 칸 소리가 비고 빛내기가 문장과 어긋납니다."
     }
   ]
 }

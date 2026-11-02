@@ -5,8 +5,8 @@
   "title": "같은 종류끼리 세어 표 만들기",
   "summary": "몬스터가 말풍선으로 보여 준 종류를 밭에서 모두 찾아 누르면 누를 때마다 숫자를 세고(하나, 둘 …), 다 찾으면 오른쪽 표의 수 칸에 개수가 채워지는 활동. 이닝마다 두 종류(표 2행 고정), 두 문제가 끝나면 표 완성 설명.",
   "reference": {
-    "moduleCommit": "cd88f28def8ffec04a42e8dafa3be4f3b9bc907d",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-12) 보다 늦은 모듈 첫 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "0ccda63dc63d8433b6e906327c4981f3f767a640",
+    "moduleCommitWhy": "2026-10-26 0ccda63 의 Monster.ts 모션 루프 변경(MOTION_WAIT_MS 300ms 기다림)에 맞춰 mon_que 리소스 설명 글을 고쳤고, Table.ts 페이드 변경은 GameData 와 리소스에 영향이 없어 그대로 두었습니다. 스펙 전체를 모듈 코드와 맞춰 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/MA/M38_1",
     "activities": [
       "MAL2M08W3S3"
@@ -105,7 +105,7 @@
         "alias": "mon_que",
         "kind": "lottie",
         "fixedAlias": true,
-        "note": "몬스터 문제 제공 모션(475x430). 문제 내레이션과 같이 처음부터 재생하고, 내레이션이 더 길면 루프로 잇습니다. alias 는 mon_{상태} 고정 — 코드가 이 이름으로 부릅니다."
+        "note": "몬스터 문제 제공 모션(475x430). 문제 내레이션과 같이 처음부터 재생합니다. 모션 한 바퀴가 끝났을 때 내레이션이 남아 있으면 0.3초까지 기다립니다. 그 안에 내레이션이 끝나면 다시 돌리지 않고, 더 남았으면 0.3초 뒤 처음부터 다시 돌립니다(component/Monster.ts:29 MOTION_WAIT_MS, :150-155). correct · end 모션도 같은 방식으로 재생합니다. alias 는 mon_{상태} 고정 — 코드가 이 이름으로 부릅니다."
       },
       {
         "alias": "mon_idle",

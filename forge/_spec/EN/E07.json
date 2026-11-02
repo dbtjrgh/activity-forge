@@ -2,11 +2,11 @@
   "specVersion": 1,
   "module": "E07",
   "subject": "EN",
-  "title": "길 따라 자동차 — 타일 길을 달리며 만나는 낱말을 듣습니다",
-  "summary": "6칸 × 4줄 판 위에 길 타일이 깔려 있고 자동차가 출발점에 서 있습니다. 정해진 길을 따라 자동차가 달리다가 낱말 타일을 만나면 멈춰서 그림이 뜨고 낱말을 읽어 줍니다. 길을 다 지나면 다음 판으로 넘어갑니다. 판마다 길 모양과 만나는 낱말이 다릅니다.",
+  "title": "길 따라 자동차 — 가려진 칸에 길 조각을 끌어다 놓아 길을 잇습니다",
+  "summary": "6칸 × 4줄 판(maps 가운데 하나를 무작위로 고릅니다, E07.ts:74)에 길 타일이 깔려 있고, 낱말 칸(quiz)은 가려져 있습니다. 아래 카드 줄에서 맞는 길 조각 카드를 가려진 칸에 끌어다 놓으면(TileCard.ts DragContainer) 그 칸의 그림과 낱말 소리가 나오고(QuizAnswerDisplay.ts:145 · 154 · 194), 자동차가 지나갈 수 있는 데까지 길을 따라 달립니다(TileCard.ts:144 → PuzzleMap.ts:281). 마지막에는 텐트 앞에서 끝 효과가 나옵니다.",
   "reference": {
-    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/E07",
     "activities": [
       "ENL3M01W1S1",
@@ -75,9 +75,9 @@
       },
       {
         "alias": "car",
-        "kind": "image",
+        "kind": "sound",
         "fixedAlias": true,
-        "note": "자동차 기본 그림."
+        "note": "자동차가 달릴 때 나는 소리입니다(Car.ts:28 getSound('car'), PuzzleMap.ts:292 play('car')). 자동차 그림은 carSide · carUp · carDown 셋입니다."
       },
       {
         "alias": "carSide",
@@ -101,31 +101,32 @@
         "alias": "carEffectLeft",
         "kind": "lottie",
         "fixedAlias": true,
-        "note": "옆으로 갈 때 뒤에 붙는 효과."
+        "note": "마지막에 텐트 앞에서 한 번 나오는 효과입니다(Car.ts:155-160, PuzzleMap.ts:337). 텐트가 자동차의 왼쪽이나 오른쪽에 있을 때, 곧 course 마지막 칸이 그 앞 칸과 같은 줄에 있을 때 이것이 나옵니다(PuzzleMap.ts:307-309). 들어온 방향이 아니라 텐트 쪽 방향으로 고르므로, 위에서 내려와 오른쪽 텐트로 꺾는 길도 이것입니다. 자동차보다 40px 위에 그립니다(Car.ts:51). 완성본은 fireworks_left 로티를 씁니다."
       },
       {
         "alias": "carEffectTop",
         "kind": "lottie",
         "fixedAlias": true,
-        "note": "위아래로 갈 때 뒤에 붙는 효과."
+        "note": "마지막에 텐트 앞에서 한 번 나오는 효과입니다(Car.ts:161-166, PuzzleMap.ts:337). 텐트가 자동차의 위나 아래에 있을 때, 곧 course 마지막 칸이 그 앞 칸과 같은 열에 있을 때 이것이 나옵니다(PuzzleMap.ts:310-312). 완성본 다섯 개는 모두 fireworks_top 로티를 씁니다."
       },
       {
         "alias": "particle",
-        "kind": "lottie",
-        "fixedAlias": true,
-        "note": "낱말을 만났을 때 튀는 알갱이."
+        "kind": "sound",
+        "fixedAlias": false,
+        "note": "**모듈이 읽지 않습니다.** 완성본은 소리로 등록해 두었습니다.",
+        "aliasMayBeOff": "모듈이 이 이름을 주석 안에서만 부릅니다(QuizAnswerDisplay.ts:200 줄 주석, :212 부터의 블록 주석 안 :260) — 없어도 화면과 소리는 같습니다."
       },
       {
         "alias": "correct",
         "kind": "lottie",
         "fixedAlias": true,
-        "note": "맞혔을 때 나오는 효과."
+        "note": "맞혔을 때의 효과. **같은 이름을 로티(QuizAnswerDisplay.ts:111)와 소리(:174)로 둘 다 부릅니다** — 완성본은 lottie 와 sound 에 같은 alias 로 하나씩 등록합니다."
       },
       {
         "alias": "incorrect",
-        "kind": "lottie",
+        "kind": "sound",
         "fixedAlias": true,
-        "note": "틀렸을 때 나오는 효과."
+        "note": "틀린 칸에 놓았을 때 나는 소리입니다(TileCard.ts:155 AudioManager.play('incorrect'))."
       },
       {
         "alias": "bgm",
@@ -138,10 +139,46 @@
         "kind": "sound",
         "fixedAlias": true,
         "note": "시작할 때 도우미가 하는 안내. E07.ts:119 가 guide(\"nar2\") 로 그대로 부릅니다 — **모듈에 박혀 있어 이름을 바꿀 수 없습니다.** 바로 위 :118 에 nar1 을 부르던 줄이 주석으로 남아 있습니다."
+      },
+      {
+        "alias": "narr1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞혔을 때 도우미가 고르는 칭찬 셋 가운데 하나입니다(QuizAnswerDisplay.ts:204 → mainCharacter.correct)."
+      },
+      {
+        "alias": "narr2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "narr1 과 같습니다."
+      },
+      {
+        "alias": "narr3",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "narr1 과 같습니다."
+      },
+      {
+        "alias": "incorrect1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀렸을 때 도우미가 고르는 말 셋 가운데 하나입니다(TileCard.ts:184 → mainCharacter.incorrect)."
+      },
+      {
+        "alias": "incorrect2",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "incorrect1 과 같습니다."
+      },
+      {
+        "alias": "incorrect3",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "incorrect1 과 같습니다."
       }
     ],
     "providedByModule": {
-      "note": "**이 모듈은 사실상 아무것도 안 넣습니다.** Assets.ts 에 네 줄(폰트·스크롤 바탕·bgm·거품)뿐이고 그나마 이 활동에서 쓰지 않는 것이 섞여 있습니다. 배경부터 효과까지 **전부 액티비티가 넣습니다.**"
+      "note": "**이 모듈은 아무것도 등록하지 않습니다.** Assets.ts 의 네 줄이 모두 주석입니다. 배경부터 효과 · 소리까지 **전부 액티비티가 넣습니다.**"
     }
   },
   "gameData": {
@@ -169,7 +206,7 @@
                     "key": "alias",
                     "type": "asset:image",
                     "required": true,
-                    "desc": "그 칸에 놓을 타일 그림. 길 타일(tile_horizon·tile_vertical·tile_tl·tile_tr·tile_bl·tile_br·tile_start·tile_end 등)과 꾸밈 타일(tile_b01~b07)이 있습니다."
+                    "desc": "그 칸에 놓을 타일 그림. 길 타일(tile_horizon · tile_vertical · tile_tl · tile_tr · tile_bl · tile_br · tile_start · tile_end · tile_down · tile_end_up 등)과 꾸밈 타일(tile_b01~b07)이 있습니다. **자동차 출발 자리는 alias 가 정확히 tile_start 인 칸에서만 찾습니다**(PuzzleMap.ts:163) — 없으면 자동차가 (0, 0) 에 섭니다."
                   },
                   {
                     "key": "quiz",
@@ -185,9 +222,9 @@
                   },
                   {
                     "key": "image",
-                    "type": "asset:sound",
+                    "type": "asset:image",
                     "optional": true,
-                    "desc": "그때 뜨는 그림. **타입이 asset:sound 로 잡혀 있지만 실제로는 그림입니다** — 기계가 초안을 뽑을 때 값이 sound 와 같아서 잘못 짚었습니다."
+                    "desc": "낱말 칸을 맞혔을 때 뜨는 그림(QuizAnswerDisplay.ts:145 · 154). quiz 가 true 일 때만 씁니다."
                   }
                 ],
                 "desc": "칸 하나."
@@ -221,17 +258,17 @@
                       "right",
                       "up"
                     ],
-                    "desc": "거기서 어느 쪽으로 갈지. 자동차 그림이 여기서 갈립니다 — left·right 는 carSide, up 은 carUp, down 은 carDown 입니다."
+                    "desc": "**모듈이 읽지 않습니다.** PuzzleMap.ts:185 가 carDirection 으로 담아 두기만 하고 어디서도 안 읽습니다. 자동차가 보는 쪽(carSide · carUp · carDown)은 칸 자리로 정합니다. 움직일 때는 다음 칸이 있는 쪽(PuzzleMap.ts:316-327, Car.ts:100-129), 시작할 때는 출발 칸에서 둘째 칸 쪽(PuzzleMap.ts:195-206), 마지막에는 텐트 칸 쪽(PuzzleMap.ts:307-313)입니다. 완성본은 다음 칸으로 가는 쪽을 적고, 마지막 칸에는 들어온 쪽을 적습니다. ENL3M01W1S1 · ENL3M08W1S1 은 첫 판 20번 칸(down, 실제는 right)과 둘째 판 3번 칸(right, 실제는 down)이 다음 칸과 안 맞지만 그대로 돕니다. 새로 만들 때도 완성본과 같은 꼴로 적습니다."
                   }
                 ],
                 "desc": "칸 하나."
               },
-              "desc": "자동차가 지나갈 길. **차례가 곧 순서**입니다 — 첫 칸에서 시작해 하나씩 옮겨 갑니다."
+              "desc": "자동차가 지나갈 길. **차례가 곧 순서**입니다 — 첫 칸에서 시작해 위 · 아래 · 왼쪽 · 오른쪽으로 이웃한 칸을 하나씩 옮겨 갑니다. **첫 칸은 자동차가 서 있는 출발 칸**입니다. 모듈은 첫 칸을 목록에서 빼고(PuzzleMap.ts:190) 둘째 칸부터 움직입니다. 자동차 자리는 map 에서 alias 가 tile_start 인 칸이고, 없으면 0번 칸입니다(PuzzleMap.ts:156-166, 176). 시작할 때 자동차는 출발 칸에서 둘째 칸 쪽을 보고 섭니다(PuzzleMap.ts:192-206). **마지막 칸에는 텐트 타일을 둡니다.** 모듈은 타일 이름을 보지 않고, course 의 마지막 칸이면 그 칸에 들어가지 않습니다(PuzzleMap.ts:304-305). 바로 앞 칸에서 텐트 쪽으로 돌아 왼쪽 · 오른쪽이면 60px, 위 · 아래면 38px 만 다가간 뒤 끝 효과(carEffectLeft · carEffectTop)가 나옵니다(PuzzleMap.ts:113-114, 306-314, 337). 그래서 마지막 칸은 그 앞 칸과 이웃해야 텐트 쪽을 바로 봅니다. 완성본은 왼쪽에서 들어가는 텐트에 tile_end(22→23), 위에서 들어가는 텐트에 tile_end_up(17→23)을 씁니다."
             }
           ],
           "desc": "칸 하나."
         },
-        "desc": "판 하나가 한 판입니다. 판마다 길과 낱말이 다릅니다. 기존 4개가 2~3판입니다."
+        "desc": "판 목록. **이 가운데 하나만 무작위로 골라 씁니다**(E07.ts:74 choiceOne) — 다음 판으로 넘어가지 않습니다. 완성본은 모두 3판입니다."
       }
     ]
   },
@@ -239,8 +276,8 @@
     {
       "id": "fixed-alias-registered",
       "level": "error",
-      "check": "bg · map · selectCardBG · tile_cover · 자동차 그림 넷 · 로티 넷 · bgm · nar2 가 AssetTable 에 있어야 한다.",
-      "why": "**이 모듈은 사실상 아무것도 안 넣습니다.** Assets.ts 에 네 줄(폰트·스크롤 바탕·bgm·거품)뿐이고 그나마 이 활동에서 쓰지 않는 것이 섞여 있습니다. 배경부터 효과까지 **전부 액티비티가 넣습니다.**"
+      "check": "bg · map · selectCardBG · tile_cover · 자동차 그림 셋(carSide · carUp · carDown) · 로티(carEffectLeft · carEffectTop · correct) · 소리(car · correct · incorrect · bgm · nar2 · narr1~3 · incorrect1~3) 가 AssetTable 에 있어야 한다.",
+      "why": "모듈 Assets.ts 가 모두 주석이라 이 이름들을 아무도 등록해 주지 않습니다. 없는 그림은 console.error 만 찍고 비고, 없는 소리는 무음으로 지나갑니다."
     },
     {
       "id": "map-has-24-cells",
@@ -257,8 +294,8 @@
     {
       "id": "course-dir-matches-next",
       "level": "warn",
-      "check": "course[i].dir 가 course[i+1].idx 로 가는 방향과 맞아야 한다.",
-      "why": "right 는 +1, left 는 -1, down 은 +6, up 은 -6 입니다. 어긋나면 자동차가 옆을 보면서 딴 데로 미끄러집니다."
+      "check": "course[i].dir 는 course[i+1].idx 로 가는 방향으로 적는다. 마지막 칸에는 들어온 쪽을 적는다.",
+      "why": "모듈은 dir 를 읽지 않습니다(PuzzleMap.ts:185 에서 담기만 함). 자동차가 보는 쪽은 칸 자리로 정하므로 어긋나도 화면은 그대로입니다. 완성본과 같은 꼴로 적어 두면 읽기 쉽습니다. right 는 +1, left 는 -1, down 은 +6, up 은 -6 입니다. 개발 완료 ENL3M01W1S1 · ENL3M08W1S1 에는 어긋난 값이 두 개씩 있습니다."
     },
     {
       "id": "alias-exists-in-assettable",

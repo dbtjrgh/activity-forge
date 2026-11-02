@@ -5,8 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
-    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "67a8349012fef6e4b71e52f71a5ad3ef29e2fdcb",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/KR/K28",
     "activities": [
       "KOL3M01W3S3",
@@ -51,7 +51,38 @@
     }
   },
   "assets": {
-    "required": []
+    "required": [
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음(K28.ts:175 Com_Audio.PlayBGM). 완성본 7/7 이 등록합니다."
+      },
+      {
+        "alias": "start",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작 안내 — 도우미가 읽습니다(K28.ts:181 Com_Audio.PlayGuide). 완성본 7/7 이 등록합니다."
+      },
+      {
+        "alias": "click",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "버튼을 누를 때 소리(K28_Button.ts:414 PlaySFX). 완성본 7/7 이 등록합니다."
+      },
+      {
+        "alias": "correct",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞혔을 때 소리(K28_Answer.ts:235 PlaySFX). 완성본 7/7 이 등록합니다."
+      },
+      {
+        "alias": "answer_img_box",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "정답 그림 상자(K28_Answer.ts:299). 완성본 7/7 이 등록합니다."
+      }
+    ]
   },
   "gameData": {
     "root": "quizData",
@@ -407,7 +438,7 @@
               {
                 "key": "answer_anim_4",
                 "type": "object",
-                "required": true,
+                "required": false,
                 "fields": [
                   {
                     "key": "x",
@@ -433,7 +464,9 @@
                     "required": true,
                     "default": 720
                   }
-                ]
+                ],
+                "optional": true,
+                "desc": "5번째 이닝 값이라 이닝이 다섯 이상일 때만 적습니다(10호 KOL3M10W3S3 은 4이닝)."
               },
               {
                 "key": "answer_anim_5",
@@ -473,7 +506,8 @@
                 "key": "answer",
                 "type": "array",
                 "required": true,
-                "minLength": 5,
+                "minLength": 4,
+                "desc": "이닝마다 position 네 칸의 정답 그림 번호입니다 — answer[이닝][position] 이 button_{이닝}_{position}_{번호} 의 번호입니다. 모듈은 이 번호를 빼고 처음 그림을 고르고(K28_Button.ts:150 · 231 · 308-310), 네 칸 라벨이 모두 이 번호일 때 이닝을 끝냅니다(K28_Answer.ts:363-371 · 397-427). 번호는 AssetTable 에 등록한 그 칸 번호 가운데 하나여야 합니다. 개발 완료 7개는 모두 0 입니다(정답 그림을 _0 으로 둡니다). 안쪽 배열은 position 네 칸이라 정확히 4칸이어야 합니다(K28_Answer.ts:420-426).",
                 "of": {
                   "key": "",
                   "type": "array",
@@ -482,7 +516,8 @@
                     "key": "",
                     "type": "number"
                   }
-                }
+                },
+                "minLengthWhy": "완성본은 5~6이닝이고 10호 KOL3M10W3S3 은 4이닝으로 만들고 있습니다. 이닝마다 answer_anim_{이닝}(로티) · inning_sfx{이닝}(소리)를 조합한 이름으로 부르므로(K28_Answer.ts:443 · 450) 이닝 수만큼 AssetTable 에 넣어야 합니다."
               }
             ]
           }
@@ -497,6 +532,7 @@
             "key": "image",
             "type": "object",
             "required": true,
+            "desc": "버튼 네 칸의 자리(position 0~3)입니다. 모듈은 열쇠에서 가운데 position 숫자만 읽고 앞의 이닝 · 뒤의 번호는 보지 않습니다(K28_Button.ts:216-221). 개발 완료 7개는 모두 button_0_0_1 · button_0_1_2 · button_0_2_3 · button_0_3_4 입니다. 그림은 AssetTable image 에 button_{이닝}_{position}_{번호} 로 등록한 것을 씁니다. 공용 67a8349(2026-09-30)부터 모듈은 이닝 · position 마다 등록한 번호를 모아(K28_Button.ts:282-296), K28_Answer.value.answer 의 정답 번호를 뺀 가운데 하나를 처음 그림으로 고릅니다. 칸끼리 겹치지 않게 고르고, 모자라면 같은 번호를 다시 씁니다(K28_Button.ts:302-319). 그래서 칸마다 그림 수는 정해져 있지 않습니다. 개발 완료는 KOL3M06W3S3 만 0~5 여섯 개이고 나머지 여섯은 0~4 다섯 개입니다. 정답 말고 등록한 번호가 없는 칸이 처음 보이는 이닝에 있으면 그 칸 버튼을 만들지 않아 끝까지 그 칸이 없습니다(K28_Button.ts:239-242). 다음 이닝에 있으면 앞 이닝 그림이 그대로 남습니다(K28_Button.ts:158-163). 누르면 번호가 하나씩 늘고 「등록한 수 − 1」 다음에는 0 으로 돌아갑니다. 그 이름이 없으면 그림을 바꾸지 않으므로(K28_Button.ts:357-375) 번호는 0부터 빠짐없이 이어져야 합니다. 이 조건은 규칙 button-images-per-cell 에 있습니다.",
             "fields": [
               {
                 "key": "button_0_0_1",
@@ -1073,7 +1109,7 @@
                   {
                     "key": "hint_text_4",
                     "type": "object",
-                    "required": true,
+                    "required": false,
                     "fields": [
                       {
                         "key": "text",
@@ -1100,7 +1136,9 @@
                         "type": "number",
                         "required": true
                       }
-                    ]
+                    ],
+                    "optional": true,
+                    "desc": "5번째 이닝 값이라 이닝이 다섯 이상일 때만 적습니다(10호 KOL3M10W3S3 은 4이닝)."
                   },
                   {
                     "key": "hint_text_5",
@@ -1192,14 +1230,16 @@
                   {
                     "key": "hint_4",
                     "type": "object",
-                    "required": true,
+                    "required": false,
                     "fields": [
                       {
                         "key": "size",
                         "type": "number",
                         "required": true
                       }
-                    ]
+                    ],
+                    "optional": true,
+                    "desc": "5번째 이닝 값이라 이닝이 다섯 이상일 때만 적습니다(10호 KOL3M10W3S3 은 4이닝)."
                   },
                   {
                     "key": "hint_5",
@@ -1233,7 +1273,9 @@
                 "key": "button",
                 "type": "array",
                 "required": true,
-                "minLength": 108,
+                "minLength": 40,
+                "minLengthWhy": "이닝 4개 이상(answer minLength 4) × position 4칸 × 칸마다 그림 2개 이상(정답과 오답 하나, K28_Button.ts:308-312) = 32 에 frame_{0~3}_0 · frame_{0~3}_1 여덟 개를 더한 수입니다.",
+                "desc": "사람이 가만히 있을 때 흔들 버튼 · 테두리 라벨 목록입니다. Com_Affordance 는 스프라이트의 지금 라벨과 글자까지 같은 이름만 찾습니다(Com_Affordance.ts:352-363, K28.ts:161-166). 버튼 라벨은 지금 보이는 그림의 alias 로 바뀌므로(K28_Button.ts:179 · 265 · 382) AssetTable 에 등록한 button_{이닝}_{position}_{번호} 를 다 적고 frame_{0~3}_0 · frame_{0~3}_1 여덟 개를 더합니다. 공용 67a8349 부터 처음 보이는 그림도 등록한 아무 번호나 될 수 있어(K28_Button.ts:302-319) 목록에 없는 번호로 시작한 버튼은 흔들리지 않습니다. KOL3M06W3S3 은 0~5 를 등록했는데 목록에는 0~4 만 있습니다.",
                 "of": {
                   "key": "",
                   "type": "asset:image"
@@ -1244,5 +1286,13 @@
         ]
       }
     ]
-  }
+  },
+  "rules": [
+    {
+      "id": "button-images-per-cell",
+      "level": "error",
+      "check": "이닝(0 ~ Com_Inning.length − 1) · position(0~3)마다 AssetTable image 의 button_{이닝}_{position}_{번호} 가 0 부터 빠짐없이 이어져야 하고, 정답 번호(K28_Answer.value.answer[이닝][position])가 그 가운데 있어야 하며, 정답 말고 하나 이상 더 있어야 한다. 그림 수는 정해져 있지 않다.",
+      "why": "공용 67a8349(2026-09-30)부터 모듈은 등록한 번호에서 오답 그림을 고릅니다(K28_Button.ts:282-319). 정답 말고 번호가 없는 칸이 처음 보이는 이닝에 있으면 그 칸 버튼을 만들지 않아(K28_Button.ts:239-242) 네 칸이 다 맞을 수 없습니다(K28_Answer.ts:420-426). 다음 이닝에 있으면 앞 이닝 그림이 그대로 남습니다(K28_Button.ts:158-163). 번호가 비어 있거나 정답 번호가 등록되지 않았으면 누를 때 다음 그림을 못 찾아 그 그림에서 멈추고 정답에 닿지 못합니다(K28_Button.ts:370-375). 개발 완료 7개는 칸마다 0~4(KOL3M06W3S3 은 0~5)이고 정답이 모두 0 이라 다 지킵니다."
+    }
+  ]
 }

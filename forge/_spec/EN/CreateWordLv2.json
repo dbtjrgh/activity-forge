@@ -5,8 +5,8 @@
   "title": "우주선 낱말 여행 — 맞는 행성을 골라 우주선을 키웁니다",
   "summary": "우주선이 왼쪽에서 출발하고 오른쪽에 행성 둘이 떠 있습니다. 낱말 소리가 나면 그 낱말이 적힌 행성으로 우주선을 보냅니다. 맞으면 행성이 붙으면서 우주선이 한 단계 자라고, 틀리면 부딪혀 터집니다. 이닝 묶음을 다 지나면 다음 묶음으로 넘어갑니다.",
   "reference": {
-    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/CreateWordLv2",
     "activities": [
       "ENL2M01W3S2",
@@ -149,10 +149,64 @@
         "kind": "lottie",
         "fixedAlias": true,
         "note": "지나가는 유성 둘."
+      },
+      {
+        "alias": "comNar01",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞혔을 때 도우미 칭찬 셋 가운데 하나(component/GameMap.ts:20 → SpaceShip.ts:148 · 288 mainCharacter.correct)."
+      },
+      {
+        "alias": "comNar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "comNar01 과 같습니다."
+      },
+      {
+        "alias": "comNar03",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "comNar01 과 같습니다."
+      },
+      {
+        "alias": "comNar07",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "틀렸을 때 도우미 말 셋 가운데 하나(component/GameMap.ts:21 → Planet.ts:91 mainCharacter.incorrect)."
+      },
+      {
+        "alias": "comNar08",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "comNar07 과 같습니다."
+      },
+      {
+        "alias": "comNar09",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "comNar07 과 같습니다."
+      },
+      {
+        "alias": "comNar10",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "둘째 이닝부터 이닝 시작 안내 셋 가운데 하나(component/GameMap.ts:22 · 106 guide)."
+      },
+      {
+        "alias": "comNar11",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "comNar10 과 같습니다."
+      },
+      {
+        "alias": "comNar12",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "comNar10 과 같습니다."
       }
     ],
     "providedByModule": {
-      "note": "**이 모듈은 사실상 아무것도 안 넣습니다.** Assets.ts 에 네 줄(폰트·스크롤 바탕·bgm·거품)뿐이고 그나마 이 활동에서 쓰지 않는 것이 섞여 있습니다. 배경부터 효과까지 **전부 액티비티가 넣습니다.**"
+      "note": "**이 모듈은 아무것도 등록하지 않습니다.** Asset.ts 의 네 줄이 모두 주석입니다. 배경부터 효과 · 도우미 말까지 **전부 액티비티가 넣습니다.**"
     }
   },
   "gameData": {
@@ -186,19 +240,20 @@
               "type": "asset:lottie",
               "desc": "alias 하나. AssetTable 에 같은 이름이 있어야 합니다."
             },
-            "desc": "로켓이 떠 있을 때. 단계마다 하나씩입니다."
+            "desc": "로켓이 떠 있을 때. **로켓 그룹(quizInfo.infoList 첫 묶음) 이닝 수 + 1 개**를 씁니다 — 처음 모습 하나에, 이닝마다 정답을 맞힌 뒤 다음 것으로 넘어갑니다(SpaceShip.ts:17-19 · :133-137). 완성본은 모두 3이닝이라 4개입니다."
           },
           {
             "key": "ufoIdleAni",
             "type": "array",
             "required": true,
-            "minLength": 4,
+            "minLength": 3,
             "of": {
               "key": "",
               "type": "asset:lottie",
               "desc": "alias 하나. AssetTable 에 같은 이름이 있어야 합니다."
             },
-            "desc": "UFO 가 떠 있을 때. 단계마다 하나씩입니다."
+            "desc": "UFO 가 떠 있을 때. **UFO 그룹(quizInfo.infoList 둘째 묶음) 이닝 수 + 1 개**를 씁니다 — 처음 모습 하나에, 이닝마다 정답을 맞힌 뒤 다음 것으로 넘어갑니다(SpaceShip.ts:160-162 · :272-276). 완성본은 3이닝이면 4개, 2이닝(ENL2M05W3S2)이면 3개입니다.",
+            "minLengthWhy": "UFO 그룹이 2이닝이면 3개면 됩니다(ENL2M05W3S2). 더 적으면 마지막 정답 뒤에 없는 애니를 불러 멈춥니다."
           },
           {
             "key": "rocketAddAni",
@@ -299,7 +354,7 @@
                         "key": "word",
                         "type": "asset:image",
                         "required": true,
-                        "desc": "낱말. 화면에 글자로 그립니다."
+                        "desc": "낱말 **그림** alias. 글자로 그리지 않고 이 그림을 띄웁니다(component/Board.ts:47 AssetManager.get(quiz.info.word))."
                       },
                       {
                         "key": "textWord",
@@ -318,6 +373,12 @@
                         "type": "asset:sound",
                         "required": true,
                         "desc": "그 낱말의 음원."
+                      },
+                      {
+                        "key": "wordOffsetY",
+                        "type": "number",
+                        "optional": true,
+                        "desc": "낱말 그림(word · grayword)을 낱말판 가운데에서 세로로 미는 값입니다(px, 양수면 아래로). Board.ts:65 가 `quiz.info.wordOffsetY ?? 0` 으로 읽고 :66~67 이 두 그림에 같이 줍니다. 없으면 0 입니다. 낱말 그림은 여백 없이 잘려 있어서 어센더(t · d · h)나 디센더(g · y · p)가 없는 낱말은 글자 몸통이 판 가운데에서 어긋나 보입니다(Board.ts:61~64 주석). **어긋나는 낱말에만 적고 나머지는 비워 둡니다.** 개발 완료 완성본 다섯 가운데 ENL2M01W3S2 의 angry 칸(GameData.ts:49) 하나만 8 을 씁니다."
                       }
                     ],
                     "desc": "그 문제의 낱말·행성 정보."
@@ -351,8 +412,8 @@
     {
       "id": "fixed-alias-registered",
       "level": "error",
-      "check": "bg · board · board_answer · bgm · nar02 · sound* 여섯 · ani_* 다섯이 AssetTable 에 있어야 한다.",
-      "why": "**이 모듈은 사실상 아무것도 안 넣습니다.** Assets.ts 에 네 줄(폰트·스크롤 바탕·bgm·거품)뿐이고 그나마 이 활동에서 쓰지 않는 것이 섞여 있습니다. 배경부터 효과까지 **전부 액티비티가 넣습니다.**"
+      "check": "bg · board · board_answer · bgm · nar02 · sound* 여섯 · ani_* 다섯 · comNar01~03 · comNar07~09 · comNar10~12 가 AssetTable 에 있어야 한다.",
+      "why": "모듈 Asset.ts 가 모두 주석이라 이 이름들을 아무도 등록해 주지 않습니다. 없는 그림은 비고, 없는 소리는 무음으로 지나갑니다."
     },
     {
       "id": "answerplanet-in-baseplanet",

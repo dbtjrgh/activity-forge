@@ -5,8 +5,8 @@
   "title": "찾아서 눌러 보기 — 그림 속에 숨은 사물 찾기",
   "summary": "배경 그림 속에 사물이 여럿 숨어 있고, 아이가 하나씩 눌러 찾습니다. 누르면 그 사물이 빛나며 튀어나오고(out) 그 자리에서 계속 움직이며(idle4), 낱말 카드가 화면 가운데 크게 떠서 소리를 냅니다. 화면 아래 상자에는 사물 아이콘이 흐리게 늘어서 있다가 찾을 때마다 하나씩 켜집니다. 다 찾으면 완료 버튼이 뜨고, 그 뒤에는 다시 눌러 카드를 또 볼 수 있습니다. 한동안 안 누르면 아직 못 찾은 것 하나가 흔들려 알려 줍니다(어포던스).",
   "reference": {
-    "moduleCommit": "98795dcf647214f0d3300a77db22bf681d4be87a",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글의 줄 번호와 주요 동작(섞기 · 기본값 · 고정 개수 · 박힌 이름 · 등록하는 이름)을 모듈 코드와 대 봤습니다. 모든 문장을 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/PlaySparkLv2M2",
     "activities": [
       "ENL1M02W1S1",
@@ -87,7 +87,7 @@
         "alias": "SL_en_com_sfx01",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "사물을 누를 때(Thing.ts:129)와 완료 버튼을 누를 때(PlaySparkLv2M2.ts:174). 영어 공통 효과음입니다."
+        "note": "사물을 누를 때(Thing.ts:129)와 완료 버튼을 누를 때(PlaySparkLv2M2.ts:178). 영어 공통 효과음입니다."
       },
       {
         "alias": "SL_en_com_sfx04",
@@ -99,7 +99,7 @@
         "alias": "SL_en_com_nar01",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "찾았을 때 도우미 칭찬. nar01~03 중 하나를 무작위로 고릅니다(PlaySparkLv2M2.ts:165)."
+        "note": "찾았을 때 도우미 칭찬. nar01~03 중 하나를 무작위로 고릅니다(PlaySparkLv2M2.ts:167-168)."
       },
       {
         "alias": "SL_en_com_nar02",
@@ -112,6 +112,12 @@
         "kind": "sound",
         "fixedAlias": true,
         "note": "위와 같은 무리."
+      },
+      {
+        "alias": "SL_en_105_s1_nar02",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "시작할 때 도우미가 하는 안내. PlaySparkLv2M2.ts:129 가 guide(\"SL_en_105_s1_nar02\") 로 **5호 이름을 그대로** 부릅니다 — 다른 호도 이 alias 로 이번 회차 파일을 가리켜야 소리가 납니다. 완성본 5개가 다 넣고 있습니다."
       }
     ],
     "providedByModule": {
@@ -302,7 +308,7 @@
                   "key": "sound",
                   "type": "asset:sound",
                   "required": true,
-                  "desc": "카드가 커진 뒤 나는 낱말 소리. Card.ts:33."
+                  "desc": "카드가 커진 뒤 나는 낱말 소리. Card.ts:39."
                 }
               ]
             },
@@ -433,7 +439,7 @@
       "id": "guide-narration-alias",
       "level": "warn",
       "check": "시작 안내 나레이션 alias 가 AssetTable 에 있어야 한다.",
-      "why": "**모듈에 회차 이름이 박혀 있습니다** — PlaySparkLv2M2.ts:126 이 guide(\"SL_en_105_s1_nar02\") 를 그대로 부릅니다. 5호 것입니다. 8호를 만들 때도 **그 alias 로 이번 회차 파일을 가리켜야** 소리가 납니다. 모듈을 고치지 않는 한 이름은 바꿀 수 없습니다."
+      "why": "**모듈에 회차 이름이 박혀 있습니다** — PlaySparkLv2M2.ts:129 이 guide(\"SL_en_105_s1_nar02\") 를 그대로 부릅니다. 5호 것입니다. 8호를 만들 때도 **그 alias 로 이번 회차 파일을 가리켜야** 소리가 납니다. 모듈을 고치지 않는 한 이름은 바꿀 수 없습니다."
     },
     {
       "id": "character-state-four",

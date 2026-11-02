@@ -19,6 +19,7 @@ import { parseStudyCode } from "./spec";
 import { workPath } from "./paths";
 import type { Recipe } from "./types";
 import { readAssets } from "./cloneassets";
+import { specRoot } from "./gdexports";
 export type Clone = {
   recipe: Recipe;
   from: string; // 원본 액티비티 폴더
@@ -42,7 +43,7 @@ export function cloneFrom(originCode: string, newCode?: string): Clone {
     notes.push(`모듈을 ${refs.length}개 들여옵니다 — 맨 앞엣것(${ref.module})으로 봅니다.`);
   }
 
-  const gd = readGameData(dir);
+  const gd = readGameData(dir, specRoot(ref.subject, ref.module));
   if (!gd) notes.push("GameData 를 못 읽었습니다 — 값 없이 뜹니다.");
 
   const { assets, notes: assetNotes } = readAssets(dir);

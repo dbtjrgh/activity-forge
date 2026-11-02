@@ -147,6 +147,11 @@ export type Spec = {
     of?: SpecField;
     minLength?: number;
     minLengthWhy?: string;
+    note?: string;
+    // **본문(root) 말고 GameData 가 같이 내놓는 export — 본문에서 뽑는 것** (2026-10-26, `gdexports.ts`).
+    // `unionOf` 는 관계와 같은 길(`relpath.ts`)이고, 그 길에 걸린 값을 겹치지 않게 모은 목록이 그 export 다(차례는 안 본다).
+    // E28 `baseAnyBlock` = `[].info.answerBlock[]`. 적은 것만 ⑤ 담기가 넘기고, 완성본 값이 이 길로 뽑은 것과 같은지는 잰다.
+    derived?: { name: string; unionOf: string; note?: string }[];
   };
   rules?: SpecRule[];
   relations?: SpecRelation[];

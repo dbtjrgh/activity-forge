@@ -15,9 +15,11 @@ import type { AssetKind } from "./types";
 // `rotation: Math.PI / 180` 처럼 계산식으로 적힌 자리도 있습니다. 그래서
 // TypeScript 파서에 그대로 맡깁니다. 식으로 적힌 자리는 계산하지 않고
 // { __expr: "Math.PI / 180" } 로 남깁니다 — 나중에 사람이 봐야 할 자리입니다.
-export function readGameData(activityDir: string): { root: string; data: unknown } | null {
+export function readGameData(activityDir: string, prefer?: string): { root: string; data: unknown } | null {
   const ex = readExports(path.join(activityDir, "GameData.ts"));
   if (!ex) return null; // 애니메이션처럼 GameData 가 아예 없는 것이 있습니다.
+  // **스펙이 본문을 정했으면 그것** (2026-10-26, `gdexports.ts`). E28 은 baseAnyBlock 을 quizData 앞에 둔다.
+  if (prefer && ex.has(prefer)) return { root: prefer, data: ex.get(prefer) };
   // 맨 앞엣것 하나면 됩니다 — **단 비어 있으면 다음 것** (2026-10-02). K36 완성본 5개가 `export const activityData = {};` 를
   // 먼저 두고 실제 값을 `quizData` 에 담았다. 앞엣것을 집어 스펙이 「자리 0개」로 떴고, 9호를 만들면 quizData 가 통째로 빠졌다.
   // 완성본 1586개 가운데 export 가 둘 이상인 15개를 재 보니 앞엣것이 빈 것은 그 5개뿐이다(`quizData, quizData2` · `baseAnyBlock, quizData` 는 그대로)

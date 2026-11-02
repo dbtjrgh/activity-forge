@@ -60,6 +60,22 @@ export interface RscGuide {
   /** 크기로 원본을 바꿨으면 그 까닭 한 줄 */
   originNote?: string
   items: GuideItem[]
+  /**
+   * 기획서에 적힌 이 학습코드 소리 이름 가운데 없는 것(`rsccount.ts` `planGap`) — 창의 「소리」 할 일은 이것만 본다 (2026-10-28).
+   * 원본 소리 이름(`SL_ko_321_s1_nar06`)은 이 학습코드 이름이 될 수 없어 끝까지 「아직」이라 할 일과 진행을 흐렸다.
+   * `note` 가 있으면 기획서로 못 셌다(영어 · 기획서 없음) — 그때는 원본 이름으로 센다
+   */
+  plan: { names: number; note: string; missing: string[]; unsure: string[] }
+  /**
+   * 리소스 폴더에는 없고 호 저장소(`public/sparklab/<코드>`)에만 있어 들어온 것으로 센 파일 수 (2026-10-28).
+   * 끝낸 학습코드는 리소스 폴더를 정리해 거기에만 남는다. `mine` 에는 안 든다
+   */
+  hall: number
+  /**
+   * 개발 완료한 학습코드인가 (2026-10-28) — 그러면 할 일 칸은 개수를 안 세고 한 줄만 보인다.
+   * 원본과 견주면 이번 호가 원본보다 적게 쓴 것(물건 6개 → 악기 5개)까지 「아직 없음」으로 나왔다
+   */
+  finished: boolean
   /** 이번 폴더에 놓인 파일 전부 — 이름이 달라도 */
   mine: GuideFile[]
   /** 이번 리소스 폴더 — 창은 만들지 않는다. 없으면 `exists: false` */

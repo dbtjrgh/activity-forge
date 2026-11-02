@@ -23,13 +23,17 @@ import type { GuideItem, RscGuide } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import { readAnswers } from './answer'
 import { carryable } from './carryrsc'
+import { doneOf } from './chatothers'
+import { finishedAt } from './hallwalk'
 import { originNow } from './originpick'
-import { kindKey } from './rsccount'
+import { kindKey, planGap } from './rsccount'
+import { countHints, sizeHints } from './rscguidehints'
 import { placedFiles, type Placed } from './rscguidemine'
 import { loadForge, type Forge } from './runtime'
 import { isTalkCopy, sameVoice, talkSlots, voiceGated } from './voice'
 
 type Base = Omit<GuideItem, 'state' | 'group' | 'pick'>
+type RscFile = ReturnType<Forge['files']['listDir']>['files'][number]
 /** `slots` — 원본 자리(rel)마다 그 파일을 가리키는 레시피 자리(`image|img01`). 두 별칭이 한 파일을 가리킬 수 있다 */
 type OriginSide = { module: string; origin: string; items: Base[]; slots: Map<string, string[]>; auto: Set<string>; dir: string; note: string }
 
@@ -90,57 +94,11 @@ function picked(repoRoot: string, code: string, have: Set<string>): Map<string, 
   return out
 }
 
-/** 아직인 그림을 크기로 묶어, 이름이 다르게 온 그림 가운데 크기가 맞는 수를 적는다 — 같은 크기 · 절반 · 두 배(`sizematch.ts` 와 같은 세 꼴) */
-function sizeHints(items: GuideItem[], spare: Map<string, number>): void {
-  const bySize = new Map<string, GuideItem[]>()
-  for (const i of items) {
-    if (i.state !== 'wait' || !i.w || !i.h) continue
-    const k = `${i.w}x${i.h}`
-    bySize.set(k, [...(bySize.get(k) ?? []), i])
-  }
-  for (const [size, group] of bySize) {
-    const { w, h } = group[0] as { w: number; h: number }
-    const keys = [size, w % 2 === 0 && h % 2 === 0 ? `${w / 2}x${h / 2}` : '', `${w * 2}x${h * 2}`].filter(Boolean)
-    let got = 0
-    for (const k of keys) {
-      const take = Math.min(spare.get(k) ?? 0, group.length - got)
-      got += take
-      if (take) spare.set(k, (spare.get(k) ?? 0) - take)
-    }
-    if (!got) continue
-    for (const i of group) {
-      if (group.length > 1) i.group = { size: `${w}×${h}`, of: group.length, got }
-      if (got === group.length) i.state = 'hint'
-    }
-  }
-}
-
-/**
- * 크기로 못 재는 것(소리 · 영상 · 로티) — 이름이 다른 파일이 **아직인 수만큼** 왔으면 실마리, 모자라면 몇 개 왔나만.
- * 9호 KOL1M08W1S3 은 소리가 새 이름으로 다 왔는데 원본 이름 다섯이 「남음」으로 떠 있었다.
- * **그림도 크기로 못 맞춘 나머지는 수로 센다** — 9호 KOL1M08W4S2 는 사진(1040×640)과 글자 그림이 원본(936×576 · 330×135)과
- * 다른 크기로 열 장 다 왔는데 「남은 항목 17」이었다. 크기 묶음(`group`)이 이미 붙은 그림은 그 말을 그대로 둔다
- */
-function countHints(items: GuideItem[], spare: Map<string, number>): void {
-  for (const [kind, all] of spare) {
-    let got = all
-    const waiting = items.filter((i) => i.kind === kind && i.state === 'wait' && !(kind === 'image' && i.group))
-    // **이닝 낱말이 먼저** (2026-10-02) — 새로 온 소리는 대개 이닝 낱말이다. 대사는 앞 호 것을 돌려 쓰는 일이 많아(9호 K36 은 5개만 왔다)
-    // 한데 세면 「7개 중 5개」로 어느 것이 빠졌는지 안 보였다. 대사는 받을 리소스 창의 「대사 성우」 칸에서 고른다
-    for (const part of [waiting.filter((i) => !i.talk), waiting.filter((i) => i.talk)]) {
-      if (!part.length || got <= 0) continue
-      for (const i of part) {
-        if (got >= part.length) i.state = 'hint'
-        else if (part.length > 1) i.group = { size: '', of: part.length, got }
-        if (kind === 'image') i.byCount = true
-      }
-      got -= part.length
-    }
-  }
-}
+/** 못 잰 결과의 빈 모양 — 학습코드를 못 읽은 IPC 도 같이 쓴다 */
+export const guideBlank = (code: string): RscGuide => ({ code, module: '', origin: '', items: [], plan: { names: 0, note: '', missing: [], unsure: [] }, hall: 0, finished: false, mine: [], dir: '', exists: false })
 
 export async function rscGuide(code: string): Promise<RscGuide> {
-  const blank: RscGuide = { code, module: '', origin: '', items: [], mine: [], dir: '', exists: false }
+  const blank = guideBlank(code)
   try {
     const forge = await loadForge()
     const side = originSide(forge, code)
@@ -149,12 +107,21 @@ export async function rscGuide(code: string): Promise<RscGuide> {
     const files = listing?.files ?? []
     const dir = listing?.dir ?? ''
     // 이번 폴더 파일 하나씩 — 그림은 크기까지(머리만 읽어 싸다). 「넣은 리소스」와 아래 실마리가 같이 쓴다
-    const placed: Placed[] = files.map((f) => {
-      const rel = f.base === 'root' ? f.name : `${f.base}/${f.name}`
-      const s = f.kind === 'image' && PICTURE.test(f.name) ? forge.png.pngSize(path.join(dir, rel)) : null
-      return { rel, name: path.basename(f.name), kind: kindKey(f.name, f.kind), w: s?.w ?? null, h: s?.h ?? null }
-    })
-    const names = new Set(placed.map((f) => f.name.toLowerCase()))
+    const placedIn = (from: string, list: RscFile[]): Placed[] =>
+      list.map((f) => {
+        const rel = f.base === 'root' ? f.name : `${f.base}/${f.name}`
+        const s = f.kind === 'image' && PICTURE.test(f.name) ? forge.png.pngSize(path.join(from, rel)) : null
+        return { rel, name: path.basename(f.name), kind: kindKey(f.name, f.kind), w: s?.w ?? null, h: s?.h ?? null }
+      })
+    const placed = placedIn(dir, files)
+    // 호 저장소에만 있는 파일도 들어온 것으로 센다 (2026-10-28) — 끝낸 학습코드는 리소스 폴더를 정리해 거기에만 남아,
+    // 할 일은 「25개가 아직 없습니다」인데 바로 아래 공유 폴더 칸은 「이미 있음 25개」였다. 빈 뼈대는 readme.md 뿐이라 안 잡힌다.
+    // 「넣은 리소스」(`mine`)에는 안 싣는다 — 썸네일 · 폴더 열기가 리소스 폴더를 본다
+    const hallDir = forge.common.rscOfDone(code)
+    const have = new Set(placed.map((f) => f.rel.toLowerCase()))
+    const hall = path.resolve(hallDir) === path.resolve(dir) ? [] : placedIn(hallDir, forge.files.listDir(hallDir).files).filter((f) => !have.has(f.rel.toLowerCase()))
+    const seen = [...placed, ...hall]
+    const names = new Set(seen.map((f) => f.name.toLowerCase()))
     const pick = picked(forge.paths.REPO_ROOT, code, new Set(placed.map((f) => f.rel.toLowerCase())))
     const taken = new Set([...pick.values()].map((v) => v.toLowerCase()))
     const known = new Set(side.items.map((i) => i.name.toLowerCase()))
@@ -162,7 +129,7 @@ export async function rscGuide(code: string): Promise<RscGuide> {
     const spare = new Map<string, number>()
     // 그림이 아닌 것은 갈래마다 수만
     const spareKind = new Map<string, number>()
-    for (const f of placed) {
+    for (const f of seen) {
       if (known.has(f.name.toLowerCase())) continue
       if (taken.has(f.rel.toLowerCase())) continue // 정한 자리가 있는 파일은 실마리로 다시 세지 않는다
       spareKind.set(f.kind, (spareKind.get(f.kind) ?? 0) + 1)
@@ -178,7 +145,11 @@ export async function rscGuide(code: string): Promise<RscGuide> {
     // 그림은 크기 실마리가 쓰고 남은 수만 — 크기로 짝지은 파일을 수로 또 세지 않는다
     spareKind.set('image', [...spare.values()].reduce((a, b) => a + b, 0))
     countHints(items, spareKind)
-    return { code, module: side.module, origin: side.origin, originNote: side.note, items, mine: placedFiles(placed, items, side.slots, pick), dir, exists: listing?.exists ?? false }
+    // 기획서 글은 도장째 남겨 두어(`plansound.ts`) 몇 초마다 불러도 폴더만 다시 읽는다
+    const gap = planGap(forge, code)
+    const plan = { ...gap.plan, missing: gap.missing, unsure: gap.unsure }
+    const finished = finishedAt(doneOf(forge, code).act) === true
+    return { code, module: side.module, origin: side.origin, originNote: side.note, items, plan, hall: hall.length, finished, mine: placedFiles(placed, items, side.slots, pick), dir, exists: listing?.exists ?? false }
   } catch (error) {
     return { ...blank, error: toMessage(error) }
   }

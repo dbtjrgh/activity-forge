@@ -5,7 +5,7 @@ import { voiceInfo, voiceKeep, voiceSet, voiceUse } from '../services/forge/voic
 import { IPC } from '../../shared/ipc'
 import { openGuide, setGuideTop } from '../guidewin'
 import { toMessage } from '../lib/errors'
-import { guideOriginDir, rscGuide } from '../services/forge/rscguide'
+import { guideBlank, guideOriginDir, rscGuide } from '../services/forge/rscguide'
 import { normalizeCode } from './answers'
 import { isRscName, thumbsOf, THUMBS_MAX } from './shots'
 
@@ -30,7 +30,7 @@ export function registerGuideIpc(): void {
   })
   ipcMain.handle(IPC.guideGet, async (_e, code: unknown): Promise<RscGuide> => {
     const ok = normalizeCode(String(code ?? ''))
-    if (!ok) return { code: String(code ?? ''), module: '', origin: '', items: [], mine: [], dir: '', exists: false, error: NOT_CODE }
+    if (!ok) return { ...guideBlank(String(code ?? '')), error: NOT_CODE }
     return rscGuide(ok)
   })
   ipcMain.handle(IPC.guideThumbs, async (_e, code: unknown, rels: unknown, wide: unknown): Promise<ThumbsResult> => {

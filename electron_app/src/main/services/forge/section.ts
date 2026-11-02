@@ -43,6 +43,19 @@ export function planCode(text: string): string | null {
 }
 
 /**
+ * 국어 「개발자 전달」 기획서의 학습코드 — 1쪽 머리 `Lv3_08호 S3(읽기)` 와 파일 이름 `한글스파크_Lv3_9호(M08)_1주_…` 를 같이 읽는다(2026-10-26).
+ * 1쪽에는 주가 없고 호는 M 번호(`08호` = M08)다. 레벨 · M 번호가 1쪽과 파일 이름에서 다르거나 주가 없으면 null — 짐작하지 않는다.
+ * 본보기는 9호 KOL3M08W1S3 한 장뿐이다. 공유 폴더의 국어 상세기획서는 여러 호를 묶은 pptx 라 학습코드가 없다.
+ * 진행판에 놓을 때 가르기(`sortpaper.ts`)만 쓴다 — 작업대의 「다른 학습코드 기획서」 막기는 파일 이름을 안 받는다
+ */
+export function koPlanCode(text: string, fileName: string): string | null {
+  const head = /Lv\s*(\d)\s*_\s*(\d{1,2})\s*호\s*S\s*(\d)/.exec(text.slice(0, 300))
+  const file = /Lv(\d)_\d{1,2}호\(M(\d\d)\)_(\d)주/i.exec(fileName)
+  if (!head || !file || head[1] !== file[1] || Number(head[2]) !== Number(file[2])) return null
+  return `KOL${file[1]}M${file[2]}W${file[3]}S${head[3]}`
+}
+
+/**
  * 기획서 1쪽이 말하는 주인 학습코드 — `planCode` 꼴(괄호)이 먼저, 없으면 괄호 없이 적은 것(`모듈 ID  MA-L1-M08-W2-S1`, 국어 `KO-L1-…`).
  * 기획서 모듈넘버를 배치표와 견줄 때(`layoutfill.ts` · `planmodule.ts`)만 쓴다 — 9호 「개발자 전달」 기획서는 괄호 없이 적어,
  * MAL1M08W3S3 폴더에 잘못 든 W2S1 기획서(M30_1)를 못 가렸다(2026-10-14).

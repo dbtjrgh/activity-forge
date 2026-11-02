@@ -5,8 +5,8 @@
   "title": "인터북 (그림책 넘겨 보기)",
   "summary": "책 표지를 꾹 눌러 펼치고, 씬을 순서대로 넘기며 이야기를 보는 활동. 씬마다 자동으로 넘어가거나(auto) 학생이 터치해야 넘어갑니다(touch). 탐색수학 차시에 붙습니다.",
   "reference": {
-    "moduleCommit": "81e32177e7279e91b67ef0fd21eb8ba04749c177",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글의 줄 번호와 주요 동작(섞기 · 기본값 · 고정 개수 · 박힌 이름 · 등록하는 이름)을 모듈 코드와 대 봤습니다. 모든 문장을 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/MA/MIB",
     "activities": [
       "MAL2M06W1S1",
@@ -62,6 +62,12 @@
         "kind": "sound",
         "fixedAlias": true,
         "note": "**모듈이 등록하지 않습니다.** MIB.playBGM() 의 기본 인자가 \"bgm\" 이고 AudioManager.getSound(\"bgm\") 으로 찾으므로 액티비티가 이 이름으로 등록해야 합니다. Assets.ts 에 bgm 줄이 주석 처리돼 있어 빠뜨리기 쉽습니다 — 없으면 getSound 가 undefined 를 주고 BGM 만 조용히 안 나옵니다."
+      },
+      {
+        "alias": "bgm1",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "이북용 배경음. **모듈이 등록하지 않고 이름으로 부릅니다** — 제목이 있는 씬이 시작할 때(Scene.ts:72)와 표지를 닫고 책으로 돌아올 때(Scene.ts:240) playBGM(\"bgm1\") 로 바꿔 틉니다. X 단추로 표지에 돌아오면 다시 bgm 으로 바꿉니다(Scene.ts:193). 완성본 12개가 다 넣고 있습니다."
       }
     ],
     "providedByModule": {
@@ -110,7 +116,7 @@
               "key": "cover",
               "type": "asset:image",
               "optional": true,
-              "desc": "책 표지 이미지. 이 키가 있으면 그 씬은 표지로 다뤄집니다 — 커버만 점점 커지며 등장하고, 표지를 눌러야 넘어갑니다. **본문 씬에는 두지 말 것**(Scene.ts 가 키가 있는지로 판정하므로 빈 값이라도 표지 취급이 됩니다). 마지막 씬에서 되돌아갈 표지도 이 값에서 찾습니다."
+              "desc": "책 표지 이미지. 이 키가 있으면 그 씬은 표지로 다뤄집니다 — 커버만 점점 커지며 등장하고, 표지를 눌러야 넘어갑니다. **본문 씬에는 두지 말 것**(Scene.ts:43 · 89 · 117 이 값이 있는지로 판정합니다 — 빈 글자는 표지로 안 보지만, 앞 회차 표지 alias 가 남아 있으면 본문 씬도 표지로 동작합니다). 마지막 씬에서 되돌아갈 표지도 이 값에서 찾습니다."
             },
             {
               "key": "coverBg",
@@ -132,7 +138,7 @@
               "key": "title",
               "type": "asset:image",
               "optional": true,
-              "desc": "씬 위에 얹는 제목 이미지. 있으면 1.5초 머무른 뒤 나레이션이 시작됩니다."
+              "desc": "씬 위에 얹는 제목 이미지. 있으면 BGM 을 이북용 bgm1 으로 바꾸고 1.5초 머무른 뒤 나레이션이 시작됩니다(Scene.ts:70-74)."
             },
             {
               "key": "nar",
@@ -224,8 +230,8 @@
     {
       "id": "cover-key-presence",
       "level": "error",
-      "check": "표지가 아닌 씬에는 cover 키를 두지 않는다(빈 값도 안 된다).",
-      "why": "Scene.ts 가 값이 아니라 **키가 있는지**로 표지를 판정합니다. 빈 플레이스홀더를 남기면 본문 씬이 표지처럼 동작합니다."
+      "check": "표지가 아닌 씬에는 cover 키를 두지 않는다.",
+      "why": "Scene.ts:43 · 89 · 117 · 327 과 MIB.ts:98 이 cover 에 **값이 있는지**로 표지를 판정합니다. 앞 회차 표지 alias 를 본문 씬에 남겨 두면 본문 씬이 표지처럼 동작합니다(빈 글자는 표지로 안 봅니다)."
     },
     {
       "id": "trans-on-source-scene",

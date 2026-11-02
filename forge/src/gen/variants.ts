@@ -49,7 +49,7 @@ export function variantTable(subject: string, module: string, acts: { code: stri
   for (const a of acts) {
     let got: string[] = [];
     try {
-      const g = readGameData(a.dir);
+      const g = readGameData(a.dir, spec.codegen.gameDataExport);
       if (g) got = variantValues(spec, g.root, g.data);
     } catch {
       got = [];

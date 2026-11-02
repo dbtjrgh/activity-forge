@@ -5,8 +5,8 @@
   "title": "UFO 로 낱말 빨아올려 문장 만들기",
   "summary": "문장을 듣고 아래 늘어선 낱말 중 맞는 것을 UFO 로 빨아올려 순서대로 문장을 완성하는 활동.",
   "reference": {
-    "moduleCommit": "91f04c1d0de057f1ba7e9a1dde9dfe716927892f",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "c970a060e49521d95e66d30fefe4538cace6f8a4",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/E39",
     "activities": [
       "ENL2M02W3S3",
@@ -59,9 +59,9 @@
       },
       {
         "alias": "bg_ani1",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "배경 장식 1."
+        "note": "배경 장식 1 — 로티입니다(E39.ts:54 LottieSprite json)."
       },
       {
         "alias": "star",
@@ -89,33 +89,33 @@
       },
       {
         "alias": "idle_ufo",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "대기 상태 UFO."
+        "note": "대기 상태 UFO — 로티입니다(Ufo.ts:27 LottieSprite json)."
       },
       {
         "alias": "fail_ufo",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "실패한 UFO."
+        "note": "실패한 UFO — 로티입니다(Ufo.ts:33 LottieSprite json)."
       },
       {
         "alias": "correct1_ufo",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "정답 UFO 1."
+        "note": "정답 UFO 1 — 로티입니다(Ufo.ts:39 LottieSprite json)."
       },
       {
         "alias": "correct2_ufo",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "정답 UFO 2."
+        "note": "정답 UFO 2 — 로티입니다(Ufo.ts:45 LottieSprite json)."
       },
       {
         "alias": "ufo_ef",
-        "kind": "lottie",
+        "kind": "sound",
         "fixedAlias": true,
-        "note": "UFO 이펙트."
+        "note": "UFO 가 낱말을 빨아올릴 때 나는 소리입니다(PlayStage.ts:109 playAsync)."
       },
       {
         "alias": "correct_ufo_ef",
@@ -157,7 +157,7 @@
         "alias": "ufo-correct-ending",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "정답 마무리 소리. **같은 이름의 로티도 필요합니다** — 코드가 같은 문자열로 둘 다 찾습니다."
+        "note": "정답 마무리 소리. 소리로만 부릅니다(Ufo.ts:117 AudioManager.play) — 같은 이름의 로티는 필요 없습니다. 완성본은 모두 소리 하나로 등록합니다."
       }
     ],
     "providedByModule": {
@@ -186,7 +186,7 @@
                 "type": "string",
                 "desc": "낱말 하나. **화면에 글자로 그립니다** — 아래 words[].word 와 글자까지 같아야 짝이 됩니다."
               },
-              "desc": "그 이닝 문장의 **낱말 목록. 적은 차례가 정답 순서입니다** — PlayStage.ts:84 가 빨아올린 낱말과 `sentence[지금 순서]` 를 견주고, 끝까지 맞으면 이닝이 끝납니다(:99).",
+              "desc": "그 이닝 문장의 **낱말 목록. 적은 차례가 정답 순서입니다** — PlayStage.ts:98 가 빨아올린 낱말과 `sentence[지금 순서]` 를 견주고, 끝까지 맞으면 이닝이 끝납니다(:113).",
               "minLengthWhy": "낱말이 둘은 있어야 순서 문제가 됩니다."
             },
             {
@@ -205,7 +205,7 @@
                 "type": "string",
                 "desc": "그 낱말이 나타나기까지 기다릴 시간(ms)."
               },
-              "desc": "낱말이 하나씩 나타나는 간격(ms). Sentence.ts:84~87 이 칸마다 `delay()` 를 겁니다. **타입이 string 으로 잡혀 있지만 값은 ms 수입니다** — 표본이 계산식을 적어 그렇게 보인 것입니다.",
+              "desc": "문장 음원을 트는 동안 **낱말 블록마다 네온을 켜 두는 시간(ms)** 입니다(Sentence.ts:80-92). i 번째 값이 i 번째 블록의 네온 시간이라 sentence 낱말 수와 칸 수가 같아야 합니다. 값은 ms 수입니다.",
               "minLengthWhy": "sentence 낱말 수만큼 필요합니다."
             },
             {
@@ -232,8 +232,8 @@
                 ],
                 "desc": "칸 하나."
               },
-              "desc": "그 이닝에 아래로 늘어설 낱말들 — **정답과 오답이 섞여 있습니다.** `word` 로 sentence 와 짝을 찾습니다.",
-              "minLengthWhy": "정답 낱말 수보다 많아야 고르는 문제가 됩니다."
+              "desc": "그 이닝에 아래로 늘어설 낱말들. 모듈이 섞어서 늘어놓습니다(PlayStage.ts:68). `word` 로 sentence 와 짝을 찾습니다. **완성본은 모두 sentence 낱말과 같은 낱말 · 같은 수이고 오답 낱말이 없습니다.** 낱말 수가 position 의 열쇠가 됩니다.",
+              "minLengthWhy": "sentence 낱말이 둘 이상이라 둘은 있어야 합니다."
             }
           ],
           "desc": "칸 하나."
@@ -296,7 +296,7 @@
       "id": "sentence-words-match",
       "level": "error",
       "check": "sentence 의 모든 낱말이 words[].word 안에 글자까지 같게 있어야 한다.",
-      "why": "PlayStage.ts:84 가 문자열로 견줍니다. 한 글자만 달라도 그 낱말은 **아무리 빨아올려도 정답이 되지 않아 이닝이 끝나지 않습니다.**"
+      "why": "PlayStage.ts:98 가 문자열로 견줍니다. 한 글자만 달라도 그 낱말은 **아무리 빨아올려도 정답이 되지 않아 이닝이 끝나지 않습니다.**"
     },
     {
       "id": "position-key-exists",
@@ -308,19 +308,7 @@
       "id": "sentence-delay-length",
       "level": "error",
       "check": "sentenceDelay 의 칸 수가 sentence 낱말 수와 같아야 한다.",
-      "why": "Sentence.ts:84 가 칸마다 delay 를 겁니다. 모자라면 뒤쪽 낱말이 한꺼번에 나타납니다."
-    },
-    {
-      "id": "words-more-than-sentence",
-      "level": "error",
-      "check": "words 개수가 sentence 낱말 수보다 많아야 한다.",
-      "why": "오답이 없으면 고를 것이 없어 문제가 성립하지 않습니다."
-    },
-    {
-      "id": "ending-alias-both-kinds",
-      "level": "error",
-      "check": "`ufo-correct-ending` 을 로티와 음원 양쪽에 같은 이름으로 등록해야 한다.",
-      "why": "코드가 같은 문자열로 애니와 소리를 둘 다 찾습니다. 한쪽만 넣으면 그림이나 소리 한쪽이 조용히 빠집니다."
+      "why": "Sentence.ts:84 가 sentenceDelay 칸마다 i 번째 블록에 네온을 켭니다. 모자라면 뒤쪽 낱말은 네온이 안 켜지고, 많으면 없는 블록을 읽다 오류가 납니다(코드로 읽은 동작)."
     },
     {
       "id": "delay-is-number",

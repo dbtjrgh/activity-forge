@@ -61,19 +61,29 @@
   "assets": {
     "required": [],
     "providedByModule": {
-      "note": "**자판과 공책, 앨범은 모듈 것입니다.** Assets.ts 가 배경·판·공책·글쇠 열한 벌·지우개·앨범 판·배경음·안내(SL_en_com_nar86)·효과음·알갱이 로티를 등록합니다. **액티비티는 그림 두 벌과 낱말 소리만 넣습니다.** 회차 AssetTable 에 남아 있는 //{alias:'correct'…} 주석은 **틀에서 딸려 온 것**입니다 — 기존 회차가 모두 주석인 채로 두었고 모듈이 안 찾습니다.",
+      "note": "**자판과 공책, 앨범은 모듈 것입니다.** Assets.ts 가 배경·판·공책·글쇠 열한 벌·지우개·앨범 판·배경음·안내(SL_en_com_nar86)·효과음·알갱이 로티를 등록합니다. **액티비티는 그림 두 벌과 낱말 소리만 넣습니다.** 회차 AssetTable 에 남아 있는 //{alias:'correct'…} 주석은 **틀에서 딸려 온 것**입니다 — 기존 회차가 모두 주석인 채로 두었고 모듈이 안 찾습니다.\n\n**목록은 모듈 Assets.ts 의 정확한 이름입니다**(2026-10-26 — 검사가 이름 그대로 대조합니다). 전에 줄여 적어 두었던 설명: image: key01_body ~ key11_body ; sound: SL_en_com_nar86 (시작 안내) ; sound: SL_en_com_sfx01·02·04·13~16",
       "image": [
         "bg",
         "panel",
-        "notebook",
         "key_bg",
-        "key01_body ~ key11_body",
+        "key01_body",
+        "key02_body",
+        "key03_body",
+        "key04_body",
+        "key05_body",
+        "key06_body",
+        "key07_body",
+        "key08_body",
+        "key09_body",
+        "key10_body",
+        "key11_body",
         "trash_board",
         "trash_n",
         "trash_p",
         "result_panel",
         "bar_sz2",
         "bar_sz3",
+        "notebook",
         "return_icon"
       ],
       "lottie": [
@@ -82,8 +92,17 @@
       ],
       "sound": [
         "bgm",
-        "SL_en_com_nar86 (시작 안내)",
-        "SL_en_com_sfx01·02·04·13~16"
+        "SL_en_com_nar86",
+        "SL_en_com_sfx01",
+        "SL_en_com_sfx02",
+        "SL_en_com_sfx04",
+        "SL_en_com_sfx13",
+        "SL_en_com_sfx14",
+        "SL_en_com_sfx15",
+        "SL_en_com_sfx16"
+      ],
+      "font": [
+        "GangwonEduPower"
       ]
     }
   },

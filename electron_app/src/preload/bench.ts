@@ -88,8 +88,8 @@ export const benchApi = {
   forgeInbox: (code: string, drops: string[], overwrite: boolean): Promise<InboxResult> =>
     ipcRenderer.invoke(IPC.forgeInbox, code, drops, overwrite),
   /**
-   * **차시를 안 정하고 통째로 놓는다** — 도구가 학습코드를 가려 나눈다
-   * (2026-09-16). 놓는 자리를 한 곳으로 하자는 결정을 잇는 자리다.
+   * **진행판에 기획서를 통째로 놓는다** — 1쪽을 읽어 학습코드마다 나눈다
+   * (2026-09-16, 2026-10-26 부터 기획서 PDF 만 — `sortplan.ts`).
    */
   forgeSort: (drops: string[], overwrite: boolean): Promise<SortedInbox> =>
     ipcRenderer.invoke(IPC.forgeSort, drops, overwrite),

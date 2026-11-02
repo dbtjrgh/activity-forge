@@ -5,8 +5,8 @@
   "title": "파이프 조립해 물탱크 채우기 (낱말 철자)",
   "summary": "물탱크로 이어지는 파이프에 빠진 부품(동그라미·손잡이·작은관)을 색칠된 것 중에서 골라 끼우는 활동. 파이프를 다 채우면 물이 흐릅니다.",
   "reference": {
-    "moduleCommit": "b9be3c8d5768fae9695e2c51bda9464bbcb04344",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "3cafe47023033202a173bd0def8972fe73623f5f",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/WordSparkLv3M2",
     "activities": [
       "ENL3M02W1S3",
@@ -75,27 +75,27 @@
       },
       {
         "alias": "conveyor1",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "부품이 흘러오는 컨베이어 1."
+        "note": "부품이 흘러오는 컨베이어 1 — 로티입니다(MainScene.ts:19 LottieSprite json)."
       },
       {
         "alias": "conveyor2",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "컨베이어 2."
+        "note": "컨베이어 2 — 로티입니다(MainScene.ts:28 LottieSprite json)."
       },
       {
         "alias": "water_tank",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "물탱크."
+        "note": "물탱크 — 로티입니다(Pipe.ts:63 LottieSprite json)."
       },
       {
         "alias": "water_tank_masking",
-        "kind": "image",
+        "kind": "lottie",
         "fixedAlias": true,
-        "note": "물탱크 마스크."
+        "note": "물탱크 마스크 — 로티입니다(Pipe.ts:67 LottieSprite json)."
       },
       {
         "alias": "tank_mask",
@@ -285,7 +285,7 @@
           ],
           "desc": "칸 하나."
         },
-        "desc": "파이프 목록. **칸 하나가 파이프 한 벌이고, 표본은 세 벌(pipe01~pipe03)입니다.**",
+        "desc": "파이프 목록. 칸 하나가 파이프 한 벌입니다(완성본은 세 벌, pipe01~pipe03). **이닝마다 섞어서 하나씩 쓰고, 다 쓰면 다시 섞어 돌려 씁니다**(WordSparkLv3M2.ts:92-109) — 이닝 수와 맞출 필요는 없습니다.",
         "minLengthWhy": "파이프가 하나는 있어야 합니다."
       },
       {
@@ -354,12 +354,6 @@
       "level": "error",
       "check": "빠진 자리에 쓰이는 모든 갈래가 colorOptionList 에 있어야 한다.",
       "why": "한 갈래라도 빠지면 그 자리에서 진행이 막힙니다."
-    },
-    {
-      "id": "pipe-count-matches-quiz",
-      "level": "warn",
-      "check": "pipeData 의 파이프 수와 quizInfo 의 이닝 수를 맞춰 둔다.",
-      "why": "표본은 파이프 3벌 · 이닝 수는 낱말 수만큼입니다. 파이프가 모자라면 뒤쪽 이닝에서 쓸 파이프가 없습니다."
     },
     {
       "id": "word-is-text",

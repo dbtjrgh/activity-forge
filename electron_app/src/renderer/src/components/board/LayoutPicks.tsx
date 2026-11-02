@@ -44,6 +44,8 @@ export default function LayoutPicks({ subject, issue, rows, onChanged }: { subje
       </summary>
       {!got && <p className="sub">불러오는 중…</p>}
       {got?.error && <p className="state error">{got.error}</p>}
+      {/* 진행판 셈(`boardOf`)은 「모듈 못 정함」인데 목록(`layoutAsks`)은 개발 완료 · 배치표에 정한 모듈로 다시 걸러 0 이 될 수 있다 — 빈 카드로 두지 않는다 */}
+      {got && !got.error && !list.length && <p className="sub">개발 완료됐거나 배치표에 모듈이 정해져 있어 고를 학습코드가 없습니다.</p>}
       {once && <p className="sub">{once}</p>}
       {free && folders && <FolderNote folders={folders} />}
       {list.map((r) => (

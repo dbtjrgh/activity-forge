@@ -5,8 +5,8 @@
   "title": "썸네일 골라 사진 찍고 꾸미기 · 영상 보기",
   "summary": "썸네일 3~7개 중 하나를 골라 사진을 찍은 뒤, 두 번째 화면에서 그 사진을 꾸미거나(editorPanel) 사진첩 영상으로 봅니다(videoPanel). 완성본 15개 가운데 꾸미기 7 · 영상 8. **9호 L3W2S1 · L3W4S1 이 어느 쪽인지는 기획서가 정합니다** — L3 는 2·4·5·6호가 영상, 7호가 꾸미기였습니다. M30_3 은 이 모듈에서 꾸미기만 떼어 낸 것입니다.",
   "reference": {
-    "moduleCommit": "2ed8a63b5569b92c820ceeca6391cd4193ddaf80",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "0ccda63dc63d8433b6e906327c4981f3f767a640",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/MA/M30",
     "activities": [
       "MAL1M02W4S1",
@@ -170,8 +170,174 @@
         "kind": "image",
         "fixedAlias": true,
         "note": "모듈 component/ThumnailBox.ts 가 AssetManager.get(\"next-btn-click\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 15개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "drop-sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "칸에 색 조각을 놓을 때 소리(component/Book.ts:44). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "wrong",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "맞지 않는 칸에 놓았을 때 소리(component/Book.ts:50). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "pattern_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "무늬 고르기 소리(component/BookCover.ts:45). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "drawing-sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "그리기 소리(component/BookCover.ts:46). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "btn_click_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "단추를 누를 때 소리(component/CameraPanel.ts:201 · ThumnailBox.ts:41 · EndColoringBtn.ts:22). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "takePicture_sound",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "사진을 찍을 때 소리(component/CameraPanel.ts:211). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "openTool",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "도구 상자를 열 때 소리(component/ui/Tool.ts:71). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "bgm",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "배경음(M30.ts:56). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "camera_guide",
+        "kind": "sound",
+        "fixedAlias": true,
+        "note": "사진 찍기 안내 — 도우미가 읽습니다(component/CameraPanel.ts:124 guide). 두 판 모두 씁니다(완성본 17/17)."
+      },
+      {
+        "alias": "cover-neon",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판 완성본 둘(MAL2M05W2S1 · MAL2M08W2S1)이 AssetTable 에서 주석으로 꺼 둔 채 나갔습니다.",
+        "note": "표지 · 배경 그림(component/Book.ts:105). 완성본 15/17 이 등록합니다."
+      },
+      {
+        "alias": "cover",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판 완성본 둘(MAL2M05W2S1 · MAL2M08W2S1)이 AssetTable 에서 주석으로 꺼 둔 채 나갔습니다.",
+        "note": "표지 · 배경 그림(component/BookCover.ts:48). 완성본 15/17 이 등록합니다."
+      },
+      {
+        "alias": "cover-mask-bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판 완성본 둘(MAL2M05W2S1 · MAL2M08W2S1)이 AssetTable 에서 주석으로 꺼 둔 채 나갔습니다.",
+        "note": "표지 · 배경 그림(component/BookCover.ts:53). 완성본 15/17 이 등록합니다."
+      },
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판 완성본 둘(MAL2M05W2S1 · MAL2M08W2S1)이 AssetTable 에서 주석으로 꺼 둔 채 나갔습니다.",
+        "note": "표지 · 배경 그림(component/Editor.ts:38). 완성본 15/17 이 등록합니다."
+      },
+      {
+        "alias": "editor_guide",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 판(editorPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 editor-panel-assets 가 막습니다.",
+        "note": "꾸미기 안내 — 도우미가 읽습니다(component/Editor.ts:60 guide)."
+      },
+      {
+        "alias": "tool-box",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 판(editorPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 editor-panel-assets 가 막습니다.",
+        "note": "도구 상자(component/ToolBox.ts:13)."
+      },
+      {
+        "alias": "eraser",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 판(editorPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 editor-panel-assets 가 막습니다.",
+        "note": "지우개(component/ToolBox.ts:71)."
+      },
+      {
+        "alias": "eraser-on",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "꾸미기 판(editorPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 editor-panel-assets 가 막습니다.",
+        "note": "지우개 고른 모양(component/ToolBox.ts:82)."
+      },
+      {
+        "alias": "photo-book",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판(videoPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 video-panel-assets 가 막습니다.",
+        "note": "사진첩(component/PhotoBook.ts:9)."
+      },
+      {
+        "alias": "photo-frame",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판(videoPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 video-panel-assets 가 막습니다.",
+        "note": "사진 틀(component/PhotoBook.ts:10)."
+      },
+      {
+        "alias": "bg2",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판(videoPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 video-panel-assets 가 막습니다.",
+        "note": "영상 판 배경(component/VideoPanel.ts:45)."
+      },
+      {
+        "alias": "replay",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판(videoPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 video-panel-assets 가 막습니다.",
+        "note": "다시 보기 단추(component/VideoPanel.ts:50)."
+      },
+      {
+        "alias": "video-neon",
+        "kind": "image",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판(videoPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 video-panel-assets 가 막습니다.",
+        "note": "영상 테두리(component/VideoPanel.ts:60)."
+      },
+      {
+        "alias": "video_guide",
+        "kind": "sound",
+        "fixedAlias": true,
+        "aliasMayBeOff": "영상 판(videoPanel)만 씁니다 — 다른 판 완성본에는 없습니다. 그 판에서는 관계 video-panel-assets 가 막습니다.",
+        "note": "영상 안내 — 도우미가 읽습니다(component/VideoPanel.ts:102 guide)."
       }
-    ]
+    ],
+    "providedByModule": {
+      "note": "M30.addAsset() 이 Assets.ts 로 등록합니다 — 액티비티 AssetTable 에 다시 넣지 않아도 됩니다. 글꼴 NanumSquareRoundR 도 등록합니다.",
+      "sound": [
+        "counting1-sound",
+        "counting2-sound",
+        "counting3-sound"
+      ],
+      "lottie": [
+        "camera_ef",
+        "firework_L",
+        "firework_R",
+        "particle_ef"
+      ]
+    }
   },
   "gameData": {
     "root": "quizData",
@@ -450,6 +616,42 @@
       "pick": "[].frameData[].frame.texture",
       "note": "frameData[] 의 scene.base · scene.on · frame.texture 는 AssetTable 의 alias 여야 한다.",
       "why": "없는 alias 는 AssetManager.get 이 오류만 찍고 지나가서, 썸네일이나 사진 틀이 화면에서 사라집니다."
+    },
+    {
+      "id": "editor-panel-assets",
+      "kind": "hasAlias",
+      "each": "[]",
+      "when": {
+        "pick": "panel",
+        "is": "editorPanel"
+      },
+      "names": [
+        "editor_guide",
+        "tool-box",
+        "eraser",
+        "eraser-on"
+      ],
+      "note": "꾸미기 판(editorPanel)이면 editor_guide · tool-box · eraser · eraser-on 이 AssetTable 에 있어야 한다.",
+      "why": "Editor.ts:60 · ToolBox.ts:13 · 71 · 82 가 이 이름으로 부릅니다. 없으면 안내가 무음이고 도구 그림이 비어 지울 수 없습니다."
+    },
+    {
+      "id": "video-panel-assets",
+      "kind": "hasAlias",
+      "each": "[]",
+      "when": {
+        "pick": "panel",
+        "is": "videoPanel"
+      },
+      "names": [
+        "photo-book",
+        "photo-frame",
+        "bg2",
+        "replay",
+        "video-neon",
+        "video_guide"
+      ],
+      "note": "영상 판(videoPanel)이면 photo-book · photo-frame · bg2 · replay · video-neon · video_guide 가 AssetTable 에 있어야 한다.",
+      "why": "PhotoBook.ts:9-10 · VideoPanel.ts:45 · 50 · 60 · 102 가 이 이름으로 부릅니다. 없으면 사진첩 · 배경 · 단추가 비고 안내가 무음입니다."
     }
   ]
 }

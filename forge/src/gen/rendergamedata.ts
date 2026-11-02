@@ -9,7 +9,7 @@ const IND = "  ";
 
 // ─── GameData.ts ─────────────────────────────────────────────────────────
 
-export function renderGameData(spec: Spec, node: Node): string {
+export function renderGameData(spec: Spec, node: Node, derived?: Map<string, unknown[]>): string {
   if (spec.gameData.kind === "unused") {
     return [
       `// ${spec.module} — ${spec.title}`,
@@ -21,12 +21,15 @@ export function renderGameData(spec: Spec, node: Node): string {
   }
   const seen = new Set<string>();
   const body = renderNode(node, 0, spec.gameData.root, seen);
+  // 본문에서 뽑는 export(`gdexports.ts`)는 본문 **뒤에** 쓴다 — 읽는 셈이 스펙 없이 보면 첫 export 를 본문으로 집는다
+  const extra = [...(derived ?? [])].flatMap(([name, values]) => [`export const ${name} = ${JSON.stringify(values, null, 2)};`, ``]);
   return [
     `// ${spec.module} — ${spec.title}`,
     `// 이 파일은 레시피에서 생성됐습니다. 이후 수정은 이 파일이 정본입니다.`,
     ``,
     `export const ${spec.gameData.root} = ${body};`,
     ``,
+    ...extra,
   ].join("\n");
 }
 

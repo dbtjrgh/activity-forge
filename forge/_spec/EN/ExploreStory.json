@@ -5,8 +5,8 @@
   "title": "그림책 읽기 — 표지를 눌러 펼치고 쪽마다 읽어 줍니다",
   "summary": "배경 위에 그림책 표지가 커지며 나타나고 살짝 커졌다 작아졌다를 되풀이합니다. 도우미가 나와 한마디 하고, 표지를 누르면 제목 소리가 난 뒤 책이 펼쳐집니다. 펼친 면마다 나레이션이 저절로 나오고 끝나면 다음 장으로 넘어갑니다. 좌우 화살표로 손수 넘길 수도 있고, 오른쪽 위 닫기를 누르면 표지로 돌아옵니다. 끝까지 넘기면 표지로 돌아오면서 끝납니다.",
   "reference": {
-    "moduleCommit": "60633306c40fa7bacabd8cb740246072a9e5183a",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-11) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글의 줄 번호와 주요 동작(섞기 · 기본값 · 고정 개수 · 박힌 이름 · 등록하는 이름)을 모듈 코드와 대 봤습니다. 모든 문장을 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/ExploreStory",
     "activities": [
       "ENL1M01W2S1",
@@ -73,7 +73,7 @@
         "alias": "cover",
         "kind": "image",
         "boundTo": "quizData.coverAlias",
-        "note": "그림책 표지. EbookActivity.ts:23 이 quizData.coverAlias 로 찾습니다."
+        "note": "그림책 표지. EbookActivity.ts:22 이 quizData.coverAlias 로 찾습니다."
       },
       {
         "alias": "bg-front",
@@ -85,25 +85,25 @@
         "alias": "close",
         "kind": "image",
         "fixedAlias": true,
-        "note": "책을 덮는 X 단추. Book.ts:533 하드코딩. 자리도 (890, -470) 으로 박혀 있습니다."
+        "note": "책을 덮는 X 단추. Book.ts:571-573 하드코딩. 자리도 (890, -470) 으로 박혀 있습니다."
       },
       {
         "alias": "leftBTN",
         "kind": "image",
         "fixedAlias": true,
-        "note": "앞장으로 가는 화살표. Book.ts:546. x = -870 고정. 첫 장에서는 숨습니다."
+        "note": "앞장으로 가는 화살표. Book.ts:584-586. x = -870 고정. 첫 장에서는 숨습니다."
       },
       {
         "alias": "rightBTN",
         "kind": "image",
         "fixedAlias": true,
-        "note": "다음 장으로 가는 화살표. Book.ts:552. x = 870 고정."
+        "note": "다음 장으로 가는 화살표. Book.ts:590-592. x = 870 고정."
       },
       {
         "alias": "bgm",
         "kind": "sound",
         "fixedAlias": true,
-        "note": "배경음. ExploreStory.ts:59 getSound(\"bgm\") 이 이름으로 찾습니다. 책을 펼치면 0.1 로 줄고 덮으면 되돌아옵니다."
+        "note": "배경음. ExploreStory.ts:56 getSound(\"bgm\") 이 이름으로 찾습니다. 처음에는 크기 1 로 돌고, 책을 펼치면 0 으로 줄어 안 들리며(:96), 덮으면 처음 크기가 아니라 0.1 로만 돌아옵니다(:109)."
       },
       {
         "alias": "title",
@@ -155,7 +155,7 @@
         "required": true,
         "minLength": 6,
         "minLengthWhy": "면 하나에 나레이션 하나입니다. pageInfo 가 14칸이면 6개, 26칸이면 12개입니다.",
-        "desc": "면마다 저절로 나오는 나레이션 alias. **차례가 곧 면 번호**입니다. Book.ts:493 이 이 목록으로 소리를 미리 잡아 두고, 다 나오면 다음 장으로 넘깁니다.",
+        "desc": "면마다 저절로 나오는 나레이션 alias. **차례가 곧 면 번호**입니다. Book.ts:531 이 이 목록으로 소리를 미리 잡아 두고, 다 나오면 다음 장으로 넘깁니다.",
         "of": {
           "key": "",
           "type": "asset:sound",
@@ -175,7 +175,7 @@
       "id": "pageinfo-even-with-blank-ends",
       "level": "error",
       "check": "pageInfo 칸 수가 짝수이고, 첫 칸과 끝 칸이 null 이어야 한다.",
-      "why": "Book.ts:502 가 i, i+1 을 한 쌍으로 묶습니다. 홀수면 마지막 면의 오른쪽이 undefined 가 되어 AssetManager.get(undefined) 로 갑니다. 양 끝의 null 은 빈 속표지라, 빼면 첫 면이 왼쪽에 붙어 표지를 연 느낌이 안 납니다."
+      "why": "Book.ts:541-543 가 i, i+1 을 한 쌍으로 묶습니다. 홀수면 마지막 면의 오른쪽이 undefined 가 되어 AssetManager.get(undefined) 로 갑니다. 양 끝의 null 은 빈 속표지라, 빼면 첫 면이 왼쪽에 붙어 표지를 연 느낌이 안 납니다."
     },
     {
       "id": "soundinfo-matches-pages",

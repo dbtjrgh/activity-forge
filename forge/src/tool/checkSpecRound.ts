@@ -42,13 +42,8 @@ function assetsOf(dir: string): Partial<Record<AssetKind, RecipeAsset[]>> {
 // 자리는 스펙이 `string` 으로 잡고 있어 별칭을 아예 안 봅니다(모르는 값이
 // 섞이면 리소스 자리로 안 보는 규칙 때문입니다). **없는 예외를 적어 두면
 // 아래 「낡았습니다」가 잘못 뜹니다.** 그 결함은 계획서에 적어 뒀습니다.
-const KNOWN: Array<{ code: string; path: string; why: string }> = [
-  {
-    code: "MAL1M01W4S3",
-    path: "quizData.narration.MA.answer1",
-    why: "AssetTable 에 주석으로만 있습니다",
-  },
-];
+// (2026-10-26 MAL1M01W4S3 narration.MA.answer1 을 뺐습니다 — 모듈이 안 읽는 값이라 스펙이 aliasMayBeOff 로 받습니다)
+const KNOWN: Array<{ code: string; path: string; why: string }> = [];
 
 function isKnown(code: string, issuePath: string): boolean {
   return KNOWN.some((k) => k.code === code && issuePath.startsWith(k.path));

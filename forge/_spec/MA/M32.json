@@ -5,8 +5,8 @@
   "title": "찾아서 노트에 채우기",
   "summary": "배경 그림 속에 숨은 것들을 눌러 찾고, 찾은 것을 오른쪽 노트에 채워 나가는 활동. 이닝마다 찾을 목록이 달라지고 위쪽 이닝 띠에 진행이 표시됩니다.",
   "reference": {
-    "moduleCommit": "5f4f0593f11b5f7dcdbb0edbc48876f6c757f13e",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 모듈 코드 전부와 맞춰 봤습니다 — 배경 이어 붙이기 · 좌표 원점 · align 간격 · 모듈이 안 읽는 값(finishNarration · items[].inningbar) 설명을 고치고, type 마다 꼭 있어야 하는 값과 name 한 번만을 관계로 더했습니다(cd95106 은 BGM 페이드만).",
     "module": "sparkon_common/_common/module/MA/M32",
     "activities": [
       "MAL1M02W3S3",
@@ -67,16 +67,11 @@
         "kind": "image",
         "fixedAlias": false,
         "boundTo": "quizData.bg[]",
-        "note": "배경 그림들. 배열이라 여러 장을 겹칠 수 있습니다. 3840x2160 으로 만들고 화면에는 가운데 1920x1080 만 보입니다."
+        "note": "배경 그림들. 적은 차례대로 앞 그림의 오른쪽 끝에 가로로 이어 붙어 긴 배경 한 장이 됩니다(BG.ts:184-188). 아이가 끌어서 좌우로 넘겨 보며 찾습니다. 완성본 9개는 모두 3080x2160 두 장(bg1 · bg2)입니다."
       }
     ],
     "providedByModule": {
-      "note": "M32.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M32 에 있습니다(별도 repo).\n\n**로티 alias 가 MAL1M02W3S3_ 로 시작하는 것은 최초 제작 차시 이름이 그대로 굳은 것입니다** — 활동 이름이 아니라 모듈이 찾는 고정 이름이니 새 차시에서도 바꾸지 마세요. 도우미 색은 이 이름 안에 들어 있어(MAL1M02W3S3_Bmon_talk 등) inningData[].mon 값이 그중 하나를 고릅니다.\n\n배경(bg)만 GameData 가 가리키고 액티비티가 넣습니다.",
-      "font": [
-        "NanumSquareRoundR",
-        "NanumSquareRoundB",
-        "NanumSquareRoundEB"
-      ],
+      "note": "M32.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M32 에 있습니다(별도 repo).\n\n**로티 alias 가 MAL1M02W3S3_ 로 시작하는 것은 최초 제작 차시 이름이 그대로 굳은 것입니다** — 활동 이름이 아니라 모듈이 찾는 고정 이름이니 새 차시에서도 바꾸지 마세요. 도우미 색은 이 이름 안에 들어 있어(MAL1M02W3S3_Bmon_talk 등) inningData[].mon 값이 그중 하나를 고릅니다. **모듈이 물고 있는 로티는 아래 넷뿐입니다**(Assets.ts:32-35) — MAL1M02W3S3 · MAL1M11W2S3 의 MAL1M02W3S3_bg_* 꾸밈 로티는 액티비티가 등록합니다.\n\n배경(bg)만 GameData 가 가리키고 액티비티가 넣습니다.",
       "image": [
         "inningbar_bg",
         "inning_off",
@@ -123,7 +118,7 @@
           "type": "asset:image",
           "desc": "배경 그림 alias 하나."
         },
-        "desc": "배경 그림들. 적은 차례대로 겹쳐 깔립니다.",
+        "desc": "배경 그림들. **겹치지 않고 적은 차례대로 가로로 이어 붙습니다**(BG.ts:186). 아이가 끌어서 좌우로 넘겨 봅니다(BG.ts:154-170, 세로로는 안 움직입니다).",
         "minLengthWhy": "배경이 한 장은 있어야 합니다."
       },
       {
@@ -150,14 +145,14 @@
               "key": "lottie",
               "type": "asset:lottie",
               "optional": true,
-              "desc": "애니 alias. type 이 deco-lottie 이거나 애니로 그리는 대상에 씁니다."
+              "desc": "꾸밈 로티 alias. **type 이 deco-lottie 일 때만 읽습니다**(BG.ts:21). 누르는 대상(item)은 이 값을 안 읽고 alias.normal · alias.highlight 그림으로만 그립니다."
             },
             {
               "key": "pos",
               "type": "point",
               "required": true,
               "figma": true,
-              "desc": "놓이는 자리."
+              "desc": "놓이는 자리. **원점은 이어 붙인 배경 전체의 가운데입니다**(BG.ts:188 pivot, mItemRoot 는 배경과 같은 판 위). 처음 화면의 가운데가 (0, 0) 이고 x 가 ±960 밖이면 끌어야 보입니다. 완성본 x 는 -2209 ~ 2300 까지 있습니다."
             },
             {
               "key": "anchor",
@@ -170,19 +165,25 @@
               "key": "touch",
               "type": "bool",
               "optional": true,
-              "desc": "누를 수 있는지. **애니 자동재생과 반대로 묶여 있습니다** — BG.ts:22 가 `autoplay: !touch` 로 잡으므로, touch: true 인 것은 누를 때까지 애니가 멈춰 있습니다."
+              "desc": "**deco-lottie 만 읽고, true 면 자동 재생을 끕니다**(BG.ts:22 `autoplay: !touch`). 꾸밈 로티는 누를 수 없어서(BG.ts:28 eventMode none) true 면 애니가 끝까지 멈춰 있습니다. 누르는 대상(item)은 이 값과 상관없이 늘 누를 수 있습니다. 완성본은 모두 적지 않거나 false 입니다."
+            },
+            {
+              "key": "ani_loop",
+              "type": "bool",
+              "optional": true,
+              "desc": "꾸밈 로티(deco-lottie)를 되풀이할지. 없으면 되풀이합니다(BG.ts:15·23). false 면 한 번 돌고 멈춥니다."
             },
             {
               "key": "image",
               "type": "asset:image",
               "optional": true,
-              "desc": "그림 alias. 애니가 아닌 것에 씁니다."
+              "desc": "꾸밈 그림 alias. **type 이 deco-image 일 때만 읽습니다**(BG.ts:43)."
             },
             {
               "key": "name",
               "type": "string",
               "optional": true,
-              "desc": "**연결 이름.** 이닝 띠와 노트가 이 이름으로 대상을 찾습니다(M32.ts:143 · NotePanel.ts:171). 한 글자만 달라도 찾은 것이 노트에 안 채워집니다."
+              "desc": "**연결 이름.** 이닝 띠와 노트가 이 이름으로 대상을 찾습니다(M32.ts:143 · NotePanel.ts:171). 한 글자만 달라도 찾은 것이 띠와 노트에 안 채워집니다. **이닝 띠 · 노트에서 같은 name 을 두 번 쓰지 않습니다** — 한 번 찾은 칸은 다시 세지 않습니다(M32.ts:174)."
             },
             {
               "key": "alias",
@@ -202,25 +203,26 @@
                   "desc": "강조 그림."
                 }
               ],
-              "desc": "대상 그림 두 벌 — 기본과 강조(찾을 때 반짝이는 것)."
+              "desc": "대상 그림 두 벌 — 기본과 찾은 뒤 바뀌는 그림(BG.ts:74-75 · 89-91). **type 이 item 이면 꼭 있어야 합니다** — 없으면 그 칸에서 오류가 나 뒤 칸이 하나도 안 놓입니다."
             },
             {
               "key": "popup",
               "type": "asset:image",
               "optional": true,
-              "desc": "눌렀을 때 뜨는 확대 그림."
+              "desc": "찾았을 때 정답 팝업에 뜨는 그림(M32.ts:176·186). 찾은 칸이나 이닝 띠 칸을 다시 누를 때도 뜹니다(M32.ts:149)."
             },
             {
               "key": "sound",
               "type": "asset:sound",
               "optional": true,
-              "desc": "눌렀을 때 재생할 음원. 노트에 채워질 때도 이 소리를 다시 냅니다(NotePanel.ts:172)."
+              "desc": "찾았을 때 정답 팝업과 함께 나는 음원(CorrectPanel.ts:40). 찾은 칸 · 이닝 띠 칸을 다시 누를 때와 채워진 노트 칸을 누를 때도 다시 납니다(M32.ts:149 · NotePanel.ts:159-176)."
             },
             {
               "key": "inningbar",
               "type": "asset:image",
               "optional": true,
-              "desc": "이닝 띠에 보일 아이콘 그림."
+              "desc": "**모듈이 읽지 않습니다**(InningBar.ts 는 inningData[].inningbar 만 읽습니다). 완성본이 관례로 적어 둔 값입니다 — 띠 그림은 inningData[].inningbar.item[].normal · correct 입니다.",
+              "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면은 같습니다."
             }
           ],
           "desc": "칸 하나."
@@ -258,7 +260,7 @@
                 "Pmon",
                 "Rmon"
               ],
-              "desc": "도우미 캐릭터 색. 애니 alias 는 모듈이 `MAL1M02W3S3_{색}_talk` 로 물고 있습니다 — 액티비티가 따로 등록할 것은 없습니다."
+              "desc": "도우미 캐릭터 색. 애니 alias 는 모듈이 `MAL1M02W3S3_{색}_talk` 로 물고 있습니다 — 액티비티가 따로 등록할 것은 없습니다. 값이 이 셋 밖이면 도우미 애니뿐 아니라 그 이닝 지시문(narr)도 안 나옵니다(MonterAni.ts:37-47)."
             },
             {
               "key": "inningbar",
@@ -355,7 +357,7 @@
                   "key": "align",
                   "type": "number",
                   "optional": true,
-                  "desc": "노트 칸 정렬 방식 번호. **0 도 뜻이 있는 값입니다** — NotePanel.ts:229 가 `info.align || info.align == 0` 으로 봅니다. 생략하면 기본 정렬입니다."
+                  "desc": "노트 칸 사이 간격(px). 없으면 50 입니다(NotePanel.ts:229-233). 음수면 칸이 겹칩니다 — 완성본은 -45 · -10 입니다. **0 도 값입니다**(간격 0). **노트 칸이 정확히 4개면 2×2 고정 배치라 이 값을 안 읽습니다**(NotePanel.ts:207)."
                 }
               ],
               "desc": "오른쪽 노트 한 장."
@@ -370,13 +372,14 @@
         "key": "finishNarration",
         "type": "asset:sound",
         "optional": true,
-        "desc": "학습을 마칠 때 읽는 음원."
+        "desc": "**모듈이 읽지 않습니다** — 적어도 소리가 나지 않습니다(M32.finish 는 BGM 을 줄이고 진행률만 올립니다, M32.ts:125-130). 완성본 둘(MAL3M02W3S3 · MAL3M11W2S3)이 적어 두었지만 재생되지 않습니다.",
+        "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
       },
       {
         "key": "disuseCommonCorrect",
         "type": "bool",
         "optional": true,
-        "desc": "공통 정답 패널을 쓰지 않을지. true 면 CorrectPanel 이 공통 연출을 건너뜁니다(CorrectPanel.ts:26) — 활동 고유 연출을 쓸 때만 켭니다."
+        "desc": "true 면 정답 팝업의 바탕 그림을 item_bg 대신 item_bg2 로 씁니다(CorrectPanel.ts:25-28). 팝업은 그대로 뜨고 popup 그림과 sound 도 그대로입니다. 완성본은 MAL3M06W1S3 하나만 켰습니다."
       }
     ]
   },
@@ -385,31 +388,25 @@
       "id": "name-links-three-lists",
       "level": "error",
       "check": "inningbar.item[].name 과 notePanel.item[].name 이 items[].name 중 하나와 정확히 같아야 한다.",
-      "why": "**이 모듈은 name 하나로 세 목록을 잇습니다**(M32.ts:143·190 · NotePanel.ts:171 · InningBar.ts:261). 이름이 어긋나면 눌러서 찾아도 띠와 노트가 채워지지 않아 **이닝이 끝나지 않습니다.** 에러는 없습니다."
-    },
-    {
-      "id": "touch-items-have-name",
-      "level": "error",
-      "check": "type 이 item 인 칸은 name 이 있어야 한다.",
-      "why": "장식(deco-*)은 이름이 없어도 되지만, 찾는 대상은 이름으로 연결됩니다. 이름이 없으면 찾아도 아무 일이 없습니다."
+      "why": "**이 모듈은 name 하나로 세 목록을 잇습니다**(M32.ts:143·190 · NotePanel.ts:171 · InningBar.ts:261). 띠 이름이 어긋나면 눌러서 찾아도 띠가 안 채워져 **이닝이 끝나지 않습니다**(M32.ts:193·206). 노트 이름이 어긋나면 노트 칸만 안 채워집니다. 에러는 없습니다."
     },
     {
       "id": "touch-controls-autoplay",
       "level": "warn",
-      "check": "장식 애니를 저절로 돌리려면 touch 를 false 로 둔다.",
-      "why": "BG.ts:22 가 `autoplay: !touch` 입니다 — touch: true 로 두면 애니가 멈춰 있습니다. 두 뜻이 한 값에 묶여 있어 헷갈립니다."
+      "check": "꾸밈 로티(deco-lottie)에 touch: true 를 적지 않는다.",
+      "why": "BG.ts:22 가 `autoplay: !touch` 이고 꾸밈 로티는 누를 수 없습니다(BG.ts:28). true 면 애니가 끝까지 멈춰 있습니다."
     },
     {
       "id": "align-zero-is-value",
       "level": "warn",
-      "check": "정렬을 0 으로 두고 싶으면 0 을 적는다 — 키를 지우면 기본 정렬이 된다.",
+      "check": "노트 칸 간격을 0 으로 두고 싶으면 0 을 적는다 — 키를 지우면 간격 50 이 된다.",
       "why": "NotePanel.ts:229 가 0 을 값으로 받아들이도록 따로 검사합니다. 키를 지우는 것과 0 은 다릅니다."
     },
     {
       "id": "legacy-lottie-alias",
       "level": "warn",
-      "check": "MAL1M02W3S3_ 로 시작하는 로티는 모듈이 물고 있으니 액티비티에서 등록하지 않는다.",
-      "why": "활동 이름처럼 보이지만 모듈 공용 이름입니다. 같은 alias 를 다시 등록하면 PixiJS 가 덮어씁니다."
+      "check": "모듈이 등록하는 로티 넷(MAL1M02W3S3_correct_ef · MAL1M02W3S3_Bmon_talk · MAL1M02W3S3_Pmon_talk · MAL1M02W3S3_Rmon_talk)은 액티비티에서 다시 등록하지 않는다.",
+      "why": "활동 이름처럼 보이지만 모듈 공용 이름입니다(Assets.ts:32-35). 같은 alias 를 다시 등록하면 PixiJS 가 덮어씁니다. MAL1M02W3S3_bg_* 같은 꾸밈 로티는 모듈이 주지 않으니 액티비티가 등록합니다."
     },
     {
       "id": "start-narration-lowercase",
@@ -428,5 +425,80 @@
     "eop 는 액티비티 onStart 가 부릅니다. 모듈은 부르지 않습니다.",
     "노트 넘기기 버튼(note_prev_btn · note_next_btn)은 모듈이 물고 있습니다. 노트가 여러 장일 때 자동으로 붙습니다.",
     "8호에는 이 모듈을 쓰는 자리가 없습니다."
+  ],
+  "relations": [
+    {
+      "id": "touch-items-have-name",
+      "kind": "present",
+      "each": "items",
+      "when": {
+        "pick": "type",
+        "is": "item"
+      },
+      "picks": [
+        "name"
+      ],
+      "note": "type 이 item 인 칸은 name 이 있어야 한다.",
+      "why": "장식(deco-*)은 이름이 없어도 되지만, 찾는 대상은 이름으로 연결됩니다. 이름이 없으면 찾아도 아무 일이 없습니다."
+    },
+    {
+      "id": "item-needs-picture",
+      "kind": "present",
+      "each": "items",
+      "when": {
+        "pick": "type",
+        "is": "item"
+      },
+      "picks": [
+        "alias.normal",
+        "alias.highlight",
+        "popup",
+        "sound"
+      ],
+      "note": "type 이 item 인 칸은 alias.normal · alias.highlight · popup · sound 가 있어야 한다.",
+      "why": "BGItem.init 이 alias.normal · highlight 를 조건 없이 읽어(BG.ts:74-75) alias 가 없으면 오류가 나고 그 뒤 칸이 하나도 안 놓입니다. popup · sound 는 찾을 때마다 정답 팝업으로 갑니다(M32.ts:176·186) — 없으면 빈 팝업에 소리가 안 납니다."
+    },
+    {
+      "id": "deco-lottie-needs-lottie",
+      "kind": "present",
+      "each": "items",
+      "when": {
+        "pick": "type",
+        "is": "deco-lottie"
+      },
+      "picks": [
+        "lottie"
+      ],
+      "note": "type 이 deco-lottie 인 칸은 lottie 가 있어야 한다.",
+      "why": "DecoLottieItem 이 lottie 로 로티를 만듭니다(BG.ts:20-24). 없으면 LottieSprite 가 오류를 던져 그 뒤 칸이 안 놓입니다."
+    },
+    {
+      "id": "deco-image-needs-image",
+      "kind": "present",
+      "each": "items",
+      "when": {
+        "pick": "type",
+        "is": "deco-image"
+      },
+      "picks": [
+        "image"
+      ],
+      "note": "type 이 deco-image 인 칸은 image 가 있어야 한다.",
+      "why": "DecoImageItem 이 image 를 그립니다(BG.ts:43). 없으면 빈 그림이 놓이고 console.error 가 납니다."
+    },
+    {
+      "id": "bar-name-once",
+      "kind": "distinct",
+      "pick": "inningData[].inningbar.item[].name",
+      "note": "이닝 띠 칸의 name 은 모든 이닝을 통틀어 한 번씩만 쓴다.",
+      "why": "한 번 찾은 배경 칸은 다시 눌러도 띠를 세지 않습니다(M32.ts:174-177, BG.ts:90). 같은 name 이 다른 이닝 띠에 또 있으면 그 칸이 끝내 안 채워져 이닝이 끝나지 않습니다(M32.ts:206). 에러는 없습니다."
+    },
+    {
+      "id": "note-name-once",
+      "kind": "distinct",
+      "pick": "inningData[].notePanel.item[].name",
+      "note": "노트 칸의 name 은 모든 노트를 통틀어 한 번씩만 쓴다.",
+      "why": "PageItem.items 가 모든 노트의 칸을 name 하나로 묶습니다(NotePanel.ts:155). 같은 name 이 두 노트에 있으면 앞 노트의 칸은 찾아도 안 채워집니다."
+    }
   ]
 }

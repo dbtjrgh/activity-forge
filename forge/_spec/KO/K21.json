@@ -5,8 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
-    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "8feb59860d067444592cb5927a1e92a6f445f84b",
+    "moduleCommitWhy": "2026-10-26 그 사이 모듈 변경에 더해, 기계로 거른 후보(리소스 종류 · 모듈이 안 읽는 값 · 이름을 박아 부르는 리소스 · 검사 경고)와 앞서 짚은 오류를 코드 줄로 확인해 맞췄습니다. 설명 글 전체를 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/KR/K21",
     "activities": [
       "KOL3M01W2S2",
@@ -134,6 +134,42 @@
         "kind": "image",
         "fixedAlias": true,
         "note": "모듈 RecordButton.ts 가 AssetManager.get(\"btn_outline\") 로 이름을 박아 부른다 — 없으면 화면이 빈다. 완성본 10개 다 가짐(litgate, 2026-09-29)."
+      },
+      {
+        "alias": "Type1_1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "바구니와 물건 자리에 놓이는 첫째 종류 물건 그림(Basket.ts:28 · ObjectManager.ts:21) — 이름을 `Type1_${n}` 로 조합해 부릅니다."
+      },
+      {
+        "alias": "Type1_2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "바구니와 물건 자리에 놓이는 첫째 종류 물건 그림(Basket.ts:28 · ObjectManager.ts:21) — 이름을 `Type1_${n}` 로 조합해 부릅니다."
+      },
+      {
+        "alias": "Type1_3",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "바구니와 물건 자리에 놓이는 첫째 종류 물건 그림(Basket.ts:28 · ObjectManager.ts:21) — 이름을 `Type1_${n}` 로 조합해 부릅니다."
+      },
+      {
+        "alias": "Type2_1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "바구니와 물건 자리에 놓이는 둘째 종류 물건 그림(Basket.ts:35 · ObjectManager.ts:28) — 이름을 `Type2_${n}` 로 조합해 부릅니다."
+      },
+      {
+        "alias": "Type2_2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "바구니와 물건 자리에 놓이는 둘째 종류 물건 그림(Basket.ts:35 · ObjectManager.ts:28) — 이름을 `Type2_${n}` 로 조합해 부릅니다."
+      },
+      {
+        "alias": "Type2_3",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "바구니와 물건 자리에 놓이는 둘째 종류 물건 그림(Basket.ts:35 · ObjectManager.ts:28) — 이름을 `Type2_${n}` 로 조합해 부릅니다."
       }
     ]
   },
@@ -238,20 +274,26 @@
           {
             "key": "maxInning",
             "type": "number",
-            "required": true,
-            "default": 1
+            "required": false,
+            "default": 1,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
           },
           {
             "key": "isRandomInning",
             "type": "bool",
-            "required": true,
-            "default": true
+            "required": false,
+            "default": true,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
           },
           {
             "key": "isTouchSound",
             "type": "bool",
-            "required": true,
-            "default": true
+            "required": false,
+            "default": true,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
           },
           {
             "key": "isSfxSound",
@@ -262,20 +304,26 @@
           {
             "key": "isNarrationSound",
             "type": "bool",
-            "required": true,
-            "default": true
+            "required": false,
+            "default": true,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
           },
           {
             "key": "isMainCharacterSound",
             "type": "bool",
-            "required": true,
-            "default": true
+            "required": false,
+            "default": true,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
           },
           {
             "key": "isAffordanceTimer",
             "type": "bool",
-            "required": true,
-            "default": true
+            "required": false,
+            "default": true,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
           },
           {
             "key": "minRecTime",
@@ -286,20 +334,32 @@
           {
             "key": "isInningCompleteActivation",
             "type": "bool",
-            "required": true,
-            "default": true
+            "required": false,
+            "default": true,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
           },
           {
             "key": "isCompleteActivation",
             "type": "bool",
-            "required": true,
-            "default": true
+            "required": false,
+            "default": true,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
+          },
+          {
+            "key": "hideLastObjectAfterLastRecord",
+            "type": "bool",
+            "optional": true,
+            "desc": "true 이면 typeB 에서 마지막 녹음이 끝난 뒤, 그때 보이는 물건 그림을 숨깁니다. 근거는 Quiz.ts:531~535 hideLastObjectIfNeeded 이고, 부르는 자리는 typeB_select_A 의 Quiz.ts:430~432 와 typeB_select_B 의 Quiz.ts:509~511 입니다. 7번 반복 가운데 주인 대사 녹음이 있는 마지막 차례(i === 5)이고, 녹음이 끝나면 RecordButton.ts:138 이 isSelectTalk 를 켭니다. 물건 그림은 talkCount_guest 가 1, 3, 5 일 때 앞 그림을 숨기고 다음 그림을 띄우므로(Quiz.ts:385~389, 474~478, ObjectManager.ts:38~58) 한 번에 하나만 보입니다. 그래서 숨기는 것은 정상 흐름에서 세 번째 그림(Type1_3 또는 Type2_3)이고, 이 값을 켜면 마지막 녹음 뒤에는 물건 그림이 하나도 남지 않습니다. 없거나 false 이면 숨기지 않습니다(모듈 기본). typeA 에서는 Quiz.ts:533 이 바로 돌아가 아무 일도 하지 않습니다. 개발 완료 7개는 이 값을 쓰지 않습니다(2026-10-26). 개발 중인 KOL3M10W2S2(11호) 만 true 이고, 그 GameData.ts:35 주석에 「10차시 전용」이라고 적혀 있습니다. 기획서나 figma 가 마지막 대사 뒤에 물건 그림이 사라지게 할 때만 true 로 적습니다."
           },
           {
             "key": "isShowLog",
             "type": "bool",
-            "required": true,
-            "default": false
+            "required": false,
+            "default": false,
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 이닝 수는 settings.inningCount 로 셉니다(K21.ts:46).",
+            "optional": true
           },
           {
             "key": "recoder_gain_value_pc",
@@ -318,7 +378,7 @@
       {
         "key": "inningData",
         "type": "array",
-        "required": true,
+        "required": false,
         "minLength": 1,
         "of": {
           "key": "",
@@ -331,7 +391,9 @@
               "default": 0
             }
           ]
-        }
+        },
+        "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다).",
+        "optional": true
       },
       {
         "key": "positions",
@@ -342,7 +404,7 @@
             "key": "framePos",
             "type": "point",
             "optional": true,
-            "figma": true
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다)."
           },
           {
             "key": "characterPos",
@@ -439,12 +501,13 @@
           {
             "key": "btnPos",
             "type": "point",
-            "required": true,
-            "figma": true,
+            "required": false,
             "default": {
               "x": 1780,
               "y": 940
-            }
+            },
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다).",
+            "optional": true
           },
           {
             "key": "dimdPos",
@@ -488,12 +551,13 @@
           {
             "key": "chattingIconPos",
             "type": "point",
-            "required": true,
-            "figma": true,
+            "required": false,
             "default": {
               "x": 274.86,
               "y": 651.49
-            }
+            },
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다).",
+            "optional": true
           },
           {
             "key": "chattingPos_guest",
@@ -541,7 +605,8 @@
                   "required": true
                 }
               ]
-            }
+            },
+            "desc": "**typeB 이면 꼭 있어야 합니다** — ObjectManager.ts:17-29 가 조건 없이 읽습니다(관계 typeb-animal-pos)."
           },
           {
             "key": "animalPosB",
@@ -563,7 +628,8 @@
                   "required": true
                 }
               ]
-            }
+            },
+            "desc": "**typeB 이면 꼭 있어야 합니다** — ObjectManager.ts:17-29 가 조건 없이 읽습니다(관계 typeb-animal-pos)."
           }
         ]
       },
@@ -820,12 +886,12 @@
           {
             "key": "timer",
             "type": "object",
-            "required": true,
+            "required": false,
             "fields": [
               {
                 "key": "alias",
                 "type": "asset:lottie",
-                "aliasMayBeOff": "K21 은 animation.timer 를 안 읽습니다(CharacterManager.ts · RecordButton.ts 가 hi·idle·wave 만 봅니다). 완성본 8개가 등록 없이 나가 있습니다.",
+                "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다.",
                 "required": true,
                 "default": "timer"
               },
@@ -853,7 +919,9 @@
                 "required": true,
                 "default": false
               }
-            ]
+            ],
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다).",
+            "optional": true
           }
         ]
       },
@@ -871,17 +939,22 @@
           {
             "key": "wrong",
             "type": "asset:sound",
-            "required": true,
-            "default": "wrong"
+            "required": false,
+            "default": "wrong",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 모듈이 읽는 소리는 sound.recStart · recEnd 입니다(RecordButton.ts:97 · 147).",
+            "optional": true,
+            "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
           },
           {
             "key": "wrong2",
             "type": "enum",
-            "required": true,
+            "required": false,
             "values": [
               "wrong2"
             ],
-            "default": "wrong2"
+            "default": "wrong2",
+            "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 모듈이 읽는 소리는 sound.recStart · recEnd 입니다(RecordButton.ts:97 · 147).",
+            "optional": true
           },
           {
             "key": "touch",
@@ -942,22 +1015,27 @@
               {
                 "key": "wrong",
                 "type": "array",
-                "required": true,
+                "required": false,
                 "minLength": 3,
                 "of": {
                   "key": "",
-                  "type": "asset:sound"
-                }
+                  "type": "asset:sound",
+                  "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
+                },
+                "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 모듈이 읽는 나레이션은 narration.KO 의 enterance · correct · endBtn 입니다(Quiz.ts:140, InningManager.ts:58, ChatWindow.ts:334).",
+                "optional": true
               },
               {
                 "key": "wrong2",
                 "type": "array",
-                "required": true,
+                "required": false,
                 "minLength": 3,
                 "of": {
                   "key": "",
                   "type": "string"
-                }
+                },
+                "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 모듈이 읽는 나레이션은 narration.KO 의 enterance · correct · endBtn 입니다(Quiz.ts:140, InningManager.ts:58, ChatWindow.ts:334).",
+                "optional": true
               },
               {
                 "key": "guide",
@@ -972,8 +1050,11 @@
               {
                 "key": "hint",
                 "type": "asset:sound",
-                "required": true,
-                "default": "com5"
+                "required": false,
+                "default": "com5",
+                "desc": "**모듈이 읽지 않습니다**(모듈 폴더 · sparkLib · 액티비티 코드에 이 이름이 없습니다). 모듈이 읽는 나레이션은 narration.KO 의 enterance · correct · endBtn 입니다(Quiz.ts:140, InningManager.ts:58, ChatWindow.ts:334).",
+                "optional": true,
+                "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
               },
               {
                 "key": "endBtn",
@@ -1488,5 +1569,21 @@
         ]
       }
     ]
-  }
+  },
+  "relations": [
+    {
+      "id": "typeb-animal-pos",
+      "kind": "present",
+      "when": {
+        "pick": "quizType",
+        "is": "typeB"
+      },
+      "picks": [
+        "positions.animalPosA",
+        "positions.animalPosB"
+      ],
+      "note": "quizType 이 typeB 면 positions.animalPosA · animalPosB 가 있어야 한다.",
+      "why": "typeB 에서 ObjectManager.ts:17-29 가 두 자리표를 조건 없이 읽어 물건을 놓습니다. 없으면 자리를 못 찾아 물건이 안 놓입니다(코드로 읽은 동작)."
+    }
+  ]
 }

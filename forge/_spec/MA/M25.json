@@ -5,8 +5,8 @@
   "title": "두더지 잡기 (문제 보고 맞는 것 때리기)",
   "summary": "언덕 뒤 구멍에서 토끼들이 판을 들고 올라오고, 문제 패널의 문제에 맞는 토끼를 망치로 때리는 활동. 문제를 맞히면 다음 문제로 넘어가고, 문제를 다 풀면 이닝이 끝납니다.",
   "reference": {
-    "moduleCommit": "a3d7784a4d71b99525234e3c104bdd30c25e7372",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-09-29) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "247a68bde74942b667cf22da4f90fc8806e75bc6",
+    "moduleCommitWhy": "2026-10-26 모듈이 문제마다 그 문제의 소리를 틀고 숨긴 단추는 안 틀게 고쳐, soundBtn.sound 설명과 줄 번호를 맞췄습니다.",
     "module": "sparkon_common/_common/module/MA/M25",
     "activities": [
       "MAL1M02W1S3",
@@ -55,7 +55,7 @@
   "assets": {
     "required": [],
     "providedByModule": {
-      "note": "M25.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M25 에 있습니다(별도 repo). 로티 alias 가 MAL1M02W1S3_ 로 시작하는 것은 최초 제작 차시 이름이 그대로 굳은 것입니다 — 활동별 이름이 아니라 모듈 공용이므로 바꾸지 마세요.\n\n**이름을 조합해 찾거나 GameData 가 가리키는 자원** — required 에는 이름이 고정된 것만 적을 수 있어서 여기에 규칙을 둡니다.\n- `(문제 그림)` (image) ← quizData.inningData[].quizPanel[].normal · .answered — 문제 패널에 올라가는 그림 두 벌 — 풀기 전(normal)과 푼 뒤(answered). 이름은 자유이고 GameData 가 가리킵니다.\n- `(토끼가 든 판 그림)` (image) ← quizData.inningData[].targets[].image — 선지. 토끼가 들고 올라오는 판에 붙습니다.\n- `(문제 음원)` (sound) ← quizData.inningData[].quizPanel[].soundBtn.sound — 문제 패널의 동그란 소리 버튼을 누르면 재생됩니다. 빈 문자열이면 버튼이 만들어지지 않습니다.",
+      "note": "M25.addAsset() 이 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것. 파일은 resource_common/common/module/MA/M25 에 있습니다(별도 repo). 로티 alias 가 MAL1M02W1S3_ 로 시작하는 것은 최초 제작 차시 이름이 그대로 굳은 것입니다 — 활동별 이름이 아니라 모듈 공용이므로 바꾸지 마세요.\n\n**이름을 조합해 찾거나 GameData 가 가리키는 자원** — required 에는 이름이 고정된 것만 적을 수 있어서 여기에 규칙을 둡니다.\n- `(문제 그림)` (image) ← quizData.inningData[].quizPanel[].normal · .answered — 문제 패널에 올라가는 그림 두 벌 — 풀기 전(normal)과 푼 뒤(answered). 이름은 자유이고 GameData 가 가리킵니다.\n- `(토끼가 든 판 그림)` (image) ← quizData.inningData[].targets[].image — 선지. 토끼가 들고 올라오는 판에 붙습니다.\n- `(문제 음원)` (sound) ← quizData.inningData[].quizPanel[].soundBtn.sound — 문제 패널의 동그란 소리 버튼을 누르면 재생됩니다. 빈 문자열이면 버튼을 숨깁니다. 문제마다 그 문제의 소리가 납니다.",
       "image": [
         "bg",
         "bg_scrollbase",
@@ -120,7 +120,7 @@
                 "type": "number",
                 "required": true,
                 "default": 1000,
-                "desc": "곡선 오른쪽 끝 x. **아래를 닫는 lineTo 의 y 에도 이 값이 그대로 쓰입니다**(BG.ts:94 — lineTo(endX, endX)). 그래서 endX 를 줄이면 마스크 아래쪽이 같이 올라옵니다. 의도한 것인지 확인되지 않았습니다."
+                "desc": "마스크 아래 오른쪽 모서리의 x 입니다(곡선 끝점 x 는 curve.x 입니다, BG.ts:93). **아래를 닫는 lineTo 의 y 에도 이 값이 그대로 쓰입니다**(BG.ts:94-95 — lineTo(endX, endX), lineTo(startX, endX)). 그래서 endX 를 줄이면 마스크 아래쪽이 같이 올라옵니다. 의도한 것인지 확인되지 않았습니다."
               },
               {
                 "key": "posY",
@@ -166,7 +166,7 @@
             "desc": "언덕 곡선. 2차 베지어 한 조각으로 그립니다(moveTo → quadraticCurveTo → lineTo 두 번으로 닫습니다)."
           }
         ],
-        "desc": "배경 언덕 마스크. 토끼는 이 곡선 **아래로 잘려** 보입니다 — 구멍에서 올라오는 것처럼 보이게 하는 장치입니다. 값이 어긋나면 토끼가 언덕 위로 떠 보이거나 아예 안 보입니다."
+        "desc": "배경 언덕 마스크. 언덕 배경 그림(bg_scrollbase)과 구멍이 이 곡선 아래쪽만 보이게 잘립니다(BG.ts:101-104). 토끼는 이 마스크로 자르지 않고 토끼마다 따로 둔 마스크로 구멍에서 올라오는 것처럼 보입니다(GameTarget.ts:87-94). 값이 어긋나면 언덕 그림이 잘리는 모양이 달라집니다."
       },
       {
         "key": "inningData",
@@ -202,13 +202,13 @@
                     "key": "width",
                     "type": "number",
                     "required": true,
-                    "desc": "문제 패널 배경(quiz_panel)을 늘릴 너비(px). 그림마다 달라서 문제별로 적습니다."
+                    "desc": "문제 패널 배경(quiz_panel)을 늘릴 너비(px). **이닝의 첫 문제(quizPanel[0]) 값만 쓰입니다** — 둘째 문제부터는 패널 크기를 다시 정하지 않습니다(QuizPanel.ts:122-123 · 145-173)."
                   },
                   {
                     "key": "height",
                     "type": "number",
                     "required": true,
-                    "desc": "문제 패널 배경 높이(px)."
+                    "desc": "문제 패널 배경 높이(px). **이닝의 첫 문제(quizPanel[0]) 값만 쓰입니다** — 둘째 문제부터는 다시 정하지 않습니다."
                   },
                   {
                     "key": "soundBtn",
@@ -219,7 +219,7 @@
                         "key": "sound",
                         "type": "asset:sound",
                         "required": true,
-                        "desc": "버튼을 누르면 재생할 음원. **빈 문자열이면 버튼을 만들지 않습니다** — 소리 없는 문제는 \"\" 로 둡니다."
+                        "desc": "버튼을 누르면 재생할 음원. 문제마다 그 문제의 소리로 바뀝니다(QuizPanel.ts:101 · 153). **빈 문자열이면 버튼을 숨기고 소리를 틀지 않습니다**(QuizPanel.ts:198-200) — 소리 없는 문제는 \"\" 로 둡니다."
                       },
                       {
                         "key": "correct_sound",
@@ -232,7 +232,7 @@
                         "type": "point",
                         "optional": true,
                         "figma": true,
-                        "desc": "버튼 자리. quizPos 를 기준으로 다시 계산되므로 둘을 같이 적습니다(QuizPanel.ts:108~110)."
+                        "desc": "버튼 자리. 판 가운데 기준 좌표가 그대로 버튼 위치가 되고 quizPos 와 따로 적용됩니다. 이 값이 있어야 quizPos · answeredPos 가 쓰이므로 셋을 같이 적습니다(QuizPanel.ts:108-116)."
                       }
                     ],
                     "desc": "문제를 다시 들려주는 동그란 버튼(circleBTN_normal)."
@@ -249,12 +249,12 @@
                     "type": "point",
                     "optional": true,
                     "figma": true,
-                    "desc": "맞힌 뒤 그림이 놓이는 자리. 그림 크기가 달라 자리를 따로 잡아야 할 때 씁니다."
+                    "desc": "마지막 문제를 맞혀 스피커가 사라진 뒤 그림이 놓이는 자리. soundBtn.pos 를 쓰는 문제에서만 적용되고 마지막이 아닌 문제에서는 쓰이지 않습니다(QuizPanel.ts:181-193). 그림 크기가 달라 자리를 따로 잡아야 할 때 씁니다."
                   }
                 ],
                 "desc": "칸 하나."
               },
-              "desc": "그 이닝에서 순서대로 낼 문제 목록. **문제를 다 맞히면 이닝이 끝납니다**(QuizPanel.isEnd 가 mCurrentQuizIndex 로 판정). 칸 하나 = 문제 하나입니다."
+              "desc": "그 이닝에서 순서대로 낼 문제 목록. **문제를 다 맞히면 이닝이 끝납니다**(QuizPanel.isQuizEnd 가 mCurrentQuizIndex 로 판정). 칸 하나 = 문제 하나입니다."
             },
             {
               "key": "targets",
@@ -275,14 +275,14 @@
                     "key": "correct",
                     "type": "number",
                     "required": true,
-                    "desc": "**이 토끼가 몇 번째 문제의 정답인지. 1 부터 셉니다.** GameTarget.ts:153 이 correct == quizPanel 현재 번호 + 1 로 비교하므로, quizPanel[0] 의 정답은 correct: 1 입니다. 0 부터 적으면 **모든 문제가 오답 처리**됩니다 — 에러는 나지 않고 학생이 계속 틀립니다. 어느 문제의 정답도 아닌 토끼는 겹치지 않는 큰 수(예: 99)를 줍니다."
+                    "desc": "**이 토끼가 몇 번째 문제의 정답인지. 1 부터 셉니다.** GameTarget.ts:153 이 correct == quizPanel 현재 번호 + 1 로 비교하므로, quizPanel[0] 의 정답은 correct: 1 입니다. 0 부터 적으면 **모든 문제가 오답 처리**됩니다 — 에러는 나지 않고 학생이 계속 틀립니다. 어느 문제의 정답도 아닌 토끼는 0 을 줍니다 — 완성본이 모두 0 이고, 어느 문제 번호 + 1 과도 겹치지 않는 값이면 됩니다."
                   },
                   {
                     "key": "pos",
                     "type": "point",
                     "required": true,
                     "figma": true,
-                    "desc": "토끼가 올라올 구멍 자리."
+                    "desc": "토끼가 올라올 구멍 자리. 이닝이 시작될 때 image · correct 를 섞어 구멍에 나눠 주므로(GameScreen.ts:94-111), 같은 칸의 image 가 이 자리에 뜨지는 않습니다."
                   }
                 ],
                 "desc": "칸 하나."
@@ -300,7 +300,7 @@
         "key": "startNar",
         "type": "asset:sound",
         "optional": true,
-        "desc": "이닝 시작 지문. 도우미 캐릭터가 읽습니다. 값이 없으면 지문 없이 시작합니다(M25.ts:112 가 있는지 확인합니다)."
+        "desc": "이닝 시작 지문. 도우미 캐릭터가 읽습니다. **첫 이닝에서만** 읽고, 값이 없으면 모듈의 SL_ma_m25_nar01 을 읽습니다(M25.ts:111-117). 둘째 이닝부터는 이 값을 쓰지 않고 newInning1~3 중 하나를 읽습니다(:107-109)."
       }
     ]
   },
@@ -308,20 +308,20 @@
     {
       "id": "correct-is-one-based",
       "level": "error",
-      "check": "quizPanel 의 i 번째(0부터) 문제마다 targets 안에 correct === i + 1 인 칸이 정확히 하나 있어야 한다.",
+      "check": "quizPanel 의 i 번째(0부터) 문제마다 targets 안에 correct === i + 1 인 칸이 하나 이상 있어야 한다(둘 이상이면 그중 어느 것을 눌러도 정답입니다).",
       "why": "GameTarget.ts:153 이 mCorrectIDX == mCurrentQuizIndex + 1 로 비교합니다. **0 부터 적으면 모든 문제가 오답이 되고, 빠뜨리면 그 문제에서 이닝이 끝나지 않습니다.** 모듈이 검사하지 않고 에러도 없습니다."
     },
     {
       "id": "sound-btn-empty-string",
       "level": "warn",
       "check": "소리 버튼이 필요 없는 문제는 soundBtn.sound 를 \"\" 로 둔다(키를 지우지 말 것).",
-      "why": "QuizPanel.ts:97 이 값이 있고 빈 문자열이 아닌지를 봅니다. 키를 아예 지우면 undefined 접근이 됩니다."
+      "why": "QuizPanel.ts:97 이 값이 있고 빈 문자열이 아닌지를 봅니다. sound 키가 없어도 버튼이 숨겨질 뿐이지만, soundBtn 객체 자체를 지우면 soundBtn.sound 접근에서 멈춥니다(QuizPanel.ts:97 · 150 · 186 · 194)."
     },
     {
       "id": "panel-size-per-quiz",
       "level": "warn",
       "check": "quizPanel[].width · height 가 문제 그림 크기와 맞아야 한다.",
-      "why": "패널 배경을 그 값으로 늘립니다. 안 맞으면 그림이 패널 밖으로 나가거나 여백이 크게 남습니다."
+      "why": "이닝의 첫 문제(quizPanel[0]) 값으로만 패널 배경을 늘립니다(둘째 문제부터는 다시 정하지 않습니다). 그래서 첫 문제 크기가 그 이닝 모든 문제 그림에 맞아야 합니다. 안 맞으면 그림이 패널 밖으로 나가거나 여백이 크게 남습니다."
     },
     {
       "id": "alias-exists-in-assettable",

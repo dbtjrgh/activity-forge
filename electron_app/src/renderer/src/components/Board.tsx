@@ -5,7 +5,6 @@ import NowList from './board/NowList'
 import RunTable from './board/RunTable'
 import StatusBar from './board/StatusBar'
 import Tiles from './board/Tiles'
-import VacationList from './board/VacationList'
 import './board/board.css'
 
 /**
@@ -49,8 +48,7 @@ function Board({
           <StatusBar rows={result.rows} />
           {done < result.rows.length && <NowList rows={result.rows} onOpen={onForge} />}
           <LayoutPicks subject={result.subject} issue={result.issue} rows={result.rows} onChanged={onChanged} />
-          {/* 방학호와 리소스가 거의 다 같은 짝 — 1~5호 · 6호(방학)에만 있다 */}
-          <VacationList rows={result.rows} onOpen={onForge} />
+          {/* 방학호와 리소스가 거의 다 같은 짝은 칸 위 테두리 딱지로만 보인다 — 따로 모은 목록은 2026-10-26 사용자 말로 걷었다(6호까지 다 끝난 호라 볼 일이 없음) */}
           <div id={TOUR_ANCHOR.boardTiles}>
             <Tiles rows={result.rows} onOpen={onForge} />
           </div>

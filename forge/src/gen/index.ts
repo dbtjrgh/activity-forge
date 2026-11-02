@@ -21,6 +21,7 @@ import {
   renderIndexHtml,
 } from "./render";
 import { checkAssetFiles } from "./genassets";
+import { deriveExports } from "./gdexports";
 
 const COPY_AS_IS = ["App.vue", "main.ts", "style.css"];
 const RSC_DIRS = ["images", "sounds", "animations"];
@@ -88,7 +89,7 @@ export function generate(recipeFile: string, opts: GenOptions = {}): GenResult {
   const files: Record<string, string> = {
     "Activity.ts": renderActivity(study.code, spec),
     "AssetTable.ts": renderAssetTable(study.code, recipe, spec),
-    "GameData.ts": renderGameData(spec, node),
+    "GameData.ts": renderGameData(spec, node, deriveExports(spec, recipe.gameData)),
     "activityInfo.json": renderActivityInfo(study.code, recipe),
     "index.html": renderIndexHtml(
       study.code,

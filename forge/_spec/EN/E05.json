@@ -5,8 +5,8 @@
   "title": "낱말 창문 — 창문을 열어 낱말 카드 보기",
   "summary": "무대에 창문이 여러 개 서 있고 창문마다 캐릭터 그림자가 좌우로 어른거립니다. 창문을 누르면 열리면서 조명이 켜지고 그림자가 캐릭터로 바뀐 뒤, 그 낱말의 카드가 화면 가운데에 크게 떠서 소리를 냅니다. 창문을 전부 열면 완료 버튼이 나타나고, 그것을 누르면 끝납니다. 다 연 뒤에는 창문을 다시 눌러 카드를 또 볼 수 있습니다.",
   "reference": {
-    "moduleCommit": "f5ea4aaaddd2c34f831d4c216f5ce59946230ccf",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-13) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "cd95106669029c9beee0ed4f274927aef1211343",
+    "moduleCommitWhy": "2026-10-26 설명 글의 줄 번호와 주요 동작(섞기 · 기본값 · 고정 개수 · 박힌 이름 · 등록하는 이름)을 모듈 코드와 대 봤습니다. 모든 문장을 한 줄씩 대 본 것은 아닙니다.",
     "module": "sparkon_common/_common/module/EN/E05",
     "activities": [
       "ENL1M01W1S1",
@@ -195,12 +195,14 @@
             {
               "key": "answerCard",
               "type": "asset:image",
-              "desc": "**모듈이 안 읽습니다.** 카드 그림은 answercard_{word} 로 찾습니다."
+              "desc": "**모듈이 읽지 않습니다**(모듈 폴더와 액티비티 훅에 이 이름이 없습니다). 카드 그림은 answercard_{word} 로 찾습니다.",
+              "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
             },
             {
               "key": "answerSound",
               "type": "asset:sound",
-              "desc": "**모듈이 안 읽습니다.** 낱말 소리는 word_{word} 로 찾습니다."
+              "desc": "**모듈이 읽지 않습니다**(모듈 폴더와 액티비티 훅에 이 이름이 없습니다). 낱말 소리는 word_{word} 로 찾습니다.",
+              "aliasMayBeOff": "모듈이 이 값을 안 읽습니다 — AssetTable 에 없어도 화면과 소리는 같습니다."
             }
           ],
           "desc": "칸 하나."

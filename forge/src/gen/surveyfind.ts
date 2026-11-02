@@ -10,6 +10,7 @@ import { workRoot } from "./paths";
 import { commonRoot } from "./commonroot";
 import type { Sample } from "./survey";
 import { readGameData } from "./surveyread";
+import { specRoot } from "./gdexports";
 // 공통 repo 의 폴더 이름과 학습코드의 과목 글자가 다릅니다(국어 KO ↔ KR). 그 표는 `subjects.ts` 한 곳입니다.
 import { SUBJECT_CODES, dirOf } from "./subjects";
 
@@ -64,12 +65,14 @@ export function surveyAll(): Map<string, Sample[]> {
 // 모듈 하나를 쓰는 액티비티만. GameData 까지 읽어서 돌려줍니다.
 export function findUsers(subject: string, module: string): Sample[] {
   const want = module.toUpperCase();
+  // 스펙이 정한 본문 export 를 읽는다 — 첫 export 가 본문이 아닌 모듈이 있다(E28, `gdexports.ts`)
+  const prefer = specRoot(subject, module);
   const out: Sample[] = [];
   for (const dir of activityDirs()) {
     const hit = modulesOf(dir).some(
       (r) => r.module.toUpperCase() === want && r.subject === subject,
     );
-    if (hit) out.push(readSample(dir));
+    if (hit) out.push(readSample(dir, prefer));
   }
   return out.sort((a, b) => a.code.localeCompare(b.code));
 }
@@ -139,10 +142,10 @@ function stub(dir: string): Sample {
   return { code: path.basename(dir), month: monthOf(dir), dir, root: null, data: undefined };
 }
 
-function readSample(dir: string): Sample {
+function readSample(dir: string, prefer?: string): Sample {
   const s = stub(dir);
   try {
-    const g = readGameData(dir);
+    const g = readGameData(dir, prefer);
     if (!g) return { ...s, note: "GameData.ts 가 없습니다" };
     return { ...s, root: g.root, data: g.data };
   } catch (e) {

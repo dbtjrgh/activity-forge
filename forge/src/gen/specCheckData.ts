@@ -46,6 +46,29 @@ export function checkGameData(v: unknown, errors: string[]): void {
     errors.push('gameData.of 는 kind 가 "array" 일 때만 씁니다.');
   }
   checkFields(v.fields, "gameData.fields", errors);
+  checkDerived(v.derived, v.root, errors);
+}
+
+// 본문에서 뽑는 export (`gdexports.ts`). 이름이 본문과 같거나 둘이 겹치면 생성기가 같은 export 를 두 번 쓴다.
+function checkDerived(list: unknown, root: unknown, errors: string[]): void {
+  if (list === undefined) return;
+  if (!Array.isArray(list)) {
+    errors.push("gameData.derived 가 배열이 아닙니다.");
+    return;
+  }
+  const seen = new Set<string>();
+  list.forEach((d, i) => {
+    const at = `gameData.derived[${i}]`;
+    if (!isObj(d)) {
+      errors.push(`${at} 가 객체가 아닙니다.`);
+      return;
+    }
+    if (typeof d.name !== "string" || !IDENT.test(d.name)) errors.push(`${at}.name 이 식별자가 아닙니다.`);
+    else if (d.name === root) errors.push(`${at}.name 이 본문(root)과 같습니다.`);
+    else if (seen.has(d.name)) errors.push(`${at}.name "${d.name}" 이 두 번 적혔습니다.`);
+    else seen.add(d.name);
+    if (typeof d.unionOf !== "string" || d.unionOf === "") errors.push(`${at}.unionOf 가 비었습니다 — 뽑을 길을 적어야 합니다.`);
+  });
 }
 
 export function checkFields(list: unknown[], where: string, errors: string[]): void {

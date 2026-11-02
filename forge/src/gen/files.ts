@@ -72,7 +72,14 @@ export function rscDir(code: string): string | null {
 
 export function listFiles(code: string): RscListing | null {
   const dir = rscDir(code);
-  if (!dir) return null;
+  return dir ? listDir(dir) : null;
+}
+
+/**
+ * 리소스 꼴 폴더 하나를 갈래별로 — `listFiles` 의 몸통. 앱 받을 리소스 창이 호 저장소 쪽
+ * (`rscOfDone`, 리소스 폴더를 정리한 뒤 파일이 남는 곳)도 같은 갈래로 읽게 뗐습니다(2026-10-28).
+ */
+export function listDir(dir: string): RscListing {
   if (!fs.existsSync(dir)) return { dir, exists: false, files: [] };
 
   const files: RscFile[] = [];

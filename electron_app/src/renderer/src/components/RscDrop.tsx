@@ -127,7 +127,7 @@ function RscDrop({
                 >
                   덮어쓰기
                 </button>
-                <span className="sub">폴더에 있던 기존 파일은 삭제됩니다.</span>
+                <span className="sub">폴더에 있던 기존 파일은 휴지통으로 옮깁니다.</span>
               </p>
             </>
           )}
