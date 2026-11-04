@@ -5,8 +5,8 @@
   "title": "",
   "summary": "",
   "reference": {
-    "moduleCommit": "f98fae5154846c8bd019a1791f4f733b8483b8ee",
-    "moduleCommitWhy": "어림 — 스펙 파일 마지막 커밋(2026-10-06) 이전의 모듈 마지막 커밋입니다. 맞춰 본 것이 아닙니다(2026-10-14 specpin --guess).",
+    "moduleCommit": "9ba1eeb56731a25f82367022e93771943f97d93b",
+    "moduleCommitWhy": "2026-11-03 모듈 코드와 맞춰 봤습니다.",
     "module": "sparkon_common/_common/module/KR/K33",
     "activities": [
       "KOL2M01W2S2",
@@ -316,6 +316,13 @@
                 "type": "point",
                 "required": true,
                 "figma": true
+              },
+              {
+                "key": "scale",
+                "type": "number",
+                "required": false,
+                "figma": true,
+                "desc": "진행자 크기입니다. 없으면 1.4 입니다. 발밑(아래 가운데)을 기준으로 커집니다. 9호 KOL2M09W2S2 는 1.58."
               }
             ]
           },
@@ -329,6 +336,13 @@
                 "type": "point",
                 "required": true,
                 "figma": true
+              },
+              {
+                "key": "centerY",
+                "type": "number",
+                "required": false,
+                "figma": true,
+                "desc": "힌트 줄 묶음 가운데의 y 입니다(첫 줄 자리가 0, 아래가 +). 힌트가 늘 때마다 묶음이 위로 밀려 가운데를 지킵니다. 없으면 340(9호 figma 에서 힌트 1줄일 때 그 줄 가운데)입니다. 마지막 줄이 마이크 단추에 닿으면 모듈이 묶음째 올립니다."
               }
             ]
           },

@@ -29,8 +29,9 @@ export function takeNote(put: InboxResult, total: number, minutes: number): stri
   return parts.join(' ')
 }
 
-type Took = Pick<ShareItem, 'to' | 'where' | 'kind'> & { abs: string }
-type Entry = { from: string; where: string; at: string; auto?: boolean }
+type Took = Pick<ShareItem, 'to' | 'where' | 'kind' | 'near'> & { abs: string }
+/** `near` — 기획서 참고 이름으로 다른 학습코드 폴더에서 가져온 소리(`ShareItem.near`) */
+type Entry = { from: string; where: string; at: string; auto?: boolean; near?: boolean }
 export type ShareLog = { files: Record<string, Entry>; auto?: ShareAuto }
 
 const fileOf = (repoRoot: string, code: string): string => path.join(repoRoot, '_recipe', `${code}.share.json`)
@@ -44,13 +45,20 @@ export function readLog(repoRoot: string, code: string): ShareLog {
   }
 }
 
+/** 리소스 폴더에 아직 있는, 참고 이름으로 다른 학습코드 폴더에서 가져온 소리 — 사람이 지웠으면 빼고 센다 */
+export function nearTaken(log: ShareLog, dir: string): string[] {
+  return Object.entries(log.files)
+    .filter(([to, e]) => e.near && fs.existsSync(path.join(dir, to)))
+    .map(([to]) => path.basename(to))
+}
+
 /** 넣은 것을 남긴다 — `took` 은 실제로 들어간 자리. `auto` 면 마지막 저절로 가져온 것도 바꾼다 */
 export function writeLog(repoRoot: string, code: string, picks: Took[], took: string[], auto: boolean): ShareLog {
   const log = readLog(repoRoot, code)
   if (!took.length) return log
   const at = new Date().toISOString()
   const done = picks.filter((p) => took.includes(p.to))
-  for (const p of done) log.files[p.to] = { from: p.abs, where: p.where, at, ...(auto ? { auto: true } : {}) }
+  for (const p of done) log.files[p.to] = { from: p.abs, where: p.where, at, ...(auto ? { auto: true } : {}), ...(p.near ? { near: true } : {}) }
   if (auto) {
     const kinds: ShareAuto['kinds'] = {}
     for (const p of done) kinds[p.kind] = (kinds[p.kind] ?? 0) + 1

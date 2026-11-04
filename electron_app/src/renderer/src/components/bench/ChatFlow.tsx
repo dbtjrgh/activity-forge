@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { BUTTON, type ChatState } from '../../../../shared/forge'
+import { BUTTON, isClaudeLoginNote, type ChatState } from '../../../../shared/forge'
 import { TARGET } from '../../lib/benchorder'
 import { formatDate } from '../../lib/format'
+import ClaudeLogin from '../ClaudeLogin'
 import type { Chat } from './useChat'
 import './chat.css'
 
@@ -78,6 +79,10 @@ export default function ChatFlow({ chat, canRun, lock, force, noShot }: { chat: 
       </div>
       {armed && <p className="state warn">figma 화면이 없습니다. 그대로 시작하려면 한 번 더 누르세요.</p>}
       {info.error && <p className="state error">{info.error}</p>}
+      {/* 로그인이 풀렸으면 이 칸에서 로그인한다 — 첫 차례에 막혔으면 이어 갈 대화가 없어 다시 시작해야 한다 */}
+      {isClaudeLoginNote(info.error) && (
+        <ClaudeLogin done={info.sessionId ? '로그인되었습니다. 답을 보내면 대화를 이어 갑니다.' : '로그인되었습니다. 다시 시작하세요.'} />
+      )}
       {info.progress.length > 0 && (
         <ol className="chat-progress" ref={log}>
           {info.progress.map((l, i) => (
@@ -117,6 +122,12 @@ export default function ChatFlow({ chat, canRun, lock, force, noShot }: { chat: 
           {checks.files?.unused && checks.files.unused.length > 0 && (
             <p className="state warn">
               리소스 폴더에 받았는데 쓰지 않은 파일이 {checks.files.unused.length}개 있습니다. {checks.files.unused.slice(0, 6).join(', ')}
+            </p>
+          )}
+          {/* 막지 않는다 — 원본에서 그대로 가져온 다른 호 전용 녹음일 수 있다(`chatforeign.ts`) */}
+          {checks.foreign && checks.foreign.length > 0 && (
+            <p className="state warn">
+              다른 호에서만 쓰던 녹음이 {checks.foreign.length}개 있습니다. 이번 호 공유 폴더에 같은 역할의 녹음이 있는지 들어 보세요. {checks.foreign.join(', ')}
             </p>
           )}
           {checks.spec && checks.spec.length > 0 && (

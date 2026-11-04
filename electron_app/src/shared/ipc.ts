@@ -179,5 +179,7 @@ export const IPC = {
   setupEvent: 'setup:event',
   setupFinish: 'setup:finish',
   setupOpenInstall: 'setup:openInstall',
-  setupGitIdentity: 'setup:gitIdentity'
+  setupGitIdentity: 'setup:gitIdentity',
+  claudeLogin: 'setup:claudeLogin',
+  claudeLoggedIn: 'setup:claudeLoggedIn'
 } as const

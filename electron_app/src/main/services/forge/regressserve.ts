@@ -5,8 +5,7 @@
  * - **덧config 자리가 다르다** — 미리보기 덧config(`devconfig.ts`)를 다시 쓰면 그 config 를 보던 사람의 vite 가 다시 뜬다.
  *   호마다 `회귀 검사 임시 폴더/vite.<M 번호>.mts` 에 쓴다
  * - **의존성 캐시도 따로**(`cacheDir`) — 호 저장소의 `node_modules/.vite` 를 사람의 서버와 같이 쓰면 한쪽이 다시 묶는 동안 다른 쪽이 깨진다
- * - **전역 정션을 안 따른다** — `sparkon_common/node_modules` 는 한 호만 가리키는 정션이라(`sparkon link`), 공용 코드의 `pixi.js` 등이
- *   다른 호 것으로 풀릴 수 있다. 호 package.json 의 의존성을 전부 `resolve.dedupe` 에 넣어 늘 그 호 것으로 푼다
+ * - **전역 정션을 안 따른다** — 호 package.json 의 의존성을 전부 `resolve.dedupe` 에 넣어 늘 그 호 것으로 푼다(`hallDeps`, 미리보기도 같다)
  * - 안내 영상이 없으면 「다 봤다」로 보내는 글은 미리보기와 같은 것(`GUIDE_SKIP_PLUGIN`)을 끼운다
  * - 파일 감시(`watch: null`)와 HMR 을 끈다 — 돌리는 동안 바뀔 것이 없고, 쓰는 중인 파일에 서버째 죽는 길(함정)도 막는다
  * - 호 저장소의 정션 셋(`hallLinks`)이 없으면 띄우지 않는다 — **만들지 않는다**(전역 상태라 사람이 건다)
@@ -17,11 +16,11 @@
  */
 
 import type { ChildProcess } from 'node:child_process'
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { toMessage } from '../../lib/errors'
-import { baseImport, GUIDE_SKIP_PLUGIN } from './devconfig'
+import { baseImport, GUIDE_SKIP_PLUGIN, hallDeps } from './devconfig'
 import { hallLinks } from './viewcheck'
 import { noVite, plain, portIn, READY_TIMEOUT, spawnVite, viteBin, waitVitePort } from './vitespawn'
 
@@ -61,8 +60,7 @@ function sweepStamps(dir: string, month: string): void {
 }
 
 function writeConfig(repo: string, month: string): string {
-  const pkg = JSON.parse(readFileSync(join(repo, 'package.json'), 'utf8')) as { dependencies?: object; devDependencies?: object }
-  const deps = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies })
+  const deps = hallDeps(repo)
   const dir = regressTmp()
   mkdirSync(dir, { recursive: true })
   sweepStamps(dir, month)

@@ -171,3 +171,21 @@ export interface ShapeRunResult {
   note: string
   error: string
 }
+
+// ─── Claude Code 로그인 ─────────────────────────────────────────────────
+
+/**
+ * **Claude Code 에 로그인이 안 돼 있다** (2026-10-01) — 깔기만 하고 로그인을 안 했거나, 로그인이 풀렸을 때.
+ * 화면이 이 글과 같은지 보고 「Claude Code 로그인」 단추를 붙인다(`ClaudeLogin.tsx`) — 그래서 메인과 렌더러가 같이 보는 여기에 둔다.
+ * 2026-11-03 까지는 「터미널에서 claude를 실행해」라 했다 — 사용자가 「양산기 창에서 해결」을 바랐다
+ */
+export const CLAUDE_LOGIN_NOTE = 'Claude Code에 로그인되어 있지 않습니다. 「Claude Code 로그인」을 눌러 로그인한 뒤 다시 시도하세요.'
+
+/** 로그인이 풀렸다는 글인가 — 11-03 전에 남은 대화 기록의 옛 문장(「터미널에서 claude를 실행해」)도 앞머리가 같다 */
+export const isClaudeLoginNote = (text: string | undefined): boolean => Boolean(text?.startsWith('Claude Code에 로그인되어 있지 않습니다.'))
+
+/** 로그인 창을 연 결과 — 못 열었으면 까닭 */
+export interface ClaudeLoginOpen {
+  ok: boolean
+  error?: string
+}

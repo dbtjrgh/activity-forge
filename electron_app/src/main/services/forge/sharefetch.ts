@@ -27,7 +27,7 @@ import { loadForge, type Forge } from './runtime'
 import { autoNoteOf, copyIn, copyingOf, startAuto, withTake } from './shareauto'
 import { budget, reach } from './sharefind'
 import { pickEnSounds, pickSong, pickSpeak, pickStory } from './shareen'
-import { readLog } from './sharelog'
+import { nearTaken, readLog } from './sharelog'
 import { pickNuSounds } from './sharenu'
 import { pickJoined, pickNear, pickShared } from './shareown'
 import { haveOf, pickLotties, pickMotion, pickSounds, type Ctx, type Pick, type Picked } from './sharepick'
@@ -106,9 +106,11 @@ async function look(code: string, fresh: boolean): Promise<Found> {
   const subject = code.slice(0, 2)
   const unknown = (what: string): string => `공유 폴더에서 ${subjectName(subject)} ${what}의 위치를 모릅니다.`
   if (!shareKnown(subject)) return { look: empty(code, root, unknown('리소스')), picks: [], forge }
-  const auto = readLog(forge.paths.REPO_ROOT, code).auto
+  const log = readLog(forge.paths.REPO_ROOT, code)
+  const auto = log.auto
   const autoNote = autoNoteOf(code)
-  const out: ShareLook = { ...empty(code, root), dir, ...(auto ? { auto } : {}), ...(autoNote ? { autoNote } : {}) }
+  const near = nearTaken(log, dir)
+  const out: ShareLook = { ...empty(code, root), dir, ...(auto ? { auto } : {}), ...(autoNote ? { autoNote } : {}), ...(near.length ? { near } : {}) }
   const offline = await reach(root, fresh)
   if (offline) return { look: { ...out, offline, ms: Date.now() - t0 }, picks: [], forge }
   // 누리는 뿌리의 형제 폴더다(`sharerulenu.ts`). 훑기는 없는 폴더를 빈 것으로 읽어, 뿌리를 다른 곳으로 정한 사람에게 0 이 「없음」으로 보인다 — 모른다고 한다

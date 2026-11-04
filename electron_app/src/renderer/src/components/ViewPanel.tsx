@@ -116,7 +116,7 @@ function ViewPanel({ code, moduleName }: { code: string; moduleName: string }) {
         <>
           <p className="state warn">{check.blocked}</p>
           {/* 한 번 눌러 건다 (2026-09-29 사용자 말 — 「딸깍으로」). 명령은 안 될 때만 보인다 */}
-          {check.command && (broken.length > 0 || !check.sameMonth) && (
+          {check.command && broken.length > 0 && (
             <>
               <p className="row-actions">
                 <button className="go" onClick={() => void link()} disabled={linking} title="연결하면 다른 호의 미리보기 연결은 해제됩니다.">
@@ -158,8 +158,8 @@ function ViewPanel({ code, moduleName }: { code: string; moduleName: string }) {
       {up && <p className="path mono">{server.url}</p>}
       <PreviewIssues code={code} />
 
-      {/* 정션 목록 — 서버가 도는 동안 다른 호로 바뀌면 알린다(`ViewLinks.tsx`) */}
-      <ViewLinks code={code} check={check} running={Boolean(up)} />
+      {/* 정션 목록(`ViewLinks.tsx`) */}
+      <ViewLinks check={check} />
 
       {/* ─ 재현 검사 ─ 띄워 보기와 짝이다. 눈으로 보는 것과 기계가 보는 것 */}
       <p className="row-actions repro-go">

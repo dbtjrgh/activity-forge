@@ -8,7 +8,7 @@
 
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import type { SetupCheck } from '../../../shared/forge'
+import { CLAUDE_LOGIN_NOTE, type SetupCheck } from '../../../shared/forge'
 import { git } from '../../lib/git'
 import { poppler } from './poppler'
 import { refreshToolPath } from './toolpath'
@@ -73,7 +73,7 @@ export function nodeFits(v: string): boolean {
  * Claude Code 에 로그인돼 있나 — `claude auth status` 가 JSON 으로 답한다(`loggedIn`).
  * 로그인이 안 됐으면 종료 코드가 0 이 아닐 수 있어 오류 쪽 stdout 도 본다. 못 읽으면 null(모름) — 모르는 것을 「안 됨」으로 막지 않는다
  */
-async function claudeLoggedIn(): Promise<boolean | null> {
+export async function claudeLoggedIn(): Promise<boolean | null> {
   let out = ''
   try {
     out = (await run('claude', ['auth', 'status'], { timeout: 15_000, windowsHide: true, shell: process.platform === 'win32' })).stdout
@@ -154,7 +154,7 @@ export async function programChecks(): Promise<SetupCheck[]> {
         claudeV === null
           ? '대화로 만들기에 필요합니다. 설치하고 로그인한 뒤 「다시 확인」을 누르세요.'
           : claudeIn === false
-            ? 'Claude Code에 로그인되어 있지 않습니다. 터미널에서 claude를 실행해 로그인한 뒤 「다시 확인」을 누르세요.'
+            ? CLAUDE_LOGIN_NOTE
             : claudeIn === null
               ? '로그인 상태를 확인하지 못했습니다. 로그인했으면 「확인했습니다」를 누르세요.'
               : '대화로 만들기에 씁니다.'

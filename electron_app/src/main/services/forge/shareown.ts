@@ -3,8 +3,8 @@
  *
  * `sharepick.ts` `pickSounds` 는 이름 주인 학습코드의 자리에서 찾는다. 그 밖에 완성본이 쓴 소리가 두 가지 있었다 —
  * - **다른 번호 이름**(`near`) — 기획서가 적은 다른 학습코드 번호 이름 가운데 `planreuse.ts` 규칙이 안 받은 것(대개 한 주 늦은 번호, 다른 레벨 번호).
- *   **이 학습코드 폴더(`sharerule.ts` `ownSoundDir`)에 있을 때만** 받는다 — 기획서 PDF 에 다른 시트 이름이 같이 실려 와서 이름 주인 자리에서 찾으면
- *   안 쓰는 소리가 들어온다. 완성본으로 잼 — 국어 114개 / 16 학습코드, 수학 39개 / 6. 그 폴더들의 다른 번호 이름 가운데 완성본이 안 쓴 것은
+ *   **이 학습코드 폴더(`sharerule.ts` `ownSoundDir`)에서** 찾는다 — 기획서 PDF 에 다른 시트 이름이 같이 실려 와서 이름 주인 자리에서 찾으면
+ *   안 쓰는 소리가 들어온다(2026-11-04 부터 같은 호의 앞선 학습코드가 주인이면 그 폴더도 본다 — `pickNear`). 완성본으로 잼 — 국어 114개 / 16 학습코드, 수학 39개 / 6. 그 폴더들의 다른 번호 이름 가운데 완성본이 안 쓴 것은
  *   국어 342개 중 5, 수학 86개 중 25
  * - **수학 숫자 읽기 이름**(`shared`, `SL_ma_main_` · `inc_` · `sel_`) — 이름에 학습코드 번호가 없어 주인을 모른다. 이 학습코드 폴더, 없으면 숫자 읽기
  *   공통 폴더(`numberSpot`)에서 **이름으로만** 찾는다. 공통 폴더를 통째로 가져오면 학습코드마다 200개 가운데 대부분이 안 쓰는 것이다
@@ -41,15 +41,40 @@ function take(c: Ctx, out: Picked, name: string, found: Map<string, Hit[]>): boo
   return true
 }
 
-/** 기획서가 적은 다른 번호 이름 — 이 학습코드 폴더에 있을 때만(국어 · 수학) */
+/**
+ * 기획서가 적은 다른 번호 이름 — 이 학습코드 폴더, 없으면 **같은 호에서 앞선 학습코드**인 이름 주인 폴더(국어 · 수학).
+ * 2026-11-04 — KOL2M09W2S2 기획서의 정답 소리 `SL_ko_133_s1_nar02 · 03`(9호 Lv1 1주)은 「기존」 표시가 표 칸에서 떨어져 `near` 로만 남았고,
+ * 이 학습코드 폴더(Lv2 2주 말하기)에는 없어 Claude 가 사람에게 넣어 달라고 했다. 이름 주인 폴더에는 있었다.
+ * 다른 시트 이름이 섞이는 것은 대개 뒤 시트라, 주인이 같은 호 · 같은 과목이고 주 · 세션이 이 학습코드보다 앞설 때만 주인 폴더를 본다 —
+ * 기획서 이름이 있는 38개로 재 보니 새로 가져올 이름 2개, 둘 다 완성본이 쓴 소리였다
+ */
 export async function pickNear(c: Ctx, names: string[]): Promise<Picked> {
   const out = empty()
   const s = c.forge.spec.parseStudyCode(c.code)
   if (!s || (s.subject !== 'KO' && s.subject !== 'MA')) return out
-  const todo = todoOf(c, out, names)
+  let todo = todoOf(c, out, names)
   if (!todo.length) return out
   const found = byKey((await listAll(c, soundSpots(c.root, s), (h) => AUDIO.test(h.rel) && ownSoundDir(h.rel, s))).hits)
-  for (const n of todo) take(c, out, n, found)
+  todo = todo.filter((n) => !take(c, out, n, found))
+
+  const byHome = new Map<string, string[]>()
+  for (const n of todo) {
+    const home = homeOf(n)
+    const h = home ? c.forge.spec.parseStudyCode(home) : null
+    const earlier = h && (h.week < s.week || (h.week === s.week && h.session < s.session))
+    if (home && h && h.subject === s.subject && h.month === s.month && earlier) byHome.set(home, [...(byHome.get(home) ?? []), n])
+  }
+  for (const [home, list] of byHome) {
+    const h = c.forge.spec.parseStudyCode(home)
+    if (!h) continue
+    const there = byKey((await listAll(c, soundSpots(c.root, h), (x) => AUDIO.test(x.rel) && ownSoundDir(x.rel, h))).hits)
+    for (const n of list) {
+      const before = out.picks.length
+      take(c, out, n, there)
+      // 이 자리에서 찾은 것은 표시한다 — 화면 · 가져온 기록이 「들어 보세요」로 알린다
+      for (const p of out.picks.slice(before)) p.near = true
+    }
+  }
   return out
 }
 

@@ -75,6 +75,9 @@ export function firstBrief(c: ChatCtx, notes: ChatTurn[] = []): string {
     '## 끝맺음 (반드시)',
     `차례를 끝낼 때마다 마지막에 ${OPEN} 와 ${CLOSE} 사이에 JSON 하나를 둔다. 사람에게 보이는 글은 한국어, 업무용 말투로 짧게 쓴다.`,
     '사람이 꼭 봐야 할 것(기획서 오기로 보이는 것, 기획서와 다르게 한 것)은 **이렇게** 굵게 쓰고 맨 앞에 둔다.',
+    // 2026-11-03 사용자 — 「검수칸 · 대화칸 문장이 쓸데없이 길다, 깔끔하게 요약해서」. 끝 보고가 열 줄 넘게 같은 말을 되풀이했다
+    '글은 요약해서 쓴다. say 는 세 줄 이내, check 는 다섯 항목 이내이고 항목마다 한 문장(60자 안팎)이다. 질문도 한두 문장, 고를 답은 짧은 말이다.',
+    '파일 이름 나열 · 까닭 설명 · 확인한 과정은 쓰지 않고 사람이 할 일과 결과만 쓴다. check 를 say 에 되풀이하지 않는다. 덩어리 앞 글은 화면에 안 나오니 할 말은 say 에 쓴다.',
     '질문할 때:',
     OPEN,
     '{"status":"ask","say":"지금까지 한 일 한두 줄","questions":[{"text":"질문","options":["고를 답1","고를 답2"]}]}',
@@ -124,12 +127,12 @@ export function replyBrief(text: string, images: string[], rsc: string, moved: M
     ...lines('지난 차례 뒤에 내용이 바뀐 파일(같은 이름 — 다시 열어 본다):', moved.changed),
     ...lines('지난 차례 뒤에 리소스 폴더에서 없어진 파일:', moved.gone),
     ...(figma ? lines('지금의 figma 화면 차례(붙인 차례 = 이닝 차례):', shots) : []),
-    // 그새 figma 가 들어왔으면 figma 없이 어림한 자리를 다시 맞추게 한다 — 알리기만 하면 앞서 쓴 어림을 그대로 둔다
-    ...([...moved.added, ...moved.changed].some((f) => f.startsWith('_figma/')) ? ['', FIGMA_REDO] : []),
+    ...([...moved.added, ...moved.changed].some((f) => f.startsWith('_figma/')) ? ['', FIGMA_REDO] : []), // figma 가 새로 오면 어림한 자리를 다시 맞추게 — 알리기만 하면 어림을 그대로 둔다
     // 그림이 새로 들어왔으면 같은 배경 짝을 다시 잰 것 — 별 없는 판 · 효과 판을 나중에 넣는 일이 잦다(9호 인터북)
     ...pages,
     '',
-    `이어서 진행하고, 같은 꼴(${OPEN} … ${CLOSE})로 끝맺는다.`
+    `이어서 진행하고, 같은 꼴(${OPEN} … ${CLOSE})로 끝맺는다.`,
+    '사람에게 보이는 글(say · check · 질문)은 요약해서 짧게 쓴다. say 세 줄, check 다섯 항목 이내다.'
   ].join('\n')
 }
 
@@ -151,7 +154,8 @@ export function fixBrief(c: ChatChecks, opts: { spec: boolean; last?: boolean })
     ...part('AssetTable 이 가리키는데 호 저장소에 없는 파일(files 에 빠졌거나 이름이 다르다):', c.files?.missing ?? []),
     ...part('리소스 복사 실패:', c.files?.failed ?? []),
     ...part('리소스 폴더에 왔는데 AssetTable 이 안 부르는 파일(참고 — 기획서의 이펙트 · 소리를 빠뜨린 것인지 본다. 일부러 안 쓴 것이면 끝 보고에 까닭을 적는다):', c.files?.unused ?? []),
-    ...part('스펙 검사(참고 — 맞게 한 것이면 그대로 두고 끝 보고에 까닭을 적는다):', opts.spec ? (c.spec ?? []) : [])
+    ...part('스펙 검사(참고 — 맞게 한 것이면 그대로 두고 끝 보고에 까닭을 적는다):', opts.spec ? (c.spec ?? []) : []),
+    ...part('다른 호에서만 쓰던 녹음인데 이번 기획서에 없는 소리(참고 — 이번 호 공유 폴더 · 리소스 폴더에 같은 역할의 녹음이 있으면 그것으로 바꾼다):', c.foreign ?? [])
   ].join('\n')
 }
 
@@ -179,7 +183,8 @@ export function readReply(text: string): ChatReply {
   const end = text.indexOf(CLOSE, at)
   const j = blockOf(text.slice(at + OPEN.length, end >= 0 ? end : undefined))
   if (!j) return { kind: 'ask', say: text.trim(), questions: [], unread: true }
-  const say = [before, str(j['say'])].filter(Boolean).join('\n\n')
+  // 덩어리 앞 글(일하며 쓴 설명)은 say 가 있으면 싣지 않는다 — 같은 말이 두 번 붙어 끝 보고가 열 줄을 넘었다(2026-11-03)
+  const say = str(j['say']) || before
   if (j['status'] === 'done') {
     const files = arr(j['files'])
       .map((f) => (f && typeof f === 'object' ? (f as Record<string, unknown>) : {}))

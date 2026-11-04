@@ -1,6 +1,5 @@
 /** 만들려던 글 보기 · 실제로 쓰기 · 띄워 보기 · 재현 검사. 왜 모양을 여기 적는지는 `../forge.ts` 머리말. */
 
-import { hoLabel } from './boardlist'
 import type { InboxResult } from './inbox'
 import type { RunResult } from './run'
 
@@ -131,8 +130,8 @@ export interface ViewCheck {
   activity: boolean
   links: LinkState[]
   /**
-   * `sparkon_common/node_modules` 가 지금 가리키는 호.
-   * **호마다 다시 거는 전역 상태다** — 다른 호가 걸려 있으면 이 차시는 못 띄운다.
+   * `sparkon_common/node_modules` 가 지금 가리키는 호. **호마다 다시 거는 전역 상태다.**
+   * 2026-11-03 부터 다른 호가 걸려 있어도 띄운다 — 미리보기 덧config 가 의존성을 이 호 것으로 푼다(`devconfig.ts`)
    */
   linkedMonth: string
   sameMonth: boolean
@@ -140,10 +139,6 @@ export interface ViewCheck {
   command: string
   blocked: string
 }
-
-/** 미리보기 서버가 도는 동안 다시 잰 `check` 로 — 공통 node_modules 정션이 다른 호로 바뀌었으면 알릴 한 줄, 아니면 빈 글 */
-export const junctionNote = (c: ViewCheck): string =>
-  c.linkedMonth && !c.sameMonth ? `정션이 ${hoLabel(c.linkedMonth)}로 바뀌어 미리보기가 그 호 코드를 띄웁니다.` : ''
 
 /** 떠 있던 dev 서버가 죽었을 때 메인이 보내는 로그 줄의 머리 — 화면은 이 줄을 보고 「실행 중」을 내린다 */
 export const VIEW_EXITED = '서버가 종료되었습니다'

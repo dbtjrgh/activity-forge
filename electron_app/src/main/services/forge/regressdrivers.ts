@@ -130,7 +130,32 @@ const M38_2 = `
     await h.sleep(250)
   }`
 
-const DRIVERS: Record<string, string> = { M01, M05, M28, M31, M38_2 }
+// M39 — 모듈이 힌트에 쓰는 길 찾기(`_recommend`)를 그대로 따라 방향 단추를 채우고 출발을 누른다.
+// 입력은 지시 대사가 끝나 판이 풀리고(mLocked false) 출발을 기다릴 때(mWaitGo)만 받는다. 길과 어긋난 화살표가 있으면 휴지통으로 비운다
+const M39 = `
+  const m = await h.wait(() => h.find('M39'))
+  if (!m) return h.stuck('M39 모듈을 화면에서 찾지 못했습니다.')
+  const cmd = m.mCommand
+  R.data = m.mQuizData && m.mQuizData.inningData ? m.mQuizData.inningData.length : null
+  let at = '', tries = 0
+  while (!R.done) {
+    if (m.mWaitGo && !cmd.mLocked) {
+      const key = m.mInning ? m.mInning.startCoord + '>' + m.mInning.goalCoord + ':' + cmd.inputs.length : ''
+      if (key !== at) { at = key; tries = 0 }
+      const where = '이닝(' + key + ')'
+      if (++tries > ${TRIES}) return h.stuck(where + ' 단추를 눌러도 넘어가지 않습니다.')
+      const dir = cmd.isFull ? null : m._recommend()
+      const btn = cmd.mButtons.find((b) => b.dir === dir)
+      const target = cmd.isFull ? cmd.mGo : btn ? btn.sprite : cmd.inputs.length ? cmd.mTrash : null
+      if (!target) return h.stuck(where + ' 우체통까지 가는 길을 찾지 못했습니다.')
+      if (cmd.isFull) h.log(where + ' 출발 ' + cmd.inputs.join(','))
+      if (!(await h.press(target))) return h.stuck(where + ' 단추가 가려져 누를 수 없습니다.')
+      await h.sleep(300)
+    }
+    await h.sleep(200)
+  }`
+
+const DRIVERS: Record<string, string> = { M01, M05, M28, M31, M38_2, M39 }
 
 /** 끝까지 몰고 갈 수 있는 모듈 — 칸의 모듈이 여럿이면(「+」) 그 가운데 하나 */
 export function driverOf(module: string): { name: string; body: string } | null {

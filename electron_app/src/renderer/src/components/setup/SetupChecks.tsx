@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import type { SetupCheck } from '../../../../shared/forge'
+import { isClaudeLoginNote, type SetupCheck } from '../../../../shared/forge'
+import ClaudeLogin from '../ClaudeLogin'
 
 /**
  * 처음 설정의 「필요한 프로그램」 — `FirstRun.tsx` 에서 뗐다(2026-10-16, git 이름 칸과 「확인했습니다」가 붙어 200줄을 넘을 참이었다).
@@ -50,6 +51,7 @@ export default function SetupChecks({
                 </button>
               )}
               {c.identity && <GitIdentity onSaved={recheck} />}
+              {isClaudeLoginNote(c.note) && <ClaudeLogin done="로그인되었습니다." onDone={recheck} />}
             </li>
           )
         })}

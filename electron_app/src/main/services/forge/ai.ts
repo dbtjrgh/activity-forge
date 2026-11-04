@@ -18,6 +18,7 @@
  */
 
 import { execFile } from 'node:child_process'
+import { CLAUDE_LOGIN_NOTE } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import { AI_TIMEOUT, MAX_OUT, args, askFrom, type AgentReach } from './aiargs'
 import { tapeKey } from './aimodel'
@@ -28,11 +29,10 @@ import { tapeGet, tapeMiss, tapeMode, tapePut } from './tape'
 export const AI_SECONDS = AI_TIMEOUT / 1000
 
 /**
- * **Claude Code 에 로그인이 안 돼 있다** (2026-10-01) — 깔기만 하고 로그인을 안 했거나, 로그인이 풀렸을 때.
- * `claude -p` 는 영어 한 줄(「Invalid API key · Please run /login」 따위)을 답 자리나 오류에 낸다 — 그대로 보이면 무슨 일인지 모른다.
- * 초기 설정의 확인(`setup.ts`)도 같은 문장을 쓴다
+ * **Claude Code 에 로그인이 안 돼 있다** — `claude -p` 는 영어 한 줄(「Invalid API key · Please run /login」 따위)을 답 자리나 오류에 낸다.
+ * 그대로 보이면 무슨 일인지 모르므로 이 글로 바꾼다. 글은 화면도 보도록 `shared/forge/ai.ts` 에 있다
  */
-export const CLAUDE_LOGIN_NOTE = 'Claude Code에 로그인되어 있지 않습니다. 터미널에서 claude를 실행해 로그인한 뒤 다시 시도하세요.'
+export { CLAUDE_LOGIN_NOTE }
 // 2026-10-02 「Failed to authenticate: OAuth session expired and could not be refreshed」가 빠져 명령줄 전체가 화면에 떴다
 const LOGIN = /please run \/login|run \/login|not logged in|invalid api key|authentication_error|failed to authenticate|oauth (token|session) (has )?expired|login required/i
 /** 짧은 글만 본다 — 긴 답 안에 우연히 그 낱말이 있어도 로그인 오류로 읽지 않게 */

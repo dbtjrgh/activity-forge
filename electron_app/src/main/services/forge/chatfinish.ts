@@ -9,6 +9,7 @@
  * - **타입 검사(막음)** — 호 저장소 전체 `vue-tsc --noEmit`(`halltsc.ts`). **이 학습코드 폴더에서 난 오류만** 막는다 — 남의 폴더 오류는 우리 탓이 아니다.
  *   공용 모듈 오류는 막지 않고 실어 둔다(`common`, 화면이 경고) · 잰 시각(`at`)을 같이 남긴다 — 찍어 둔 결과라 스펙을 고쳐도 옛 결과가 보였다
  * - **받았는데 안 쓴 리소스(참고)** — 리소스 폴더에 왔는데 AssetTable 이 안 부르는 파일(`pubfiles.ts` `unusedRsc`). 9호 MAL2M08W1S3 의 새 정답 파티클이 그렇게 빠졌다
+ * - **다른 호에서만 쓰던 녹음(참고)** — 원본에서 그대로 가져온 그 호 전용 녹음(`chatforeign.ts`)
  * - **스펙 검사(참고)** — 2026-10-08 사용자 결정으로 막지 않는다. 리소스 파일 검사(`asset-file-*`)는 뺀다 — 호 저장소가 아니라 리소스 폴더를 봐서 틀리게 나온다
  *
  * Electron 을 import 하지 않는다(services 규칙).
@@ -19,6 +20,7 @@ import path from 'node:path'
 import type { ChatChecks } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import type { ChatFile } from './chatbrief'
+import { foreignSounds } from './chatforeign'
 import { identCheck } from './chatident'
 import type { ChatCtx } from './chatprep'
 import { hallTsc } from './halltsc'
@@ -124,7 +126,9 @@ export async function finishChat(forge: Forge, ctx: ChatCtx, files: ChatFile[]):
     files: { copied: copy.copied, missing: back.missing, failed: copy.failed, unused: back.unread ? [] : unusedRsc(ctx.rsc, ctx.pub, back.want, files, ctx.moduleDir) },
     ...(back.unread ? { unread: back.unread } : {}),
     // 학습코드가 폴더와 다르면 학습 기록이 다른 학습코드로 간다 — 막는다(`chatident.ts`)
-    ident: identCheck(ctx.act, ctx.code, ctx.origin.act)
+    ident: identCheck(ctx.act, ctx.code, ctx.origin.act),
+    // 다른 호에서만 쓰던 녹음 — 막지 않고 보인다(9호 KOL1M09W4S2 가 7호 박사 대사를 썼다)
+    foreign: back.unread ? [] : foreignSounds(forge, ctx.code, ctx.act, ctx.rsc, back.want)
   }
 }
 

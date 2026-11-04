@@ -23,7 +23,7 @@
  * Electron 을 import 하지 않는다(services 규칙).
  */
 
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -65,12 +65,28 @@ const guideSkip = {
 export const baseImport = (repo: string): string => `import base from ${JSON.stringify(join(repo, 'vite.config.ts').replace(/\\/g, '/'))}`
 
 /**
+ * 호 package.json 의 의존성 이름 전부 — `resolve.dedupe` 에 넣는다.
+ * `sparkon_common/node_modules` 는 한 호만 가리키는 정션이라(`sparkon link`) 공용 코드의 `pixi.js` 등이 다른 호 것으로 풀린다.
+ * dedupe 에 넣으면 vite 가 늘 이 호 뿌리에서 푼다 — 미리보기와 회귀 검사(`regressserve.ts`)가 같이 쓴다
+ */
+export function hallDeps(repo: string): string[] {
+  const pkg = JSON.parse(readFileSync(join(repo, 'package.json'), 'utf8')) as { dependencies?: object; devDependencies?: object }
+  return Object.keys({ ...pkg.dependencies, ...pkg.devDependencies })
+}
+
+/**
  * 호 저장소의 config 를 그대로 쓰되 위 글만 더한 config 를 만들어 그 자리를 돌려준다.
  *
  * **repo 의 config 를 다시 쓰지 않는다.** 별칭(`@_common`)·플러그인이 거기 있고,
  * 옮겨 적으면 두 벌이 되어 갈린다. 그대로 들여와 플러그인 하나만 얹는다.
+ *
+ * **전역 정션이 다른 호를 가리켜도 이 호 것으로 띄운다** (2026-11-03) — 의존성을 `hallDeps` 로 dedupe 하고,
+ * 의존성 캐시는 호마다 임시 폴더에 따로 둔다(호 저장소의 `node_modules/.vite` 는 사람이 손으로 띄운 `yarn dev` 몫).
+ * 그 전에는 「연결」로 정션을 다시 걸어야 했고, 그러면 다른 호에서 띄워 둔 미리보기가 바뀌었다.
+ * 회귀 검사가 10-15 부터 이 꼴로 호마다 띄워 왔고, M39(10호)를 8호 정션인 채로 이렇게 띄워 끝까지 돌려 봤다
  */
-export function writeDevConfig(repo: string): string {
+export function writeDevConfig(repo: string, month: string): string {
+  const dir = join(tmpdir(), 'sparkon-forge')
   const text = `${baseImport(repo)}
 
 ${GUIDE_SKIP_PLUGIN}
@@ -83,10 +99,14 @@ const watchGuard = {
   }
 }
 
-export default { ...base, plugins: [...(base.plugins ?? []), guideSkip, watchGuard] }
+export default {
+  ...base,
+  cacheDir: ${JSON.stringify(join(dir, `view-cache-${month}`).replace(/\\/g, '/'))},
+  resolve: { ...(base.resolve ?? {}), dedupe: ${JSON.stringify(hallDeps(repo))} },
+  plugins: [...(base.plugins ?? []), guideSkip, watchGuard]
+}
 `
   // **한 자리에 덮어쓴다** (M6) — 띄울 때마다 새 임시 폴더를 만들면 쌓이기만 하고 아무도 안 지운다
-  const dir = join(tmpdir(), 'sparkon-forge')
   mkdirSync(dir, { recursive: true })
   const at = join(dir, 'vite.forge.config.mts')
   writeFileSync(at, text, 'utf8')

@@ -7,6 +7,7 @@ import type {
   SetupResult,
   SetupRun,
   SetupState,
+  ClaudeLoginOpen,
   WorkPick,
   BoardKey,
   BoardList,
@@ -172,6 +173,10 @@ const api = {
   setupOpenInstall: (name: string): Promise<void> => ipcRenderer.invoke(IPC.setupOpenInstall, name),
   /** git 사용자 이름 · 메일을 전역으로 — 못 하면 그 까닭(빈 글이면 됨) */
   setupGitIdentity: (name: string, email: string): Promise<string> => ipcRenderer.invoke(IPC.setupGitIdentity, name, email),
+  /** Claude Code 로그인 콘솔 창을 연다 — 로그인은 사람이 그 창과 브라우저에서 한다 */
+  claudeLogin: (): Promise<ClaudeLoginOpen> => ipcRenderer.invoke(IPC.claudeLogin),
+  /** Claude Code 에 로그인돼 있나 — 못 읽으면 null */
+  claudeLoggedIn: (): Promise<boolean | null> => ipcRenderer.invoke(IPC.claudeLoggedIn),
   ...benchApi
 }
 if (process.contextIsolated) {

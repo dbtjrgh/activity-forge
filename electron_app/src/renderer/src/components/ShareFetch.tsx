@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ShareAuto, ShareLook } from '../../../shared/forge'
 import { formatAgo, formatBytes } from '../lib/format'
-
-const KIND = { sound: '소리', lottie: '애니메이션', video: '영상' } as const
+import ShareLists, { KIND } from './ShareLists'
 
 /** 「공유 폴더에서 소리 11개, 애니메이션 2개를 자동으로 가져왔습니다.」 */
 function autoLine(auto: ShareAuto): string {
@@ -160,34 +159,13 @@ export default function ShareFetch({
           </span>
         )}
       </p>
-      {!compact && got.items.length > 0 && (
-        <details className="files">
-          <summary>가져올 파일 {got.items.length}개</summary>
-          <ul>
-            {got.items.map((i) => (
-              <li key={i.to} title={i.from}>
-                <span className="mono">{i.to}</span>
-                <span className="sub">
-                  {KIND[i.kind]}, {i.where === 'hall' ? `앞 호 완성본 ${i.from}` : '공유 폴더'}, {formatBytes(i.bytes)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </details>
+      {/* 기획서 참고 이름으로 같은 호 앞선 학습코드 폴더에서 가져온 소리 — 이름은 기획서 그대로지만 자리가 달라 들어 보게 한다(`shareown.ts`) */}
+      {got.near && got.near.length > 0 && (
+        <p className="state warn">
+          기획서 참고 이름으로 다른 학습코드 폴더에서 가져온 소리가 {got.near.length}개 있습니다. 미리보기에서 맞는 녹음인지 들어 보세요. {got.near.join(', ')}
+        </p>
       )}
-      {!compact && got.miss.length > 0 && (
-        <details className="files">
-          <summary>가져오지 않은 파일 {got.miss.length}개</summary>
-          <ul>
-            {got.miss.map((m) => (
-              <li key={m.name}>
-                <span className="mono">{m.name}</span>
-                <span className="sub">{m.why}</span>
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
+      {!compact && <ShareLists got={got} />}
       {!compact && got.notes.map((n) => (
         <p key={n} className="sub">
           {n}

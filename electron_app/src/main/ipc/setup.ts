@@ -1,10 +1,11 @@
 import { isAbsolute } from 'node:path'
 import { dialog, ipcMain, shell } from 'electron'
-import type { BranchPlans, SetupLine, SetupResult, SetupRun, WorkPick } from '../../shared/forge'
+import type { BranchPlans, ClaudeLoginOpen, SetupLine, SetupResult, SetupRun, WorkPick } from '../../shared/forge'
 import { IPC } from '../../shared/ipc'
 import { branchPlans, finishSetup, runSetup, setupState } from '../services/forge/setup'
 import { branchProblem } from '../services/forge/setupbranch'
-import { installPage, saveGitIdentity } from '../services/forge/setupchecks'
+import { openClaudeLogin } from '../services/forge/claudelogin'
+import { claudeLoggedIn, installPage, saveGitIdentity } from '../services/forge/setupchecks'
 import { inspectWork } from '../services/forge/setuprepos'
 
 /**
@@ -92,4 +93,8 @@ export function registerSetupIpc(): void {
     if (m.length > 120 || !/^[^\s@\p{Cc}]+@[^\s@\p{Cc}]+\.[^\s@\p{Cc}]+$/u.test(m)) return '메일 주소를 확인하세요.'
     return saveGitIdentity(n, m)
   })
+
+  // Claude Code 로그인 — 처음 설정과 대화 칸이 같이 부른다. 받는 값이 없다
+  ipcMain.handle(IPC.claudeLogin, (): ClaudeLoginOpen => openClaudeLogin())
+  ipcMain.handle(IPC.claudeLoggedIn, (): Promise<boolean | null> => claudeLoggedIn())
 }

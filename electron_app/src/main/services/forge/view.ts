@@ -6,12 +6,13 @@
  * 지금은 사람이 `sparkon link M07` 을 치고 주소를 손으로 적습니다.
  *
  * 하는 일은 셋입니다 —
- *   ① 정션이 제대로 걸려 있나 보고, 아니면 **칠 명령을 알려 준다**
+ *   ① 정션이 걸려 있나 보고, 아니면 **칠 명령을 알려 준다**
  *   ② 호 저장소에서 vite 를 띄우고 **실제로 잡힌 포트를 읽어 낸다**
  *   ③ `localhost:<포트>/<학습코드>/` 를 연다 (여는 것은 ipc 층의 몫)
  *
  * **정션은 사람이 「연결」을 누를 때만 건다** (2026-09-29, `link.ts`). `sparkon_common/node_modules` 가
- * **호 하나만 가리키는 전역 상태**라 다시 거는 순간 다른 호의 미리보기가 바뀝니다 — 그래서 저절로는 안 겁니다.
+ * **호 하나만 가리키는 전역 상태**라 다시 거는 순간 다른 호 일이 바뀝니다 — 그래서 저절로는 안 겁니다.
+ * 2026-11-03 부터 **그 정션이 다른 호를 가리켜도 띄웁니다** — 덧config 가 의존성을 이 호 것으로 푼다(`devconfig.ts`).
  *
  * ① 은 `viewcheck.ts` 에 있습니다.
  */
@@ -25,7 +26,7 @@ import { writeDevConfig } from './devconfig'
 import { mark } from './measure'
 import { loadForge } from './runtime'
 import { noVite, plain, portIn, READY_TIMEOUT, spawnVite, viteBin, waitVitePort } from './vitespawn'
-import { viewCheck } from './viewcheck'
+import { monthOf, viewCheck } from './viewcheck'
 
 // vite 가 뜨기를 `READY_TIMEOUT`(`vitespawn.ts`)만큼 기다린다. 넘으면 죽이고 로그를 보여 준다.
 
@@ -121,7 +122,7 @@ export async function startServer(
   // **못 만들어도 서버는 띄운다** — 편의 때문에 띄우기 자체가 막히면 안 된다.
   const args = ['--port', String(PORT_FROM)]
   try {
-    args.push('--config', writeDevConfig(check.repo))
+    args.push('--config', writeDevConfig(check.repo, monthOf(code)))
   } catch (error) {
     push(`추가 설정 없이 서버를 엽니다: ${toMessage(error)}`)
   }

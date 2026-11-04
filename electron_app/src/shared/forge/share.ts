@@ -24,6 +24,8 @@ export interface ShareItem {
   /** 리소스 폴더 안 자리 */
   to: string
   bytes: number
+  /** 기획서 참고 이름이라 이 학습코드 폴더가 아니라 같은 호 앞선 학습코드 폴더에서 찾았다(`shareown.ts` `pickNear`) — 화면이 들어 보라고 알린다 */
+  near?: boolean
 }
 
 /** 못 가져오는 것 하나와 그 까닭 */
@@ -74,6 +76,8 @@ export interface ShareLook {
   copying?: number
   /** 마지막 저절로 넣기에서 생긴 문제 한 줄(실패 · 이름 같은 다른 파일 · 시간 상한) */
   autoNote?: string
+  /** 리소스 폴더에 있는, 기획서 참고 이름으로 다른 학습코드 폴더에서 가져온 소리(`near`) — 맞는 녹음인지 들어 보라고 알린다 */
+  near?: string[]
   error?: string
 }
 

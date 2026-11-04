@@ -1,0 +1,353 @@
+{
+  "specVersion": 1,
+  "module": "M39",
+  "subject": "MA",
+  "title": "화살표로 이동 순서 만들어 우체통까지 가기",
+  "summary": "4열 x 3행 칸판에서 방향 버튼으로 아래 이동 순서 칸을 다 채우고 출발을 누르면, 몬스터가 화살표 하나에 한 칸씩 움직인다. 못 가는 칸(어두운 칸 · 장애물 · 판 밖)에 들어가려 하거나 다 움직였는데 우체통 칸이 아니면 오답, 우체통 칸에 서면 정답. 판정은 출발 뒤 실제 이동 결과로만 한다.",
+  "reference": {
+    "moduleCommit": "42987ae8911322e9cdd736cda2ddfde3bdba1eb2",
+    "moduleCommitWhy": "2026-11-03 모듈 코드와 맞춰 봤습니다.",
+    "module": "sparkon_common/_common/module/MA/M39",
+    "activities": [
+      "MAL2M09W2S3"
+    ],
+    "doc": "sparkon_common/_common/module/MA/M39/README.md — 좌표와 근거는 §5, 리소스 배치는 §6, GameData 규칙과 양산 체크리스트는 §7.",
+    "note": "첫 적용 학습코드는 MAL2M09W2S3(10호 L2W2S3, 2026-11-03)이고 같은 모듈을 MAL3M09W3S3(Lv3 확장, 네 방향 · 이동 순서 5~6칸)이 씁니다. 스펙은 모듈 코드(M39.ts · component/*.ts)와 README 를 읽어 적고 그 학습코드로 대조했습니다."
+  },
+  "codegen": {
+    "hooks": {
+      "onLoad": [
+        "M39.addAsset();"
+      ],
+      "onInit": [
+        "this.addChild(M39.handle);",
+        "await M39.handle.init(quizData);"
+      ],
+      "onStart": [
+        "await M39.handle.start();",
+        "await M39.handle.play();",
+        "await M39.handle.finish();",
+        "await SparkApp.eop.show(1);"
+      ],
+      "onAffordanceOn": [
+        "M39.handle.onAffordanceOn();"
+      ],
+      "onAffordanceCanceled": [
+        "M39.handle.onAffordanceCanceled();"
+      ],
+      "onResize": [
+        "M39.handle.onResize();"
+      ]
+    },
+    "gameDataExport": "quizData",
+    "extends": {
+      "symbol": "ActivityBase",
+      "from": "@_common/sparkLib/ActivityBase"
+    },
+    "imports": [
+      {
+        "symbol": "SparkApp",
+        "from": "@_common/sparkLib/Application"
+      },
+      {
+        "symbol": "M39",
+        "from": "@_common/module/MA/M39/M39"
+      }
+    ]
+  },
+  "assets": {
+    "providedByModule": {
+      "note": "M39.addAsset() 이 resource_common/common/module/MA/M39 에서 등록하므로 액티비티 AssetTable 에 다시 넣지 말 것([Resolver] already has key 경고와 함께 덮입니다). 아래 조작 판 · 방향 버튼 · 이동 순서 칸 · 휴지통 · 출발 · 도착 파티클과 BGM · 효과음입니다. 출발 기본 그림은 M30_3 의 main_next_btn_n.png 를 같이 씁니다(바이트까지 같음).\n\n도우미 대사(incorrect1~3 · affordance)는 공통 MainCharacter 가 등록합니다. 메뉴 · EOP 소리는 공통 UI 몫입니다.\n\n가이드 내레이션 SL_ma_m39_guide_nar01 · 02 는 Lv2 · Lv3 가 이름은 같고 내용이 달라 모듈 공용이 아니라 학습코드 AssetTable 에 둡니다. 영상 안 소리라 모듈 코드는 부르지 않습니다.",
+      "image": [
+        "m39_panel",
+        "m39_btn_up_n",
+        "m39_btn_up_p",
+        "m39_btn_down_n",
+        "m39_btn_down_p",
+        "m39_slot_empty",
+        "m39_slot_up",
+        "m39_slot_down",
+        "m39_slot_up_on",
+        "m39_slot_down_on",
+        "m39_slot_up_x",
+        "m39_slot_down_x",
+        "m39_trash_n",
+        "m39_trash_p",
+        "m39_go_n",
+        "m39_go_p"
+      ],
+      "sound": [
+        "bgm",
+        "SL_ma_com_sfx01",
+        "SL_ma_cor_sfx01",
+        "SL_ma_inc_sfx02",
+        "SL_ma_m39_sfx01"
+      ],
+      "lottie": [
+        "m39_correct_ef"
+      ]
+    },
+    "required": [
+      {
+        "alias": "bg",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "숲속 공터 배경. 3840x2160 bleed — 스케일 1, 화면 가운데 정렬이라 16:9 에서는 가운데 1920x1080 만 보입니다. 활동별 교체(기획 「배경 디자인 활동별 변경 가능」)."
+      },
+      {
+        "alias": "tile_on_1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "밝은 칸(갈 수 있음) 356x200. tile_on_2 와 무늬만 달라 모듈이 바둑판으로 번갈아 깝니다."
+      },
+      {
+        "alias": "tile_on_2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "밝은 칸 두 번째 무늬 356x200."
+      },
+      {
+        "alias": "tile_off_1",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "어두운 칸(못 감) 356x200. tile_off_2 와 번갈아 깝니다."
+      },
+      {
+        "alias": "tile_off_2",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "어두운 칸 두 번째 무늬 356x200."
+      },
+      {
+        "alias": "mailbox",
+        "kind": "image",
+        "fixedAlias": true,
+        "note": "우체통(도착) 356x200 — 칸 크기로 받아 goalCoord 칸 가운데에 그대로 놓습니다. 도착하면 통 튕깁니다."
+      },
+      {
+        "alias": "mon_idle",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "편지를 든 몬스터 정면 대기 280x280. 루프."
+      },
+      {
+        "alias": "mon_jump",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "몬스터 정면 통통 이동 280x280. 한 칸 옮기는 0.5초 동안 루프합니다(모든 방향 공통, 옆모습 없음)."
+      },
+      {
+        "alias": "mon_correct",
+        "kind": "lottie",
+        "fixedAlias": true,
+        "note": "몬스터 기쁨 280x280(편지를 넣은 뒤라 편지가 없음). 마지막 이닝 도착에서만 1회."
+      }
+    ]
+  },
+  "gameData": {
+    "root": "quizData",
+    "fields": [
+      {
+        "key": "boardRows",
+        "type": "number",
+        "required": true,
+        "default": 3,
+        "desc": "칸판 행 수(기획 boardRows). Lv2 · Lv3 모두 3. R1 이 맨 위입니다."
+      },
+      {
+        "key": "boardCols",
+        "type": "number",
+        "required": true,
+        "default": 4,
+        "desc": "칸판 열 수(기획 boardCols). Lv2 · Lv3 모두 4, 기획상 5까지. C1 이 맨 왼쪽입니다."
+      },
+      {
+        "key": "layout",
+        "type": "object",
+        "required": true,
+        "desc": "화면 배치. 좌표 원점은 화면 가운데(1920x1080). 빠진 값은 모듈 기본값(figma 1~3이닝 화면에서 잰 값)을 씁니다.",
+        "fields": [
+          {
+            "key": "board",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "pos",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "칸판 가운데. 기본 (0, −127)."
+              },
+              {
+                "key": "gap",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "칸 사이 가로 · 세로(px). 기본 (16, 10)."
+              }
+            ]
+          },
+          {
+            "key": "hero",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "offset",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "칸 가운데에서 몬스터 로티 가운데까지. 기본 (0, −52) — 몸통이 칸 아래쪽에 서고 머리가 칸 위로 조금 나옵니다. 우체통 칸에서도 같은 자리에 서서 우체통 앞을 가립니다(figma 도착 화면)."
+              }
+            ]
+          },
+          {
+            "key": "command",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {
+                "key": "pos",
+                "type": "point",
+                "required": true,
+                "figma": true,
+                "desc": "아래 노란 조작 판 가운데. 기본 (0, 366). 판 폭은 칸 수에 따라 모듈이 늘립니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "inningData",
+        "type": "array",
+        "required": true,
+        "minLength": 3,
+        "minLengthWhy": "기획 「이닝(문항 수) 3~5개」.",
+        "desc": "이닝마다 판 하나. 차례대로 진행하고 마지막 이닝만 도착 뒤 기쁨 애니 + 최종 대사를 냅니다.",
+        "of": {
+          "key": "",
+          "type": "object",
+          "fields": [
+            {
+              "key": "narration",
+              "type": "asset:sound",
+              "required": true,
+              "default": "SL_ma_234_s3_nar01",
+              "desc": "이닝 시작 지시문. 도우미가 읽고 끝나야 입력이 열립니다(이닝 공통이라 보통 같은 파일). 예 「위쪽, 아래쪽 화살표를 눌러 친구가 우체통까지 가도록 해 보자!」"
+            },
+            {
+              "key": "clearNarration",
+              "type": "asset:sound",
+              "required": true,
+              "desc": "도착 대사(몬스터). 중간 이닝은 nar02 「우체통에 도착했어!」, 마지막 이닝은 nar03 「편지 배달 성공!」."
+            },
+            {
+              "key": "startCoord",
+              "type": "string",
+              "required": true,
+              "desc": "몬스터 시작 칸 「R행C열」(예 R3C1). walkableCells 안에 있어야 합니다."
+            },
+            {
+              "key": "goalCoord",
+              "type": "string",
+              "required": true,
+              "desc": "우체통 칸 「R행C열」. walkableCells 안에 있어야 합니다."
+            },
+            {
+              "key": "commandCount",
+              "type": "number",
+              "required": true,
+              "default": 2,
+              "desc": "이동 순서 칸 수(1~6). Lv2 는 2 고정, Lv3 는 5 → 5 → 6. 모든 칸을 채워야 출발할 수 있습니다."
+            },
+            {
+              "key": "directionSet",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "desc": "아래 줄 방향 버튼 차례. Lv2 [up, down], Lv3 [up, down, left, right]. left · right 그림은 아직 없어 up 그림을 돌려 씁니다.",
+              "of": {
+                "key": "",
+                "type": "enum",
+                "values": [
+                  "up",
+                  "down",
+                  "left",
+                  "right"
+                ]
+              }
+            },
+            {
+              "key": "walkableCells",
+              "type": "array",
+              "required": true,
+              "minLength": 2,
+              "desc": "밝은 칸(갈 수 있음) 「R행C열」 목록. 나머지 칸은 어두운 칸입니다. 시작 칸부터 우체통 칸까지 끊기지 않는 길 하나로, commandCount 번에 닿아야 합니다(기획 「우회 경로가 생기지 않도록」).",
+              "of": {
+                "key": "",
+                "type": "string"
+              }
+            },
+            {
+              "key": "obstacles",
+              "type": "array",
+              "required": true,
+              "minLength": 0,
+              "desc": "장애물 — 못 가는 칸 표시(경로 난이도에는 안 씁니다). 어두운 칸에 둡니다.",
+              "of": {
+                "key": "",
+                "type": "object",
+                "fields": [
+                  {
+                    "key": "type",
+                    "type": "enum",
+                    "required": true,
+                    "values": [
+                      "log",
+                      "puddle",
+                      "rock"
+                    ],
+                    "desc": "장애물 종류(기록용). 그림은 image 가 정합니다."
+                  },
+                  {
+                    "key": "image",
+                    "type": "asset:image",
+                    "required": true,
+                    "desc": "장애물 그림 alias(356x200, 칸 크기). 예 obj_puddle · obj_log · obj_rock."
+                  },
+                  {
+                    "key": "coord",
+                    "type": "string",
+                    "required": true,
+                    "desc": "장애물 칸 「R행C열」."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "relations": [
+    {
+      "id": "inning-count",
+      "kind": "count",
+      "pick": "inningData",
+      "min": 3,
+      "max": 5,
+      "note": "inningData 는 3~5개.",
+      "why": "기획 확정 범위입니다."
+    },
+    {
+      "id": "direction-count",
+      "kind": "count",
+      "pick": "inningData[].directionSet",
+      "min": 2,
+      "max": 4,
+      "note": "방향 버튼은 2~4개.",
+      "why": "Lv2 는 위 · 아래, Lv3 는 네 방향입니다."
+    }
+  ]
+}

@@ -8,12 +8,12 @@
 import { existsSync, realpathSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import type { LinkState, ViewCheck } from '../../../shared/forge'
-import { hoLabel } from '../../../shared/forge'
 import { toMessage } from '../../lib/errors'
 import { homeTaken } from './commonlink'
 import { loadForge } from './runtime'
 
-function monthOf(code: string): string {
+/** 학습코드의 M 번호(`MAL2M09W2S3` → `09`) — 미리보기 덧config 의 캐시 자리도 이것으로 가른다 */
+export function monthOf(code: string): string {
   return /M(\d\d)/.exec(code)?.[1] ?? ''
 }
 
@@ -94,11 +94,9 @@ export async function viewCheck(code: string): Promise<ViewCheck> {
       : common.beside
         ? `${missing} 아래 명령을 PowerShell 에서 실행하세요.`
         : missing
-  } else if (!out.sameMonth) {
-    out.blocked = out.linkedMonth
-      ? `미리보기가 ${hoLabel(out.linkedMonth)}에 연결되어 있습니다. ${hoLabel(month)}로 다시 연결하세요.`
-      : '미리보기가 어느 호에 연결되어 있는지 읽지 못했습니다.'
   } else if (!out.activity) {
+    // 공통 node_modules 정션이 다른 호를 가리키는 것은 막지 않는다(2026-11-03) — 미리보기 덧config 가
+    // 의존성을 이 호 것으로 푼다(`devconfig.ts` `hallDeps`). 정션 자체가 없으면 위에서 막는다
     out.blocked = '아직 저장소에 없는 학습코드입니다. 먼저 대화로 생성하세요.'
   }
   return out

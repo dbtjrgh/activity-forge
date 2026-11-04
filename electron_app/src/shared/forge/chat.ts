@@ -55,6 +55,8 @@ export interface ChatChecks {
    * 학습 기록이 다른 학습코드로 올라간다. 옛 대화 기록에는 없다
    */
   ident?: { ok: boolean; lines: string[] }
+  /** 참고 — 다른 호에서만 쓰던 녹음인데 이번 기획서에 없는 소리(`chatforeign.ts`, 2026-11-04). 막지 않는다 */
+  foreign?: string[]
 }
 
 export interface ChatInfo {
